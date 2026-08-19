@@ -1,0 +1,13 @@
+"use client";
+
+import { Bell, Menu, Search } from "lucide-react";
+import { usePathname } from "next/navigation";
+import { Brand } from "@/components/brand";
+import { adminNav, studentNav } from "@/config/navigation";
+import { cn } from "@/lib/utils";
+
+export function AppShell({ role, children }: { role: "student" | "admin"; children: React.ReactNode }) {
+  const pathname = usePathname();
+  const nav = role === "admin" ? adminNav : studentNav;
+  return <div className="min-h-screen bg-[#f6f6f2]"><aside className="fixed inset-y-0 left-0 z-30 hidden w-64 flex-col border-r border-zinc-200 bg-white p-5 lg:flex"><Brand /><div className="mt-9 text-[10px] font-bold uppercase tracking-[0.2em] text-zinc-400">{role === "admin" ? "Quản trị hệ thống" : "Không gian học tập"}</div><nav className="mt-3 space-y-1">{nav.map((item) => { const active = item.href === pathname; const Icon = item.icon; return <a key={item.label} href={item.href} className={cn("flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-zinc-600 transition hover:bg-zinc-100 hover:text-ink", active && "bg-ink text-white hover:bg-ink hover:text-white")}><Icon size={17} /><span>{item.label}</span></a>; })}</nav><div className="mt-auto rounded-xl border border-zinc-200 bg-paper p-4"><div className="text-xs font-semibold">{role === "admin" ? "Hệ thống ổn định" : "Chuỗi học 7 ngày 🔥"}</div><p className="mt-1 text-xs leading-5 text-zinc-500">{role === "admin" ? "Mock mode đang bật" : "Học thêm 20 phút hôm nay"}</p></div></aside><div className="lg:pl-64"><header className="sticky top-0 z-20 flex h-18 items-center justify-between border-b border-zinc-200 bg-white/90 px-5 py-4 backdrop-blur lg:px-8"><div className="flex items-center gap-3"><button aria-label="Mở menu" className="grid h-10 w-10 place-items-center rounded-lg border border-zinc-200 lg:hidden"><Menu size={18} /></button><div className="hidden items-center gap-2 rounded-full bg-zinc-100 px-4 py-2.5 text-sm text-zinc-500 md:flex"><Search size={16} /><span>Tìm kiếm nội dung...</span><kbd className="ml-10 rounded border bg-white px-1.5 text-[10px]">⌘ K</kbd></div></div><div className="flex items-center gap-3"><button aria-label="Thông báo" className="relative grid h-10 w-10 place-items-center rounded-full border border-zinc-200 bg-white"><Bell size={17} /><span className="absolute right-1.5 top-1.5 h-2 w-2 rounded-full bg-lime ring-2 ring-white" /></button><div className="grid h-10 w-10 place-items-center rounded-full bg-ink text-xs font-bold text-white">{role === "admin" ? "AD" : "HN"}</div></div></header><main className="p-5 lg:p-8">{children}</main></div></div>;
+}

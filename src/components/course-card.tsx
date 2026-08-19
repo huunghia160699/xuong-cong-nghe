@@ -1,0 +1,7 @@
+import { ArrowUpRight, BookOpen } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { Card } from "@/components/ui/card";
+
+export function CourseCard({ course }: { course: { slug: string; category: string; title: string; lessons: number; level: string; color: string; accent: string } }) {
+  return <a href={`/khoa-hoc/${course.slug}`} className="group block"><Card className="overflow-hidden transition duration-300 hover:-translate-y-1 hover:shadow-soft"><div className={`relative flex aspect-[16/10] flex-col justify-between p-6 ${course.color} ${course.accent}`}><div className="flex justify-between"><Badge className="border-current/20 bg-white/80 text-ink">{course.category}</Badge><ArrowUpRight className="transition group-hover:translate-x-1 group-hover:-translate-y-1" /></div><div><div className="text-5xl font-black tracking-tighter">{course.category === "Excel" ? "fx" : course.category === "AI" ? "✦" : "01"}</div><div className="mt-2 text-xs font-semibold uppercase tracking-[0.2em] opacity-70">Learn by doing</div></div></div><div className="p-5"><h3 className="min-h-14 text-lg font-semibold leading-snug">{course.title}</h3><div className="mt-5 flex items-center justify-between border-t border-zinc-100 pt-4 text-xs text-zinc-500"><span className="flex items-center gap-1.5"><BookOpen size={14} />{course.lessons} bài</span><span>{course.level}</span></div></div></Card></a>;
+}
