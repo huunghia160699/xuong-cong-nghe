@@ -1,8 +1,8 @@
-import "server-only";
 import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
 import { getSupabasePublicConfig } from "@/lib/supabase/config";
 
+/** Server-only by design. Only call from Route Handlers, Server Actions or Server Components. */
 export async function createSupabaseServerClient() {
   const { url, anonKey } = getSupabasePublicConfig();
   const store = await cookies();
