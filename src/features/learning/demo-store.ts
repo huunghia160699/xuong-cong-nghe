@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { quizQuestions } from "@/data/mock";
+import { gradeQuiz } from "@/features/learning/scoring";
 
 const STORAGE_KEY = "xuong-cong-nghe:demo-learning:v1";
 const CHANGED_EVENT = "xuong-cong-nghe:demo-learning-changed";
@@ -87,15 +88,14 @@ export function useDemoLearning() {
   function submitQuiz(): string | null {
     const current = readState();
     const answers = { ...current.quizDraft };
-    const total = quizQuestions.length;
-    const correct = quizQuestions.filter((q) => answers[String(q.id)] === q.correctIndex).length;
+    const { total, correct, score } = gradeQuiz(quizQuestions, answers);
     const attempt: DemoQuizAttempt = {
       id: crypto.randomUUID(),
       submittedAt: new Date().toISOString(),
       answers,
       correct,
       total,
-      score: Math.round((correct / total) * 100),
+      score,
     };
     const saved = persistState({
       ...current,
