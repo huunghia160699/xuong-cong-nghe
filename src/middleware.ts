@@ -1,6 +1,7 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextRequest, NextResponse } from "next/server";
 import { getSupabasePublicConfig, isLiveMode, safeNextPath } from "@/lib/supabase/config";
+import type { SupabaseCookieToSet } from "@/lib/supabase/cookie-types";
 
 export async function middleware(request: NextRequest) {
   if (!isLiveMode()) return NextResponse.next({ request });
@@ -16,7 +17,7 @@ export async function middleware(request: NextRequest) {
   const supabase = createServerClient(config.url, config.anonKey, {
     cookies: {
       getAll: () => request.cookies.getAll(),
-      setAll(items) {
+      setAll(items: SupabaseCookieToSet[]) {
         items.forEach(({ name, value }) => request.cookies.set(name, value));
         response = NextResponse.next({ request });
         items.forEach(({ name, value, options }) => response.cookies.set(name, value, options));

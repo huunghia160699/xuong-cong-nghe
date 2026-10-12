@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
-import { DemoDashboard } from "@/features/learning/components/demo-dashboard";
+import DemoDashboard from "@/features/learning/components/demo-dashboard";
 import { LiveDashboard } from "@/features/learning/components/live-dashboard";
 import { getExcelProgress } from "@/features/learning/live-service";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
