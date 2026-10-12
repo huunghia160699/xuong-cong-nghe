@@ -3,12 +3,19 @@ import { notFound } from "next/navigation";
 import { ArrowLeft, ArrowRight, Check, Clock3, PlayCircle } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
-import { courseDetail } from "@/data/mock";
+import { courseDetail, courses } from "@/data/mock";
 import { excelLessons } from "@/features/learning/content";
 
 export default async function CourseDetailPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  if (slug !== "excel-can-ban") notFound();
+  const selectedCourse = courses.find((course) => course.slug === slug);
+  if (!selectedCourse) notFound();
+  if (slug !== "excel-can-ban") return <main className="mx-auto max-w-4xl px-5 py-20">
+    <Badge>Khóa học dự kiến</Badge>
+    <h1 className="mt-5 text-4xl font-bold">{selectedCourse.title}</h1>
+    <p className="mt-5 text-sm leading-7 text-zinc-600">Nội dung khóa học này đang được phát triển. Hiện có thể học thử trọn lộ trình Excel căn bản và luyện trắc nghiệm.</p>
+    <Link href="/khoa-hoc/excel-can-ban" className="mt-8 inline-flex items-center gap-2 text-sm font-semibold">Khám phá Excel căn bản <ArrowRight size={17} /></Link>
+  </main>;
   const c = courseDetail;
   const start = `/student/khoa-hoc/excel-can-ban/${excelLessons[0].slug}`;
 
