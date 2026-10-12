@@ -19,7 +19,7 @@ export const studentNav = [
 
 export const adminNav = [
   { label: "Tổng quan", href: "/admin", icon: Gauge },
-  { label: "Khóa học", href: "/admin#courses", icon: BookOpen },
+  { label: "Khóa học", href: "/admin/khoa-hoc", icon: BookOpen },
   { label: "Câu hỏi & Quiz", href: "/admin#quiz", icon: ClipboardCheck },
   { label: "Tài nguyên", href: "/admin#resources", icon: Library },
   { label: "Dự án", href: "/admin#projects", icon: FolderKanban },

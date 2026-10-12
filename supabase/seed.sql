@@ -18,6 +18,10 @@ values
   ('20000000-0000-0000-0000-000000000003','10000000-0000-0000-0000-000000000001','Ứng dụng vào công việc',3)
 on conflict (id) do update set title=excluded.title,position=excluded.position;
 
+update public.lessons set slug='giao-dien-va-vung-lam-viec' where chapter_id='20000000-0000-0000-0000-000000000001' and slug='giao-dien-vung-lam-viec' and not exists (select 1 from public.lessons existing where existing.chapter_id='20000000-0000-0000-0000-000000000001' and existing.slug='giao-dien-va-vung-lam-viec');
+update public.lessons set slug='nhap-va-dinh-dang-du-lieu' where chapter_id='20000000-0000-0000-0000-000000000001' and slug='nhap-dinh-dang-du-lieu' and not exists (select 1 from public.lessons existing where existing.chapter_id='20000000-0000-0000-0000-000000000001' and existing.slug='nhap-va-dinh-dang-du-lieu');
+update public.lessons set slug='cau-truc-mot-cong-thuc' where chapter_id='20000000-0000-0000-0000-000000000002' and slug='cau-truc-cong-thuc' and not exists (select 1 from public.lessons existing where existing.chapter_id='20000000-0000-0000-0000-000000000002' and existing.slug='cau-truc-mot-cong-thuc');
+
 insert into public.lessons (chapter_id,slug,title,summary,duration_minutes,position,is_preview,status)
 values
   ('20000000-0000-0000-0000-000000000001','giao-dien-va-vung-lam-viec','Giao diện và vùng làm việc','Làm quen với workbook, worksheet, ô, hàng và cột.',8,1,true,'published'),
