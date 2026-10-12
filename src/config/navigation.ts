@@ -1,7 +1,7 @@
 import { BarChart3, BookOpen, ClipboardCheck, FileText, FolderKanban, Gauge, GraduationCap, Library, Settings, Sparkles, Users } from "lucide-react";
 
 export const publicNav = [
-  { label: "Khóa học", href: "/khoa-hoc/excel-can-ban" },
+  { label: "Khóa học", href: "/khoa-hoc" },
   { label: "Luyện tập", href: "/student/quiz" },
   { label: "Tài nguyên", href: "/#tai-nguyen" },
   { label: "Công cụ", href: "/#cong-cu" },
@@ -19,7 +19,7 @@ export const studentNav = [
 
 export const adminNav = [
   { label: "Tổng quan", href: "/admin", icon: Gauge },
-  { label: "Khóa học", href: "/admin#courses", icon: BookOpen },
+  { label: "Khóa học", href: "/admin/khoa-hoc", icon: BookOpen },
   { label: "Câu hỏi & Quiz", href: "/admin#quiz", icon: ClipboardCheck },
   { label: "Tài nguyên", href: "/admin#resources", icon: Library },
   { label: "Dự án", href: "/admin#projects", icon: FolderKanban },

@@ -4,10 +4,13 @@ import { ArrowLeft, ArrowRight, Check, Clock3, PlayCircle } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { courseDetail, courses } from "@/data/mock";
+import { isLiveMode } from "@/lib/supabase/config";
+import { LiveCourseDetail } from "@/features/courses/components/live-course-detail";
 import { excelLessons } from "@/features/learning/content";
 
 export default async function CourseDetailPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
+  if (isLiveMode()) return <LiveCourseDetail slug={slug} />;
   const selectedCourse = courses.find((course) => course.slug === slug);
   if (!selectedCourse) notFound();
   if (slug !== "excel-can-ban") return <main className="mx-auto max-w-4xl px-5 py-20">

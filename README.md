@@ -1,48 +1,48 @@
-# Xưởng Công Nghệ
+# Xưởng Công Nghệ — HuuNghia Lab
 
-Starter repository cho nền tảng học và thực hành năng lực số, xây bằng Next.js, TypeScript, Tailwind CSS và Supabase.
+Nền tảng học và thực hành năng lực số: Next.js 15, TypeScript, Tailwind CSS và Supabase.
 
-## Chạy ngay
+## Chạy chế độ Demo
 
-Yêu cầu Node.js 20.9 trở lên.
-
-Trên Windows, có thể nhấp đúp `START-WEB.cmd`. Cửa sổ trình duyệt sẽ tự mở sau khi website khởi động.
+Yêu cầu Node.js 22 trở lên.
 
 ```bash
-npm install
-npm run dev
+pnpm install
+pnpm dev
 ```
 
-Mở `http://localhost:3000`. Dự án mặc định dùng dữ liệu mẫu nên không cần tài khoản Supabase để xem giao diện.
+Mở `http://localhost:3000`. Mặc định dùng chế độ **Demo**, không cần Supabase.
+Bài học, lựa chọn quiz và kết quả lưu trong `localStorage` của thiết bị.
 
-## Màn hình có sẵn
+## Chạy với Supabase Auth và dữ liệu thật
 
-- `/` — Homepage công khai
-- `/khoa-hoc/excel-can-ban` — Chi tiết khóa học
-- `/student` — Student Dashboard
-- `/student/quiz` — Quiz Player tương tác
-- `/admin` — Admin Dashboard
+Xem `docs/SUPABASE_SETUP.md` để cấu hình từng bước. Tóm tắt:
+1. Tạo / khôi phục Supabase Dev, chạy `supabase/migrations` theo thứ tự và `supabase/seed.sql`.
+2. Tạo `.env.local` từ `.env.example`, điền URL và anon key.
+3. Đặt `NEXT_PUBLIC_USE_MOCK_DATA=false` và restart server.
+4. Đăng ký hoặc đăng nhập qua `/dang-nhap`.
 
-## Kết nối Supabase
+**Live mode không tự lùi về Demo khi thiếu biến môi trường.** Middleware và Server Layout kiểm tra session/role; quiz chấm ở PostgreSQL qua RPC, không chấm trên trình duyệt.
 
-1. Sao chép `.env.example` thành `.env.local`.
-2. Điền URL và anon key của Supabase.
-3. Chạy migration trong `supabase/migrations` và file `supabase/seed.sql`.
-4. Đặt `NEXT_PUBLIC_USE_MOCK_DATA=false`.
+## Routes
 
-## Cấu trúc chính
+| Route | Mô tả |
+| --- | --- |
+| `/` | Trang chủ |
+| `/khoa-hoc/excel-can-ban` | Lộ trình Excel |
+| `/student` | Dashboard học viên |
+| `/student/khoa-hoc/excel-can-ban/[lessonSlug]` | Bài học / tiến độ |
+| `/student/quiz` | Làm bài |
+| `/student/quiz/ket-qua/[attemptId]` | Xem kết quả |
+| `/dang-nhap`, `/dang-ky`, `/quen-mat-khau` | Xác thực |
+| `/admin`, `/admin/khoa-hoc` | Quản trị (cần quyền admin ở live mode) |
 
-```text
-src/app           routes và layout
-src/components    component dùng chung
-src/config        navigation và feature flags
-src/data          mock data
-src/features      domain modules (mở rộng tiếp)
-src/lib           utilities và clients
-supabase          schema, migration, seed
-docs              specification và quyết định sản phẩm
+## Kiểm thử
+
+```bash
+pnpm test
+pnpm typecheck
+pnpm build
 ```
 
-## Bước phát triển tiếp theo
-
-Ưu tiên theo `docs/ROADMAP.md`: Supabase Auth + profile, repository layer thay mock data, CRUD khóa học phía admin, rồi mới mở rộng lesson player và kết quả học tập.
+GitHub Actions kiểm tra tự động. Không đưa service role key, mật khẩu hoặc dữ liệu học viên thực vào repo.

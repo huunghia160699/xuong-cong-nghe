@@ -1,38 +1,30 @@
 # Roadmap — Xưởng Công Nghệ
 
-## MVP 0.1 — Giao diện và vòng học thử
+## MVP 0.1 — Nền và vòng học thử
+- [x] Homepage, Course Detail, Student Dashboard, Lesson, Quiz, Result
+- [x] Nội dung Excel 9 bài + 6 câu hỏi
+- [x] Local demo progress + kết quả
+- [x] Unit test, typecheck, build và smoke test demo
 
-- [x] Design system và Public/Student/Admin shells
-- [x] Các màn hình nền và mock data
-- [x] 9 bài Excel căn bản có nội dung và điều hướng
-- [x] Đánh dấu hoàn thành bài; lưu cục bộ trên trình duyệt
-- [x] Trắc nghiệm 6 câu: lưu lựa chọn, quay lại, nộp, tính điểm
-- [x] Quiz Result: giải thích từng câu, ôn tập
-- [x] Dashboard hiển thị tiến độ và lịch sử học thử
-- [x] Thêm workflow CI typecheck + build (cần xác nhận run xanh)
-- [ ] Xác nhận kiểm thử trình duyệt 360px / 768px / 1280px
-- [ ] Xác nhận production build và xử lý các lỗi CI nếu có
+## MVP 0.2 — Auth và dữ liệu thật (mã nguồn đã có, cần cấu hình triển khai)
+- [x] Supabase SSR client và middleware làm mới session
+- [x] Đăng nhập, đăng ký học viên, khôi phục/đổi mật khẩu, đăng xuất
+- [x] Kiểm tra quyền student/admin ở middleware và Server Layout
+- [x] Tự tạo profiles.role=student bằng trigger
+- [x] Lưu tiến độ bài học thật trong bảng lesson_progress (code)
+- [x] RPC submit_quiz/get_quiz_result chấm điểm và xem kết quả theo tài khoản (code)
+- [x] Quiz API không trả đáp án đúng trước khi nộp
+- [x] Live Student Dashboard hiển thị tiến độ và bài nộp theo tài khoản
+- [x] Live Admin Dashboard dữ liệu thật + tạo/đổi trạng thái khóa học
+- [x] Seed Supabase 9 lessons + 6 quiz questions
+- [ ] **Chưa áp migrations/seed vào Supabase project thực**
+- [ ] **Chưa kiểm thử Auth, RLS, RPC với nhiều tài khoản trong môi trường thật**
+- [ ] **Chưa có deploy chính thức**
+- [ ] Editor CRUD chương/bài/câu hỏi và autosave quiz đang làm dở
 
-**Lưu ý:** Đây là bản demo không xác thực. Tiến độ/điểm nằm trong `localStorage` của máy hiện tại, không có đồng bộ đa thiết bị và không được dùng làm điểm chính thức.
+## MVP 0.3 — Thực hành chuyên sâu
+- Excel Lab tương tác và tự chấm
+- Word Lab, Notes, Tools, Resources
+- Teacher Workspace, AI Tutor, thương mại ở giai đoạn sau
 
-## MVP 0.2 — Dữ liệu thật và bảo mật
-
-- [ ] Cấu hình / khôi phục Supabase Dev
-- [ ] Áp migration bảo vệ role, correct answer, score và quiz answer
-- [ ] Supabase Auth / profiles / route guards cho Student + Admin
-- [ ] Đổi mock repository sang Supabase query/action
-- [ ] Chấm quiz ở server; autosave câu trả lời có kiểm tra
-- [ ] Enrollment, lesson progress, quiz attempt thực
-- [ ] CRUD khóa, chương, bài, câu hỏi phía admin
-- [ ] Kiểm thử RLS cho learner và admin; không công bố đáp án trước submit
-
-## MVP 0.3 — Luyện tập sâu
-
-- [ ] Excel Lab engine và tự chấm
-- [ ] Sổ tay, tài nguyên và báo cáo tiến độ
-- [ ] Word Lab
-- [ ] CMS bài viết / dự án / thương mại số
-
-## Sau v1.0
-
-Teacher Workspace, lớp học, giao bài, Coding Lab, AI Tutor, chứng nhận và subscription.
+Chi tiết cấu hình: `docs/SUPABASE_SETUP.md`.
