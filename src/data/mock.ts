@@ -7,17 +7,16 @@ export const categories = [
 
 export const courses = [
   { slug: "nang-luc-so-nen-tang", category: "Năng lực số", title: "Năng lực số nền tảng", lessons: 12, level: "Cơ bản", color: "bg-zinc-900", accent: "text-lime" },
-  { slug: "excel-can-ban", category: "Excel", title: "Excel căn bản cho công việc", lessons: 18, level: "Cơ bản", color: "bg-[#dff1df]", accent: "text-zinc-900" },
+  { slug: "excel-can-ban", category: "Excel", title: "Excel căn bản cho công việc", lessons: 9, level: "Cơ bản", color: "bg-[#dff1df]", accent: "text-zinc-900" },
   { slug: "ai-cho-cong-viec", category: "AI", title: "AI cho học tập và công việc", lessons: 10, level: "Mọi cấp độ", color: "bg-[#ece7fb]", accent: "text-zinc-900" },
 ];
 
 export const courseDetail = {
   ...courses[1],
   description: "Làm chủ bảng tính từ những thao tác đầu tiên đến công thức, biểu đồ và báo cáo thực tế.",
-  duration: "6 giờ 30 phút",
-  students: 1248,
-  rating: 4.9,
-  progress: 64,
+  duration: "1 giờ 47 phút",
+  students: 0,
+  rating: null,
   chapters: [
     { title: "Làm quen với Excel", lessons: ["Giao diện và vùng làm việc", "Nhập và định dạng dữ liệu", "Thao tác với hàng và cột"] },
     { title: "Công thức nền tảng", lessons: ["Cấu trúc một công thức", "SUM, AVERAGE, MIN, MAX", "Tham chiếu tương đối và tuyệt đối"] },
@@ -25,29 +24,58 @@ export const courseDetail = {
   ],
 };
 
-export const dashboardStats = [
-  { label: "Khóa đang học", value: "03", note: "+1 tháng này" },
-  { label: "Bài đã hoàn thành", value: "28", note: "7 ngày liên tiếp" },
-  { label: "Điểm trung bình", value: "8.6", note: "Tăng 0.4 điểm" },
-  { label: "Bài đã luyện", value: "42", note: "Top 18% tuần này" },
-];
-
 export const adminStats = [
-  { label: "Người dùng", value: "2,480", delta: "+12.5%" },
-  { label: "Đang hoạt động", value: "684", delta: "+8.2%" },
-  { label: "Khóa học", value: "21", delta: "+2 mới" },
-  { label: "Lượt làm bài", value: "8,942", delta: "+18.7%" },
+  { label: "Người dùng", value: "—", delta: "Chưa kết nối dữ liệu" },
+  { label: "Đang hoạt động", value: "—", delta: "Chưa kết nối dữ liệu" },
+  { label: "Khóa học", value: "03", delta: "Dữ liệu mẫu" },
+  { label: "Lượt làm bài", value: "—", delta: "Chưa kết nối dữ liệu" },
 ];
 
+/**
+ * Đáp án chỉ nằm trong bundle demo. Khi nối Supabase phải chấm điểm ở server;
+ * không trả về correctIndex/is_correct cho client trước khi nộp bài.
+ */
 export const quizQuestions = [
   {
     id: 1,
     question: "Trong Excel, ký hiệu nào dùng để bắt đầu một công thức?",
-    options: ["Dấu bằng (=)", "Dấu cộng (+)", "Dấu thăng (#)", "Dấu hai chấm (:)"]
+    options: ["Dấu bằng (=)", "Dấu cộng (+)", "Dấu thăng (#)", "Dấu hai chấm (:)"],
+    correctIndex: 0,
+    explanation: "Công thức Excel luôn bắt đầu bằng dấu bằng (=), ví dụ =A1+B1.",
   },
   {
     id: 2,
-    question: "Hàm nào tính tổng một vùng dữ liệu?",
-    options: ["COUNT", "AVERAGE", "SUM", "IF"]
+    question: "Hàm nào dùng để tính tổng các ô từ B2 đến B8?",
+    options: ["COUNT(B2:B8)", "AVERAGE(B2:B8)", "SUM(B2:B8)", "IF(B2:B8)"],
+    correctIndex: 2,
+    explanation: "SUM là hàm tính tổng. Công thức đầy đủ là =SUM(B2:B8).",
+  },
+  {
+    id: 3,
+    question: "Địa chỉ ô ở cột C, hàng 5 được viết như thế nào?",
+    options: ["5C", "C5", "C:5", "C-5"],
+    correctIndex: 1,
+    explanation: "Địa chỉ ô trong Excel viết tên cột trước, số hàng sau: C5.",
+  },
+  {
+    id: 4,
+    question: "Tham chiếu nào giữ nguyên cả cột và hàng khi sao chép công thức?",
+    options: ["A1", "A$1", "$A1", "$A$1"],
+    correctIndex: 3,
+    explanation: "$A$1 là tham chiếu tuyệt đối, cố định cả cột A và hàng 1.",
+  },
+  {
+    id: 5,
+    question: "Hàm nào tính giá trị trung bình của vùng B2:B8?",
+    options: ["=AVERAGE(B2:B8)", "=MAX(B2:B8)", "=MIN(B2:B8)", "=SUM(B2:B8)"],
+    correctIndex: 0,
+    explanation: "AVERAGE tính trung bình cộng các giá trị số trong vùng tham chiếu.",
+  },
+  {
+    id: 6,
+    question: "Để so sánh chi phí giữa các tháng, biểu đồ nào thường phù hợp?",
+    options: ["Biểu đồ phân tán", "Biểu đồ cột", "Biểu đồ radar", "Không cần biểu đồ"],
+    correctIndex: 1,
+    explanation: "Biểu đồ cột giúp so sánh giá trị của từng tháng hoặc từng nhóm.",
   },
 ];

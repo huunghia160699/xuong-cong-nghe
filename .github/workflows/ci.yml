@@ -1,0 +1,44 @@
+name: Verify web foundation
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: pnpm
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+      - name: Unit tests
+        run: pnpm test
+      - name: Typecheck
+        run: pnpm typecheck
+      - name: Production build
+        run: pnpm build
+      - name: Smoke test routes
+        shell: bash
+        run: |
+          pnpm start > /tmp/xcn-server.log 2>&1 &
+          server_pid=$!
+          trap 'kill "$server_pid" 2>/dev/null || true' EXIT
+          for i in {1..30}; do
+            if curl --silent --fail http://127.0.0.1:3000/ > /dev/null; then break; fi
+            sleep 1
+          done
+          for route in "/" "/khoa-hoc/excel-can-ban" "/student" "/student/quiz" "/student/khoa-hoc/excel-can-ban/giao-dien-va-vung-lam-viec"; do
+            echo "Checking $route"
+            curl --fail --silent --show-error "http://127.0.0.1:3000$route" > /dev/null
+          done

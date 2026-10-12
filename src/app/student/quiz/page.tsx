@@ -1,18 +1,100 @@
 "use client";
 
 import { useState } from "react";
-import { ArrowLeft, ArrowRight, CheckCircle2, Clock3, Flag, XCircle } from "lucide-react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { ArrowLeft, ArrowRight, Flag } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { quizQuestions } from "@/data/mock";
+import { useDemoLearning } from "@/features/learning/demo-store";
 import { cn } from "@/lib/utils";
 
 export default function QuizPage() {
+  const router = useRouter();
+  const { state, ready, setQuizAnswer, submitQuiz } = useDemoLearning();
   const [index, setIndex] = useState(0);
-  const [selected, setSelected] = useState<number | null>(null);
-  const [submitted, setSubmitted] = useState(false);
+  const [flagged, setFlagged] = useState<number[]>([]);
+  const [error, setError] = useState("");
   const question = quizQuestions[index];
-  const correct = index === 0 ? 0 : 2;
-  const next = () => { setIndex((index + 1) % quizQuestions.length); setSelected(null); setSubmitted(false); };
-  return <div className="mx-auto max-w-5xl"><div className="flex flex-wrap items-center justify-between gap-3"><a href="/student" className="inline-flex items-center gap-2 text-sm font-medium text-zinc-500 hover:text-ink"><ArrowLeft size={16} /> Thoát bài luyện</a><div className="flex items-center gap-3"><Badge>Excel căn bản</Badge><span className="flex items-center gap-2 text-sm text-zinc-500"><Clock3 size={16} /> 05:24</span></div></div><div className="mt-8 h-1.5 overflow-hidden rounded-full bg-zinc-200"><div className="h-full bg-ink" style={{width:`${((index+1)/quizQuestions.length)*100}%`}} /></div><div className="mt-3 flex justify-between text-xs text-zinc-500"><span>Câu {index + 1} / {quizQuestions.length}</span><span>{Math.round(((index+1)/quizQuestions.length)*100)}% hoàn thành</span></div><Card className="mt-8 p-6 sm:p-10"><div className="flex items-start justify-between gap-5"><div><div className="text-xs font-bold uppercase tracking-[.16em] text-zinc-400">Câu hỏi {String(index+1).padStart(2,"0")}</div><h1 className="mt-5 max-w-3xl text-2xl font-semibold leading-snug sm:text-3xl">{question.question}</h1></div><button aria-label="Đánh dấu câu hỏi" className="grid h-10 w-10 shrink-0 place-items-center rounded-full border border-zinc-200 hover:bg-zinc-50"><Flag size={17} /></button></div><div className="mt-9 grid gap-3">{question.options.map((option, oi) => { const isSelected = selected === oi; const isCorrect = submitted && oi === correct; const isWrong = submitted && isSelected && oi !== correct; return <button key={option} disabled={submitted} onClick={() => setSelected(oi)} className={cn("flex w-full items-center gap-4 rounded-xl border p-4 text-left text-sm transition sm:p-5", !isSelected && "border-zinc-200 hover:border-zinc-400", isSelected && !submitted && "border-ink bg-zinc-50 ring-1 ring-ink", isCorrect && "border-emerald-500 bg-emerald-50 ring-1 ring-emerald-500", isWrong && "border-red-400 bg-red-50 ring-1 ring-red-400")}><span className="grid h-8 w-8 shrink-0 place-items-center rounded-full border border-current text-xs font-bold">{String.fromCharCode(65+oi)}</span><span className="flex-1 font-medium">{option}</span>{isCorrect && <CheckCircle2 className="text-emerald-600" size={20} />}{isWrong && <XCircle className="text-red-500" size={20} />}</button>})}</div>{submitted && <div className={cn("mt-6 rounded-xl border p-5 text-sm leading-6", selected === correct ? "border-emerald-200 bg-emerald-50 text-emerald-900" : "border-red-200 bg-red-50 text-red-900")}><strong>{selected === correct ? "Chính xác!" : "Chưa chính xác."}</strong> Mọi công thức trong Excel đều bắt đầu bằng dấu bằng để chương trình nhận biết và thực hiện phép tính.</div>}<div className="mt-8 flex items-center justify-between border-t border-zinc-100 pt-6"><button onClick={() => setSelected(null)} className="text-sm font-medium text-zinc-500">Xóa lựa chọn</button>{!submitted ? <button disabled={selected === null} onClick={() => setSubmitted(true)} className="inline-flex h-11 items-center rounded-full bg-ink px-6 text-sm font-medium text-white disabled:cursor-not-allowed disabled:opacity-30">Kiểm tra đáp án</button> : <button onClick={next} className="inline-flex h-11 items-center rounded-full bg-ink px-6 text-sm font-medium text-white">Câu tiếp theo <ArrowRight size={16} className="ml-2" /></button>}</div></Card></div>;
+  const selected = state.quizDraft[String(question.id)];
+  const answered = quizQuestions.filter((item) => state.quizDraft[String(item.id)] !== undefined).length;
+  const remaining = quizQuestions.length - answered;
+
+  function finish() {
+    if (remaining > 0 && !window.confirm(`Còn ${remaining} câu chưa trả lời. Bạn vẫn muốn nộp bài?`)) return;
+    const attemptId = submitQuiz();
+    if (!attemptId) {
+      setError("Không thể lưu bài làm trên thiết bị. Hãy kiểm tra dung lượng lưu trữ hoặc quyền trình duyệt.");
+      return;
+    }
+    router.push(`/student/quiz/ket-qua/${attemptId}`);
+  }
+
+  return <div className="mx-auto max-w-5xl">
+    <div className="flex flex-wrap items-center justify-between gap-3">
+      <Link href="/student" className="inline-flex items-center gap-2 text-sm font-medium text-zinc-500 hover:text-ink"><ArrowLeft size={16} /> Trở về Dashboard</Link>
+      <div className="flex items-center gap-2"><Badge>Excel căn bản</Badge><Badge>Chế độ học thử</Badge></div>
+    </div>
+    <div className="mt-7 h-1.5 overflow-hidden rounded-full bg-zinc-200">
+      <div className="h-full bg-ink transition-all" style={{ width: `${answered / quizQuestions.length * 100}%` }} />
+    </div>
+    <div className="mt-3 flex justify-between gap-4 text-xs text-zinc-500">
+      <span>Câu {index + 1}/{quizQuestions.length}</span>
+      <span>Đã trả lời {answered}/{quizQuestions.length}</span>
+    </div>
+    <div className="mt-6 grid gap-6 lg:grid-cols-[minmax(0,1fr)_220px]">
+      <Card className="p-6 sm:p-9">
+        <div className="flex items-start justify-between gap-4">
+          <div>
+            <p className="text-xs font-bold uppercase tracking-[.14em] text-zinc-500">Câu hỏi {String(index + 1).padStart(2, "0")}</p>
+            <h1 className="mt-5 text-2xl font-semibold leading-snug sm:text-3xl">{question.question}</h1>
+          </div>
+          <button type="button" aria-label="Đánh dấu để xem lại" aria-pressed={flagged.includes(question.id)}
+            onClick={() => setFlagged((prev) => prev.includes(question.id) ? prev.filter((id) => id !== question.id) : [...prev, question.id])}
+            className={cn("grid h-10 w-10 shrink-0 place-items-center rounded-lg border", flagged.includes(question.id) ? "border-amber-400 bg-amber-50" : "border-zinc-200 hover:bg-zinc-50")}>
+            <Flag size={18} />
+          </button>
+        </div>
+        <fieldset className="mt-8 grid gap-3" disabled={!ready}>
+          <legend className="sr-only">Chọn một phương án</legend>
+          {question.options.map((option, oi) => <button type="button" key={oi} aria-pressed={selected === oi}
+            onClick={() => setQuizAnswer(question.id, oi)}
+            className={cn("flex w-full items-center gap-4 rounded-xl border p-4 text-left text-sm transition sm:p-5", selected === oi ? "border-ink bg-zinc-100 ring-1 ring-ink" : "border-zinc-200 hover:border-zinc-400")}>
+            <span className="grid h-8 w-8 shrink-0 place-items-center rounded-full border border-current text-xs font-bold">{String.fromCharCode(65 + oi)}</span>
+            <span className="font-medium">{option}</span>
+          </button>)}
+        </fieldset>
+        {error && <p role="alert" className="mt-4 text-sm text-red-700">{error}</p>}
+        <div className="mt-8 flex flex-wrap items-center justify-between gap-3 border-t border-zinc-100 pt-6">
+          <button type="button" disabled={!ready || selected === undefined} onClick={() => setQuizAnswer(question.id, null)}
+            className="text-sm font-medium text-zinc-500 hover:text-ink disabled:opacity-40">Xóa lựa chọn</button>
+          <div className="flex gap-2">
+            <button type="button" disabled={index === 0} onClick={() => setIndex(index - 1)}
+              className="h-11 rounded-full border border-zinc-300 px-4 text-sm disabled:opacity-30">Câu trước</button>
+            {index < quizQuestions.length - 1 ?
+              <button type="button" onClick={() => setIndex(index + 1)} className="inline-flex h-11 items-center gap-2 rounded-full bg-ink px-5 text-sm text-white">
+                Câu tiếp <ArrowRight size={16} /></button> :
+              <button type="button" disabled={!ready} onClick={finish} className="h-11 rounded-full bg-ink px-5 text-sm text-white disabled:opacity-40">Nộp bài</button>}
+          </div>
+        </div>
+      </Card>
+      <aside>
+        <Card className="p-5 lg:sticky lg:top-28">
+          <h2 className="text-sm font-semibold">Danh sách câu hỏi</h2>
+          <p className="mt-2 text-xs leading-5 text-zinc-500">Chọn số câu để quay lại và chỉnh sửa đáp án trước khi nộp.</p>
+          <div className="mt-5 grid grid-cols-4 gap-2">
+            {quizQuestions.map((item, i) => <button key={item.id} type="button" aria-label={`Đi đến câu ${i + 1}`} aria-current={index === i ? "step" : undefined}
+              onClick={() => setIndex(i)}
+              className={cn("relative grid h-10 place-items-center rounded-lg border text-sm", index === i ? "border-ink ring-1 ring-ink" : "border-zinc-200", state.quizDraft[String(item.id)] !== undefined && "bg-zinc-900 text-white", flagged.includes(item.id) && "border-amber-500")}>
+              {i + 1}
+            </button>)}
+          </div>
+          <button type="button" disabled={!ready || answered === 0} onClick={finish}
+            className="mt-6 h-11 w-full rounded-full bg-ink text-sm font-semibold text-white disabled:opacity-40">Nộp bài ({answered}/{quizQuestions.length})</button>
+          <p className="mt-3 text-xs leading-5 text-zinc-500">Điểm chỉ được công bố sau khi nộp. Bài làm lưu cục bộ trên thiết bị này.</p>
+        </Card>
+      </aside>
+    </div>
+  </div>;
 }

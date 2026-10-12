@@ -6,8 +6,9 @@ export const siteConfig = {
 };
 
 export const featureFlags = {
-  supabase: process.env.NEXT_PUBLIC_USE_MOCK_DATA !== "true",
-  excelLab: true,
+  // Chỉ bật khi đã cấu hình Supabase và kiểm tra RLS trên môi trường thực.
+  supabase: process.env.NEXT_PUBLIC_USE_MOCK_DATA === "false",
+  excelLab: false,
   wordLab: false,
   teacherWorkspace: false,
   payments: false,
