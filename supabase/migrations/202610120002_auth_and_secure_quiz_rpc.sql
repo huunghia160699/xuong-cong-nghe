@@ -80,9 +80,9 @@ begin
   if v_quiz_id is null then raise exception 'Quiz not available' using errcode = '22023'; end if;
 
   if exists (
-    select 1 from jsonb_object_keys(p_answers) as answer_id
+    select 1 from jsonb_object_keys(p_answers) as answer_keys(question_id)
     where not exists (
-      select 1 from public.questions q where q.quiz_id = v_quiz_id and q.id::text = answer_id
+      select 1 from public.questions q where q.quiz_id = v_quiz_id and q.id::text = answer_keys.question_id
     )
   ) then
     raise exception 'Question does not belong to quiz' using errcode = '22023';
