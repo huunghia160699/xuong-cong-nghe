@@ -1,7 +1,7 @@
 import { BarChart3, BookOpen, ClipboardCheck, FileText, FolderKanban, Gauge, GraduationCap, Library, Settings, Sparkles, Users } from "lucide-react";
 
 export const publicNav = [
-  { label: "Khóa học", href: "/khoa-hoc/excel-can-ban" },
+  { label: "Khóa học", href: "/khoa-hoc" },
   { label: "Luyện tập", href: "/student/quiz" },
   { label: "Tài nguyên", href: "/#tai-nguyen" },
   { label: "Công cụ", href: "/#cong-cu" },
