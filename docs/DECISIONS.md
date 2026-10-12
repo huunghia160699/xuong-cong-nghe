@@ -1,25 +1,18 @@
-# Architecture Decision Log
+# Quyết định phát triển
 
-## ADR-001 — Một repository
+## 2026-10-12 — Hoàn thiện vòng học mẫu trước backend
 
-**Chọn:** monorepo đơn giản cho web, Supabase và docs. **Lý do:** MVP nhỏ, giảm chi phí phối hợp và giúp coding agent hiểu toàn hệ thống.
+- Giữ stack đang chạy: Next.js 15 / React 19 / Tailwind 3 trong giai đoạn này.
+- Tạo luồng học thử Excel với 9 bài và 6 câu quiz; không thêm thư viện ngoài.
+- Dùng `localStorage` để giữ tiến độ, bài làm và điểm trên cùng một trình duyệt. Đây là storage **demo, không xác thực**, dễ xóa và không đồng bộ giữa máy.
+- Không được dùng `correctIndex` gửi sang trình duyệt hay chấm điểm client khi có tài khoản thật. Chuyển scoring sang server trước Supabase integration.
+- Migration mới hạn chế quyền xem `question_options.is_correct`, tự sửa `quiz_attempts.score`, `quiz_answers.is_correct` và tự nâng `profiles.role`.
+- Trang admin hiện chỉ là mô phỏng, **chưa có route guard**; không nhập dữ liệu thật, không đưa vào môi trường công khai như admin vận hành.
+- Tạo CI typecheck và build; chưa coi hoàn thành đến khi pipeline chạy thành công và có kiểm thử browser.
 
-## ADR-002 — Next.js App Router
+## Quyết định chưa đóng
 
-**Chọn:** route groups cho public, student, admin. **Lý do:** layout tách biệt, SEO tốt cho public và vẫn hỗ trợ app tương tác.
-
-## ADR-003 — Mock-first, Supabase-ready
-
-**Chọn:** UI mặc định dùng mock data; Supabase qua repository adapter. **Lý do:** giao diện chạy ngay, phát triển UI không phụ thuộc hạ tầng nhưng không tạo ngõ cụt kiến trúc.
-
-## ADR-004 — Local shadcn-style primitives
-
-**Chọn:** component nhỏ, sở hữu trong repo thay vì phụ thuộc nguyên bộ UI. **Lý do:** dễ tùy biến đúng brand và giữ bundle gọn.
-
-## ADR-005 — Teacher có trong kiến trúc, chưa mở sản phẩm
-
-**Chọn:** role/schema sẵn sàng, feature flag tắt. **Lý do:** tránh migration khó về sau mà vẫn giữ phạm vi MVP.
-
-## ADR-006 — Lime là accent, không phải nền mặc định
-
-**Chọn:** trung tính 90%, lime cho CTA/tiến độ. **Lý do:** tạo dấu hiệu nhận diện nhưng giữ cảm giác chuyên nghiệp, ít nhiễu.
+- Tên thương hiệu, logo, domain và triển khai production.
+- Cách thiết kế endpoint nộp quiz và hệ thống entitlement.
+- Thư viện mô phỏng spreadsheet cho Excel Lab.
+- Teacher Workspace, thanh toán, AI Tutor và Coding Lab nằm sau MVP.
