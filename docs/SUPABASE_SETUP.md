@@ -44,3 +44,8 @@ where id = (select id from auth.users where email = 'admin@example.com');
 ```
 
 Đây là thao tác vận hành riêng của chủ dự án. Không tạo endpoint cấp vai trò, không cho người dùng tự truyền `role` khi đăng ký.
+
+
+## Trạng thái triển khai 13/10/2026
+
+Dự án đã khôi phục và nạp schema + seed, có thêm migration thu hồi quyền trigger. Đọc `docs/SUPABASE_STATUS_20261013.md` trước khi tiếp tục. **Không chạy lại** toàn bộ SQL/migrations trên project này; Supabase API đã ghi nhận các migration với phiên bản runtime khác timestamp trong tên file. Cần đối chiếu lịch sử trước khi dùng CLI. Chưa có tài khoản kiểm thử hoặc deploy live.
