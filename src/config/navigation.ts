@@ -21,7 +21,7 @@ export const adminNav = [
   { label: "Tổng quan", href: "/admin", icon: Gauge },
   { label: "Khóa học", href: "/admin/khoa-hoc", icon: BookOpen },
   { label: "Câu hỏi & Quiz", href: "/admin#quiz", icon: ClipboardCheck },
-  { label: "Tài nguyên", href: "/admin#resources", icon: Library },
+  { label: "Kho tệp R2", href: "/admin/kho-tai-lieu", icon: Library },
   { label: "Dự án", href: "/admin#projects", icon: FolderKanban },
   { label: "Người dùng", href: "/admin#users", icon: Users },
   { label: "Hệ thống", href: "/admin#settings", icon: Settings },
