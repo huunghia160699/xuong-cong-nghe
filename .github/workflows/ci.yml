@@ -22,6 +22,8 @@ jobs:
           cache: pnpm
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
+      - name: Validate PPT presentation source
+        run: node scripts/validate-ppt.mjs
       - name: Unit tests
         run: pnpm test
       - name: Typecheck
@@ -38,7 +40,7 @@ jobs:
             if curl --silent --fail http://127.0.0.1:3000/ > /dev/null; then break; fi
             sleep 1
           done
-          for route in "/" "/khoa-hoc/excel-can-ban" "/student" "/student/quiz" "/student/khoa-hoc/excel-can-ban/giao-dien-va-vung-lam-viec"; do
+          for route in "/" "/khoa-hoc/excel-can-ban" "/student" "/student/quiz" "/student/khoa-hoc/excel-can-ban/giao-dien-va-vung-lam-viec" "/cong-cu" "/cong-cu/trinh-chieu" "/apps/ppt/index.html" "/apps/ppt/slides.html?course=tin-hoc-co-ban&lesson=buoi-01-file-explorer" "/apps/ppt/assets/js/player.js"; do
             echo "Checking $route"
             curl --fail --silent --show-error "http://127.0.0.1:3000$route" > /dev/null
           done

@@ -51,3 +51,10 @@ GitHub Actions kiểm tra tự động. Không đưa service role key, mật kh�
 ## Kho tài liệu
 
 Dùng Supabase Storage, chưa cần Cloudflare R2. Xem `docs/SUPABASE_STORAGE.md` về thiết lập và quyền truy cập.
+
+## Thư viện trình chiếu bài giảng
+
+Bộ trình chiếu `dev-Ppt_Website` đã được nhập vào chính dự án này, dưới `public/apps/ppt/`.
+Mở trên website tại `/cong-cu/trinh-chieu` hoặc vào `/cong-cu` để xem danh sách công cụ.
+Bài Tin học cơ bản Buổi 1 gồm 29 slide với quiz/mô phỏng tương tác; có thư viện mẫu 15 layout.
+Đọc `docs/PPT_INTEGRATION.md` để biết cách đồng bộ khi nguồn thay đổi. Chưa có trình biên tập hoặc xuất PPTX.

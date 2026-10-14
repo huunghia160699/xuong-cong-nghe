@@ -1,0 +1,23 @@
+/** Thư viện minh họa 15 bố cục, không phải bài giảng chính thức. */
+const cards=(...titles)=>titles.map((title,i)=>({type:'card',number:String(i+1).padStart(2,'0'),title,text:'Nội dung minh họa có thể thay bằng dữ liệu của bài học.'}));
+const galleryNote={type:'notice',text:'Nội dung trong thư viện này chỉ dùng để kiểm tra thiết kế và component.'};
+export const layoutGallery={
+ id:'layout-gallery',label:'Bộ mẫu thiết kế',title:'Thư viện bố cục',subtitle:'15 layout và ví dụ Word/Excel',kind:'showcase',
+ slides:[
+ {id:'layout-cover',layout:'cover',eyebrow:'THƯ VIỆN GIAO DIỆN',title:'Slide Design System',subtitle:'15 bố cục • 22 thành phần',blocks:[{type:'heroStats',items:[['15','Layout'],['22','Component'],['01','Engine'],['100%','Data driven']]}]},
+ {id:'layout-full',layout:'full',eyebrow:'MẪU 02 · FULL',title:'Một ý chính trên một màn hình',blocks:[{type:'definition',label:'TƯ DUY TRÌNH BÀY',title:'Tập trung vào nội dung',text:'Một ý tưởng quan trọng được trình bày rõ ràng, không bị chia nhỏ hoặc dàn trải.',example:'Chọn một ý để giải thích sâu.'}]},
+ {id:'layout-split',layout:'split',eyebrow:'MẪU 03 · SPLIT',title:'Microsoft Word – Định dạng văn bản',blocks:[{type:'document',heading:'THÔNG BÁO',paragraphs:['Đây là một văn bản mẫu được dùng để minh họa bố cục trang và đoạn văn.','Học viên có thể quan sát và giải thích các công cụ liên quan.']},{type:'stack',items:[{type:'item',title:'Căn lề',text:'Left, Center, Right, Justify.'},{type:'item',title:'Giãn dòng',text:'Điều chỉnh Line Spacing và Spacing Before/After.'}]}]},
+ {id:'layout-reverse',layout:'split-reverse',eyebrow:'MẪU 04 · SPLIT REVERSE',title:'Excel – Công thức IF',blocks:[{type:'excelTable',name:'BẢNG ĐIỂM',headers:['Họ tên','Điểm','Kết quả'],rows:[['An','8','Đạt'],['Bình','4','Chưa đạt'],['Chi','9','Đạt']]},{type:'formula',value:'=IF(B2>=5,"Đạt","Chưa đạt")',explanation:'Nếu điểm đạt từ 5 trở lên thì trả về “Đạt”.'}]},
+ {id:'layout-two',layout:'grid-2',eyebrow:'MẪU 05 · GRID 2',title:'Hai nhóm kiến thức',blocks:cards('Khái niệm thứ nhất','Khái niệm thứ hai')},
+ {id:'layout-three',layout:'grid-3',eyebrow:'MẪU 06 · GRID 3',title:'Ba nguyên tắc cần ghi nhớ',blocks:cards('Nguyên tắc 01','Nguyên tắc 02','Nguyên tắc 03')},
+ {id:'layout-four',layout:'grid-4',eyebrow:'MẪU 07 · GRID 4',title:'Bốn định dạng tệp phổ biến',blocks:[{type:'fileType',extension:'DOCX',name:'De.docx',caption:'Word',tone:'word'},{type:'fileType',extension:'XLSX',name:'Bang.xlsx',caption:'Excel',tone:'excel'},{type:'fileType',extension:'PDF',name:'De.pdf',caption:'PDF',tone:'pdf'},{type:'fileType',extension:'PNG',name:'Anh.png',caption:'Hình ảnh',tone:'image'}]},
+ {id:'layout-comparison',layout:'comparison',eyebrow:'MẪU 08 · COMPARISON',title:'So sánh hai cách thao tác',blocks:[{type:'definition',label:'PHƯƠNG ÁN A',title:'Copy',text:'Tạo bản sao và giữ nguyên bản gốc.'},{type:'definition',label:'PHƯƠNG ÁN B',title:'Move',text:'Đưa tệp từ nơi cũ sang nơi mới.'}]},
+ {id:'layout-steps',layout:'steps',eyebrow:'MẪU 09 · STEPS',title:'Quy trình thực hiện',blocks:[{type:'steps',items:[{title:'Quan sát',text:'Nhận diện yêu cầu.'},{title:'Thao tác',text:'Thực hiện trên phần mềm.'},{title:'Kiểm tra',text:'So sánh kết quả với yêu cầu.'}]}]},
+ {id:'layout-split-demo',layout:'split-demo',eyebrow:'MẪU 10 · SPLIT DEMO',title:'Mô phỏng File Explorer',blocks:[{type:'explorer',initial:'Documents',folders:[{name:'Documents',files:[['Bai_01.docx','Word']]},{name:'Downloads',files:[['Tai_lieu.pdf','PDF']]}]},{type:'stack',items:[{type:'item',title:'Ngăn điều hướng',text:'Chuyển nhanh giữa các thư mục.'},{type:'item',title:'Đường dẫn',text:'Xác định nơi lưu.'}]}]},
+ {id:'layout-wide-demo',layout:'wide-demo',eyebrow:'MẪU 11 · WIDE DEMO',title:'Tương tác: sao chép tệp',blocks:[{type:'fileTransfer',mode:'copy',filename:'Bai_01.docx',source:'THƯ MỤC A',destination:'THƯ MỤC B'}]},
+ {id:'layout-timeline',layout:'timeline',eyebrow:'MẪU 12 · TIMELINE',title:'Quy trình làm bài',blocks:[{type:'steps',items:[{title:'Nhận đề',text:'Đọc yêu cầu'},{title:'Làm bài',text:'Thực hiện'},{title:'Lưu',text:'Đúng vị trí'},{title:'Nộp',text:'Kiểm tra'}]},galleryNote]},
+ {id:'layout-focus',layout:'focus',eyebrow:'MẪU 13 · FOCUS',title:'Một phím tắt cần nhớ',blocks:[{type:'keyCombo',keys:['Ctrl','+','S'],caption:'LƯU BÀI ĐANG LÀM'}]},
+ {id:'layout-quiz',layout:'quiz',eyebrow:'MẪU 14 · QUIZ',title:'Trong Excel, công thức thường bắt đầu bằng ký tự nào?',blocks:[{type:'quiz',answers:['=','+','@','#'],correctIndex:0,explanation:'Công thức Excel thường bắt đầu bằng dấu bằng (=).'}]},
+ {id:'layout-summary',layout:'summary',eyebrow:'MẪU 15 · SUMMARY',title:'Ba thành phần kiến trúc',blocks:cards('Slide Data','Layout Engine','Component Library')}
+ ]
+};
