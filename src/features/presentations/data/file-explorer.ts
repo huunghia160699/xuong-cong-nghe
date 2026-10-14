@@ -43,7 +43,7 @@ export const fileExplorerLesson={
         ]
       }
     ],notes:'Giới thiệu trực quan cửa sổ File Explorer: thanh địa chỉ, ngăn điều hướng và danh sách tệp. Nêu ba kết quả học tập; dành câu hỏi và tình huống tìm tệp cho slide Khởi động số 02.'},
-    {id:'warm-up',layout:'comparison',eyebrow:'KHỞI ĐỘNG',title:'Máy tính của em đang ngăn nắp?',blocks:[
+    {id:'warm-up',layout:'comparison',eyebrow:'KHỞI ĐỘNG',title:'Máy tính của em đang ngăn nắp?',subtitle:'Một tình huống thường gặp khi học và làm việc.',blocks:[
       {type:'warmUpComparison',
         messyHeading:'TỆP BỪA BỘN',
         messyText:'Tìm mãi không thấy bài tập.',
