@@ -43,3 +43,23 @@ test("the presentation keeps its edge-to-edge layout outside site gutters",()=>{
  assert.match(player,/h-\[100dvh\] w-full overflow-hidden/);
  assert.doesNotMatch(route,/xcn-container|xcn-ui/);
 });
+
+// Ensure layout changes do not regress into fixed-height filler sections.
+test("public library and tool cards follow content height with fluid vertical spacing",()=>{
+ const css=read("src/app/globals.css");
+ const library=read("src/app/(public)/cong-cu/trinh-chieu/page.tsx");
+ const tools=read("src/app/(public)/cong-cu/page.tsx");
+ const home=read("src/app/(public)/page.tsx");
+ const header=read("src/components/public-header.tsx");
+ assert.match(css,/--xcn-page-vertical:\s*clamp\(22px,\s*4\.3dvh,\s*54px\)/);
+ assert.match(css,/--xcn-block-gap:\s*clamp\(20px,\s*3\.4dvh,\s*40px\)/);
+ assert.match(css,/\.xcn-header-nav\s*\{/);
+ assert.match(header,/xcn-header-inner/);
+ assert.match(header,/xcn-header-nav/);
+ assert.doesNotMatch(library,/min-h-screen|min-h-56|grid-cols-3 border border-zinc-200 bg-white|Đã có nội dung/);
+ assert.doesNotMatch(tools,/min-h-\[75vh\]|min-h-\[275px\]|min-h-\[320px\]/);
+ assert.match(library,/xcn-page-pad/);
+ assert.match(tools,/xcn-page-pad/);
+ assert.match(home,/xcn-home-hero/);
+ assert.doesNotMatch(home,/min-h-\[560px\]|min-h-\[480px\]|min-h-72/);
+});
