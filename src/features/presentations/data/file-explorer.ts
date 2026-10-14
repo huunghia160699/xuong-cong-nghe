@@ -1,7 +1,7 @@
 // @ts-nocheck
 // Imported lesson content; migration to strictly typed authoring is planned.
 /*
- * Phần 1 — Quản lý tệp và thư mục (nội dung dùng chung cho nhiều lớp).
+ * Chủ đề — Quản lý tệp và thư mục (nội dung dùng chung cho nhiều lớp).
  * Each slide is data only: layout + reusable blocks. No per-slide HTML/CSS.
  * Source: the existing 29-slide HTML presentation, aligned to the supplied Windows lecture.
  */
@@ -20,7 +20,7 @@ export const fileExplorerLesson={
   id:'quan-ly-tep-va-thu-muc',
   title:'Quản lý tệp và thư mục',
   subtitle:'Tìm kiếm, tổ chức và thao tác với File Explorer',
-  label:'Phần 1',
+  label:'Quản lý tệp và thư mục',
   phases:[
     {label:'Mở đầu',start:0},
     {label:'Thân bài',start:4},
@@ -32,9 +32,9 @@ export const fileExplorerLesson={
     {label:'Lưu & nộp bài',start:21}
   ],
   slides:[
-    {id:'cover',layout:'cover',eyebrow:'PHẦN 1 · FILE EXPLORER',title:'Làm quen với File Explorer',blocks:[
+    {id:'cover',layout:'cover',eyebrow:'TIN HỌC CƠ BẢN',title:'Làm quen với File Explorer',blocks:[
       {type:'lessonCover',
-        eyebrow:'TIN HỌC CƠ BẢN / PHẦN 1',
+        eyebrow:'TIN HỌC CƠ BẢN',
         heading:'Làm quen với File Explorer',
         goals:[
           {verb:'Nhận diện',detail:'Giao diện và các khu vực chính.'},

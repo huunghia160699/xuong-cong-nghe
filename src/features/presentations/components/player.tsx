@@ -4,7 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import {
   ArrowDown, ArrowLeft, ArrowUp, Maximize2, Minimize2,
-  PanelRightClose, PanelRightOpen, RotateCcw,
+  MoreHorizontal, PanelRightClose, PanelRightOpen, RotateCcw,
 } from "lucide-react";
 import type { PresentationLesson, PresentationSlide } from "../types";
 import { PRESENTATION_LAYOUTS } from "../types";
@@ -50,54 +50,68 @@ function SlideCanvas({slide, index, count, reset}: {
   </section>;
 }
 
-export function PresentationPlayer({lesson, courseTitle, className}: {
-  lesson: PresentationLesson; courseTitle: string; className?: string;
+export function PresentationPlayer({lesson, courseTitle, initialClassName = ""}: {
+  lesson: PresentationLesson; courseTitle: string; initialClassName?: string;
 }) {
-  const [current,setCurrent]=useState(0);
-  const [notesOpen,setNotesOpen]=useState(false);
-  const [reset,setReset]=useState(0);
-  const [full,setFull]=useState(false);
-  const hostRef=useRef<HTMLDivElement>(null);
-  const count=lesson.slides.length;
-  const move=useCallback((next:number)=>setCurrent(Math.max(0,Math.min(count-1,next))),[count]);
-  const slide=lesson.slides[current];
-  useEffect(()=>{
-    const onFullScreen=()=>setFull(document.fullscreenElement===hostRef.current);
-    document.addEventListener("fullscreenchange",onFullScreen);
-    return ()=>document.removeEventListener("fullscreenchange",onFullScreen);
-  },[]);
-  useEffect(()=>{
+  const preview = lesson.kind === "showcase";
+  const [current, setCurrent] = useState(0);
+  const [notesOpen, setNotesOpen] = useState(false);
+  const [reset, setReset] = useState(0);
+  const [full, setFull] = useState(false);
+  const [className, setClassName] = useState(initialClassName.trim());
+  const [classDraft, setClassDraft] = useState(initialClassName.trim());
+  const [classEntryOpen, setClassEntryOpen] = useState(!preview);
+  const [mobileToolsOpen, setMobileToolsOpen] = useState(false);
+  const hostRef = useRef<HTMLDivElement>(null);
+  const count = lesson.slides.length;
+  const move = useCallback((next: number) => {
+    setCurrent(Math.max(0, Math.min(count - 1, next)));
+    setMobileToolsOpen(false);
+  }, [count]);
+  const slide = lesson.slides[current];
+
+  useEffect(() => {
+    const handleFullscreen = () => setFull(document.fullscreenElement === hostRef.current);
+    document.addEventListener("fullscreenchange", handleFullscreen);
+    return () => document.removeEventListener("fullscreenchange", handleFullscreen);
+  }, []);
+
+  useEffect(() => {
+    if (classEntryOpen) return; // Typing a class must never advance slides.
     function keyboard(event: KeyboardEvent) {
-      const target=event.target as HTMLElement | null;
-      if(target?.closest("input,textarea,select,[contenteditable=true]")||event.altKey||event.metaKey||event.ctrlKey) return;
-      // Space must activate the focused reveal button instead of skipping the slide.
-      if(event.key===" " && target?.closest("button,a,[role=button]")) return;
-      const key=event.key.toLowerCase();
-      if(["arrowright","arrowdown","pagedown"," "].includes(key)) {
-        event.preventDefault();move(current+1);
-      } else if(["arrowleft","arrowup","pageup"].includes(key)) {
-        event.preventDefault();move(current-1);
-      } else if(key==="home") {event.preventDefault();move(0);}
-      else if(key==="end") {event.preventDefault();move(count-1);}
-      else if(key==="n") {setNotesOpen(value=>!value);}
-      else if(key==="r") {setReset(value=>value+1);}
-      else if(key==="f") {
-        if(document.fullscreenElement===hostRef.current) void document.exitFullscreen();
+      const target = event.target as HTMLElement | null;
+      if (target?.closest("input,textarea,select,[contenteditable=true]") || event.altKey || event.metaKey || event.ctrlKey) return;
+      // Space should activate an interactive demo button, not change slides.
+      if (event.key === " " && target?.closest("button,a,[role=button]")) return;
+      const key = event.key.toLowerCase();
+      if (["arrowright","arrowdown","pagedown"," "].includes(key)) {
+        event.preventDefault(); move(current + 1);
+      } else if (["arrowleft","arrowup","pageup"].includes(key)) {
+        event.preventDefault(); move(current - 1);
+      } else if (key === "home") {event.preventDefault(); move(0);}
+      else if (key === "end") {event.preventDefault(); move(count - 1);}
+      else if (key === "n") {setNotesOpen(value => !value);}
+      else if (key === "r") {setReset(value => value + 1);}
+      else if (key === "f") {
+        if (document.fullscreenElement === hostRef.current) void document.exitFullscreen();
         else void hostRef.current?.requestFullscreen?.();
-      } else if(slide.layout==="quiz" && /^[1-4a-d]$/.test(key)) {
-        const i=/^[1-4]$/.test(key)?Number(key)-1:"abcd".indexOf(key);
-        const choice=hostRef.current?.querySelectorAll<HTMLButtonElement>("[data-native-quiz] [data-choice]")[i];
-        choice?.click();
+      } else if (slide.layout === "quiz" && /^[1-4a-d]$/.test(key)) {
+        const i = /^[1-4]$/.test(key) ? Number(key) - 1 : "abcd".indexOf(key);
+        hostRef.current?.querySelectorAll<HTMLButtonElement>("[data-native-quiz] [data-choice]")[i]?.click();
       }
     }
-    window.addEventListener("keydown",keyboard);
-    return ()=>window.removeEventListener("keydown",keyboard);
-  },[move,current,count,slide.layout]);
+    window.addEventListener("keydown", keyboard);
+    return () => window.removeEventListener("keydown", keyboard);
+  }, [classEntryOpen, move, current, count, slide.layout]);
 
-  // Subtitles from existing slide data remain available to the teacher, but
-  // never appear as tiny repeated lines beneath the main teaching headline.
-  const notes=[slide.subtitle,slide.notes].filter(Boolean).join("\n\n");
+  // Teaching subtitles remain in notes instead of repeating under the heading.
+  const notes = [slide.subtitle, slide.notes].filter(Boolean).join("\n\n");
 
+  function changeClass() {
+    setClassDraft(className);
+    setClassEntryOpen(true);
+    setMobileToolsOpen(false);
+  }
 
   return <div ref={hostRef} className="xcn-presentation-viewport relative h-[100dvh] w-full overflow-hidden bg-[#fafaf8] text-ink">
     <main className="xcn-presentation-stage">
@@ -108,7 +122,7 @@ export function PresentationPlayer({lesson, courseTitle, className}: {
 
     <nav className="xcn-presentation-rail" aria-label="Điều hướng nhanh giữa các slide">
       {lesson.slides.map((entry, index) =>
-        <button key={entry.id} type="button" onClick={() => move(index)}
+        <button key={entry.id} type="button" onClick={() => move(index)} disabled={classEntryOpen}
           className={"xcn-presentation-rail-button " + (index === current ? "is-active" : "")}
           title={"Slide " + (index + 1) + ": " + entry.title}
           aria-label={"Đến slide " + (index + 1) + ": " + entry.title}
@@ -117,43 +131,58 @@ export function PresentationPlayer({lesson, courseTitle, className}: {
         </button>)}
     </nav>
 
-    {notesOpen && <aside className="xcn-presentation-notes overflow-y-auto border border-zinc-200 bg-white p-5 shadow-lg"
+    {notesOpen && !classEntryOpen && <aside className="xcn-presentation-notes overflow-y-auto border border-zinc-200 bg-white p-5 shadow-lg"
       aria-label="Ghi chú giảng viên">
       <p className="text-[10px] font-bold uppercase tracking-[.16em] text-zinc-500">Ghi chú giảng viên</p>
       <h3 className="mt-4 text-lg font-semibold">{slide.title}</h3>
-      <p className="mt-4 text-sm leading-7 text-zinc-600">{notes ? notes.split("\n\n").map((paragraph,i)=><span key={i} className="mb-4 block">{paragraph}</span>) : "Slide này chưa có ghi chú riêng."}</p>
+      <p className="mt-4 text-sm leading-7 text-zinc-600">
+        {notes ? notes.split("\n\n").map((paragraph,i) => <span key={i} className="mb-4 block">{paragraph}</span>) : "Slide này chưa có ghi chú riêng."}
+      </p>
       <p className="mt-7 border-t border-zinc-200 pt-4 text-xs leading-6 text-zinc-500">
         ↑ ↓ chuyển slide · N ghi chú · R làm lại · F toàn màn hình · A–D chọn đáp án.
       </p>
     </aside>}
 
     <div className="xcn-presentation-toolbar" aria-label="Thanh công cụ trình chiếu">
-      <div className="xcn-presentation-context flex min-w-0 items-center gap-1 rounded-full border border-zinc-200 bg-white/95 p-1.5 shadow-lg"
-        title={(className || "Lớp chung") + " · " + courseTitle}>
-        <Link href="/cong-cu/trinh-chieu" aria-label="Quay lại thư viện" title="Quay lại thư viện"
-          className="xcn-presentation-action grid shrink-0 place-items-center rounded-full transition hover:bg-lime">
-          <ArrowLeft size={18}/>
-        </Link>
-        <div className="xcn-presentation-lesson-label flex min-w-0 items-center gap-2 px-2">
-          <span className="shrink-0 text-xs font-bold sm:text-sm">{className || "Lớp chung"}</span>
-          <span aria-hidden="true" className="h-4 shrink-0 border-l border-zinc-300"/>
-          <span className="truncate text-xs font-semibold sm:text-sm">{courseTitle}</span>
-        </div>
-        <button type="button" onClick={() => setReset(value => value + 1)}
-          title="Làm lại tương tác (R)" aria-label="Làm lại tương tác"
-          className="xcn-presentation-action grid shrink-0 place-items-center rounded-full transition hover:bg-zinc-100">
-          <RotateCcw size={17}/>
-        </button>
-        <button type="button" onClick={() => setNotesOpen(value => !value)}
-          title="Ghi chú giảng viên (N)" aria-label="Ghi chú giảng viên" aria-pressed={notesOpen}
-          className={"xcn-presentation-action grid shrink-0 place-items-center rounded-full transition " +
-            (notesOpen ? "bg-lime" : "hover:bg-zinc-100")}>
-          {notesOpen ? <PanelRightClose size={17}/> : <PanelRightOpen size={17}/>}
-        </button>
+      <div className="xcn-presentation-context rounded-full border border-zinc-200 bg-white/95 px-4 py-2 shadow-lg"
+        title={(preview ? "Xem trước" : className || "Tên lớp") + " · " + courseTitle}>
+        <span className="xcn-presentation-class-name" title={preview ? "Xem trước" : className || "Tên lớp"}>
+          {preview ? "Xem trước" : className || "Tên lớp"}
+        </span>
+        <span className="xcn-presentation-subject-divider" aria-hidden="true"/>
+        <span className="xcn-presentation-subject-name" title={courseTitle}>{courseTitle}</span>
       </div>
 
       <nav aria-label="Điều khiển trình chiếu"
         className="xcn-presentation-pill flex shrink-0 items-center justify-center gap-1 rounded-full border border-zinc-200 bg-white/95 p-1.5 shadow-lg">
+        <Link href="/cong-cu/trinh-chieu" aria-label="Quay lại thư viện" title="Quay lại thư viện"
+          className="xcn-presentation-action xcn-action-secondary grid shrink-0 place-items-center rounded-full text-ink transition hover:bg-zinc-100">
+          <ArrowLeft size={18}/>
+        </Link>
+        <button type="button" onClick={() => setReset(value => value + 1)}
+          title="Làm lại tương tác (R)" aria-label="Làm lại tương tác"
+          className="xcn-presentation-action xcn-action-secondary grid shrink-0 place-items-center rounded-full text-ink transition hover:bg-zinc-100">
+          <RotateCcw size={17}/>
+        </button>
+        <button type="button" onClick={() => setNotesOpen(value => !value)}
+          title="Ghi chú giảng viên (N)" aria-label="Ghi chú giảng viên" aria-pressed={notesOpen}
+          className={"xcn-presentation-action xcn-action-secondary grid shrink-0 place-items-center rounded-full transition " +
+            (notesOpen ? "bg-lime" : "hover:bg-zinc-100")}>
+          {notesOpen ? <PanelRightClose size={17}/> : <PanelRightOpen size={17}/>}
+        </button>
+        {!preview && <button type="button" onClick={changeClass}
+          title="Đổi tên lớp" aria-label="Đổi tên lớp"
+          className="xcn-presentation-action xcn-action-secondary grid shrink-0 place-items-center rounded-full text-ink transition hover:bg-zinc-100">
+          <span className="text-[11px] font-bold">Lớp</span>
+        </button>}
+
+        <button type="button" onClick={() => setMobileToolsOpen(value => !value)}
+          title="Tùy chọn trình chiếu" aria-label="Tùy chọn trình chiếu" aria-expanded={mobileToolsOpen}
+          className="xcn-presentation-action xcn-mobile-tools-button grid shrink-0 place-items-center rounded-full text-ink transition hover:bg-zinc-100">
+          <MoreHorizontal size={19}/>
+        </button>
+
+        <span className="xcn-presentation-divider" aria-hidden="true"/>
         <button type="button" onClick={() => move(current - 1)} disabled={current === 0}
           aria-label="Slide trước" title="Slide trước (↑)"
           className="xcn-presentation-action grid shrink-0 place-items-center rounded-full bg-zinc-100 text-ink transition hover:bg-zinc-200 disabled:opacity-35">
@@ -172,7 +201,47 @@ export function PresentationPlayer({lesson, courseTitle, className}: {
           className="xcn-presentation-action grid shrink-0 place-items-center rounded-full bg-zinc-100 text-ink transition hover:bg-zinc-200">
           {full ? <Minimize2 size={18}/> : <Maximize2 size={18}/>}
         </button>
+        {mobileToolsOpen && <div className="xcn-mobile-tools-menu" role="group" aria-label="Các chức năng trình chiếu">
+          <Link href="/cong-cu/trinh-chieu" className="xcn-mobile-tools-row"><ArrowLeft size={17}/> Quay lại thư viện</Link>
+          <button type="button" onClick={() => {setReset(value => value + 1);setMobileToolsOpen(false);}}
+            className="xcn-mobile-tools-row"><RotateCcw size={17}/> Làm lại tương tác</button>
+          <button type="button" onClick={() => {setNotesOpen(value => !value);setMobileToolsOpen(false);}}
+            className="xcn-mobile-tools-row">{notesOpen ? <PanelRightClose size={17}/> : <PanelRightOpen size={17}/>} Ghi chú giảng viên</button>
+          {!preview && <button type="button" onClick={changeClass}
+            className="xcn-mobile-tools-row">Đổi tên lớp</button>}
+        </div>}
       </nav>
     </div>
+
+    {classEntryOpen && <div className="xcn-class-entry-backdrop">
+      <div className="xcn-class-entry-card" role="dialog" aria-modal="true" aria-labelledby="class-entry-title">
+        <span className="text-xs font-bold uppercase tracking-[.16em] text-zinc-500">{courseTitle}</span>
+        <h2 id="class-entry-title" className="mt-3 text-3xl font-bold tracking-tight">Nhập tên lớp</h2>
+        <p className="mt-3 text-sm leading-6 text-zinc-600">
+          Tên lớp sẽ hiển thị bên trái màn hình trình chiếu. Có thể thay đổi lại trong thanh công cụ.
+        </p>
+        <form className="mt-7 flex flex-col gap-4" onSubmit={event => {
+          event.preventDefault();
+          const next = classDraft.trim();
+          if (!next) return;
+          setClassName(next);
+          setClassEntryOpen(false);
+        }}>
+          <label htmlFor="presentation-class" className="text-sm font-semibold">Lớp học</label>
+          <input id="presentation-class" name="presentation-class" autoFocus autoComplete="off"
+            value={classDraft} onChange={event => setClassDraft(event.target.value)}
+            maxLength={40} placeholder="Ví dụ: HL.26-27" required
+            className="h-12 w-full rounded-none border border-zinc-300 bg-white px-4 text-base outline-none focus:border-ink focus:ring-1 focus:ring-ink"/>
+          <div className="mt-2 flex justify-end gap-2">
+            {className && <button type="button" onClick={() => setClassEntryOpen(false)}
+              className="border border-zinc-200 px-5 py-3 text-sm font-semibold hover:bg-zinc-100">Hủy</button>}
+            <button type="submit" disabled={!classDraft.trim()}
+              className="bg-ink px-5 py-3 text-sm font-semibold text-white disabled:opacity-40">
+              {className ? "Cập nhật lớp" : "Bắt đầu trình chiếu"}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>}
   </div>;
 }

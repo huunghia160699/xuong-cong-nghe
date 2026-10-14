@@ -6,7 +6,7 @@ Dựa trên **ý tưởng** từ repo PPT: bài giảng dưới dạng dữ li�
 ## Kiến trúc
 - `src/features/presentations/data/`: nội dung 29 slide File Explorer và 15 slide mẫu.
 - `src/features/presentations/types.ts`: schema slide, block, 15 layout tái sử dụng.
-- `src/features/presentations/catalog.ts`: môn học / phần nội dung / lớp học.
+- `src/features/presentations/catalog.ts`: môn học / phần nội dung; tên lớp nhập khi bắt đầu trình chiếu.
 - `src/features/presentations/components/blocks.tsx`: các khối trình chiếu dạng React, câu hỏi, mô phỏng, bảng, tài liệu.
 - `src/features/presentations/components/player.tsx`: slide canvas, thanh tiến độ, điều hướng, chọn đáp án, mô phỏng, phím tắt, ghi chú, fullscreen.
 - `src/features/presentations/presentation.css`: lưới 15 layout và responsive.
@@ -14,7 +14,7 @@ Dựa trên **ý tưởng** từ repo PPT: bài giảng dưới dạng dữ li�
 ## Đường dẫn
 - `/cong-cu`: danh mục công cụ.
 - `/cong-cu/trinh-chieu`: danh mục các phần nội dung.
-- `/cong-cu/trinh-chieu/quan-ly-tep-va-thu-muc?class=hl-26-27`: phần Quản lý tệp và thư mục cho lớp HL.26-27.
+- `/cong-cu/trinh-chieu/quan-ly-tep-va-thu-muc`: mở phần Quản lý tệp và thư mục, **nhập tên lớp ngay khi mở**.
 - `/cong-cu/trinh-chieu/layout-gallery`: các layout mẫu.
 - URL HTML cũ ở `/apps/ppt/index.html` và `/apps/ppt/slides.html` được chuyển hướng về trang mới.
 
@@ -30,6 +30,12 @@ Source nội dung từ `huunghia160699/dev-Ppt_Website`, commit `e81104f08ddaa85
 
 ## Nguyên tắc học theo phần
 
-Cấu trúc: **Môn Tin học cơ bản → Phần 1: Quản lý tệp và thư mục → Các slide/chủ đề tương tác**. Không cố định thời lượng mỗi phần theo Buổi 1/Buổi 2 hoặc Bài 01. Khi phát triển các nội dung Word, Excel sau này, thêm phần chủ đề mới vào catalog, không đặt tên theo lịch dạy.
+Cấu trúc: **Môn Tin học cơ bản → Quản lý tệp và thư mục → Các slide/chủ đề tương tác**. Không cố định thời lượng mỗi phần theo Buổi 1/Buổi 2 hoặc Bài 01. Khi phát triển các nội dung Word, Excel sau này, thêm phần chủ đề mới vào catalog, không đặt tên theo lịch dạy.
 
 Đường dẫn cũ `/cong-cu/trinh-chieu/buoi-01-file-explorer` được chuyển hướng **308** sang `/cong-cu/trinh-chieu/quan-ly-tep-va-thu-muc`; liên kết lớp `?class=hl-26-27` được giữ nguyên.
+
+## Tên lớp và thanh điều khiển
+
+Thư viện không hiển thị danh sách lớp có sẵn. Khi vào trình chiếu của một chủ đề, ứng dụng yêu cầu nhập tên lớp (tối đa 40 ký tự). Tên lớp chỉ tồn tại trong trạng thái trình duyệt của phiên trình chiếu, không được ghi Supabase hay cấu hình cứng trong catalog. URL cũ có `?class=hl-26-27` được dùng để gợi ý điền sẵn, có thể thay đổi. Thư viện 15 bố cục là chế độ xem trước, không yêu cầu lớp.
+
+Viên thuốc góc trái chỉ hiển thị `Tên lớp | Tên môn`; mọi điều khiển được đặt ở viên thuốc phải theo thứ tự **quay lại → làm lại → ghi chú → đổi lớp → trước → số trang → sau → toàn màn hình**. Trên màn hình hẹp, nhóm công cụ phụ thu gọn trong nút Tùy chọn thuộc chính viên thuốc phải.

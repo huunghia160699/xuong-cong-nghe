@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { notFound, permanentRedirect } from "next/navigation";
-import { canonicalPresentationLessonId, findPresentationLesson, legacyPresentationLessonIds, presentationClassHasLesson, presentationClasses } from "@/features/presentations/catalog";
+import { canonicalPresentationLessonId, findPresentationLesson, legacyPresentationLessonIds } from "@/features/presentations/catalog";
 import { PresentationPlayer } from "@/features/presentations/components/player";
 import "@/features/presentations/presentation.css";
 
@@ -24,12 +24,13 @@ export default async function LessonPresentation({
   const search=await searchParams;
   const entry=findPresentationLesson(lessonId);
   if(!entry) notFound();
-  const group=search.class ? presentationClasses.find(item=>
-    item.id===search.class && presentationClassHasLesson(item.id,entry.course.id,entry.lesson.id)) : null;
+  // Old bookmarked ?class=hl-26-27 values still prefill the editable class prompt.
+  const rawClass=typeof search.class==="string" ? search.class.slice(0,40) : "";
+  const initialClassName=rawClass.toLowerCase()==="hl-26-27" ? "HL.26-27" : rawClass;
   const canonicalId=canonicalPresentationLessonId(lessonId);
   if(canonicalId!==lessonId) {
-    const query=group ? "?class="+encodeURIComponent(group.id) : "";
+    const query=rawClass ? "?class="+encodeURIComponent(rawClass) : "";
     permanentRedirect("/cong-cu/trinh-chieu/"+canonicalId+query);
   }
-  return <PresentationPlayer lesson={entry.lesson} courseTitle={entry.course.title} className={group?.name}/>;
+  return <PresentationPlayer lesson={entry.lesson} courseTitle={entry.course.title} initialClassName={initialClassName}/>;
 }
