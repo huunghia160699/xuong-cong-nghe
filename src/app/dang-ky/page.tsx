@@ -6,8 +6,8 @@ import { isLiveMode } from "@/lib/supabase/config";
 export default async function SignUpPage({ searchParams }: { searchParams: Promise<{ error?: string }> }) {
   if (!isLiveMode()) redirect("/student");
   const params = await searchParams;
-  return <main className="mx-auto max-w-md px-5 py-20">
-    <h1 className="text-3xl font-bold">Tạo tài khoản học viên</h1>
+  return <main className="xcn-ui mx-auto max-w-lg px-[var(--xcn-page-gutter)] py-14">
+    <h1 className="text-4xl font-bold">Tạo tài khoản học viên</h1>
     <p className="mt-3 text-sm text-zinc-600">Tài khoản mới chỉ có quyền học viên. Quyền quản trị do hệ thống cấp riêng.</p>
     {params.error && <p role="alert" className="mt-5 rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700">Không thể đăng ký. Vui lòng kiểm tra thông tin hoặc thử email khác.</p>}
     <form action={signUpAction} className="mt-7 space-y-5">

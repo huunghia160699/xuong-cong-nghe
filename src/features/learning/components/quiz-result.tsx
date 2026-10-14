@@ -17,7 +17,7 @@ export function QuizResult({ attemptId }: { attemptId: string }) {
     <Link href="/student/quiz" className="mt-5 inline-flex items-center gap-2 text-sm font-semibold"><ArrowLeft size={16} /> Về bài trắc nghiệm</Link>
   </Card>;
 
-  return <div className="mx-auto max-w-4xl">
+  return <div className="w-full">
     <Link href="/student" className="inline-flex items-center gap-2 text-sm text-zinc-500"><ArrowLeft size={16} /> Dashboard học viên</Link>
     <Card className="mt-7 p-7 sm:p-10">
       <Badge>Trắc nghiệm Excel • Kết quả học thử</Badge>
