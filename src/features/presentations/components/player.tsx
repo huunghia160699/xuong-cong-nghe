@@ -21,9 +21,9 @@ function SlideCanvas({slide, index, count, reset}: {
   const blocks = slide.blocks.filter(block => block.type !== "notice");
   // An opening slide uses a dedicated visual teaching cover rather than
   // the normal heading + block layout.
-  if (cover && blocks[0]?.type === "lessonCover") {
+  if ((cover && blocks[0]?.type === "lessonCover") || blocks[0]?.type === "warmUpComparison") {
     return <section aria-label={"Slide " + (index+1) + ": " + slide.title}
-      className="xcn-slide relative h-full min-h-0 overflow-y-auto overscroll-contain bg-ink text-white">
+      className={"xcn-slide relative h-full min-h-0 overflow-y-auto overscroll-contain " + (cover ? "bg-ink text-white" : "bg-[#fafaf8] text-ink")}>
       <PresentationBlockView block={blocks[0]}/>
     </section>;
   }
@@ -70,6 +70,8 @@ export function PresentationPlayer({lesson, courseTitle, className}: {
     function keyboard(event: KeyboardEvent) {
       const target=event.target as HTMLElement | null;
       if(target?.closest("input,textarea,select,[contenteditable=true]")||event.altKey||event.metaKey||event.ctrlKey) return;
+      // Space must activate the focused reveal button instead of skipping the slide.
+      if(event.key===" " && target?.closest("button,a,[role=button]")) return;
       const key=event.key.toLowerCase();
       if(["arrowright","arrowdown","pagedown"," "].includes(key)) {
         event.preventDefault();move(current+1);

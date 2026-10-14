@@ -16,7 +16,7 @@ test("15 showcase slide layouts remain separate from lessons",()=>{
  assert.equal(PRESENTATION_LAYOUTS.length,15);
 });
 test("content only uses supported reusable blocks",()=>{
- const allowed=new Set(["lessonCover","heroStats","card","definition","fileType","filename","item","stack","notice","shortcut","keyCombo","folderTree","code","steps","explorer","fileTransfer","quiz","formula","excelTable","document","image","compare","hotspot"]);
+ const allowed=new Set(["lessonCover","warmUpComparison","heroStats","card","definition","fileType","filename","item","stack","notice","shortcut","keyCombo","folderTree","code","steps","explorer","fileTransfer","quiz","formula","excelTable","document","image","compare","hotspot"]);
  for(const lesson of [fileExplorerLesson,layoutGallery]) for(const slide of lesson.slides) {
   assert.ok(PRESENTATION_LAYOUTS.includes(slide.layout),slide.id);
   for(const block of slide.blocks) assert.ok(allowed.has(block.type),slide.id+":"+block.type);
@@ -60,10 +60,24 @@ test("opening cover explains why File Explorer matters without decorative statis
  assert.equal(visual.heading,"Làm quen với File Explorer");
  assert.equal(visual.goals.length,3);
  assert.deepEqual(visual.goals.map(goal=>goal.verb),["Nhận diện","Thao tác","Tổ chức"]);
- assert.match(visual.question,/tìm lại/);
+ assert.equal(Object.hasOwn(visual,"question"),false);
  assert.ok(!cover.blocks.some(block=>block.type==="heroStats"));
 });
 test("the 29 existing lesson slides keep their original educational subtitles in data",()=>{
  const warmUp=fileExplorerLesson.slides.find(slide=>slide.id==="warm-up");
  assert.equal(warmUp.subtitle,"Một tình huống thường gặp khi học và làm việc.");
+});
+
+test("slide 02 owns the warm-up question and before/after reveal",()=>{
+  const slides=fileExplorerLesson.slides;
+  assert.equal(slides[0].id,"cover");
+  assert.equal(slides[1].id,"warm-up");
+  assert.equal(slides[1].blocks.length,1);
+  const warmup=slides[1].blocks[0];
+  assert.equal(warmup.type,"warmUpComparison");
+  assert.match(warmup.prompt,/Máy tính của em/);
+  assert.match(warmup.discussion,/tìm lại ảnh hoặc bài văn/);
+  assert.match(warmup.messyText,/bài tập/);
+  assert.match(warmup.tidyText,/thư mục/);
+  assert.equal(fileExplorerLesson.slides.length,29);
 });

@@ -60,10 +60,7 @@ export function LessonOpeningCover({block}: {block: PresentationBlock}) {
         </div>
         <div className="xcn-explorer-status">4 mục　·　Documents / BAI_TAP</div>
       </div>
-      <div className="xcn-lesson-opening-question">
-        <span>KHỞI ĐỘNG</span>
-        <p>{block.question ?? "Làm thế nào tìm lại một tệp đã lưu thật nhanh?"}</p>
-      </div>
+
     </div>
   </div>;
 }

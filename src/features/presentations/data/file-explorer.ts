@@ -40,15 +40,20 @@ export const fileExplorerLesson={
           {verb:'Nhận diện',detail:'Giao diện và các khu vực chính.'},
           {verb:'Thao tác',detail:'Tạo, đổi tên, sao chép, di chuyển và xóa tệp.'},
           {verb:'Tổ chức',detail:'Sắp xếp dữ liệu gọn, dễ tìm lại.'}
-        ],
-        question:'Làm sao tìm lại một bức ảnh hoặc bài văn đã lưu thật nhanh?'
+        ]
       }
-    ],notes:'Gợi hỏi: Em đã từng tải về nhưng không tìm lại được tệp chưa? Giới thiệu đây là một cửa sổ mô phỏng File Explorer với ngăn điều hướng, thanh địa chỉ, danh sách tệp. Sau buổi học, học viên còn cần lưu Word–Excel đúng vị trí và định dạng.'},
-    {id:'warm-up',layout:'comparison',eyebrow:'KHỞI ĐỘNG',title:'Tệp vừa tải được lưu ở đâu?',subtitle:'Một tình huống thường gặp khi học và làm việc.',blocks:[
-      card('Không tìm thấy','Đã tải tài liệu nhưng chưa xác định được vị trí lưu.',{number:'01'}),
-      card('Đã tìm được','Biết mở lại tài liệu trong thư mục lưu trữ.',{number:'02'}),
-      note('Trao đổi tình huống: đã từng tải tệp nhưng không biết tìm lại ở đâu?')
-    ],notes:'Học viên trả lời 1 (chưa tìm thấy) hoặc 2 (đã tìm được) trong khung chat.'},
+    ],notes:'Giới thiệu trực quan cửa sổ File Explorer: thanh địa chỉ, ngăn điều hướng và danh sách tệp. Nêu ba kết quả học tập; dành câu hỏi và tình huống tìm tệp cho slide Khởi động số 02.'},
+    {id:'warm-up',layout:'comparison',eyebrow:'KHỞI ĐỘNG',title:'Máy tính của em đang ngăn nắp?',subtitle:'Một tình huống thường gặp khi học và làm việc.',blocks:[
+      {type:'warmUpComparison',
+        messyHeading:'TỆP BỪA BỘN',
+        messyText:'Tìm mãi không thấy bài tập.',
+        tidyHeading:'THƯ MỤC NGĂN NẮP',
+        tidyText:'Mở đúng thư mục, thấy đúng tệp.',
+        prompt:'Máy tính của em đang giống bên nào hơn?',
+        discussion:'Làm thế nào tìm lại ảnh hoặc bài văn đã lưu thật nhanh?',
+        revealLabel:'Hiện cách sắp xếp'
+      }
+    ],notes:'Bước 1: Chỉ cho học viên quan sát màn hình Desktop lộn xộn ở cột trái. Đặt câu hỏi: Tìm lại bài tập Word như thế nào? Bước 2: Bấm nút “Hiện cách sắp xếp” để minh họa tệp nằm trong thư mục rõ ràng ở cột phải. Bước 3: Mời học viên chọn bên trái/bên phải và liên hệ File Explorer. Thời gian tìm tệp phụ thuộc cách tổ chức và công cụ tìm kiếm; không khẳng định số giây cố định.'},
     {id:'goals',layout:'grid-4',eyebrow:'MỤC TIÊU',title:'4 kỹ năng cần nắm vững',subtitle:'Nền tảng để thực hành Word và Excel trong buổi học trực tiếp.',blocks:[
       card('Hiểu cấu trúc dữ liệu','Tệp, thư mục và đường dẫn.',{number:'01',icon:'folder'}),
       card('Thao tác với tệp','Tạo, sửa tên, sao chép, di chuyển.',{number:'02',icon:'copy'}),

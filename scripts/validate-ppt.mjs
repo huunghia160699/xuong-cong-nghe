@@ -1,7 +1,7 @@
 import {fileExplorerLesson} from "../src/features/presentations/data/file-explorer.ts";
 import {layoutGallery} from "../src/features/presentations/data/layout-gallery.ts";
 import {PRESENTATION_LAYOUTS} from "../src/features/presentations/types.ts";
-const allowed=new Set(["lessonCover","heroStats","card","definition","fileType","filename","item","stack","notice","shortcut","keyCombo","folderTree","code","steps","explorer","fileTransfer","quiz","formula","excelTable","document","image","compare","hotspot"]);
+const allowed=new Set(["lessonCover","warmUpComparison","heroStats","card","definition","fileType","filename","item","stack","notice","shortcut","keyCombo","folderTree","code","steps","explorer","fileTransfer","quiz","formula","excelTable","document","image","compare","hotspot"]);
 let errors=0;
 for (const lesson of [fileExplorerLesson,layoutGallery]) {
  const ids=new Set();
@@ -23,8 +23,12 @@ for (const lesson of [fileExplorerLesson,layoutGallery]) {
    if(!allowed.has(block.type)){console.error("Unknown block",slide.id,block.type);errors++;}
    if(block.type==="lessonCover" &&
       (!Array.isArray(block.goals) || block.goals.length!==3 ||
-       !block.question || !block.heading)) {
+       !block.heading)) {
      console.error("Invalid lesson opening cover",slide.id);errors++;
+   }
+   if(block.type==="warmUpComparison" &&
+      (!block.messyText||!block.tidyText||!block.prompt||!block.revealLabel)) {
+      console.error("Warm-up comparison missing stages",slide.id);errors++;
    }
    if(block.type==="quiz"&&(!Array.isArray(block.answers)||block.correctIndex<0||block.correctIndex>=block.answers.length)){console.error("Invalid quiz",slide.id);errors++;}
   }
