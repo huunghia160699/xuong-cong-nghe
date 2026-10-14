@@ -5,7 +5,7 @@ import { getPublishedCourses } from "@/features/courses/live-public";
 
 export default async function CourseCatalogPage() {
   const courses = isLiveMode() ? await getPublishedCourses() : demoCourses;
-  return <main className="xcn-container py-14">
+  return <main className="xcn-container xcn-page-pad">
     <p className="text-xs font-semibold uppercase tracking-[.14em] text-zinc-500">Học theo lộ trình</p>
     <h1 className="mt-3 text-4xl font-bold tracking-tight">Khóa học</h1>
     <p className="mt-4 text-base leading-7 text-zinc-600">{isLiveMode() ? "Danh sách khóa học đã xuất bản từ cơ sở dữ liệu." : "Các khóa học giới thiệu trong chế độ demo."}</p>

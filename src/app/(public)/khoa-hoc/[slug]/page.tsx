@@ -13,7 +13,7 @@ export default async function CourseDetailPage({ params }: { params: Promise<{ s
   if (isLiveMode()) return <LiveCourseDetail slug={slug} />;
   const selectedCourse = courses.find((course) => course.slug === slug);
   if (!selectedCourse) notFound();
-  if (slug !== "excel-can-ban") return <main className="xcn-container py-14">
+  if (slug !== "excel-can-ban") return <main className="xcn-container xcn-page-pad">
     <Badge>Khóa học dự kiến</Badge>
     <h1 className="mt-5 text-4xl font-bold">{selectedCourse.title}</h1>
     <p className="mt-5 text-sm leading-7 text-zinc-600">Nội dung khóa học này đang được phát triển. Hiện có thể học thử trọn lộ trình Excel căn bản và luyện trắc nghiệm.</p>
@@ -24,7 +24,7 @@ export default async function CourseDetailPage({ params }: { params: Promise<{ s
 
   return <main>
     <section className="bg-ink text-white"><div className="grid-paper">
-      <div className="xcn-container py-12">
+      <div className="xcn-container xcn-section-pad">
         <Link href="/" className="inline-flex items-center gap-2 text-sm text-zinc-400 hover:text-white"><ArrowLeft size={16} /> Trang chủ / Khóa học</Link>
         <div className="mt-8 grid gap-9 lg:grid-cols-[1.2fr_.8fr]">
           <div>
@@ -46,7 +46,7 @@ export default async function CourseDetailPage({ params }: { params: Promise<{ s
         </div>
       </div>
     </div></section>
-    <section className="xcn-container grid gap-8 py-14 lg:grid-cols-[1.25fr_.75fr]">
+    <section className="xcn-container xcn-section-pad grid gap-8 lg:grid-cols-[1.25fr_.75fr]">
       <div>
         <h2 className="text-3xl font-bold">Nội dung khóa học</h2>
         <p className="mt-3 text-sm text-zinc-500">3 chương • {excelLessons.length} bài học • chọn một bài để mở</p>
