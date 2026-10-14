@@ -26,7 +26,7 @@
 
 ## 4. Màu sắc và tương phản
 
-- **Ba màu chính**: nền trắng, chữ mực đen, điểm nhấn lime; xám là sắc độ trung tính cho phân tầng.
+- **Bảng màu hiện hành**: navy `#04122D`, blue `#005BFD`, cyan `#00E9FD`, ice `#F0F6FD` và trắng; xám là sắc độ trung tính cho phân tầng. Blue làm CTA, cyan nhấn trên navy.
 - Chỉ dùng đỏ/amber cho trạng thái sai hoặc cảnh báo có ý nghĩa, không trang trí tùy hứng.
 - Nền sáng ↔ chữ tối; slide mở đầu nền tối ↔ chữ trắng. Không lạm dụng gradient, kính mờ, nhiều màu hay hiệu ứng.
 - Layout dùng grid thẳng hàng. Bốn nhóm ý trình bày **2×2**, không ép bốn cột chữ nhỏ.
@@ -66,3 +66,11 @@ Kiểm tra trực quan trên 1280×720, 1920×1080, tablet/điện thoại và m
 ## Tổ chức theo phần học
 
 Không gắn bài trình chiếu Tin học với số buổi hoặc số bài. Dùng tên chủ đề làm đơn vị bền vững (ví dụ **Phần 1 · Quản lý tệp và thư mục**); các lớp khác nhau có thể phân bổ phần nội dung vào nhiều buổi tùy tiến độ. Slide nhỏ vẫn đánh số để điều hướng, không gọi số slide là số bài.
+
+## 8. Word/Excel cơ bản — cấu trúc chủ đề (14/10/2026)
+
+- Tách `Word cơ bản` và `Excel cơ bản` thành **hai course độc lập** trong danh mục trình chiếu, không gộp chung hoặc đánh số buổi dạy.
+- Mỗi course gồm các lesson theo chủ đề; slide 01 mở đầu, phần nội dung gồm khái niệm, thao tác, ví dụ thực hành, tối thiểu hai quiz tương tác, và slide tổng kết.
+- Mỗi lesson sử dụng dữ liệu TypeScript và 15 bố cục có sẵn; hướng dẫn chi tiết và đáp án để trong `notes`. Không sao chép các slide Word/Excel vào thư viện bố cục mẫu.
+- Excel có thể dùng dấu `,` hoặc `;` để phân tách tham số tùy vùng/cài đặt; ví dụ trong slide dùng dấu phẩy, ghi chú giải thích sự khác biệt.
+- Ảnh minh họa bảng và tài liệu là mô phỏng cấu trúc, không coi là tài liệu Word/Excel đang chạy; bài thực hành yêu cầu người học mở phần mềm thật.

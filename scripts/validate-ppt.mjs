@@ -1,9 +1,11 @@
 import {fileExplorerLesson} from "../src/features/presentations/data/file-explorer.ts";
 import {layoutGallery} from "../src/features/presentations/data/layout-gallery.ts";
+import {wordBasicsLessons} from "../src/features/presentations/data/word-basics.ts";
+import {excelBasicsLessons} from "../src/features/presentations/data/excel-basics.ts";
 import {PRESENTATION_LAYOUTS} from "../src/features/presentations/types.ts";
 const allowed=new Set(["lessonCover","warmUpComparison","heroStats","card","definition","fileType","filename","item","stack","notice","shortcut","keyCombo","folderTree","code","steps","explorer","fileTransfer","quiz","formula","excelTable","document","image","compare","hotspot"]);
 let errors=0;
-for (const lesson of [fileExplorerLesson,layoutGallery]) {
+for (const lesson of [fileExplorerLesson,layoutGallery,...wordBasicsLessons,...excelBasicsLessons]) {
  const ids=new Set();
  for(const slide of lesson.slides) {
   if(!slide.id||ids.has(slide.id)){console.error("Duplicate ID",slide.id);errors++;}
@@ -48,3 +50,17 @@ if(fileExplorerLesson.id!=="quan-ly-tep-va-thu-muc" || fileExplorerLesson.label!
 if(fileExplorerLesson.slides.length!==29||layoutGallery.slides.length!==15)errors++;
 console.log("Layout registry: "+PRESENTATION_LAYOUTS.length+"; errors: "+errors);
 if(errors) process.exit(1);
+
+for (const [subject,lessons,required] of [["Word",wordBasicsLessons,4],["Excel",excelBasicsLessons,5]]) {
+  if(lessons.length!==required){console.error(subject,"wrong module count");errors++;}
+  for(const lesson of lessons){
+    const phases=lesson.phases??[];
+    if(phases.length!==3||phases[0].start!==0||phases[1].start!==1||phases[2].start!==lesson.slides.length-1){console.error("Bad phases",lesson.id);errors++;}
+    if(lesson.slides.filter(slide=>slide.layout==="quiz").length<2){console.error("Missing quizzes",lesson.id);errors++;}
+    if(!lesson.slides.some(slide=>slide.eyebrow==="THỰC HÀNH")){console.error("Missing exercise",lesson.id);errors++;}
+    if(lesson.slides.some(slide=>!slide.notes||slide.notes.length<20)){console.error("Notes missing",lesson.id);errors++;}
+  }
+}
+const ids=[fileExplorerLesson,layoutGallery,...wordBasicsLessons,...excelBasicsLessons].map(lesson=>lesson.id);
+if(new Set(ids).size!==ids.length){console.error("Duplicate lesson IDs");errors++;}
+if(errors)process.exit(1);

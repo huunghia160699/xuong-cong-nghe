@@ -25,6 +25,16 @@
 
 ## III. Lịch sử
 
+### 2026-10-14 — Bổ sung giáo trình slide Word và Excel cơ bản
+- **Mục tiêu:** 2 khóa trình chiếu độc lập Word cơ bản / Excel cơ bản, đủ nền tảng, có ví dụ, thực hành và quiz.
+- **Thay đổi và file:** `src/features/presentations/data/basics-builder.ts`, `word-basics.ts`, `excel-basics.ts`, `catalog.ts`, route trình chiếu, trang thư viện, kiểm thử, tài liệu chuẩn trình chiếu.
+- **Quyết định:** tổ chức từng môn thành các chủ đề không cố định số buổi; tái sử dụng player và layout hiện tại, giữ File Explorer gốc và 15 mẫu; Word/Excel mô phỏng dữ liệu, không giả làm phần mềm Office tương tác.
+- **Kiểm thử:** kiểm tra validate-ppt, `pnpm test`, `pnpm typecheck`, `pnpm build`, smoke route qua GitHub Actions sau commit.
+- **GitHub commit:** xem commit trong git history theo tiêu đề `feat: publish Word and Excel basics slide curricula`.
+- **Vercel Production:** xác minh theo SHA deployment tương ứng sau khi release.
+- **Tồn đọng:** không xuất `.pptx` vì bộ bài sử dụng hệ slide native của website; có thể xây dựng công cụ xuất riêng nếu được yêu cầu.
+
+
 ### 2026-10-14 — Chuẩn hóa palette 4 màu và tài liệu dự án
 - **Mục tiêu:** dùng navy / blue / cyan / ice từ ảnh người dùng gửi cho nhận diện toàn website; yêu cầu các lần sửa sau có tài liệu đối chiếu.
 - **Thay đổi:** token Tailwind và CSS nền, home, tool, thẻ khóa học, dashboard, CTA, trình chiếu; `AGENTS.md`, `docs/BRAND.md`, `docs/DESIGN_SYSTEM.md`, `docs/DECISIONS.md`, `CHANGELOG.md`, test palette.

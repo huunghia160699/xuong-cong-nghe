@@ -1,0 +1,70 @@
+import test from "node:test";
+import assert from "node:assert/strict";
+import {readFileSync} from "node:fs";
+import {PRESENTATION_LAYOUTS} from "../src/features/presentations/types.ts";
+import {wordBasicsLessons} from "../src/features/presentations/data/word-basics.ts";
+import {excelBasicsLessons} from "../src/features/presentations/data/excel-basics.ts";
+import {fileExplorerLesson} from "../src/features/presentations/data/file-explorer.ts";
+import {layoutGallery} from "../src/features/presentations/data/layout-gallery.ts";
+
+const subjects=[["Word",wordBasicsLessons,4],["Excel",excelBasicsLessons,5]];
+test("Word and Excel are separate subjects with full multi-topic curricula",()=>{
+  assert.equal(wordBasicsLessons.length,4);
+  assert.equal(excelBasicsLessons.length,5);
+  assert.ok(wordBasicsLessons.reduce((n,m)=>n+m.slides.length,0)>=70);
+  assert.ok(excelBasicsLessons.reduce((n,m)=>n+m.slides.length,0)>=85);
+  assert.ok(wordBasicsLessons.every(m=>m.id.startsWith("word-")));
+  assert.ok(excelBasicsLessons.every(m=>m.id.startsWith("excel-")));
+});
+test("every new topic has a strong classroom narrative, activities and explanations",()=>{
+  for(const [subject,lessons] of subjects)for(const lesson of lessons){
+    assert.ok(lesson.slides.length>=12,`${subject}:${lesson.id}`);
+    assert.deepEqual(lesson.phases.map(p=>p.label),["Mở đầu","Thân bài","Kết luận"]);
+    assert.deepEqual(lesson.phases.map(p=>p.start),[0,1,lesson.slides.length-1]);
+    assert.equal(lesson.slides[0].layout,"cover");
+    assert.equal(lesson.slides.at(-1).layout,"summary");
+    assert.ok(lesson.slides.some(slide=>slide.eyebrow==="THỰC HÀNH"));
+    const quizzes=lesson.slides.filter(slide=>slide.layout==="quiz");
+    assert.ok(quizzes.length>=2);
+    for(const slide of lesson.slides){
+      assert.ok(PRESENTATION_LAYOUTS.includes(slide.layout),slide.id);
+      assert.ok(slide.notes&&slide.notes.length>=20,slide.id+" missing notes");
+      assert.ok(slide.blocks.length>=1&&slide.blocks.length<=7,slide.id);
+      if(slide.layout==="quiz"){
+        const quiz=slide.blocks[0];
+        assert.equal(quiz.answers.length,4,slide.id);
+        assert.ok(Number.isInteger(quiz.correctIndex)&&quiz.correctIndex>=0&&quiz.correctIndex<=3,slide.id);
+        assert.ok(quiz.explanation.length>=20,slide.id);
+      }
+      if(slide.blocks.some(block=>block.type==="steps"))
+        assert.ok(slide.blocks.find(block=>block.type==="steps").items.length<=7,slide.id);
+    }
+  }
+});
+test("no duplicate IDs and original File Explorer and gallery stay intact",()=>{
+  const all=[fileExplorerLesson,layoutGallery,...wordBasicsLessons,...excelBasicsLessons];
+  assert.equal(new Set(all.map(l=>l.id)).size,all.length);
+  for(const lesson of all)assert.equal(new Set(lesson.slides.map(s=>s.id)).size,lesson.slides.length);
+  assert.equal(fileExplorerLesson.slides.length,29);
+  assert.equal(layoutGallery.slides.length,15);
+});
+test("catalog and slide routes are data driven and library visibly separates subjects",()=>{
+  const catalog=readFileSync("src/features/presentations/catalog.ts","utf8");
+  const library=readFileSync("src/app/(public)/cong-cu/trinh-chieu/page.tsx","utf8");
+  const route=readFileSync("src/app/(presentation)/cong-cu/trinh-chieu/[lessonId]/page.tsx","utf8");
+  assert.match(catalog,/id:"word-co-ban"/);
+  assert.match(catalog,/id:"excel-co-ban"/);
+  assert.match(catalog,/lessons:wordBasicsLessons/);
+  assert.match(catalog,/lessons:excelBasicsLessons/);
+  assert.match(library,/groups\.map/);
+  assert.match(library,/course\.title/);
+  assert.match(route,/allPresentationLessons\.map/);
+  assert.match(route,/permanentRedirect/);
+});
+test("spreadsheet lessons include real formulas and locale separator guidance",()=>{
+  const text=excelBasicsLessons.flatMap(m=>m.slides.map(s=>JSON.stringify(s))).join("\n");
+  for(const name of ["SUM","AVERAGE","COUNTIF","SUMIF","IF","MIN","MAX"])
+    assert.match(text,new RegExp(name+"\\("),name);
+  assert.match(text,/dấu phẩy|dấu ;|dấu ,/i);
+  assert.match(text,/101000/);
+});
