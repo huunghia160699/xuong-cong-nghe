@@ -27,11 +27,11 @@ function SlideCanvas({slide, index, count, reset}: {
       <div className={cover ? "max-w-4xl" : "mb-4"}>
         <p className={"text-[11px] font-bold uppercase tracking-[.16em] " + (cover ? "text-lime" : "text-zinc-500")}>{slide.eyebrow ?? "BÀI GIẢNG"}</p>
         {cover ?
-          <h1 className="mt-4 max-w-4xl font-bold leading-[1.05] tracking-[-.055em]" style={{fontSize:"clamp(2rem, 7vh, 5rem)"}}>{slide.title}</h1> :
-          <h2 className="mt-2 font-bold leading-[1.1] tracking-[-.045em]" style={{fontSize:"clamp(1.5rem, 4.8vh, 3.3rem)"}}>{slide.title}</h2>}
-        {slide.subtitle && <p className={"mt-2 text-sm leading-6 sm:text-base " + (cover ? "text-zinc-300" : "text-zinc-600")}>{slide.subtitle}</p>}
+          <h1 className="mt-4 max-w-4xl font-bold leading-[1.05] tracking-[-.055em]" style={{fontSize:"clamp(2.8rem, 8dvh, 5.6rem)"}}>{slide.title}</h1> :
+          <h2 className="mt-2 font-bold leading-[1.1] tracking-[-.045em]" style={{fontSize:"clamp(2.35rem, 7dvh, 4.65rem)"}}>{slide.title}</h2>}
+        {slide.subtitle && <p className={"mt-3 text-base leading-snug sm:text-lg lg:text-2xl " + (cover ? "text-zinc-300" : "text-zinc-600")}>{slide.subtitle}</p>}
       </div>
-      <div key={slide.id + "-rev-" + reset} className={"xcn-presentation-grid xcn-presentation-layout-" + layout + " mt-4"}>
+      <div key={slide.id + "-rev-" + reset} className={"xcn-presentation-grid xcn-presentation-layout-" + layout + " mt-3 sm:mt-5"}>
         {blocks.map((block,i) => <div key={i} className="xcn-presentation-block min-h-0 min-w-0">
           <PresentationBlockView block={block}/>
         </div>)}
