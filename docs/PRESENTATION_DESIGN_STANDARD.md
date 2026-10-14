@@ -53,3 +53,12 @@ Kiểm tra trực quan trên 1280×720, 1920×1080, tablet/điện thoại và m
 - Mở đầu bài File Explorer dùng khối `lessonCover` tái sử dụng: tiêu đề, **ba mục tiêu ngắn**, mockup File Explorer, một câu hỏi khởi động. Bỏ hoàn toàn thống kê số slide/số câu hỏi ở trang mở đầu.
 - Tránh hai nhan đề cạnh nhau, một tiêu đề quá dài hoặc hai đoạn cùng diễn giải lại một ý. Nếu slide cần quá nhiều câu để tự giải thích, cân nhắc tách slide hoặc thêm hướng dẫn vào ghi chú.
 - Tham khảo: Microsoft PowerPoint [Tips for creating effective presentation](https://support.microsoft.com/en-us/powerpoint/tips-for-creating-and-delivering-an-effective-presentation), [Accessible slides](https://support.microsoft.com/en-us/accessibility/powerpoint/make-your-powerpoint-presentations-accessible-to-people-with-disabilities), Duarte [One idea per slide](https://www.duarte.com/blog/secrets-to-choosing-designing-unforgettable-visual-aids/).
+
+## 7. Slide 01–02: tách mục tiêu và tình huống (14/10/2026)
+
+- **Slide 01**: chỉ có tiêu đề, ba mục tiêu, mô phỏng File Explorer kích thước lớn. Không để câu hỏi khởi động trong cover.
+- **Slide 02**: chỉ dùng tình huống tương phản, trọng tâm minh họa trực quan (Desktop rải tệp ⇢ thư mục Word/Excel/Hình ảnh rõ ràng).
+- Đầu tiên chỉ hiện tình huống bừa bộn; giáo viên **bấm “Hiện cách sắp xếp”** để xuất hiện phương án ngăn nắp. Hiệu ứng ngắn, có tùy chọn giảm chuyển động và nút đặt lại; không tự chạy khi chuyển slide.
+- Câu hỏi “Máy tính của em đang giống bên nào hơn?” xuất hiện ở chân nội dung slide; sau khi lộ phương án, bổ sung gợi hỏi tìm lại ảnh/bài văn.
+- Dùng mockup giao diện máy tính bằng React/CSS, **không phải ảnh chụp Desktop thật**, tránh đưa dữ liệu cá nhân vào nội dung công khai.
+- Giữ nguyên số lượng **29 slide** và 5 câu hỏi trắc nghiệm, không làm thay đổi thứ tự bài.

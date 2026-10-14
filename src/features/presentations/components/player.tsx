@@ -21,9 +21,9 @@ function SlideCanvas({slide, index, count, reset}: {
   const blocks = slide.blocks.filter(block => block.type !== "notice");
   // An opening slide uses a dedicated visual teaching cover rather than
   // the normal heading + block layout.
-  if (cover && blocks[0]?.type === "lessonCover") {
+  if ((cover && blocks[0]?.type === "lessonCover") || blocks[0]?.type === "warmUpComparison") {
     return <section aria-label={"Slide " + (index+1) + ": " + slide.title}
-      className="xcn-slide relative h-full min-h-0 overflow-y-auto overscroll-contain bg-ink text-white">
+      className={"xcn-slide relative h-full min-h-0 overflow-y-auto overscroll-contain " + (cover ? "bg-ink text-white" : "bg-[#fafaf8] text-ink")}>
       <PresentationBlockView block={blocks[0]}/>
     </section>;
   }
