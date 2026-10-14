@@ -5,7 +5,7 @@ import { allPresentationLessons, presentationClasses, presentationCourses } from
 
 export const metadata: Metadata = {
   title: "Thư viện trình chiếu",
-  description: "Thư viện bài giảng tương tác được thiết kế theo hệ giao diện Xưởng Công Nghệ.",
+  description: "Thư viện trình chiếu theo các phần nội dung Tin học, thiết kế đồng bộ Xưởng Công Nghệ.",
 };
 
 export default function PresentationLibraryPage() {
@@ -18,16 +18,16 @@ export default function PresentationLibraryPage() {
       </Link>
       <div className="mt-10 grid gap-10 border-b border-zinc-200 pb-12 lg:grid-cols-[1fr_340px] lg:items-end">
         <div>
-          <span className="text-xs font-bold uppercase tracking-[.18em] text-zinc-500">CÔNG CỤ / BÀI GIẢNG TƯƠNG TÁC</span>
+          <span className="text-xs font-bold uppercase tracking-[.18em] text-zinc-500">CÔNG CỤ / TRÌNH CHIẾU THEO CHỦ ĐỀ</span>
           <h1 className="mt-5 max-w-3xl text-4xl font-bold leading-tight tracking-[-.055em] sm:text-6xl">Thư viện trình chiếu.</h1>
           <p className="mt-6 max-w-2xl text-base leading-8 text-zinc-600">
-            Biên soạn nội dung một lần, giảng dạy cho nhiều lớp. Trình chiếu trực tiếp trên trình duyệt,
-            luyện tương tác và quản lý bài giảng theo môn học.
+            Tổ chức Tin học theo từng phần kiến thức, không phụ thuộc số buổi dạy. Trình chiếu trực tiếp trên trình duyệt,
+            luyện tương tác và dùng chung nội dung cho nhiều lớp.
           </p>
         </div>
         <div className="grid grid-cols-3 border border-zinc-200 bg-white">
           {[{value:presentationCourses.length,label:"Môn học"},
-            {value:lessons.length,label:"Bài giảng"},
+            {value:lessons.length,label:"Phần học"},
             {value:lessons.reduce((sum,x)=>sum+x.lesson.slides.length,0),label:"Slide"}].map(item=>
             <div key={item.label} className="border-r border-zinc-200 p-4 last:border-r-0">
               <strong className="text-3xl font-bold tracking-tight">{String(item.value).padStart(2,"0")}</strong>
@@ -38,10 +38,10 @@ export default function PresentationLibraryPage() {
       <section className="mt-12">
         <div className="flex flex-wrap items-end justify-between gap-4">
           <div>
-            <p className="text-xs font-bold uppercase tracking-widest text-zinc-500">BÀI GIẢNG</p>
-            <h2 className="mt-2 text-2xl font-bold tracking-tight sm:text-3xl">Sẵn sàng trình chiếu</h2>
+            <p className="text-xs font-bold uppercase tracking-widest text-zinc-500">CÁC PHẦN NỘI DUNG</p>
+            <h2 className="mt-2 text-2xl font-bold tracking-tight sm:text-3xl">Học theo từng phần</h2>
           </div>
-          <span className="text-sm text-zinc-500">Môn học → Bài giảng → Slide</span>
+          <span className="text-sm text-zinc-500">Môn học → Phần nội dung → Slide</span>
         </div>
         <div className="mt-6 grid gap-4 md:grid-cols-2">
           {lessons.map(({course,lesson})=><Link key={lesson.id} href={"/cong-cu/trinh-chieu/"+lesson.id}
@@ -65,16 +65,16 @@ export default function PresentationLibraryPage() {
         <div className="mt-5 grid gap-4 sm:grid-cols-2">
           {presentationClasses.map(group=><div key={group.id} className="flex flex-wrap items-center justify-between gap-5 border border-zinc-200 bg-white p-6">
             <div><span className="text-xs font-bold uppercase tracking-widest text-zinc-500">{group.schoolYear}</span>
-              <h3 className="mt-2 text-xl font-semibold">{group.name}</h3><p className="mt-2 text-sm text-zinc-500">Tin học cơ bản · {group.lessonIds.length} bài được phân</p>
+              <h3 className="mt-2 text-xl font-semibold">{group.name}</h3><p className="mt-2 text-sm text-zinc-500">Tin học cơ bản · {group.lessonIds.length} phần nội dung</p>
             </div>
             <Link href={"/cong-cu/trinh-chieu/"+group.lessonIds[0]+"?class="+group.id}
-              className="inline-flex items-center gap-2 bg-ink px-4 py-2.5 text-sm font-semibold text-white">Mở bài <ArrowRight size={15}/></Link>
+              className="inline-flex items-center gap-2 bg-ink px-4 py-2.5 text-sm font-semibold text-white">Mở phần <ArrowRight size={15}/></Link>
           </div>)}
         </div>
       </section>
       <section className="mt-14 border-t border-zinc-200 pt-10">
         <div className="flex items-center gap-2"><Layers3 size={20}/><h2 className="text-2xl font-bold tracking-tight">Thư viện bố cục</h2></div>
-        <p className="mt-3 max-w-2xl text-sm leading-7 text-zinc-600">Các mẫu này dùng để kiểm tra giao diện và biên soạn bài giảng mới. Không tính là bài học chính thức.</p>
+        <p className="mt-3 max-w-2xl text-sm leading-7 text-zinc-600">Các mẫu này dùng để kiểm tra giao diện và biên soạn bài giảng mới. Không tính là phần học chính thức.</p>
         {examples.map(({lesson})=><Link key={lesson.id} href={"/cong-cu/trinh-chieu/"+lesson.id}
           className="mt-5 flex flex-wrap items-center justify-between gap-4 border border-zinc-200 bg-white p-6 hover:border-ink">
           <div className="flex items-center gap-4"><BookOpen size={22}/>

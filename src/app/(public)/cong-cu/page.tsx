@@ -25,9 +25,9 @@ export default function ToolsPage() {
           </div>
           <div className="mt-auto">
             <span className="text-xs font-medium uppercase tracking-widest text-zinc-400">Công cụ trình chiếu</span>
-            <h2 className="mt-3 text-2xl font-semibold">Thư viện bài giảng</h2>
+            <h2 className="mt-3 text-2xl font-semibold">Trình chiếu theo phần</h2>
             <p className="mt-3 text-sm leading-7 text-zinc-300">
-              29 slide Tin học cơ bản, câu hỏi tương tác, mô phỏng thao tác, thư viện 15 bố cục và ghi chú giảng viên.
+              Học theo phần nội dung: quản lý tệp, File Explorer, câu hỏi tương tác và mô phỏng.
             </p>
             <div className="mt-6 flex items-center gap-2 text-sm font-semibold text-lime">Mở trình chiếu <ArrowRight size={16}/></div>
           </div>
@@ -49,7 +49,7 @@ export default function ToolsPage() {
           </div>
         </div>
       </div>
-      <div className="mt-10 flex items-center gap-3 text-sm text-zinc-500"><BookOpen size={17}/><span>Thư viện bài giảng giữ nguyên nội dung dự án PPT gốc, chưa hỗ trợ xuất tệp .pptx.</span></div>
+      <div className="mt-10 flex items-center gap-3 text-sm text-zinc-500"><BookOpen size={17}/><span>Công cụ trình chiếu được xây dựng theo các phần chủ đề, chưa hỗ trợ xuất tệp .pptx.</span></div>
     </div>
   </main>;
 }

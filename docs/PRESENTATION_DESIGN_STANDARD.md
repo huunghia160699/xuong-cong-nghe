@@ -6,7 +6,7 @@
 
 - **Mở đầu:** tiêu đề, tình huống khởi động, mục tiêu và khái niệm cần có.
 - **Thân bài:** đưa kiến thức theo trình tự nhận biết → thao tác → luyện tập/giải quyết tình huống; dành chỗ cho mô phỏng, bài tập và trắc nghiệm.
-- **Kết luận:** tối đa một vài nguyên tắc nhớ lâu, hành động/kiểm tra cuối buổi.
+- **Kết luận:** tối đa một vài nguyên tắc nhớ lâu, hành động/kiểm tra sau phần nội dung.
 - Lesson khai báo `phases` (3 phần) và có thể giữ `sections` chi tiết để chia chủ đề; nội dung một bài dùng chung giữa các lớp.
 
 ## 2. Giảm tải nhận thức
@@ -62,3 +62,7 @@ Kiểm tra trực quan trên 1280×720, 1920×1080, tablet/điện thoại và m
 - Câu hỏi “Máy tính của em đang giống bên nào hơn?” xuất hiện ở chân nội dung slide; sau khi lộ phương án, bổ sung gợi hỏi tìm lại ảnh/bài văn.
 - Dùng mockup giao diện máy tính bằng React/CSS, **không phải ảnh chụp Desktop thật**, tránh đưa dữ liệu cá nhân vào nội dung công khai.
 - Giữ nguyên số lượng **29 slide** và 5 câu hỏi trắc nghiệm, không làm thay đổi thứ tự bài.
+
+## Tổ chức theo phần học
+
+Không gắn bài trình chiếu Tin học với số buổi hoặc số bài. Dùng tên chủ đề làm đơn vị bền vững (ví dụ **Phần 1 · Quản lý tệp và thư mục**); các lớp khác nhau có thể phân bổ phần nội dung vào nhiều buổi tùy tiến độ. Slide nhỏ vẫn đánh số để điều hướng, không gọi số slide là số bài.

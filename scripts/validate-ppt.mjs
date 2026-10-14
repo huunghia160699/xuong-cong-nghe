@@ -42,6 +42,9 @@ if(phases.length!==3||phases[0]?.start!==0||phases[2]?.start!==28||
    (i>0&&phase.start<=phases[i-1].start))){
  console.error("Lesson must have ordered opening, body, conclusion");errors++;
 }
+if(fileExplorerLesson.id!=="quan-ly-tep-va-thu-muc" || fileExplorerLesson.label!=="Phần 1") {
+ console.error("The File Explorer content must use the topic-based curriculum.");errors++;
+}
 if(fileExplorerLesson.slides.length!==29||layoutGallery.slides.length!==15)errors++;
 console.log("Layout registry: "+PRESENTATION_LAYOUTS.length+"; errors: "+errors);
 if(errors) process.exit(1);

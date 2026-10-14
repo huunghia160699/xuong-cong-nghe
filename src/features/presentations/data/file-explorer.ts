@@ -1,7 +1,7 @@
 // @ts-nocheck
 // Imported lesson content; migration to strictly typed authoring is planned.
 /*
- * Buổi 01 — Windows File Explorer (bài giảng dùng chung cho nhiều lớp).
+ * Phần 1 — Quản lý tệp và thư mục (nội dung dùng chung cho nhiều lớp).
  * Each slide is data only: layout + reusable blocks. No per-slide HTML/CSS.
  * Source: the existing 29-slide HTML presentation, aligned to the supplied Windows lecture.
  */
@@ -17,10 +17,10 @@ const q=(id,question,answers,correctIndex,explanation)=>({
 });
 
 export const fileExplorerLesson={
-  id:'buoi-01-file-explorer',
-  title:'Windows File Explorer',
-  subtitle:'Tệp, thư mục và thao tác quản lý dữ liệu',
-  label:'Buổi 01',
+  id:'quan-ly-tep-va-thu-muc',
+  title:'Quản lý tệp và thư mục',
+  subtitle:'Tìm kiếm, tổ chức và thao tác với File Explorer',
+  label:'Phần 1',
   phases:[
     {label:'Mở đầu',start:0},
     {label:'Thân bài',start:4},
@@ -32,9 +32,9 @@ export const fileExplorerLesson={
     {label:'Lưu & nộp bài',start:21}
   ],
   slides:[
-    {id:'cover',layout:'cover',eyebrow:'BÀI 01 · FILE EXPLORER',title:'Làm quen với File Explorer',blocks:[
+    {id:'cover',layout:'cover',eyebrow:'PHẦN 1 · FILE EXPLORER',title:'Làm quen với File Explorer',blocks:[
       {type:'lessonCover',
-        eyebrow:'TIN HỌC CƠ BẢN / BÀI 01',
+        eyebrow:'TIN HỌC CƠ BẢN / PHẦN 1',
         heading:'Làm quen với File Explorer',
         goals:[
           {verb:'Nhận diện',detail:'Giao diện và các khu vực chính.'},
@@ -54,7 +54,7 @@ export const fileExplorerLesson={
         revealLabel:'Hiện cách sắp xếp'
       }
     ],notes:'Bước 1: Chỉ cho học viên quan sát màn hình Desktop lộn xộn ở cột trái. Đặt câu hỏi: Tìm lại bài tập Word như thế nào? Bước 2: Bấm nút “Hiện cách sắp xếp” để minh họa tệp nằm trong thư mục rõ ràng ở cột phải. Bước 3: Mời học viên chọn bên trái/bên phải và liên hệ File Explorer. Thời gian tìm tệp phụ thuộc cách tổ chức và công cụ tìm kiếm; không khẳng định số giây cố định.'},
-    {id:'goals',layout:'grid-4',eyebrow:'MỤC TIÊU',title:'4 kỹ năng cần nắm vững',subtitle:'Nền tảng để thực hành Word và Excel trong buổi học trực tiếp.',blocks:[
+    {id:'goals',layout:'grid-4',eyebrow:'MỤC TIÊU',title:'4 kỹ năng cần nắm vững',subtitle:'Nền tảng để thực hành Word và Excel trong quá trình thực hành.',blocks:[
       card('Hiểu cấu trúc dữ liệu','Tệp, thư mục và đường dẫn.',{number:'01',icon:'folder'}),
       card('Thao tác với tệp','Tạo, sửa tên, sao chép, di chuyển.',{number:'02',icon:'copy'}),
       card('Tìm đúng tài liệu','Dùng File Explorer và Downloads.',{number:'03',icon:'search'}),
@@ -166,7 +166,7 @@ export const fileExplorerLesson={
       card('File khác Folder','Tệp chứa; thư mục sắp xếp.',{number:'01'}),
       card('Copy khác Move','Copy giữ gốc; Move chuyển vị trí.',{number:'02'}),
       card('Lưu đúng – kiểm tra lại','Đúng tên, đúng nơi, mở được.',{number:'03'}),
-      note('Chuẩn bị buổi tiếp theo: Microsoft Word – nhập liệu và định dạng văn bản.')
+      note('Nội dung tiếp theo: Microsoft Word – nhập liệu và định dạng văn bản.')
     ],notes:'Mỗi học viên chọn một nguyên tắc để tóm tắt trong một câu. Giao nhiệm vụ tạo ON_TAP_TIN_HOC với WORD, EXCEL, NOP_BAI.'}
   ]
 };

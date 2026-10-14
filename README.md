@@ -55,3 +55,5 @@ Dùng Supabase Storage, chưa cần Cloudflare R2. Xem `docs/SUPABASE_STORAGE.md
 ## Trình chiếu bài giảng (React + Next.js)
 
 Mở tại `/cong-cu/trinh-chieu`. Dữ liệu 29 slide và 15 mẫu được hiển thị bằng renderer React của Xưởng Công Nghệ, không còn HTML/CSS từ dự án PPT độc lập. Xem `docs/PPT_INTEGRATION.md` để thêm môn/bài, layout và component. Chưa có editor hoặc xuất .pptx.
+
+**Tổ chức trình chiếu Tin học:** Môn học → các **Phần** theo chủ đề → slide tương tác. Phần hiện có: **Phần 1 – Quản lý tệp và thư mục (File Explorer)** tại `/cong-cu/trinh-chieu/quan-ly-tep-va-thu-muc`; URL `buoi-01-file-explorer` cũ chuyển hướng để giữ tương thích. Không thay đổi mô hình bài học/tiến độ của các khóa học khác.

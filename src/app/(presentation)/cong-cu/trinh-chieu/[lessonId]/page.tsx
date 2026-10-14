@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
-import { notFound } from "next/navigation";
-import { findPresentationLesson, presentationClassHasLesson, presentationClasses } from "@/features/presentations/catalog";
+import { notFound, permanentRedirect } from "next/navigation";
+import { canonicalPresentationLessonId, findPresentationLesson, legacyPresentationLessonIds, presentationClassHasLesson, presentationClasses } from "@/features/presentations/catalog";
 import { PresentationPlayer } from "@/features/presentations/components/player";
 import "@/features/presentations/presentation.css";
 
 export function generateStaticParams() {
-  return ["buoi-01-file-explorer","layout-gallery"].map(lessonId=>({lessonId}));
+  return ["quan-ly-tep-va-thu-muc","layout-gallery",...Object.keys(legacyPresentationLessonIds)].map(lessonId=>({lessonId}));
 }
 
 export async function generateMetadata({params}: {params:Promise<{lessonId:string}>}):Promise<Metadata> {
@@ -26,5 +26,10 @@ export default async function LessonPresentation({
   if(!entry) notFound();
   const group=search.class ? presentationClasses.find(item=>
     item.id===search.class && presentationClassHasLesson(item.id,entry.course.id,entry.lesson.id)) : null;
+  const canonicalId=canonicalPresentationLessonId(lessonId);
+  if(canonicalId!==lessonId) {
+    const query=group ? "?class="+encodeURIComponent(group.id) : "";
+    permanentRedirect("/cong-cu/trinh-chieu/"+canonicalId+query);
+  }
   return <PresentationPlayer lesson={entry.lesson} courseTitle={entry.course.title} className={group?.name}/>;
 }

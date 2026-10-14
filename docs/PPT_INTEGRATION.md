@@ -6,20 +6,20 @@ Dựa trên **ý tưởng** từ repo PPT: bài giảng dưới dạng dữ li�
 ## Kiến trúc
 - `src/features/presentations/data/`: nội dung 29 slide File Explorer và 15 slide mẫu.
 - `src/features/presentations/types.ts`: schema slide, block, 15 layout tái sử dụng.
-- `src/features/presentations/catalog.ts`: môn học / bài giảng / lớp học.
+- `src/features/presentations/catalog.ts`: môn học / phần nội dung / lớp học.
 - `src/features/presentations/components/blocks.tsx`: các khối trình chiếu dạng React, câu hỏi, mô phỏng, bảng, tài liệu.
 - `src/features/presentations/components/player.tsx`: slide canvas, thanh tiến độ, điều hướng, chọn đáp án, mô phỏng, phím tắt, ghi chú, fullscreen.
 - `src/features/presentations/presentation.css`: lưới 15 layout và responsive.
 
 ## Đường dẫn
 - `/cong-cu`: danh mục công cụ.
-- `/cong-cu/trinh-chieu`: danh mục bài giảng.
-- `/cong-cu/trinh-chieu/buoi-01-file-explorer?class=hl-26-27`: bài giảng lớp HL.26-27.
+- `/cong-cu/trinh-chieu`: danh mục các phần nội dung.
+- `/cong-cu/trinh-chieu/quan-ly-tep-va-thu-muc?class=hl-26-27`: phần Quản lý tệp và thư mục cho lớp HL.26-27.
 - `/cong-cu/trinh-chieu/layout-gallery`: các layout mẫu.
 - URL HTML cũ ở `/apps/ppt/index.html` và `/apps/ppt/slides.html` được chuyển hướng về trang mới.
 
 ## Mở rộng
-Thêm bài giảng/môn học mới bằng cách tạo dữ liệu theo schema rồi đăng ký trong catalog; **không cần HTML/CSS riêng cho từng bài**. Về sau có thể thêm editor, lưu nội dung trong Supabase và phân quyền tác giả mà không phải thay trình chiếu. Hai tệp dữ liệu gốc tạm dùng `@ts-nocheck`, nhưng toàn bộ renderer và logic UI mới được typecheck.
+Thêm phần nội dung/môn học mới bằng cách tạo dữ liệu theo schema rồi đăng ký trong catalog; **không cần HTML/CSS riêng cho từng bài**. Về sau có thể thêm editor, lưu nội dung trong Supabase và phân quyền tác giả mà không phải thay trình chiếu. Hai tệp dữ liệu gốc tạm dùng `@ts-nocheck`, nhưng toàn bộ renderer và logic UI mới được typecheck.
 
 ## Phạm vi hiện tại
 Có 29 slide học tập, 5 câu hỏi, hai mô phỏng Copy/Move, File Explorer, ghi chú và fullscreen. Chưa có công cụ biên tập, xuất .pptx, điểm số Supabase hay quyền truy cập riêng.
@@ -27,3 +27,9 @@ Source nội dung từ `huunghia160699/dev-Ppt_Website`, commit `e81104f08ddaa85
 
 ## Kiểm thử
 `node --experimental-strip-types scripts/validate-ppt.mjs`, `pnpm test`, `pnpm typecheck`, `pnpm build`.
+
+## Nguyên tắc học theo phần
+
+Cấu trúc: **Môn Tin học cơ bản → Phần 1: Quản lý tệp và thư mục → Các slide/chủ đề tương tác**. Không cố định thời lượng mỗi phần theo Buổi 1/Buổi 2 hoặc Bài 01. Khi phát triển các nội dung Word, Excel sau này, thêm phần chủ đề mới vào catalog, không đặt tên theo lịch dạy.
+
+Đường dẫn cũ `/cong-cu/trinh-chieu/buoi-01-file-explorer` được chuyển hướng **308** sang `/cong-cu/trinh-chieu/quan-ly-tep-va-thu-muc`; liên kết lớp `?class=hl-26-27` được giữ nguyên.

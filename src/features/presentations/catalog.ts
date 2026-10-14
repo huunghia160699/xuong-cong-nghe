@@ -19,15 +19,28 @@ export const presentationClasses = [{
   name: "HL.26-27",
   schoolYear: "2026–2027",
   courseId: "tin-hoc-co-ban",
-  lessonIds: ["buoi-01-file-explorer"],
+  lessonIds: ["quan-ly-tep-va-thu-muc"],
 }] as const;
+
+/**
+ * Public old URLs continue to work, but all new links use topic-based slugs.
+ * Only the presentation curriculum changes: quiz/course lesson IDs elsewhere
+ * on XCN are independent and must not be rewritten.
+ */
+export const legacyPresentationLessonIds: Record<string,string> = {
+  "buoi-01-file-explorer": "quan-ly-tep-va-thu-muc",
+};
+
+export function canonicalPresentationLessonId(id: string) {
+  return legacyPresentationLessonIds[id] ?? id;
+}
 
 export const allPresentationLessons = presentationCourses.flatMap(course =>
   course.lessons.map(lesson => ({course, lesson}))
 );
 
 export function findPresentationLesson(id: string) {
-  return allPresentationLessons.find(record => record.lesson.id === id);
+  return allPresentationLessons.find(record => record.lesson.id === canonicalPresentationLessonId(id));
 }
 
 export function presentationClassHasLesson(classId: string, courseId: string, lessonId: string) {
