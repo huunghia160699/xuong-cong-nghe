@@ -58,3 +58,19 @@ jobs:
             echo "Presentation controls are missing"
             exit 1
           fi
+          # Reference-inspired chrome: right dot rail, center pill and left lesson/class pill.
+          for marker in 'aria-label="Điều hướng nhanh giữa các slide"' 'xcn-presentation-pill' 'xcn-presentation-context'; do
+            if ! grep -q "$marker" <<< "$presentation_html"; then
+              echo "Presentation control missing: $marker"
+              exit 1
+            fi
+          done
+          dot_count="$(grep -o 'xcn-presentation-rail-button' <<< "$presentation_html" | wc -l)"
+          if [ "$dot_count" -ne 29 ]; then
+            echo "Expected 29 slide pagination dots, found $dot_count"
+            exit 1
+          fi
+          if grep -q 'id="slide-selector"' <<< "$presentation_html"; then
+            echo "Legacy range slider should not be rendered"
+            exit 1
+          fi
