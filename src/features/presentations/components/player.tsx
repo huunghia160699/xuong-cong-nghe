@@ -127,11 +127,11 @@ export function PresentationPlayer({lesson, courseTitle, className}: {
           <ArrowLeft size={18}/>
         </Link>
         <div className="xcn-presentation-lesson-label min-w-0 px-1.5">
-          <p className="truncate text-[10px] font-semibold uppercase tracking-[.08em] text-zinc-500">
+          <p className="hidden truncate text-[10px] font-semibold uppercase tracking-[.08em] text-zinc-500 sm:block">
             {courseTitle} · {lesson.label} · {sectionName}
           </p>
           <p className="truncate text-xs font-bold" title={lesson.title + " · " + (className || "Thư viện chung")}>
-            {lesson.title} · {className || "Thư viện chung"}
+            <span className="hidden sm:inline">{lesson.title} · </span>{className || "Thư viện chung"}
           </p>
         </div>
         <button type="button" onClick={() => setReset(value => value + 1)}
