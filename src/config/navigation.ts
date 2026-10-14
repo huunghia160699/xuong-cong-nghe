@@ -1,10 +1,10 @@
-import { BarChart3, BookOpen, ClipboardCheck, FileText, FolderKanban, Gauge, GraduationCap, Library, Settings, Sparkles, Users } from "lucide-react";
+import { BarChart3, BookOpen, ClipboardCheck, FileText, FolderKanban, Gauge, GraduationCap, Library, Presentation, Settings, Sparkles, Users } from "lucide-react";
 
 export const publicNav = [
   { label: "Khóa học", href: "/khoa-hoc" },
   { label: "Luyện tập", href: "/student/quiz" },
   { label: "Tài nguyên", href: "/#tai-nguyen" },
-  { label: "Công cụ", href: "/#cong-cu" },
+  { label: "Công cụ", href: "/cong-cu" },
   { label: "Dự án", href: "/#du-an" },
 ];
 
@@ -14,6 +14,7 @@ export const studentNav = [
   { label: "Trắc nghiệm", href: "/student/quiz", icon: ClipboardCheck },
   { label: "Kết quả", href: "/student#results", icon: BarChart3 },
   { label: "Tài nguyên", href: "/student#resources", icon: Library },
+  { label: "Trình chiếu", href: "/cong-cu/trinh-chieu", icon: Presentation },
   { label: "Sổ tay", href: "/student#notes", icon: FileText },
 ];
 
