@@ -1,66 +1,87 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ArrowLeft, ExternalLink, Maximize2, Presentation } from "lucide-react";
+import { ArrowLeft, ArrowRight, BookOpen, FileText, Layers3, Presentation, Users } from "lucide-react";
+import { allPresentationLessons, presentationClasses, presentationCourses } from "@/features/presentations/catalog";
 
 export const metadata: Metadata = {
-  title: "Trình chiếu bài giảng",
-  description: "Thư viện trình chiếu Tin học cơ bản với tương tác, mô phỏng File Explorer và ghi chú giảng viên.",
+  title: "Thư viện trình chiếu",
+  description: "Thư viện bài giảng tương tác được thiết kế theo hệ giao diện Xưởng Công Nghệ.",
 };
 
-const pptBase = "/apps/ppt";
-const sessionUrl = pptBase + "/slides.html?course=tin-hoc-co-ban&lesson=buoi-01-file-explorer&class=hl-26-27";
-const galleryUrl = pptBase + "/slides.html?course=tin-hoc-co-ban&lesson=layout-gallery";
-
-export default function PresentationToolPage() {
-  return <main className="bg-paper">
-    <div className="mx-auto max-w-[1680px] px-4 py-8 sm:px-6 lg:px-8">
+export default function PresentationLibraryPage() {
+  const lessons = allPresentationLessons.filter(entry => entry.lesson.kind !== "showcase");
+  const examples = allPresentationLessons.filter(entry => entry.lesson.kind === "showcase");
+  return <main className="min-h-screen bg-paper text-ink">
+    <div className="mx-auto max-w-7xl px-5 py-14 lg:px-8 lg:py-20">
       <Link href="/cong-cu" className="inline-flex items-center gap-2 text-sm font-medium text-zinc-600 hover:text-ink">
         <ArrowLeft size={16}/> Tất cả công cụ
       </Link>
-      <div className="mt-6 flex flex-col gap-6 border-b border-zinc-200 pb-7 lg:flex-row lg:items-end lg:justify-between">
+      <div className="mt-10 grid gap-10 border-b border-zinc-200 pb-12 lg:grid-cols-[1fr_340px] lg:items-end">
         <div>
-          <div className="flex items-center gap-3 text-xs font-semibold uppercase tracking-[.14em] text-zinc-500">
-            <Presentation size={20} className="text-ink"/> Học liệu tương tác
-          </div>
-          <h1 className="mt-3 text-3xl font-bold tracking-tight sm:text-4xl">Thư viện bài giảng</h1>
-          <p className="mt-3 max-w-2xl text-sm leading-7 text-zinc-600">
-            Một nguồn bài giảng dùng chung cho các lớp. Bộ Tin học cơ bản hiện có 29 slide Buổi 1,
-            5 câu hỏi tương tác và thư viện mẫu 15 bố cục. Sử dụng mũi tên để chuyển slide;
-            phím N để mở ghi chú và F để trình chiếu toàn màn hình.
+          <span className="text-xs font-bold uppercase tracking-[.18em] text-zinc-500">CÔNG CỤ / BÀI GIẢNG TƯƠNG TÁC</span>
+          <h1 className="mt-5 max-w-3xl text-4xl font-bold leading-tight tracking-[-.055em] sm:text-6xl">Thư viện trình chiếu.</h1>
+          <p className="mt-6 max-w-2xl text-base leading-8 text-zinc-600">
+            Biên soạn nội dung một lần, giảng dạy cho nhiều lớp. Trình chiếu trực tiếp trên trình duyệt,
+            luyện tương tác và quản lý bài giảng theo môn học.
           </p>
         </div>
-        <div className="flex flex-wrap gap-3">
-          <a href={sessionUrl} target="_blank" rel="noopener noreferrer"
-             className="inline-flex items-center gap-2 border border-zinc-300 bg-white px-5 py-3 text-sm font-semibold hover:border-zinc-900">
-            <Maximize2 size={17}/> Mở Buổi 1
-          </a>
-          <a href={galleryUrl} target="_blank" rel="noopener noreferrer"
-             className="inline-flex items-center gap-2 border border-zinc-300 bg-white px-5 py-3 text-sm font-semibold hover:border-zinc-900">
-            15 bố cục mẫu <ExternalLink size={16}/>
-          </a>
-          <a href={pptBase + "/index.html"} target="_blank" rel="noopener noreferrer"
-             className="inline-flex items-center gap-2 bg-ink px-5 py-3 text-sm font-semibold text-white hover:bg-zinc-800">
-            Mở thư viện riêng <ExternalLink size={16}/>
-          </a>
+        <div className="grid grid-cols-3 border border-zinc-200 bg-white">
+          {[{value:presentationCourses.length,label:"Môn học"},
+            {value:lessons.length,label:"Bài giảng"},
+            {value:lessons.reduce((sum,x)=>sum+x.lesson.slides.length,0),label:"Slide"}].map(item=>
+            <div key={item.label} className="border-r border-zinc-200 p-4 last:border-r-0">
+              <strong className="text-3xl font-bold tracking-tight">{String(item.value).padStart(2,"0")}</strong>
+              <p className="mt-2 text-xs text-zinc-500">{item.label}</p>
+            </div>)}
         </div>
       </div>
-      <div className="mt-7 border border-zinc-200 bg-white">
-        <div className="flex items-center justify-between gap-3 border-b border-zinc-200 px-4 py-3 text-xs font-medium text-zinc-500">
-          <span>Bài giảng tương tác được tích hợp trong Xưởng Công Nghệ</span>
-          <span className="hidden sm:block">Trình chiếu trực tiếp · HTML</span>
+      <section className="mt-12">
+        <div className="flex flex-wrap items-end justify-between gap-4">
+          <div>
+            <p className="text-xs font-bold uppercase tracking-widest text-zinc-500">BÀI GIẢNG</p>
+            <h2 className="mt-2 text-2xl font-bold tracking-tight sm:text-3xl">Sẵn sàng trình chiếu</h2>
+          </div>
+          <span className="text-sm text-zinc-500">Môn học → Bài giảng → Slide</span>
         </div>
-        <iframe
-          title="Thư viện trình chiếu Tin học cơ bản"
-          src={pptBase + "/index.html"}
-          className="h-[75dvh] min-h-[620px] w-full border-0"
-          allowFullScreen
-          loading="eager"
-        />
-      </div>
-      <p className="mt-4 text-xs leading-6 text-zinc-500">
-        Bài giảng vẫn giữ nguyên các chức năng tương tác của dự án PPT gốc.
-        Công cụ hiện chưa hỗ trợ biên tập kéo thả hoặc tải xuống PowerPoint (.pptx).
-      </p>
+        <div className="mt-6 grid gap-4 md:grid-cols-2">
+          {lessons.map(({course,lesson})=><Link key={lesson.id} href={"/cong-cu/trinh-chieu/"+lesson.id}
+            className="group flex min-h-64 flex-col border border-zinc-200 bg-white p-7 transition hover:border-ink hover:shadow-sm">
+            <div className="flex items-start justify-between gap-3">
+              <Presentation size={26}/>
+              <span className="bg-lime px-3 py-1 text-xs font-bold">Đã có nội dung</span>
+            </div>
+            <p className="mt-8 text-xs font-bold uppercase tracking-widest text-zinc-500">{course.title} · {lesson.label}</p>
+            <h3 className="mt-2 text-2xl font-semibold tracking-tight">{lesson.title}</h3>
+            <p className="mt-3 text-sm leading-6 text-zinc-600">{lesson.subtitle}</p>
+            <div className="mt-auto flex items-center justify-between border-t border-zinc-200 pt-5 text-sm">
+              <span className="text-zinc-500">{lesson.slides.length} slide · câu hỏi & mô phỏng</span>
+              <span className="inline-flex items-center gap-2 font-semibold">Trình chiếu <ArrowRight size={16}/></span>
+            </div>
+          </Link>)}
+        </div>
+      </section>
+      <section className="mt-14 border-t border-zinc-200 pt-10">
+        <div className="flex items-center gap-2"><Users size={20}/><h2 className="text-2xl font-bold tracking-tight">Lớp học</h2></div>
+        <div className="mt-5 grid gap-4 sm:grid-cols-2">
+          {presentationClasses.map(group=><div key={group.id} className="flex flex-wrap items-center justify-between gap-5 border border-zinc-200 bg-white p-6">
+            <div><span className="text-xs font-bold uppercase tracking-widest text-zinc-500">{group.schoolYear}</span>
+              <h3 className="mt-2 text-xl font-semibold">{group.name}</h3><p className="mt-2 text-sm text-zinc-500">Tin học cơ bản · {group.lessonIds.length} bài được phân</p>
+            </div>
+            <Link href={"/cong-cu/trinh-chieu/"+group.lessonIds[0]+"?class="+group.id}
+              className="inline-flex items-center gap-2 bg-ink px-4 py-2.5 text-sm font-semibold text-white">Mở bài <ArrowRight size={15}/></Link>
+          </div>)}
+        </div>
+      </section>
+      <section className="mt-14 border-t border-zinc-200 pt-10">
+        <div className="flex items-center gap-2"><Layers3 size={20}/><h2 className="text-2xl font-bold tracking-tight">Thư viện bố cục</h2></div>
+        <p className="mt-3 max-w-2xl text-sm leading-7 text-zinc-600">Các mẫu này dùng để kiểm tra giao diện và biên soạn bài giảng mới. Không tính là bài học chính thức.</p>
+        {examples.map(({lesson})=><Link key={lesson.id} href={"/cong-cu/trinh-chieu/"+lesson.id}
+          className="mt-5 flex flex-wrap items-center justify-between gap-4 border border-zinc-200 bg-white p-6 hover:border-ink">
+          <div className="flex items-center gap-4"><BookOpen size={22}/>
+            <div><strong className="text-lg">{lesson.title}</strong><p className="mt-1 text-sm text-zinc-500">{lesson.slides.length} mẫu · dùng chung hệ thiết kế Xưởng Công Nghệ</p></div>
+          </div><ArrowRight size={18}/>
+        </Link>)}
+      </section>
     </div>
   </main>;
 }
