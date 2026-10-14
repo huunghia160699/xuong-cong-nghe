@@ -6,9 +6,9 @@ export const categories = [
 ];
 
 export const courses = [
-  { slug: "nang-luc-so-nen-tang", category: "Năng lực số", title: "Năng lực số nền tảng", lessons: 12, level: "Cơ bản", color: "bg-zinc-900", accent: "text-lime" },
-  { slug: "excel-can-ban", category: "Excel", title: "Excel căn bản cho công việc", lessons: 9, level: "Cơ bản", color: "bg-[#dff1df]", accent: "text-zinc-900" },
-  { slug: "ai-cho-cong-viec", category: "AI", title: "AI cho học tập và công việc", lessons: 10, level: "Mọi cấp độ", color: "bg-[#ece7fb]", accent: "text-zinc-900" },
+  { slug: "nang-luc-so-nen-tang", category: "Năng lực số", title: "Năng lực số nền tảng", lessons: 12, level: "Cơ bản", color: "bg-ink", accent: "text-cyan" },
+  { slug: "excel-can-ban", category: "Excel", title: "Excel căn bản cho công việc", lessons: 9, level: "Cơ bản", color: "bg-cyan", accent: "text-ink" },
+  { slug: "ai-cho-cong-viec", category: "AI", title: "AI cho học tập và công việc", lessons: 10, level: "Mọi cấp độ", color: "bg-paper", accent: "text-ink" },
 ];
 
 export const courseDetail = {

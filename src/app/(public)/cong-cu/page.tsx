@@ -19,8 +19,8 @@ export default function ToolsPage() {
       <div className="xcn-section-gap grid items-stretch gap-4 md:grid-cols-2 xl:grid-cols-3">
         <Link href="/cong-cu/trinh-chieu" className="group flex min-h-0 flex-col border border-zinc-900 bg-ink p-5 text-white transition hover:-translate-y-1 hover:shadow-xl">
           <div className="flex items-start justify-between">
-            <Presentation className="text-lime" size={34}/>
-            <Badge className="border-lime/40 bg-lime/15 text-lime">Sử dụng được</Badge>
+            <Presentation className="text-cyan" size={34}/>
+            <Badge className="border-cyan/40 bg-cyan/15 text-cyan">Sử dụng được</Badge>
           </div>
           <div className="mt-5">
             <span className="text-xs font-medium uppercase tracking-widest text-zinc-400">Công cụ trình chiếu</span>
@@ -28,7 +28,7 @@ export default function ToolsPage() {
             <p className="mt-2 text-sm leading-6 text-zinc-300">
               Học theo phần nội dung: quản lý tệp, File Explorer, câu hỏi tương tác và mô phỏng.
             </p>
-            <div className="mt-6 flex items-center gap-2 text-sm font-semibold text-lime">Mở trình chiếu <ArrowRight size={16}/></div>
+            <div className="mt-6 flex items-center gap-2 text-sm font-semibold text-cyan">Mở trình chiếu <ArrowRight size={16}/></div>
           </div>
         </Link>
         <div className="flex min-h-0 flex-col border border-zinc-200 bg-white p-5">

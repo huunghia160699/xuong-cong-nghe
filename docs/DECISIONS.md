@@ -1,5 +1,13 @@
 # Quyết định phát triển
 
+## 2026-10-14 — Hệ màu và quy trình ghi chép
+
+- Chốt navy `#04122D`, blue `#005BFD`, cyan `#00E9FD`, ice `#F0F6FD` dựa trên ảnh 4 màu được cung cấp; không dùng lime branding.
+- CTA blue chữ trắng; cyan nổi bật trên navy, xanh lá/đỏ chỉ dùng semantic.
+- Mọi thay đổi phải ghi vào `docs/WORKLOG_AND_RULES.md` và cập nhật `CHANGELOG.md` khi người dùng nhìn thấy.
+- Báo đã cập nhật online chỉ khi Vercel Production `READY`, cùng SHA GitHub `main`, và domain chính được gán.
+- Giữ trang chủ cuộn thông thường, không scroll-snap trừ khi có yêu cầu mới.
+
 ## 2026-10-12 — Hoàn thiện vòng học mẫu trước backend
 
 - Giữ stack đang chạy: Next.js 15 / React 19 / Tailwind 3 trong giai đoạn này.

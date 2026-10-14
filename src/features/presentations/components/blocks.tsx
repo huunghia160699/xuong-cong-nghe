@@ -47,7 +47,7 @@ function InteractiveExplorer({block}: {block: PresentationBlock}) {
         {folders.map((item, i) => <button key={item.name} type="button" onClick={() => setFolderIndex(i)}
           aria-pressed={folderIndex === i}
           className={"flex w-full items-center gap-2 px-2 py-2 text-left text-xs font-medium transition " +
-            (i === folderIndex ? "bg-lime text-ink" : "text-zinc-600 hover:bg-zinc-200")}>
+            (i === folderIndex ? "bg-cyan text-ink" : "text-zinc-600 hover:bg-zinc-200")}>
           <Folder size={15} className="shrink-0"/><span className="truncate">{item.name}</span>
         </button>)}
       </div>
@@ -77,7 +77,7 @@ function TransferDemo({block}: {block: PresentationBlock}) {
       <div className="min-w-0 border border-zinc-200 bg-zinc-50 p-3 sm:p-5">
         <div className="flex items-center gap-2 text-xs font-bold text-zinc-700"><Folder size={17}/>{block.destination}</div>
         <div className={"mt-5 min-h-14 border p-3 text-xs font-semibold " +
-          (done ? "border-lime bg-lime text-ink" : "border-zinc-200 bg-white text-zinc-400")}>
+          (done ? "border-cyan bg-cyan text-ink" : "border-zinc-200 bg-white text-zinc-400")}>
           {done ? <span className="flex items-center gap-2"><Check size={16}/>{block.filename}</span> : "Chưa có tệp"}
         </div>
       </div>
@@ -106,7 +106,7 @@ function QuizChoices({block}: {block: PresentationBlock}) {
         return <button type="button" key={i} data-choice={i}
           onClick={() => setSelected(i)} aria-pressed={selected === i}
           className={"group flex min-h-20 items-center gap-4 border p-4 text-left transition sm:p-5 " +
-            (correct ? "border-ink bg-lime text-ink" : wrong ? "border-red-400 bg-red-50 text-red-900" :
+            (correct ? "border-ink bg-cyan text-ink" : wrong ? "border-red-400 bg-red-50 text-red-900" :
               "border-zinc-200 bg-white text-ink hover:border-ink")}>
           <span className={"grid h-10 w-10 shrink-0 place-items-center border text-sm font-black " +
             (correct ? "border-ink" : wrong ? "border-red-400" : "border-zinc-200")}>
@@ -158,13 +158,13 @@ export function PresentationBlockView({block}: {block: PresentationBlock}) {
       </article>;
     case "fileType":
       return <div className={panel+" flex flex-col gap-3"}>
-        <span className="grid h-14 w-20 place-items-center bg-ink text-xl font-black text-lime">{block.extension}</span>
+        <span className="grid h-14 w-20 place-items-center bg-ink text-xl font-black text-cyan">{block.extension}</span>
         <strong className="xcn-slide-file-name mt-auto break-all text-base sm:text-xl">{block.name}</strong>
         <span className="text-base text-zinc-600 sm:text-lg">{block.caption}</span>
       </div>;
     case "filename":
       return <div className={panel+" flex flex-col items-center justify-center"}>
-        <p className="break-all text-center font-mono text-2xl font-black tracking-tight sm:text-4xl">{block.name}<span className="bg-lime">{block.extension}</span></p>
+        <p className="break-all text-center font-mono text-2xl font-black tracking-tight sm:text-4xl">{block.name}<span className="bg-cyan">{block.extension}</span></p>
         <div className="mt-7 flex w-full justify-around text-[11px] font-bold tracking-widest text-zinc-500"><span>TÊN TỆP</span><span>PHẦN MỞ RỘNG</span></div>
       </div>;
     case "stack":
@@ -207,7 +207,7 @@ export function PresentationBlockView({block}: {block: PresentationBlock}) {
     case "steps":
       return <div className="grid h-full gap-2 sm:grid-cols-2">
         {(block.items ?? []).map((step:{title:string;text:string},i:number)=><div key={i} className="flex items-start gap-3 border border-zinc-200 bg-white p-4">
-          <span className="grid h-9 w-9 shrink-0 place-items-center bg-ink text-sm font-bold text-lime">{String(i+1).padStart(2,"0")}</span>
+          <span className="grid h-9 w-9 shrink-0 place-items-center bg-ink text-sm font-bold text-cyan">{String(i+1).padStart(2,"0")}</span>
           <div><strong className="xcn-slide-step-title text-base font-semibold sm:text-xl">{step.title}</strong>
             <p className="xcn-slide-step-text mt-2 text-base leading-snug text-zinc-600 sm:text-lg">{step.text}</p></div>
         </div>)}
@@ -221,7 +221,7 @@ export function PresentationBlockView({block}: {block: PresentationBlock}) {
     case "formula":
       return <div className={panel+" flex flex-col justify-center gap-5"}>
         <span className={eyebrow}>{block.label ?? "CÔNG THỨC"}</span>
-        <code className="break-all bg-lime p-4 font-mono text-base font-bold sm:text-2xl">{block.value}</code>
+        <code className="break-all bg-cyan p-4 font-mono text-base font-bold sm:text-2xl">{block.value}</code>
         {block.explanation && <p className="text-sm leading-7 text-zinc-600">{block.explanation}</p>}
       </div>;
     case "excelTable":
@@ -267,7 +267,7 @@ function Hotspot({block}: {block: PresentationBlock}) {
     <div className="mt-5 flex flex-wrap gap-2">
       {(block.points??[]).map((item:{label:string},i:number)=><button key={i} type="button" onClick={()=>setChosen(i)}
         aria-pressed={chosen===i}
-        className={"border px-4 py-3 text-sm "+(chosen===i?"border-ink bg-lime":"border-zinc-300 bg-zinc-50")}>
+        className={"border px-4 py-3 text-sm "+(chosen===i?"border-ink bg-cyan":"border-zinc-300 bg-zinc-50")}>
         {item.label}</button>)}
     </div>
     <p className="mt-5 text-sm leading-7" role="status">

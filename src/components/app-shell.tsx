@@ -36,7 +36,7 @@ export function AppShell({ role, children }: { role: "student" | "admin"; childr
     </div>
   </div>;
 
-  return <div className="xcn-ui min-h-screen bg-[#f6f6f2]">
+  return <div className="xcn-ui min-h-screen bg-paper">
     <aside className="fixed inset-y-0 left-0 z-30 hidden w-64 flex-col border-r border-zinc-200 bg-white p-5 lg:flex">{sidebar(false)}</aside>
     {menuOpen && <div className="fixed inset-0 z-50 lg:hidden">
       <button type="button" aria-label="Đóng menu điều hướng" onClick={() => setMenuOpen(false)} className="absolute inset-0 bg-zinc-950/40" />

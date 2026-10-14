@@ -23,17 +23,17 @@ function SlideCanvas({slide, index, count, reset}: {
   // the normal heading + block layout.
   if ((cover && blocks[0]?.type === "lessonCover") || blocks[0]?.type === "warmUpComparison") {
     return <section aria-label={"Slide " + (index+1) + ": " + slide.title}
-      className={"xcn-slide relative h-full min-h-0 overflow-y-auto overscroll-contain " + (cover ? "bg-ink text-white" : "bg-[#fafaf8] text-ink")}>
+      className={"xcn-slide relative h-full min-h-0 overflow-y-auto overscroll-contain " + (cover ? "bg-ink text-white" : "bg-paper text-ink")}>
       <PresentationBlockView block={blocks[0]}/>
     </section>;
   }
   return <section
     aria-label={"Slide " + (index+1) + ": " + slide.title}
     className={"xcn-slide relative flex h-full min-h-0 w-full flex-col overflow-y-auto overscroll-contain " +
-      (cover ? "bg-ink text-white" : "bg-[#fafaf8] text-ink")}>
+      (cover ? "bg-ink text-white" : "bg-paper text-ink")}>
     <div className={"flex min-h-0 flex-1 flex-col px-5 py-5 pb-24 pr-14 sm:px-8 sm:py-7 sm:pb-28 sm:pr-16 lg:px-10 lg:py-8 lg:pb-28 lg:pr-20 " + (cover ? "justify-center" : "")}>
       <div className={cover ? "max-w-4xl" : "mb-4"}>
-        <p className={"text-[11px] font-bold uppercase tracking-[.16em] " + (cover ? "text-lime" : "text-zinc-500")}>{slide.eyebrow ?? "BÀI GIẢNG"}</p>
+        <p className={"text-[11px] font-bold uppercase tracking-[.16em] " + (cover ? "text-cyan" : "text-zinc-500")}>{slide.eyebrow ?? "BÀI GIẢNG"}</p>
         {cover ?
           <h1 className="mt-4 max-w-4xl font-bold leading-[1.05] tracking-[-.055em]" style={{fontSize:"clamp(2.8rem, 8dvh, 5.6rem)"}}>{slide.title}</h1> :
           <h2 className="mt-2 font-bold leading-[1.1] tracking-[-.045em]" style={{fontSize:"clamp(2.35rem, 7dvh, 4.65rem)"}}>{slide.title}</h2>}
@@ -113,7 +113,7 @@ export function PresentationPlayer({lesson, courseTitle, initialClassName = ""}:
     setMobileToolsOpen(false);
   }
 
-  return <div ref={hostRef} className="xcn-presentation-viewport relative h-[100dvh] w-full overflow-hidden bg-[#fafaf8] text-ink">
+  return <div ref={hostRef} className="xcn-presentation-viewport relative h-[100dvh] w-full overflow-hidden bg-paper text-ink">
     <main className="xcn-presentation-stage">
       <div className="xcn-presentation-frame">
         <SlideCanvas slide={slide} index={current} count={count} reset={reset}/>
@@ -167,7 +167,7 @@ export function PresentationPlayer({lesson, courseTitle, initialClassName = ""}:
         <button type="button" onClick={() => setNotesOpen(value => !value)}
           title="Ghi chú giảng viên (N)" aria-label="Ghi chú giảng viên" aria-pressed={notesOpen}
           className={"xcn-presentation-action xcn-action-secondary grid shrink-0 place-items-center rounded-full transition " +
-            (notesOpen ? "bg-lime" : "hover:bg-zinc-100")}>
+            (notesOpen ? "bg-cyan" : "hover:bg-zinc-100")}>
           {notesOpen ? <PanelRightClose size={17}/> : <PanelRightOpen size={17}/>}
         </button>
         {!preview && <button type="button" onClick={changeClass}
@@ -193,7 +193,7 @@ export function PresentationPlayer({lesson, courseTitle, initialClassName = ""}:
         </span>
         <button type="button" onClick={() => move(current + 1)} disabled={current === count - 1}
           aria-label="Slide sau" title="Slide sau (↓)"
-          className="xcn-presentation-action grid shrink-0 place-items-center rounded-full bg-ink text-lime transition hover:bg-zinc-700 disabled:opacity-35">
+          className="xcn-presentation-action grid shrink-0 place-items-center rounded-full bg-ink text-cyan transition hover:bg-zinc-700 disabled:opacity-35">
           <ArrowDown size={19}/>
         </button>
         <button type="button" onClick={() => full ? void document.exitFullscreen() : void hostRef.current?.requestFullscreen?.()}

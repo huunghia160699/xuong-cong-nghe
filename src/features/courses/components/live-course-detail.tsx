@@ -20,7 +20,7 @@ export async function LiveCourseDetail({ slug }: { slug: string }) {
         <p className="mt-5 max-w-2xl text-base leading-8 text-zinc-300">{course.description || course.excerpt || "Nội dung giới thiệu đang được cập nhật."}</p>
         <div className="mt-5 flex items-center gap-2 text-sm text-zinc-300"><BookOpen size={17} /> {lessons.length} bài đã xuất bản</div>
         {firstExcelLesson && <Link href={`/student/khoa-hoc/excel-can-ban/${firstExcelLesson.slug}`}
-          className="mt-8 inline-flex h-12 items-center gap-2 rounded-full bg-lime px-6 text-sm font-semibold text-ink">Bắt đầu học <ArrowRight size={17} /></Link>}
+          className="mt-8 inline-flex h-12 items-center gap-2 rounded-full bg-blue px-6 text-sm font-semibold text-white hover:bg-blue/90">Bắt đầu học <ArrowRight size={17} /></Link>}
       </div>
     </section>
     <div className="xcn-container xcn-section-pad">

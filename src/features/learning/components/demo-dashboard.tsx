@@ -58,9 +58,9 @@ export default function DemoDashboard() {
           <p className="mt-3 text-sm text-zinc-400">{nextLesson ? `Bài tiếp theo: ${nextLesson.title}` : "Bạn đã hoàn thành tất cả 9 bài học mẫu."}</p>
           <div className="mt-auto max-w-md pt-8">
             <div className="flex justify-between text-xs text-zinc-300"><span>Tiến độ khóa học</span><span>{ready ? percentage : 0}%</span></div>
-            <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-white/20"><div className="h-full rounded-full bg-lime transition-all" style={{width:`${ready ? percentage : 0}%`}} /></div>
+            <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-white/20"><div className="h-full rounded-full bg-cyan transition-all" style={{width:`${ready ? percentage : 0}%`}} /></div>
             <Link href={nextLesson ? `/student/khoa-hoc/excel-can-ban/${nextLesson.slug}` : "/student/quiz"}
-              className="mt-5 inline-flex h-11 items-center gap-2 rounded-full bg-lime px-5 text-sm font-semibold text-ink hover:bg-white">
+              className="mt-5 inline-flex h-11 items-center gap-2 rounded-full bg-blue px-5 text-sm font-semibold text-white hover:bg-blue/90">
               {nextLesson ? "Tiếp tục bài học" : "Ôn tập bằng trắc nghiệm"} <ArrowRight size={16} />
             </Link>
           </div>

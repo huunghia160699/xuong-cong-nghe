@@ -34,7 +34,7 @@ export default async function CourseDetailPage({ params }: { params: Promise<{ s
             <div className="mt-8 flex flex-wrap gap-5 text-sm text-zinc-300"><span className="flex items-center gap-2"><Clock3 size={17} /> {c.duration}</span><span>{excelLessons.length} bài học thử</span></div>
           </div>
           <Card className="bg-white p-3 text-ink">
-            <div className="grid-paper flex aspect-video items-center justify-center rounded-lg bg-[#dff1df]"><span className="text-7xl font-black">fx</span></div>
+            <div className="grid-paper flex aspect-video items-center justify-center rounded-lg bg-paper"><span className="text-7xl font-black">fx</span></div>
             <div className="p-5">
               <div className="text-xl font-bold">Học thử miễn phí</div>
               <Link href={start} className="mt-5 inline-flex h-12 w-full items-center justify-center gap-2 rounded-full bg-ink px-5 text-sm font-semibold text-white hover:bg-zinc-700">Bắt đầu bài học <ArrowRight size={17} /></Link>

@@ -5,16 +5,17 @@ export default {
   theme: {
     extend: {
       colors: {
-        ink: "#151513",
-        paper: "#f7f7f3",
-        mist: "#ecece7",
-        lime: "#c8f13b",
+        ink: "#04122D",
+        paper: "#F0F6FD",
+        mist: "#E1EBF7",
+        blue: "#005BFD",
+        cyan: "#00E9FD",
       },
       borderRadius: {
         xl: "1rem",
       },
       boxShadow: {
-        soft: "0 12px 40px rgba(15, 15, 14, 0.06)",
+        soft: "0 12px 40px rgba(4, 18, 45, 0.07)",
       },
     },
   },

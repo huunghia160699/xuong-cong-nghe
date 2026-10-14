@@ -2,15 +2,15 @@
 @tailwind components;
 @tailwind utilities;
 
-:root { color-scheme: light; }
+:root { color-scheme: light; --xcn-navy: #04122D; --xcn-blue: #005BFD; --xcn-cyan: #00E9FD; --xcn-ice: #F0F6FD; }
 * { box-sizing: border-box; }
 html { scroll-behavior: smooth; }
-body { margin: 0; background: #fff; color: #151513; font-family: var(--font-body), sans-serif; }
+body { margin: 0; background: #fff; color: #04122D; font-family: var(--font-body), sans-serif; }
 h1, h2, h3, h4 { font-family: var(--font-display), sans-serif; }
-::selection { background: #c8f13b; color: #151513; }
+::selection { background: #00E9FD; color: #04122D; }
 .display { font-family: var(--font-display), sans-serif; }
 .grid-paper { background-image: linear-gradient(to right, rgba(255,255,255,.07) 1px, transparent 1px), linear-gradient(to bottom, rgba(255,255,255,.07) 1px, transparent 1px); background-size: 28px 28px; }
-.dot-paper { background-image: radial-gradient(#c5c5bf 1px, transparent 1px); background-size: 18px 18px; }
+.dot-paper { background-image: radial-gradient(#c5d7e9 1px, transparent 1px); background-size: 18px 18px; }
 .number-outline { -webkit-text-stroke: 1px rgba(255,255,255,.25); color: transparent; }
 
 /* One horizontal rhythm for header, pages and footer. Presentation is isolated. */
