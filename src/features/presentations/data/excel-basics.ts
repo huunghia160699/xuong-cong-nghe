@@ -1,4 +1,4 @@
-import {B, moduleLesson} from "./basics-builder";
+import {B, moduleLesson} from "./basics-builder.ts";
 
 /** Excel fundamentals: independent of Word course, reusable in multiple classes. */
 export const excelBasicsLessons = [
