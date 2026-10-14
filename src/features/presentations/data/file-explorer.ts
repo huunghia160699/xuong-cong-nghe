@@ -32,9 +32,18 @@ export const fileExplorerLesson={
     {label:'Lưu & nộp bài',start:21}
   ],
   slides:[
-    {id:'cover',layout:'cover',eyebrow:'TIN HỌC CƠ BẢN · BUỔI 01',title:'Quản lý tệp và thư mục',subtitle:'Windows File Explorer',blocks:[
-      {type:'heroStats',items:[['01','Nội dung nền tảng'],['05','Câu hỏi tương tác'],['29','Màn hình bài giảng'],['WORD / EXCEL','Định hướng kiểm tra']]}
-    ],notes:'Giới thiệu mục tiêu: tìm đúng tài liệu, lưu đúng vị trí và thuận lợi khi làm bài Word–Excel.'},
+    {id:'cover',layout:'cover',eyebrow:'BÀI 01 · FILE EXPLORER',title:'Làm quen với File Explorer',blocks:[
+      {type:'lessonCover',
+        eyebrow:'TIN HỌC CƠ BẢN / BÀI 01',
+        heading:'Làm quen với File Explorer',
+        goals:[
+          {verb:'Nhận diện',detail:'Giao diện và các khu vực chính.'},
+          {verb:'Thao tác',detail:'Tạo, đổi tên, sao chép, di chuyển và xóa tệp.'},
+          {verb:'Tổ chức',detail:'Sắp xếp dữ liệu gọn, dễ tìm lại.'}
+        ],
+        question:'Làm sao tìm lại một bức ảnh hoặc bài văn đã lưu thật nhanh?'
+      }
+    ],notes:'Gợi hỏi: Em đã từng tải về nhưng không tìm lại được tệp chưa? Giới thiệu đây là một cửa sổ mô phỏng File Explorer với ngăn điều hướng, thanh địa chỉ, danh sách tệp. Sau buổi học, học viên còn cần lưu Word–Excel đúng vị trí và định dạng.'},
     {id:'warm-up',layout:'comparison',eyebrow:'KHỞI ĐỘNG',title:'Tệp vừa tải được lưu ở đâu?',subtitle:'Một tình huống thường gặp khi học và làm việc.',blocks:[
       card('Không tìm thấy','Đã tải tài liệu nhưng chưa xác định được vị trí lưu.',{number:'01'}),
       card('Đã tìm được','Biết mở lại tài liệu trong thư mục lưu trữ.',{number:'02'}),

@@ -7,6 +7,7 @@ import {
   TriangleAlert, X,
 } from "lucide-react";
 import type { PresentationBlock } from "../types";
+import { LessonOpeningCover } from "./lesson-opening-cover";
 
 const panel = "xcn-slide-panel h-full min-w-0 border border-zinc-200 bg-white p-5 sm:p-6 lg:p-7";
 const eyebrow = "text-[11px] font-bold uppercase tracking-[.15em] text-zinc-500";
@@ -130,6 +131,8 @@ function QuizChoices({block}: {block: PresentationBlock}) {
 
 export function PresentationBlockView({block}: {block: PresentationBlock}) {
   switch(block.type) {
+    case "lessonCover":
+      return <LessonOpeningCover block={block}/>;
     case "heroStats":
       return <div className="grid h-full grid-cols-2 gap-3 lg:grid-cols-4">
         {(block.items ?? []).map(([value,label]: [string,string],i:number)=><div key={i} className="border-t border-current/20 pt-3">

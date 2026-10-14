@@ -19,6 +19,14 @@ function SlideCanvas({slide, index, count, reset}: {
   const layout = layoutSet.has(slide.layout) ? slide.layout : "full";
   const extras = slide.blocks.filter(block => block.type === "notice");
   const blocks = slide.blocks.filter(block => block.type !== "notice");
+  // An opening slide uses a dedicated visual teaching cover rather than
+  // the normal heading + block layout.
+  if (cover && blocks[0]?.type === "lessonCover") {
+    return <section aria-label={"Slide " + (index+1) + ": " + slide.title}
+      className="xcn-slide relative h-full min-h-0 overflow-y-auto overscroll-contain bg-ink text-white">
+      <PresentationBlockView block={blocks[0]}/>
+    </section>;
+  }
   return <section
     aria-label={"Slide " + (index+1) + ": " + slide.title}
     className={"xcn-slide relative flex h-full min-h-0 w-full flex-col overflow-y-auto overscroll-contain " +
@@ -29,7 +37,6 @@ function SlideCanvas({slide, index, count, reset}: {
         {cover ?
           <h1 className="mt-4 max-w-4xl font-bold leading-[1.05] tracking-[-.055em]" style={{fontSize:"clamp(2.8rem, 8dvh, 5.6rem)"}}>{slide.title}</h1> :
           <h2 className="mt-2 font-bold leading-[1.1] tracking-[-.045em]" style={{fontSize:"clamp(2.35rem, 7dvh, 4.65rem)"}}>{slide.title}</h2>}
-        {slide.subtitle && <p className={"mt-3 text-base leading-snug sm:text-lg lg:text-2xl " + (cover ? "text-zinc-300" : "text-zinc-600")}>{slide.subtitle}</p>}
       </div>
       <div key={slide.id + "-rev-" + reset} className={"xcn-presentation-grid xcn-presentation-layout-" + layout + " mt-3 sm:mt-5"}>
         {blocks.map((block,i) => <div key={i} className="xcn-presentation-block min-h-0 min-w-0">
@@ -85,7 +92,9 @@ export function PresentationPlayer({lesson, courseTitle, className}: {
     return ()=>window.removeEventListener("keydown",keyboard);
   },[move,current,count,slide.layout]);
 
-  const notes=slide.notes??"";
+  // Subtitles from existing slide data remain available to the teacher, but
+  // never appear as tiny repeated lines beneath the main teaching headline.
+  const notes=[slide.subtitle,slide.notes].filter(Boolean).join("\n\n");
 
 
   return <div ref={hostRef} className="xcn-presentation-viewport relative h-[100dvh] w-full overflow-hidden bg-[#fafaf8] text-ink">
@@ -110,7 +119,7 @@ export function PresentationPlayer({lesson, courseTitle, className}: {
       aria-label="Ghi chú giảng viên">
       <p className="text-[10px] font-bold uppercase tracking-[.16em] text-zinc-500">Ghi chú giảng viên</p>
       <h3 className="mt-4 text-lg font-semibold">{slide.title}</h3>
-      <p className="mt-4 text-sm leading-7 text-zinc-600">{notes || "Slide này chưa có ghi chú riêng."}</p>
+      <p className="mt-4 text-sm leading-7 text-zinc-600">{notes ? notes.split("\n\n").map((paragraph,i)=><span key={i} className="mb-4 block">{paragraph}</span>) : "Slide này chưa có ghi chú riêng."}</p>
       <p className="mt-7 border-t border-zinc-200 pt-4 text-xs leading-6 text-zinc-500">
         ↑ ↓ chuyển slide · N ghi chú · R làm lại · F toàn màn hình · A–D chọn đáp án.
       </p>

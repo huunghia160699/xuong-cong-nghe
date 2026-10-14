@@ -44,3 +44,12 @@
 `node --experimental-strip-types scripts/validate-ppt.mjs`, `pnpm test`, `pnpm typecheck`, `pnpm build`.
 
 Kiểm tra trực quan trên 1280×720, 1920×1080, tablet/điện thoại và máy chiếu thực tế. Quy tắc về cỡ chữ là mục tiêu thiết kế, không thể chứng nhận độ đọc dễ từ mã nguồn đơn thuần.
+
+## 6. Bố cục tiêu đề slide nội dung (cập nhật)
+
+- **Mặc định:** Nhãn chủ đề ngắn (nếu cần) → một tiêu đề nội dung lớn, có thông điệp → **khối nội dung trực tiếp** (mô phỏng, bảng, thao tác, đối chiếu hoặc quiz). **Không tự động đặt subtitle/câu mô tả nhỏ dưới tiêu đề lớn.**
+- Giữ `slide.subtitle` trong dữ liệu cũ để bảo toàn nội dung, nhưng chỉ hiển thị nó trong ghi chú giảng viên; không xóa dữ liệu gốc khi thay bố cục.
+- Chỉ dùng dòng phụ trong chính một thành phần (ví dụ nhãn File Explorer, chú thích ảnh, lời giải đáp án), nếu nó tạo thêm giá trị, không lặp ý của tiêu đề.
+- Mở đầu bài File Explorer dùng khối `lessonCover` tái sử dụng: tiêu đề, **ba mục tiêu ngắn**, mockup File Explorer, một câu hỏi khởi động. Bỏ hoàn toàn thống kê số slide/số câu hỏi ở trang mở đầu.
+- Tránh hai nhan đề cạnh nhau, một tiêu đề quá dài hoặc hai đoạn cùng diễn giải lại một ý. Nếu slide cần quá nhiều câu để tự giải thích, cân nhắc tách slide hoặc thêm hướng dẫn vào ghi chú.
+- Tham khảo: Microsoft PowerPoint [Tips for creating effective presentation](https://support.microsoft.com/en-us/powerpoint/tips-for-creating-and-delivering-an-effective-presentation), [Accessible slides](https://support.microsoft.com/en-us/accessibility/powerpoint/make-your-powerpoint-presentations-accessible-to-people-with-disabilities), Duarte [One idea per slide](https://www.duarte.com/blog/secrets-to-choosing-designing-unforgettable-visual-aids/).
