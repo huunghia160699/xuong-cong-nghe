@@ -15,7 +15,7 @@ export function LessonOpeningCover({block}: {block: PresentationBlock}) {
   const goals = (block.goals ?? []) as {verb: string; detail: string}[];
   return <div className="xcn-lesson-opening">
     <div className="xcn-lesson-opening-intro">
-        <p className="xcn-lesson-opening-eyebrow">{block.eyebrow ?? "BÀI HỌC"}</p>
+        <p className="xcn-lesson-opening-eyebrow">{block.eyebrow ?? "PHẦN NỘI DUNG"}</p>
         <h1 className="xcn-lesson-opening-title">
           {block.heading ?? "Làm quen với File Explorer"}
         </h1>

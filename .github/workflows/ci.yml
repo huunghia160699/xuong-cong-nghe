@@ -40,12 +40,22 @@ jobs:
             if curl --silent --fail http://127.0.0.1:3000/ > /dev/null; then break; fi
             sleep 1
           done
-          for route in "/" "/khoa-hoc/excel-can-ban" "/student" "/student/quiz" "/student/khoa-hoc/excel-can-ban/giao-dien-va-vung-lam-viec" "/cong-cu" "/cong-cu/trinh-chieu" "/cong-cu/trinh-chieu/buoi-01-file-explorer" "/cong-cu/trinh-chieu/layout-gallery"; do
+          for route in "/" "/khoa-hoc/excel-can-ban" "/student" "/student/quiz" "/student/khoa-hoc/excel-can-ban/giao-dien-va-vung-lam-viec" "/cong-cu" "/cong-cu/trinh-chieu" "/cong-cu/trinh-chieu/quan-ly-tep-va-thu-muc" "/cong-cu/trinh-chieu/layout-gallery"; do
             echo "Checking $route"
             curl --fail --silent --show-error "http://127.0.0.1:3000$route" > /dev/null
           done
-          # Lesson pages intentionally bypass the public site's header and footer.
-          presentation_html="$(curl --fail --silent --show-error 'http://127.0.0.1:3000/cong-cu/trinh-chieu/buoi-01-file-explorer')"
+          # Preserve old teaching-session URLs with a permanent redirect.
+          legacy_headers="$(curl --silent --show-error --head 'http://127.0.0.1:3000/cong-cu/trinh-chieu/buoi-01-file-explorer?class=hl-26-27')"
+          if ! grep -qi '308 Permanent Redirect' <<< "$legacy_headers"; then
+            echo "Legacy presentation URL must permanently redirect"
+            exit 1
+          fi
+          if ! grep -qi 'quan-ly-tep-va-thu-muc?class=hl-26-27' <<< "$legacy_headers"; then
+            echo "Legacy presentation URL must preserve the class"
+            exit 1
+          fi
+          # Presentation pages intentionally bypass the public site's header and footer.
+          presentation_html="$(curl --fail --silent --show-error 'http://127.0.0.1:3000/cong-cu/trinh-chieu/quan-ly-tep-va-thu-muc')"
           if grep -q 'aria-label="Điều hướng chính"' <<< "$presentation_html"; then
             echo "Site header leaked into presentation route"
             exit 1

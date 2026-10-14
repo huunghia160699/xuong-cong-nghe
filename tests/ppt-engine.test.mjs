@@ -92,3 +92,17 @@ test("cover heading spans full width and objectives align with Explorer illustra
  assert.match(css,/\.xcn-lesson-opening-title\s*\{[^}]*white-space:\s*nowrap;/s);
  assert.match(css,/\.xcn-lesson-opening-body\s*\{[^}]*grid-template-columns:\s*minmax\(0,\s*\.84fr\) minmax\(0,\s*1\.16fr\)/s);
 });
+
+test("Tin học presentation is organized by topic, not by teaching sessions",()=>{
+ assert.equal(fileExplorerLesson.id,"quan-ly-tep-va-thu-muc");
+ assert.equal(fileExplorerLesson.label,"Phần 1");
+ assert.equal(fileExplorerLesson.title,"Quản lý tệp và thư mục");
+ assert.match(fileExplorerLesson.slides[0].eyebrow,/PHẦN 1/);
+ assert.match(fileExplorerLesson.slides[0].blocks[0].eyebrow,/PHẦN 1/);
+ assert.doesNotMatch(fileExplorerLesson.slides.map(s=>s.eyebrow??"").join(" " ),/BÀI 01|BUỔI 01/i);
+ const catalog=readFileSync("src/features/presentations/catalog.ts","utf8");
+ const playerRoute=readFileSync("src/app/(presentation)/cong-cu/trinh-chieu/[lessonId]/page.tsx","utf8");
+ assert.match(catalog,/legacyPresentationLessonIds/);
+ assert.match(catalog,/"buoi-01-file-explorer": "quan-ly-tep-va-thu-muc"/);
+ assert.match(playerRoute,/permanentRedirect/);
+});
