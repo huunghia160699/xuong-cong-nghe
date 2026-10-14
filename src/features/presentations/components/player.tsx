@@ -85,9 +85,6 @@ export function PresentationPlayer({lesson, courseTitle, className}: {
     return ()=>window.removeEventListener("keydown",keyboard);
   },[move,current,count,slide.layout]);
 
-  const sections=lesson.sections?.length?lesson.sections:[{label:"Bài giảng",start:0}];
-  const sectionIndex=sections.reduce((result,section,i)=>current>=section.start?i:result,0);
-  const sectionName=sections[sectionIndex]?.label??"Bài giảng";
   const notes=slide.notes??"";
 
 
@@ -121,18 +118,15 @@ export function PresentationPlayer({lesson, courseTitle, className}: {
 
     <div className="xcn-presentation-toolbar" aria-label="Thanh công cụ trình chiếu">
       <div className="xcn-presentation-context flex min-w-0 items-center gap-1 rounded-full border border-zinc-200 bg-white/95 p-1.5 shadow-lg"
-        title={lesson.label + " · " + lesson.title + " / " + (className || "Thư viện chung")}>
+        title={(className || "Lớp chung") + " · " + courseTitle}>
         <Link href="/cong-cu/trinh-chieu" aria-label="Quay lại thư viện" title="Quay lại thư viện"
           className="xcn-presentation-action grid shrink-0 place-items-center rounded-full transition hover:bg-lime">
           <ArrowLeft size={18}/>
         </Link>
-        <div className="xcn-presentation-lesson-label min-w-0 px-1.5">
-          <p className="hidden truncate text-[10px] font-semibold uppercase tracking-[.08em] text-zinc-500 sm:block">
-            {courseTitle} · {lesson.label} · {sectionName}
-          </p>
-          <p className="truncate text-xs font-bold" title={lesson.title + " · " + (className || "Thư viện chung")}>
-            <span className="hidden sm:inline">{lesson.title} · </span>{className || "Thư viện chung"}
-          </p>
+        <div className="xcn-presentation-lesson-label flex min-w-0 items-center gap-2 px-2">
+          <span className="shrink-0 text-xs font-bold sm:text-sm">{className || "Lớp chung"}</span>
+          <span aria-hidden="true" className="h-4 shrink-0 border-l border-zinc-300"/>
+          <span className="truncate text-xs font-semibold sm:text-sm">{courseTitle}</span>
         </div>
         <button type="button" onClick={() => setReset(value => value + 1)}
           title="Làm lại tương tác (R)" aria-label="Làm lại tương tác"
