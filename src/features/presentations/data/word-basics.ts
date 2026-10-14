@@ -1,7 +1,8 @@
 import {B, moduleLesson} from "./basics-builder.ts";
+import {enhanceWordLessons} from "./word-visual-guides.ts";
 
 /** Word fundamentals, organized by durable topics instead of class sessions. */
-export const wordBasicsLessons = [
+export const wordBasicsLessons = enhanceWordLessons([
   moduleLesson("word-lam-quen","Làm quen Word và lưu văn bản","Tạo, nhập, mở, lưu và quản lý tài liệu Word.",[
     B.cover("cover","Làm quen Microsoft Word",["Nhận diện giao diện","Tạo và nhập văn bản","Lưu đúng tên, đúng nơi"],"Giải thích Word là trình xử lý văn bản, dùng cho thông báo, đơn, báo cáo; phân biệt bản đang mở và tệp đã lưu."),
     B.concepts("word-use","Word dùng để làm gì?",["Soạn thảo","Tạo và chỉnh sửa nội dung chữ, bảng, hình ảnh trong tài liệu."],["Trình bày","Định dạng một tài liệu rõ ràng, đúng mục đích để in hoặc gửi."],"Liên hệ thông báo lớp, đơn xin nghỉ học, báo cáo ngắn. Word không thay thế Excel khi cần tính toán bảng dữ liệu."),
@@ -85,4 +86,4 @@ export const wordBasicsLessons = [
     B.practice("practice-final","Bài tổng hợp Word cơ bản",[["Tạo tài liệu","Thông báo có tiêu đề, ba đoạn và danh sách."],["Hoàn thiện","Thiết lập A4, bảng 3 cột, số trang và một ảnh."],["Bàn giao","Lưu Ban_thong_bao.docx, xuất Ban_thong_bao.pdf."]],"Hai tệp DOCX và PDF có nội dung khớp, trình bày rõ.","Rubric gợi ý: nội dung chính xác 30%, định dạng 25%, bảng/ảnh 20%, khổ trang 10%, lưu và PDF 15%."),
     B.summary("summary","Quy trình hoàn thiện Word",[["Soạn và định dạng","Nội dung rõ, có phân cấp và khoảng cách."],["Kiểm tra","Đọc soát, xem trước in, xem góp ý."],["Bàn giao","Lưu DOCX, xuất PDF khi được yêu cầu."]],"Giao học viên nộp tài liệu Word và PDF, tự đánh giá theo rubric.")
   ])
-];
+]);

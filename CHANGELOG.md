@@ -1,5 +1,12 @@
 # Changelog
 
+## 2026-10-14 — Word cơ bản chuyên sâu với mô phỏng CSS
+
+- Giữ 75 slide Word có sẵn, thêm 49 slide hướng dẫn thao tác Microsoft Word qua mô phỏng Ribbon, thước, trang giấy, hộp thoại File/Print/Export, bảng và ảnh vẽ bằng CSS/React.
+- Mỗi mô phỏng có các bước tương tác, lệnh được tô nổi, kết quả cần kiểm tra và ghi chú giảng viên. Tổng Word tăng lên 124 slide, bốn chủ đề riêng.
+- Tăng độ chi tiết thao tác từ tạo/lưu, định dạng, bảng/ảnh, mục lục đến in PDF; responsive theo kích thước trình chiếu.
+- Giữ nguyên 96 slide Excel cơ bản, File Explorer và luồng học khác; bổ sung kiểm thử chất lượng.
+
 ## 2026-10-14 — Hai bộ slide Word/Excel cơ bản
 
 - Thêm chương trình Word cơ bản (4 chủ đề) và Excel cơ bản (5 chủ đề) thành hai nhóm riêng trong thư viện trình chiếu.

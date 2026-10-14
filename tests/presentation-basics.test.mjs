@@ -3,6 +3,7 @@ import assert from "node:assert/strict";
 import {readFileSync} from "node:fs";
 import {PRESENTATION_LAYOUTS} from "../src/features/presentations/types.ts";
 import {wordBasicsLessons} from "../src/features/presentations/data/word-basics.ts";
+import {WORD_VISUAL_GUIDE_COUNT} from "../src/features/presentations/data/word-visual-guides.ts";
 import {excelBasicsLessons} from "../src/features/presentations/data/excel-basics.ts";
 import {fileExplorerLesson} from "../src/features/presentations/data/file-explorer.ts";
 import {layoutGallery} from "../src/features/presentations/data/layout-gallery.ts";
@@ -67,4 +68,35 @@ test("spreadsheet lessons include real formulas and locale separator guidance",(
     assert.match(text,new RegExp(name+"\\("),name);
   assert.match(text,/dấu phẩy|dấu ;|dấu ,/i);
   assert.match(text,/101000/);
+});
+
+test("Word now includes 49 detailed UI mock walkthroughs while Excel remains unchanged",()=>{
+  assert.equal(WORD_VISUAL_GUIDE_COUNT,49);
+  const demos=wordBasicsLessons.flatMap(m=>m.slides.filter(slide=>slide.blocks.some(block=>block.type==="wordWorkspace")));
+  assert.equal(demos.length,49);
+  assert.equal(wordBasicsLessons.reduce((n,m)=>n+m.slides.length,0),124);
+  assert.equal(excelBasicsLessons.reduce((n,m)=>n+m.slides.length,0),96);
+  for(const slide of demos){
+    assert.match(slide.eyebrow,/MÔ PHỎNG/);
+    const block=slide.blocks[0];
+    assert.ok(["editing","open","save","font","paragraph","styles","lists","layout","break","section","header","pageNumber","table","image","wrap","toc","review","print","export"].includes(block.scene),slide.id);
+    assert.ok(block.steps.length>=3,slide.id);
+    assert.ok(block.steps.every(step=>step.title.length>8&&step.detail.length>=25&&step.tab&&step.command),slide.id);
+    assert.ok(block.tip?.length>=30,slide.id);
+  }
+});
+test("Word UI mocks are interactive and responsive with high-contrast brand colors",()=>{
+  const jsx=readFileSync("src/features/presentations/components/word-workspace.tsx","utf8");
+  const css=readFileSync("src/features/presentations/word-workspace.css","utf8");
+  const renderer=readFileSync("src/features/presentations/components/blocks.tsx","utf8");
+  const route=readFileSync("src/app/(presentation)/cong-cu/trinh-chieu/[lessonId]/page.tsx","utf8");
+  assert.match(jsx,/data-word-workspace/);
+  assert.match(jsx,/aria-live="polite"/);
+  assert.match(jsx,/role="tablist"/);
+  assert.match(jsx,/onClick=\{\(\)=>go\(index\+1\)\}/);
+  assert.match(css,/@media\(max-width:767px\)/);
+  assert.match(css,/#005bfd/i);
+  assert.match(css,/xcn-word-paper/);
+  assert.match(renderer,/case "wordWorkspace"/);
+  assert.match(route,/word-workspace.css/);
 });
