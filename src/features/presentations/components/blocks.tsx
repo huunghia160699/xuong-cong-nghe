@@ -8,9 +8,9 @@ import {
 } from "lucide-react";
 import type { PresentationBlock } from "../types";
 
-const panel = "h-full min-w-0 border border-zinc-200 bg-white p-5 sm:p-6";
+const panel = "xcn-slide-panel h-full min-w-0 border border-zinc-200 bg-white p-5 sm:p-6 lg:p-7";
 const eyebrow = "text-[11px] font-bold uppercase tracking-[.15em] text-zinc-500";
-const heading = "text-xl font-semibold tracking-tight text-zinc-900 sm:text-2xl";
+const heading = "xcn-slide-block-title text-2xl font-semibold tracking-tight text-zinc-900 sm:text-3xl";
 
 function FolderTree({nodes, depth = 0}: {nodes: any[]; depth?: number}) {
   return <ul className={depth ? "ml-5 border-l border-zinc-200 pl-3" : "space-y-1"}>
@@ -110,7 +110,7 @@ function QuizChoices({block}: {block: PresentationBlock}) {
             (correct ? "border-ink" : wrong ? "border-red-400" : "border-zinc-200")}>
             {String.fromCharCode(65 + i)}
           </span>
-          <span className="flex-1 text-sm font-semibold leading-6 sm:text-base">{answer}</span>
+          <span className="xcn-slide-choice flex-1 text-base font-semibold leading-snug sm:text-xl">{answer}</span>
           {correct && <CheckCircle2 size={20}/>}
           {wrong && <X size={20}/>}
         </button>;
@@ -133,28 +133,28 @@ export function PresentationBlockView({block}: {block: PresentationBlock}) {
     case "heroStats":
       return <div className="grid h-full grid-cols-2 gap-3 lg:grid-cols-4">
         {(block.items ?? []).map(([value,label]: [string,string],i:number)=><div key={i} className="border-t border-current/20 pt-3">
-          <strong className="block text-2xl font-black tracking-tight sm:text-4xl">{value}</strong>
-          <span className="mt-2 block text-xs leading-5 opacity-70">{label}</span>
+          <strong className="block text-3xl font-black tracking-tight sm:text-5xl">{value}</strong>
+          <span className="mt-2 block text-sm leading-snug opacity-80 sm:text-lg">{label}</span>
         </div>)}
       </div>;
     case "card":
       return <article className={panel}>
         <span className={eyebrow}>{block.number ?? "KIẾN THỨC"}</span>
         <h3 className={"mt-4 " + heading}>{block.title}</h3>
-        <p className="mt-3 text-sm leading-7 text-zinc-600 sm:text-base">{block.text}</p>
+        <p className="xcn-slide-body mt-3 text-base leading-relaxed text-zinc-700 sm:text-lg">{block.text}</p>
       </article>;
     case "definition":
       return <article className={panel}>
         <span className={eyebrow}>{block.label ?? "KHÁI NIỆM"}</span>
         <h3 className={"mt-4 " + heading}>{block.title}</h3>
-        <p className="mt-3 text-sm leading-7 text-zinc-600 sm:text-base">{block.text}</p>
+        <p className="xcn-slide-body mt-3 text-base leading-relaxed text-zinc-700 sm:text-lg">{block.text}</p>
         {block.example && <div className="mt-5 break-all bg-zinc-100 p-3 font-mono text-sm font-medium">{block.example}</div>}
       </article>;
     case "fileType":
       return <div className={panel+" flex flex-col gap-3"}>
         <span className="grid h-14 w-20 place-items-center bg-ink text-xl font-black text-lime">{block.extension}</span>
-        <strong className="mt-auto break-all text-sm sm:text-lg">{block.name}</strong>
-        <span className="text-sm text-zinc-500">{block.caption}</span>
+        <strong className="xcn-slide-file-name mt-auto break-all text-base sm:text-xl">{block.name}</strong>
+        <span className="text-base text-zinc-600 sm:text-lg">{block.caption}</span>
       </div>;
     case "filename":
       return <div className={panel+" flex flex-col items-center justify-center"}>
@@ -164,8 +164,8 @@ export function PresentationBlockView({block}: {block: PresentationBlock}) {
     case "stack":
       return <div className="flex h-full flex-col justify-center divide-y divide-zinc-200 border border-zinc-200 bg-white px-5">
         {(block.items ?? []).map((child:PresentationBlock,i:number)=><div key={i} className="py-3">
-          <strong className="text-sm font-semibold sm:text-lg">{child.title}</strong>
-          {child.text && <p className="mt-2 text-sm leading-6 text-zinc-600">{child.text}</p>}
+          <strong className="xcn-slide-stack-title text-lg font-semibold sm:text-2xl">{child.title}</strong>
+          {child.text && <p className="xcn-slide-stack-text mt-2 text-base leading-snug text-zinc-600 sm:text-lg">{child.text}</p>}
         </div>)}
       </div>;
     case "notice":
@@ -178,7 +178,7 @@ export function PresentationBlockView({block}: {block: PresentationBlock}) {
       return <div className={panel+" flex items-center gap-4"}>
         <kbd className="min-w-24 border border-zinc-200 bg-zinc-100 px-3 py-3 text-center font-mono text-sm font-bold sm:text-lg">{block.combo}</kbd>
         <div className="min-w-0">
-          <strong className="text-sm font-semibold sm:text-base">{block.label}</strong>
+          <strong className="xcn-slide-shortcut-label text-base font-semibold sm:text-xl">{block.label}</strong>
           {block.detail && <p className="mt-1 text-sm text-zinc-500">{block.detail}</p>}
         </div>
       </div>;
@@ -202,8 +202,8 @@ export function PresentationBlockView({block}: {block: PresentationBlock}) {
       return <div className="grid h-full gap-2 sm:grid-cols-2">
         {(block.items ?? []).map((step:{title:string;text:string},i:number)=><div key={i} className="flex items-start gap-3 border border-zinc-200 bg-white p-4">
           <span className="grid h-9 w-9 shrink-0 place-items-center bg-ink text-sm font-bold text-lime">{String(i+1).padStart(2,"0")}</span>
-          <div><strong className="text-sm font-semibold sm:text-base">{step.title}</strong>
-            <p className="mt-1 text-xs leading-5 text-zinc-600 sm:text-sm">{step.text}</p></div>
+          <div><strong className="xcn-slide-step-title text-base font-semibold sm:text-xl">{step.title}</strong>
+            <p className="xcn-slide-step-text mt-2 text-base leading-snug text-zinc-600 sm:text-lg">{step.text}</p></div>
         </div>)}
       </div>;
     case "explorer":
