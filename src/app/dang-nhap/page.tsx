@@ -6,9 +6,9 @@ import { isLiveMode, safeNextPath } from "@/lib/supabase/config";
 export default async function SignInPage({ searchParams }: { searchParams: Promise<{ error?: string; notice?: string; next?: string }> }) {
   if (!isLiveMode()) redirect("/student");
   const params = await searchParams;
-  return <main className="mx-auto max-w-md px-5 py-20">
+  return <main className="xcn-ui mx-auto max-w-lg px-[var(--xcn-page-gutter)] py-14">
     <p className="text-xs font-semibold uppercase tracking-[.14em] text-zinc-500">Không gian học tập</p>
-    <h1 className="mt-3 text-3xl font-bold">Đăng nhập</h1>
+    <h1 className="mt-3 text-4xl font-bold">Đăng nhập</h1>
     <p className="mt-3 text-sm text-zinc-600">Sử dụng tài khoản để đồng bộ bài học và kết quả trắc nghiệm.</p>
     {params.error && <p role="alert" className="mt-5 rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700">
       {params.error === "session" ? "Phiên đăng nhập đã hết hạn." : params.error === "callback" ? "Liên kết xác thực không hợp lệ hoặc đã hết hạn." : "Email hoặc mật khẩu không chính xác."}

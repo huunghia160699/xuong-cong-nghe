@@ -63,7 +63,7 @@ export function LiveQuiz() {
     <p className="mt-3 text-sm text-zinc-500">Hãy kiểm tra Supabase, migration và dữ liệu mẫu của bài quiz.</p></Card>;
   if (!quiz || !question) return <div className="mx-auto max-w-3xl p-8 text-sm text-zinc-600">Đang tải trắc nghiệm đã xuất bản...</div>;
 
-  return <div className="mx-auto max-w-5xl">
+  return <div className="w-full">
     <div className="flex flex-wrap justify-between gap-3">
       <Link href="/student" className="inline-flex items-center gap-2 text-sm text-zinc-500"><ArrowLeft size={16} /> Dashboard</Link>
       <Badge>Đã đăng nhập • chấm điểm tại server</Badge>

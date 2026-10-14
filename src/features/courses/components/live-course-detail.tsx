@@ -13,7 +13,7 @@ export async function LiveCourseDetail({ slug }: { slug: string }) {
   const firstExcelLesson = course.slug === "excel-can-ban" ? lessons.find((l) => getExcelLesson(l.slug)) : undefined;
   return <main>
     <section className="bg-ink text-white">
-      <div className="mx-auto max-w-7xl px-5 py-16 lg:px-8">
+      <div className="xcn-container py-12">
         <Link href="/khoa-hoc" className="inline-flex items-center gap-2 text-sm text-zinc-400 hover:text-white"><ArrowLeft size={17} /> Tất cả khóa học</Link>
         <Badge className="mt-8 block w-fit border-white/20 bg-white/5 text-white">{course.category} • {course.level}</Badge>
         <h1 className="mt-5 max-w-3xl text-4xl font-bold tracking-tight sm:text-5xl">{course.title}</h1>
@@ -23,7 +23,7 @@ export async function LiveCourseDetail({ slug }: { slug: string }) {
           className="mt-8 inline-flex h-12 items-center gap-2 rounded-full bg-lime px-6 text-sm font-semibold text-ink">Bắt đầu học <ArrowRight size={17} /></Link>}
       </div>
     </section>
-    <div className="mx-auto max-w-7xl px-5 py-16 lg:px-8">
+    <div className="xcn-container py-12">
       <h2 className="text-2xl font-semibold">Chương trình học</h2>
       {chapters.length === 0 && <Card className="mt-7 p-7 text-sm text-zinc-600">Khóa học đã được giới thiệu nhưng chưa có chương hoặc bài học được xuất bản.</Card>}
       <div className="mt-7 space-y-5">

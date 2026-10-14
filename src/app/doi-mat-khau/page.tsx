@@ -9,8 +9,8 @@ export default async function NewPasswordPage({ searchParams }: { searchParams: 
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect("/dang-nhap?error=session");
   const params = await searchParams;
-  return <main className="mx-auto max-w-md px-5 py-20">
-    <h1 className="text-3xl font-bold">Đặt lại mật khẩu</h1>
+  return <main className="xcn-ui mx-auto max-w-lg px-[var(--xcn-page-gutter)] py-14">
+    <h1 className="text-4xl font-bold">Đặt lại mật khẩu</h1>
     {params.error && <p role="alert" className="mt-5 text-sm text-red-700">Mật khẩu phải có ít nhất 8 ký tự và hai lần nhập phải trùng nhau.</p>}
     <form action={changePasswordAction} className="mt-7 space-y-5">
       <label className="block text-sm font-medium">Mật khẩu mới<input name="password" type="password" minLength={8} autoComplete="new-password" required className="mt-2 h-11 w-full rounded-lg border border-zinc-300 px-3" /></label>

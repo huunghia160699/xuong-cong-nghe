@@ -27,7 +27,7 @@ export function LiveLessonWorkspace({ lesson, completed }: { lesson: DemoLesson;
     });
   }
 
-  return <div className="mx-auto max-w-4xl">
+  return <div className="w-full">
     <Link href="/khoa-hoc/excel-can-ban" className="inline-flex items-center gap-2 text-sm text-zinc-500"><ArrowLeft size={17} /> Nội dung khóa học</Link>
     <div className="mt-6 flex flex-wrap items-center justify-between gap-3"><Badge>Đã đăng nhập • đồng bộ Supabase</Badge><Badge>{count}/{excelLessons.length} bài hoàn thành</Badge></div>
     <Card className="mt-6 p-6 sm:p-10">

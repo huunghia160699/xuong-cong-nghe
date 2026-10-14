@@ -17,7 +17,7 @@ export async function LiveQuizResult({ attemptId }: { attemptId: string }) {
   const { data, error } = await supabase.rpc("get_quiz_result", { p_attempt_id: attemptId });
   if (error || !data) notFound();
   const result = data as Result;
-  return <div className="mx-auto max-w-4xl">
+  return <div className="w-full">
     <Badge>Đã chấm điểm tại server</Badge>
     <Card className="mt-5 p-7 sm:p-10">
       <h1 className="text-3xl font-bold">Kết quả bài trắc nghiệm</h1>

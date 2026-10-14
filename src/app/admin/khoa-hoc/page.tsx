@@ -9,7 +9,7 @@ import { createSupabaseServerClient } from "@/lib/supabase/server";
 const labels: Record<string,string> = { draft:"Bản nháp", published:"Đã xuất bản", archived:"Lưu trữ" };
 
 export default async function AdminCourses({ searchParams }: { searchParams: Promise<{error?:string; notice?:string}> }) {
-  if (!isLiveMode()) return <main className="mx-auto max-w-3xl p-7"><h1 className="text-2xl font-bold">Quản lý khóa học</h1>
+  if (!isLiveMode()) return <main className="mx-auto max-w-3xl p-5"><h1 className="text-2xl font-bold">Quản lý khóa học</h1>
     <p className="mt-4 text-sm text-zinc-600">Chức năng tạo và xuất bản khóa học yêu cầu cấu hình Supabase. Chế độ hiện tại chỉ trình diễn giao diện.</p>
     <Link href="/admin" className="mt-5 inline-block text-sm underline">Về tổng quan</Link></main>;
   const params = await searchParams;
@@ -19,15 +19,15 @@ export default async function AdminCourses({ searchParams }: { searchParams: Pro
   const { data: courses, error } = await supabase.from("courses")
     .select("id,slug,title,category,status,created_at").order("created_at", { ascending:false });
   if (error) throw new Error("Không thể tải khóa học. Kiểm tra chính sách RLS.");
-  return <div className="mx-auto max-w-6xl">
+  return <div className="w-full">
     <div className="flex items-center justify-between gap-4"><div><Badge>Quản trị nội dung</Badge>
-      <h1 className="mt-3 text-3xl font-bold">Khóa học</h1>
+      <h1 className="mt-3 text-4xl font-bold">Khóa học</h1>
       <p className="mt-2 text-sm text-zinc-600">Tạo và thay đổi trạng thái xuất bản của khóa học.</p></div>
       <Link href="/admin" className="text-sm font-medium underline">Tổng quan</Link>
     </div>
     {params.error && <p role="alert" className="mt-5 rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-700">Không thể thực hiện yêu cầu. Kiểm tra thông tin, slug trùng hoặc quyền quản trị.</p>}
     {params.notice && <p role="status" className="mt-5 rounded-lg border border-zinc-200 bg-white p-4 text-sm">Thay đổi đã được lưu.</p>}
-    <Card className="mt-7 p-6"><h2 className="text-lg font-semibold">Tạo khóa học mới</h2>
+    <Card className="mt-6 p-5"><h2 className="text-lg font-semibold">Tạo khóa học mới</h2>
       <form action={createCourseAction} className="mt-5 grid gap-4 md:grid-cols-[1fr_1fr_1fr_auto] md:items-end">
         <label className="text-sm font-medium">Tên khóa học<input name="title" minLength={3} maxLength={150} required className="mt-2 h-11 w-full rounded-lg border border-zinc-300 px-3" /></label>
         <label className="text-sm font-medium">Slug<input name="slug" required pattern="[a-z0-9]+(-[a-z0-9]+)*" placeholder="excel-nang-cao" className="mt-2 h-11 w-full rounded-lg border border-zinc-300 px-3" /></label>

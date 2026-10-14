@@ -31,7 +31,7 @@ export default function DemoQuiz() {
     router.push(`/student/quiz/ket-qua/${attemptId}`);
   }
 
-  return <div className="mx-auto max-w-5xl">
+  return <div className="w-full">
     <div className="flex flex-wrap items-center justify-between gap-3">
       <Link href="/student" className="inline-flex items-center gap-2 text-sm font-medium text-zinc-500 hover:text-ink"><ArrowLeft size={16} /> Trở về Dashboard</Link>
       <div className="flex items-center gap-2"><Badge>Excel căn bản</Badge><Badge>Chế độ học thử</Badge></div>

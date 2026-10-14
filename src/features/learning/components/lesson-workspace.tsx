@@ -18,16 +18,16 @@ export function LessonWorkspace({ lesson }: { lesson: DemoLesson }) {
   const previous = getPreviousExcelLesson(lesson.slug);
   const canContinue = ready && completed;
 
-  return <div className="mx-auto max-w-5xl">
+  return <div className="w-full">
     <div className="flex flex-wrap items-center justify-between gap-3">
       <Link href="/khoa-hoc/excel-can-ban" className="inline-flex items-center gap-2 text-sm text-zinc-500 hover:text-ink">
         <ArrowLeft size={16} /> Nội dung khóa học
       </Link>
       <Badge>Chế độ học thử • lưu trên thiết bị</Badge>
     </div>
-    <div className="mt-7 grid gap-6 lg:grid-cols-[minmax(0,1fr)_250px]">
+    <div className="mt-6 grid gap-5 lg:grid-cols-[minmax(0,1fr)_250px]">
       <div className="space-y-6">
-        <Card className="p-6 sm:p-9">
+        <Card className="p-5 sm:p-7">
           <div className="flex items-center justify-between gap-4">
             <span className="text-xs font-semibold uppercase tracking-[.14em] text-zinc-500">Chương {lesson.chapter + 1} • {lesson.minutes} phút</span>
             {completed && <span className="inline-flex items-center gap-1 text-xs font-semibold text-emerald-700"><CheckCircle2 size={16} /> Đã hoàn thành</span>}

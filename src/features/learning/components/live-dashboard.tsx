@@ -15,11 +15,11 @@ export function LiveDashboard({ name, completed, attempts }: {
   const progress = Math.round(100 * completedCount / excelLessons.length);
   const submitted = attempts.filter((a) => a.score != null && a.submitted_at);
   const average = submitted.length ? (submitted.reduce((sum, a) => sum + Number(a.score), 0) / submitted.length / 10).toLocaleString("vi-VN", { maximumFractionDigits: 1 }) : "—";
-  return <div className="mx-auto max-w-[1350px]">
+  return <div className="w-full">
     <Badge>Tài khoản đã đăng nhập • Supabase</Badge>
-    <h1 className="mt-4 text-3xl font-bold">Không gian học tập</h1>
+    <h1 className="mt-3 text-4xl font-bold">Không gian học tập</h1>
     <p className="mt-2 text-sm text-zinc-600">Xin chào {name}. Dữ liệu của bạn được lưu trong tài khoản và đồng bộ khi đăng nhập.</p>
-    <div className="mt-8 grid gap-4 sm:grid-cols-3">
+    <div className="mt-6 grid gap-4 sm:grid-cols-3">
       {[{label:"Bài đã hoàn thành",value:`${completedCount}/${excelLessons.length}`},
         {label:"Điểm quiz trung bình",value:average === "—" ? "—" : `${average}/10`},
         {label:"Lượt nộp quiz",value:String(submitted.length)}].map((stat) =>

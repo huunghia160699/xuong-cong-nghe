@@ -12,3 +12,23 @@ h1, h2, h3, h4 { font-family: var(--font-display), sans-serif; }
 .grid-paper { background-image: linear-gradient(to right, rgba(255,255,255,.07) 1px, transparent 1px), linear-gradient(to bottom, rgba(255,255,255,.07) 1px, transparent 1px); background-size: 28px 28px; }
 .dot-paper { background-image: radial-gradient(#c5c5bf 1px, transparent 1px); background-size: 18px 18px; }
 .number-outline { -webkit-text-stroke: 1px rgba(255,255,255,.25); color: transparent; }
+
+/* One horizontal rhythm for header, pages and footer. Presentation is isolated. */
+:root {
+  --xcn-content-max: 1680px;
+  --xcn-page-gutter: clamp(20px, 2.5vw, 42px);
+  --xcn-section-space: clamp(48px, 4.6vw, 74px);
+}
+.xcn-container {
+  width: 100%;
+  max-width: var(--xcn-content-max);
+  margin-inline: auto;
+  padding-inline: var(--xcn-page-gutter);
+}
+.xcn-ui .text-xs { font-size: .8125rem; }
+.xcn-ui .text-sm { font-size: .9375rem; }
+.xcn-app-header { padding-inline: var(--xcn-page-gutter); }
+.xcn-app-main { padding: clamp(18px, 2.1vw, 30px) var(--xcn-page-gutter); }
+@media (max-width: 640px) {
+  :root { --xcn-page-gutter: 18px; --xcn-section-space: 46px; }
+}
