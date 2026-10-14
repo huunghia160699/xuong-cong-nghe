@@ -1,4 +1,4 @@
-import {B, moduleLesson} from "./basics-builder";
+import {B, moduleLesson} from "./basics-builder.ts";
 
 /** Word fundamentals, organized by durable topics instead of class sessions. */
 export const wordBasicsLessons = [
