@@ -28,7 +28,7 @@ h1, h2, h3, h4 { font-family: var(--font-display), sans-serif; }
 .xcn-ui .text-xs { font-size: .8125rem; }
 .xcn-ui .text-sm { font-size: .9375rem; }
 .xcn-app-header { padding-inline: var(--xcn-page-gutter); }
-.xcn-app-main { padding: clamp(18px, 2.1vw, 30px) var(--xcn-page-gutter); }
+.xcn-app-main { padding: clamp(18px, 2.9dvh, 30px) var(--xcn-page-gutter); }
 @media (max-width: 640px) {
   :root { --xcn-page-gutter: 18px; --xcn-section-space: 46px; }
 }
