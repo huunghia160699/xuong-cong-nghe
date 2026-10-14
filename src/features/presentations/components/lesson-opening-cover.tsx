@@ -14,13 +14,13 @@ import type { PresentationBlock } from "../types";
 export function LessonOpeningCover({block}: {block: PresentationBlock}) {
   const goals = (block.goals ?? []) as {verb: string; detail: string}[];
   return <div className="xcn-lesson-opening">
-    <div className="xcn-lesson-opening-copy">
-      <div className="xcn-lesson-opening-intro">
+    <div className="xcn-lesson-opening-intro">
         <p className="xcn-lesson-opening-eyebrow">{block.eyebrow ?? "BÀI HỌC"}</p>
         <h1 className="xcn-lesson-opening-title">
           {block.heading ?? "Làm quen với File Explorer"}
         </h1>
-      </div>
+    </div>
+    <div className="xcn-lesson-opening-body">
       <div className="xcn-lesson-opening-goals">
         <h2>Học xong, em làm được gì?</h2>
         <ol className="xcn-lesson-opening-goals-list">
@@ -30,8 +30,7 @@ export function LessonOpeningCover({block}: {block: PresentationBlock}) {
           </li>)}
         </ol>
       </div>
-    </div>
-    <div className="xcn-lesson-opening-visual">
+      <div className="xcn-lesson-opening-visual">
       <div className="xcn-lesson-opening-app" role="img" aria-label="Minh họa File Explorer: ngăn điều hướng, thanh địa chỉ và các tệp Word, Excel, ảnh">
         <div className="xcn-explorer-titlebar">
           <FolderOpen size={28} strokeWidth={1.75} fill="#f9d66c" color="#ba8535" aria-hidden="true"/>
@@ -60,7 +59,6 @@ export function LessonOpeningCover({block}: {block: PresentationBlock}) {
         </div>
         <div className="xcn-explorer-status">4 mục　·　Documents / BAI_TAP</div>
       </div>
-
     </div>
   </div>;
 }
