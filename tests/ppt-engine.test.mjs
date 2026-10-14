@@ -7,7 +7,7 @@ test("29 slides and five quizzes remain unchanged",()=>{
  assert.equal(fileExplorerLesson.slides.length,29);
  assert.equal(fileExplorerLesson.slides.filter(s=>s.layout==="quiz").length,5);
  assert.equal(new Set(fileExplorerLesson.slides.map(s=>s.id)).size,29);
- assert.equal(fileExplorerLesson.slides[0].title,"Quản lý tệp và thư mục");
+ assert.equal(fileExplorerLesson.slides[0].title,"Làm quen với File Explorer");
 });
 test("15 showcase slide layouts remain separate from lessons",()=>{
  assert.equal(layoutGallery.slides.length,15);
@@ -16,7 +16,7 @@ test("15 showcase slide layouts remain separate from lessons",()=>{
  assert.equal(PRESENTATION_LAYOUTS.length,15);
 });
 test("content only uses supported reusable blocks",()=>{
- const allowed=new Set(["heroStats","card","definition","fileType","filename","item","stack","notice","shortcut","keyCombo","folderTree","code","steps","explorer","fileTransfer","quiz","formula","excelTable","document","image","compare","hotspot"]);
+ const allowed=new Set(["lessonCover","heroStats","card","definition","fileType","filename","item","stack","notice","shortcut","keyCombo","folderTree","code","steps","explorer","fileTransfer","quiz","formula","excelTable","document","image","compare","hotspot"]);
  for(const lesson of [fileExplorerLesson,layoutGallery]) for(const slide of lesson.slides) {
   assert.ok(PRESENTATION_LAYOUTS.includes(slide.layout),slide.id);
   for(const block of slide.blocks) assert.ok(allowed.has(block.type),slide.id+":"+block.type);
@@ -49,4 +49,21 @@ test("visible slide information follows the 5±2 density guide",()=>{
  assert.equal(shortcuts.blocks.length,6);
  assert.match(shortcuts.notes,/Ctrl \+ Z/);
  assert.match(shortcuts.notes,/Ctrl \+ S/);
+});
+
+test("opening cover explains why File Explorer matters without decorative statistics",()=>{
+ const cover=fileExplorerLesson.slides[0];
+ assert.equal(cover.layout,"cover");
+ assert.equal(cover.blocks.length,1);
+ const visual=cover.blocks[0];
+ assert.equal(visual.type,"lessonCover");
+ assert.equal(visual.heading,"Làm quen với File Explorer");
+ assert.equal(visual.goals.length,3);
+ assert.deepEqual(visual.goals.map(goal=>goal.verb),["Nhận diện","Thao tác","Tổ chức"]);
+ assert.match(visual.question,/tìm lại/);
+ assert.ok(!cover.blocks.some(block=>block.type==="heroStats"));
+});
+test("the 29 existing lesson slides keep their original educational subtitles in data",()=>{
+ const warmUp=fileExplorerLesson.slides.find(slide=>slide.id==="warm-up");
+ assert.equal(warmUp.subtitle,"Một tình huống thường gặp khi học và làm việc.");
 });
