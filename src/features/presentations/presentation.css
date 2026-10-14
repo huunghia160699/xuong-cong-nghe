@@ -1,18 +1,30 @@
+/* Single full-viewport canvas; the slide background reaches all four screen edges. */
 .xcn-presentation-viewport {
   height: 100vh;
   height: 100dvh;
+  width: 100%;
+  isolation: isolate;
   overscroll-behavior: none;
 }
 .xcn-presentation-stage {
+  position: absolute;
+  inset: 0;
+  width: 100%;
   height: 100%;
-  min-height: 0;
-  grid-template-rows: minmax(0, 1fr);
-  /* Controls float over the canvas; the slide occupies 100% of the remaining height. */
-  padding: clamp(60px, 8dvh, 86px) clamp(46px, 5.5vw, 74px) clamp(70px, 11dvh, 96px) clamp(8px, 1.5vw, 24px);
+  padding: 0;
+  margin: 0;
 }
-.xcn-presentation-stage > :first-child { height: 100%; min-height: 0; }
-.xcn-presentation-notes { height: 100%; min-height: 0; }
+.xcn-presentation-frame {
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+  border: 0;
+  padding: 0;
+  margin: 0;
+}
 .xcn-slide {
+  width: 100%;
   height: 100%;
   min-height: 0;
   scrollbar-width: thin;
@@ -71,33 +83,16 @@
 }
 :fullscreen { background: #f1f1ec; }
 
-/* On smaller viewports, notes overlay instead of reducing the slide's height. */
-@media (max-width: 1279px) {
-  .xcn-presentation-notes {
-    position: absolute;
-    z-index: 25;
-    top: clamp(56px, 8dvh, 80px);
-    right: clamp(8px, 1.5vw, 24px);
-    bottom: clamp(64px, 10dvh, 88px);
-    width: min(86vw, 370px);
-    height: auto;
-    box-shadow: 0 12px 32px rgba(0,0,0,.16);
-  }
-}
-@media (max-height: 540px) {
-  .xcn-presentation-stage { padding-top: 51px; padding-bottom: 58px; }
-  .xcn-slide .xcn-presentation-grid { gap: .5rem; }
-}
 
-/* Shared XCN ink/white/lime presentation chrome; reference-inspired layout,
-   not a second site navigation/header/footer. */
+/* One dot per slide: rail is OVER the slide at its right-hand edge,
+   so it does not push or shrink the slide. */
 .xcn-presentation-rail {
   position: absolute;
-  z-index: 35;
-  top: clamp(68px, 9dvh, 100px);
-  right: clamp(8px, 1.5vw, 24px);
-  bottom: clamp(92px, 13dvh, 128px);
-  width: 28px;
+  z-index: 30;
+  top: clamp(22px, 7dvh, 70px);
+  right: clamp(5px, 1.1vw, 18px);
+  bottom: clamp(76px, 12dvh, 110px);
+  width: 25px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -120,18 +115,19 @@
   height: 7px;
   flex: 0 0 auto;
   border-radius: 999px;
-  background: #a1a1aa;
+  background: #85858a;
+  box-shadow: 0 0 1px #fafaf8;
   transition: background-color .15s ease, width .15s ease, height .15s ease;
 }
 .xcn-presentation-rail-button:hover .xcn-presentation-rail-dot {
-  background: #3f3f46;
+  background: #151513;
   width: 10px;
   height: 10px;
 }
 .xcn-presentation-rail-button.is-active .xcn-presentation-rail-dot,
 .xcn-presentation-rail-button.is-active:hover .xcn-presentation-rail-dot {
-  width: 8px;
-  height: clamp(13px, 2.7dvh, 26px);
+  width: 9px;
+  height: clamp(12px, 2.7dvh, 26px);
   background: #151513;
   box-shadow: inset 0 0 0 2px #c8f13b;
 }
@@ -140,40 +136,85 @@
   outline-offset: -1px;
   border-radius: 999px;
 }
-.xcn-presentation-pill {
+/* Exactly TWO floating pills, pinned to the left and right bottom corners. */
+.xcn-presentation-toolbar {
   position: absolute;
   z-index: 45;
-  bottom: clamp(12px, 2dvh, 22px);
-  left: 50%;
-  transform: translateX(-50%);
-  width: max-content;
-  max-width: calc(100vw - 24px);
+  bottom: max(10px, env(safe-area-inset-bottom));
+  left: max(10px, env(safe-area-inset-left));
+  right: max(10px, env(safe-area-inset-right));
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 8px;
+  pointer-events: none;
+}
+.xcn-presentation-context,
+.xcn-presentation-pill {
+  position: static;
+  pointer-events: auto;
+  transform: none;
+  min-height: 52px;
+  min-width: 0;
 }
 .xcn-presentation-context {
-  position: absolute;
-  z-index: 38;
-  left: clamp(10px, 1.5vw, 24px);
-  bottom: clamp(12px, 2dvh, 22px);
-  max-width: min(33vw, 410px);
+  flex: 0 1 520px;
+  max-width: min(52vw, 520px);
 }
-@media (max-width: 1199px) {
-  .xcn-presentation-context {
-    bottom: clamp(72px, 12dvh, 86px);
-    max-width: calc(100vw - 68px);
+.xcn-presentation-pill {
+  flex: 0 0 auto;
+  max-width: 100%;
+}
+.xcn-presentation-lesson-label {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+.xcn-presentation-action {
+  width: 38px;
+  height: 38px;
+}
+.xcn-presentation-page-count { min-width: 72px; }
+/* Notes are an optional overlay, not a third toolbar or a sidebar that
+   reduces the slide dimensions. */
+.xcn-presentation-notes {
+  position: absolute;
+  z-index: 37;
+  top: clamp(20px, 5dvh, 50px);
+  right: clamp(40px, 5vw, 78px);
+  bottom: clamp(74px, 13dvh, 110px);
+  width: min(350px, calc(100vw - 90px));
+  height: auto;
+  min-height: 0;
+  overscroll-behavior: contain;
+}
+@media (max-width: 767px) {
+  .xcn-presentation-toolbar { gap: 5px; }
+  .xcn-presentation-context { max-width: calc(100% - 158px); min-height: 44px; }
+  .xcn-presentation-context,
+  .xcn-presentation-pill { padding: 4px; min-height: 44px; }
+  .xcn-presentation-action { width: 29px; height: 32px; }
+  .xcn-presentation-page-count { min-width: 45px; padding: 0 1px; font-size: 12px; }
+  .xcn-presentation-lesson-label { padding: 0 1px; }
+  .xcn-presentation-rail { right: 4px; width: 23px; }
+}
+@media (max-width: 420px) {
+  .xcn-presentation-toolbar {
+    left: max(5px, env(safe-area-inset-left));
+    right: max(5px, env(safe-area-inset-right));
+    gap: 4px;
   }
-  .xcn-presentation-stage {
-    padding-bottom: clamp(108px, 20dvh, 140px);
-  }
+  .xcn-presentation-context { max-width: calc(100% - 150px); }
+  .xcn-presentation-context,
+  .xcn-presentation-pill { gap: 0; }
+  .xcn-presentation-action { width: 27px; height: 30px; }
+  .xcn-presentation-page-count { min-width: 44px; }
 }
 @media (max-height: 540px) {
-  .xcn-presentation-rail {
-    top: 57px;
-    bottom: 78px;
-  }
-  .xcn-presentation-pill { bottom: 5px; }
-  .xcn-presentation-context { bottom: 62px; }
-  .xcn-presentation-stage { padding-bottom: 116px; }
+  .xcn-presentation-rail { top: 12px; bottom: 60px; }
+  .xcn-presentation-toolbar { bottom: 5px; }
+  .xcn-presentation-notes { top: 8px; bottom: 57px; }
 }
+:fullscreen { background: #fafaf8; }
 @media (prefers-reduced-motion: reduce) {
   .xcn-presentation-rail-dot { transition: none; }
 }
