@@ -13,7 +13,7 @@ export default async function CourseDetailPage({ params }: { params: Promise<{ s
   if (isLiveMode()) return <LiveCourseDetail slug={slug} />;
   const selectedCourse = courses.find((course) => course.slug === slug);
   if (!selectedCourse) notFound();
-  if (slug !== "excel-can-ban") return <main className="mx-auto max-w-4xl px-5 py-20">
+  if (slug !== "excel-can-ban") return <main className="xcn-container py-14">
     <Badge>Khóa học dự kiến</Badge>
     <h1 className="mt-5 text-4xl font-bold">{selectedCourse.title}</h1>
     <p className="mt-5 text-sm leading-7 text-zinc-600">Nội dung khóa học này đang được phát triển. Hiện có thể học thử trọn lộ trình Excel căn bản và luyện trắc nghiệm.</p>
@@ -24,9 +24,9 @@ export default async function CourseDetailPage({ params }: { params: Promise<{ s
 
   return <main>
     <section className="bg-ink text-white"><div className="grid-paper">
-      <div className="mx-auto max-w-7xl px-5 py-16 lg:px-8">
+      <div className="xcn-container py-12">
         <Link href="/" className="inline-flex items-center gap-2 text-sm text-zinc-400 hover:text-white"><ArrowLeft size={16} /> Trang chủ / Khóa học</Link>
-        <div className="mt-10 grid gap-12 lg:grid-cols-[1.2fr_.8fr]">
+        <div className="mt-8 grid gap-9 lg:grid-cols-[1.2fr_.8fr]">
           <div>
             <Badge className="border-white/20 bg-white/5 text-zinc-300">{c.category} • {c.level}</Badge>
             <h1 className="mt-6 max-w-3xl text-5xl font-bold tracking-tight sm:text-6xl">{c.title}</h1>
@@ -46,7 +46,7 @@ export default async function CourseDetailPage({ params }: { params: Promise<{ s
         </div>
       </div>
     </div></section>
-    <section className="mx-auto grid max-w-7xl gap-12 px-5 py-20 lg:grid-cols-[1.25fr_.75fr] lg:px-8">
+    <section className="xcn-container grid gap-8 py-14 lg:grid-cols-[1.25fr_.75fr]">
       <div>
         <h2 className="text-3xl font-bold">Nội dung khóa học</h2>
         <p className="mt-3 text-sm text-zinc-500">3 chương • {excelLessons.length} bài học • chọn một bài để mở</p>

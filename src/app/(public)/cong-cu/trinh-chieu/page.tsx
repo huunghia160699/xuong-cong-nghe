@@ -12,11 +12,11 @@ export default function PresentationLibraryPage() {
   const lessons = allPresentationLessons.filter(entry => entry.lesson.kind !== "showcase");
   const examples = allPresentationLessons.filter(entry => entry.lesson.kind === "showcase");
   return <main className="min-h-screen bg-paper text-ink">
-    <div className="mx-auto max-w-7xl px-5 py-14 lg:px-8 lg:py-20">
+    <div className="xcn-container py-12 lg:py-16">
       <Link href="/cong-cu" className="inline-flex items-center gap-2 text-sm font-medium text-zinc-600 hover:text-ink">
         <ArrowLeft size={16}/> Tất cả công cụ
       </Link>
-      <div className="mt-10 grid gap-10 border-b border-zinc-200 pb-12 lg:grid-cols-[1fr_340px] lg:items-end">
+      <div className="mt-7 grid gap-8 border-b border-zinc-200 pb-8 lg:grid-cols-[1fr_340px] lg:items-end">
         <div>
           <span className="text-xs font-bold uppercase tracking-[.18em] text-zinc-500">CÔNG CỤ / TRÌNH CHIẾU THEO CHỦ ĐỀ</span>
           <h1 className="mt-5 max-w-3xl text-4xl font-bold leading-tight tracking-[-.055em] sm:text-6xl">Thư viện trình chiếu.</h1>
@@ -35,7 +35,7 @@ export default function PresentationLibraryPage() {
             </div>)}
         </div>
       </div>
-      <section className="mt-12">
+      <section className="mt-9">
         <div className="flex flex-wrap items-end justify-between gap-4">
           <div>
             <p className="text-xs font-bold uppercase tracking-widest text-zinc-500">CÁC PHẦN NỘI DUNG</p>
@@ -45,7 +45,7 @@ export default function PresentationLibraryPage() {
         </div>
         <div className="mt-6 grid gap-4 md:grid-cols-2">
           {lessons.map(({course,lesson})=><Link key={lesson.id} href={"/cong-cu/trinh-chieu/"+lesson.id}
-            className="group flex min-h-64 flex-col border border-zinc-200 bg-white p-7 transition hover:border-ink hover:shadow-sm">
+            className="group flex min-h-56 flex-col border border-zinc-200 bg-white p-5 transition hover:border-ink hover:shadow-sm">
             <div className="flex items-start justify-between gap-3">
               <Presentation size={26}/>
               
@@ -60,7 +60,7 @@ export default function PresentationLibraryPage() {
           </Link>)}
         </div>
       </section>
-      <section className="mt-14 border-t border-zinc-200 pt-10">
+      <section className="mt-10 border-t border-zinc-200 pt-10">
         <div className="flex items-center gap-2"><Layers3 size={20}/><h2 className="text-2xl font-bold tracking-tight">Thư viện bố cục</h2></div>
         <p className="mt-3 max-w-2xl text-sm leading-7 text-zinc-600">Các mẫu này dùng để kiểm tra giao diện và biên soạn bài giảng mới. Không tính là phần học chính thức.</p>
         {examples.map(({lesson})=><Link key={lesson.id} href={"/cong-cu/trinh-chieu/"+lesson.id}

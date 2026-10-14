@@ -7,10 +7,10 @@ import { isLiveMode } from "@/lib/supabase/config";
 export function PublicHeader() {
   const live = isLiveMode();
   return <header className="sticky top-0 z-40 border-b border-zinc-200/80 bg-white/95">
-    <div className="mx-auto flex min-h-20 flex-wrap items-center justify-between gap-3 px-5 py-3 lg:px-8">
+    <div className="xcn-container flex min-h-[72px] flex-wrap items-center justify-between gap-3 py-2.5">
       <Brand />
-      <nav className="flex max-w-full flex-wrap items-center gap-3 lg:gap-7" aria-label="Điều hướng chính">
-        {publicNav.map((item) => <Link key={item.label} href={item.href} className="text-xs font-medium text-zinc-600 hover:text-ink sm:text-sm">{item.label}</Link>)}
+      <nav className="flex max-w-full flex-wrap items-center gap-3 lg:gap-5" aria-label="Điều hướng chính">
+        {publicNav.map((item) => <Link key={item.label} href={item.href} className="text-sm font-medium text-zinc-600 hover:text-ink">{item.label}</Link>)}
       </nav>
       <div className="flex items-center gap-2">
         {live && <Button href="/dang-nhap" variant="ghost" size="sm">Đăng nhập</Button>}

@@ -2,5 +2,5 @@ import { Footer } from "@/components/footer";
 import { PublicHeader } from "@/components/public-header";
 
 export default function PublicLayout({ children }: { children: React.ReactNode }) {
-  return <><PublicHeader />{children}<Footer /></>;
+  return <div className="xcn-ui"><PublicHeader />{children}<Footer /></div>;
 }
