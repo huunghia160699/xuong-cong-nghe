@@ -3,6 +3,7 @@ import { notFound, permanentRedirect } from "next/navigation";
 import { allPresentationLessons, canonicalPresentationLessonId, findPresentationLesson, legacyPresentationLessonIds } from "@/features/presentations/catalog";
 import { PresentationPlayer } from "@/features/presentations/components/player";
 import "@/features/presentations/presentation.css";
+import "@/features/presentations/word-workspace.css";
 
 export function generateStaticParams() {
   return [...new Set([...allPresentationLessons.map(record=>record.lesson.id),...Object.keys(legacyPresentationLessonIds)])].map(lessonId=>({lessonId}));
