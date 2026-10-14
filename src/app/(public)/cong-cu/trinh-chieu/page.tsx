@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowLeft, ArrowRight, BookOpen, FileText, Layers3, Presentation } from "lucide-react";
-import { allPresentationLessons, presentationClasses, presentationCourses } from "@/features/presentations/catalog";
+import { allPresentationLessons, presentationCourses } from "@/features/presentations/catalog";
 
 export const metadata: Metadata = {
   title: "Thư viện trình chiếu",
