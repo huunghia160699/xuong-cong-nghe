@@ -30,3 +30,23 @@ test("quiz options and correct indexes remain valid",()=>{
   assert.ok(quiz.explanation);
  }
 });
+
+test("lesson uses three explicit narrative phases",()=>{
+ assert.deepEqual(fileExplorerLesson.phases.map(phase=>phase.label),["Mở đầu","Thân bài","Kết luận"]);
+ assert.deepEqual(fileExplorerLesson.phases.map(phase=>phase.start),[0,4,28]);
+ assert.equal(fileExplorerLesson.slides.at(-1).id,"summary");
+});
+test("visible slide information follows the 5±2 density guide",()=>{
+ for(const slide of fileExplorerLesson.slides){
+  assert.ok(slide.blocks.filter(b=>b.type!=="notice").length<=7,slide.id);
+  for(const block of slide.blocks){
+   if(["stack","steps","heroStats"].includes(block.type)){
+    assert.ok((block.items??[]).length<=7,slide.id+":"+block.type);
+   }
+  }
+ }
+ const shortcuts=fileExplorerLesson.slides.find(slide=>slide.id==="shortcuts");
+ assert.equal(shortcuts.blocks.length,6);
+ assert.match(shortcuts.notes,/Ctrl \+ Z/);
+ assert.match(shortcuts.notes,/Ctrl \+ S/);
+});
