@@ -1,4 +1,20 @@
+.xcn-presentation-viewport {
+  height: 100vh;
+  height: 100dvh;
+  overscroll-behavior: none;
+}
+.xcn-presentation-stage {
+  height: 100%;
+  min-height: 0;
+  grid-template-rows: minmax(0, 1fr);
+  /* Controls float over the canvas; the slide occupies 100% of the remaining height. */
+  padding: clamp(54px, 7.5dvh, 78px) clamp(8px, 1.5vw, 24px) clamp(64px, 10dvh, 88px);
+}
+.xcn-presentation-stage > :first-child { height: 100%; min-height: 0; }
+.xcn-presentation-notes { height: 100%; min-height: 0; }
 .xcn-slide {
+  height: 100%;
+  min-height: 0;
   scrollbar-width: thin;
   scrollbar-color: #a1a1aa transparent;
 }
@@ -6,12 +22,12 @@
   display: grid;
   align-content: stretch;
   gap: .8rem;
-  min-height: 200px;
+  min-height: 0;
   flex: 1;
 }
 .xcn-presentation-layout-cover {
   flex: initial;
-  margin-top: 3rem;
+  margin-top: clamp(8px, 3dvh, 2rem);
 }
 .xcn-presentation-layout-full,
 .xcn-presentation-layout-wide-demo,
@@ -54,3 +70,21 @@
   .xcn-presentation-grid { min-height: auto; }
 }
 :fullscreen { background: #f1f1ec; }
+
+/* On smaller viewports, notes overlay instead of reducing the slide's height. */
+@media (max-width: 1279px) {
+  .xcn-presentation-notes {
+    position: absolute;
+    z-index: 25;
+    top: clamp(56px, 8dvh, 80px);
+    right: clamp(8px, 1.5vw, 24px);
+    bottom: clamp(64px, 10dvh, 88px);
+    width: min(86vw, 370px);
+    height: auto;
+    box-shadow: 0 12px 32px rgba(0,0,0,.16);
+  }
+}
+@media (max-height: 540px) {
+  .xcn-presentation-stage { padding-top: 51px; padding-bottom: 58px; }
+  .xcn-slide .xcn-presentation-grid { gap: .5rem; }
+}
