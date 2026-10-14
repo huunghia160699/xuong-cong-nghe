@@ -44,3 +44,17 @@ jobs:
             echo "Checking $route"
             curl --fail --silent --show-error "http://127.0.0.1:3000$route" > /dev/null
           done
+          # Lesson pages intentionally bypass the public site's header and footer.
+          presentation_html="$(curl --fail --silent --show-error 'http://127.0.0.1:3000/cong-cu/trinh-chieu/buoi-01-file-explorer')"
+          if grep -q 'aria-label="Điều hướng chính"' <<< "$presentation_html"; then
+            echo "Site header leaked into presentation route"
+            exit 1
+          fi
+          if grep -q '<footer' <<< "$presentation_html"; then
+            echo "Site footer leaked into presentation route"
+            exit 1
+          fi
+          if ! grep -q 'aria-label="Điều khiển trình chiếu"' <<< "$presentation_html"; then
+            echo "Presentation controls are missing"
+            exit 1
+          fi
