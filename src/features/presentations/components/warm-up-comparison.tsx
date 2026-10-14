@@ -28,7 +28,7 @@ export function WarmUpComparison({block}: {block:PresentationBlock}) {
   const [revealed,setRevealed]=useState(false);
   return <div className="xcn-warmup">
     <header>
-      <p className="xcn-warmup-kicker">PHẦN 1 · FILE EXPLORER</p>
+      <p className="xcn-warmup-kicker">QUẢN LÝ TỆP VÀ THƯ MỤC</p>
       <h1 className="xcn-warmup-heading">Khởi động</h1>
     </header>
     <div className="xcn-warmup-comparison">

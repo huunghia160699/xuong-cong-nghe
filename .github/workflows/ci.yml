@@ -85,11 +85,21 @@ jobs:
             exit 1
           fi
           if ! grep -q 'aria-label="Làm lại tương tác"' <<< "$presentation_html"; then
-            echo "Bottom-left function buttons are missing"
+            echo "Right-side function buttons are missing"
             exit 1
           fi
           if ! grep -q 'aria-label="Trình chiếu toàn màn hình"' <<< "$presentation_html"; then
-            echo "Bottom-right fullscreen control is missing"
+            echo "Right-side fullscreen control is missing"
+            exit 1
+          fi
+          # Class entry and two-pill layout must exist, without old fixed class cards.
+          if ! grep -q 'Nhập tên lớp' <<< "$presentation_html"; then
+            echo "Class-entry dialog is missing"
+            exit 1
+          fi
+          library_html="$(curl --fail --silent --show-error 'http://127.0.0.1:3000/cong-cu/trinh-chieu')"
+          if grep -q 'Đã có nội dung' <<< "$library_html"; then
+            echo "Redundant content badge must be removed"
             exit 1
           fi
           dot_count="$(grep -o 'xcn-presentation-rail-button' <<< "$presentation_html" | wc -l)"

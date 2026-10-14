@@ -14,14 +14,6 @@ export const presentationCourses: PresentationCourse[] = [{
   lessons,
 }];
 
-export const presentationClasses = [{
-  id: "hl-26-27",
-  name: "HL.26-27",
-  schoolYear: "2026–2027",
-  courseId: "tin-hoc-co-ban",
-  lessonIds: ["quan-ly-tep-va-thu-muc"],
-}] as const;
-
 /**
  * Public old URLs continue to work, but all new links use topic-based slugs.
  * Only the presentation curriculum changes: quiz/course lesson IDs elsewhere
@@ -43,8 +35,3 @@ export function findPresentationLesson(id: string) {
   return allPresentationLessons.find(record => record.lesson.id === canonicalPresentationLessonId(id));
 }
 
-export function presentationClassHasLesson(classId: string, courseId: string, lessonId: string) {
-  return presentationClasses.some(group =>
-    group.id === classId && group.courseId === courseId &&
-    (group.lessonIds as readonly string[]).includes(lessonId));
-}

@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ArrowLeft, ArrowRight, BookOpen, FileText, Layers3, Presentation, Users } from "lucide-react";
-import { allPresentationLessons, presentationClasses, presentationCourses } from "@/features/presentations/catalog";
+import { ArrowLeft, ArrowRight, BookOpen, FileText, Layers3, Presentation } from "lucide-react";
+import { allPresentationLessons, presentationCourses } from "@/features/presentations/catalog";
 
 export const metadata: Metadata = {
   title: "Thư viện trình chiếu",
@@ -27,7 +27,7 @@ export default function PresentationLibraryPage() {
         </div>
         <div className="grid grid-cols-3 border border-zinc-200 bg-white">
           {[{value:presentationCourses.length,label:"Môn học"},
-            {value:lessons.length,label:"Phần học"},
+            {value:lessons.length,label:"Chủ đề"},
             {value:lessons.reduce((sum,x)=>sum+x.lesson.slides.length,0),label:"Slide"}].map(item=>
             <div key={item.label} className="border-r border-zinc-200 p-4 last:border-r-0">
               <strong className="text-3xl font-bold tracking-tight">{String(item.value).padStart(2,"0")}</strong>
@@ -48,9 +48,9 @@ export default function PresentationLibraryPage() {
             className="group flex min-h-64 flex-col border border-zinc-200 bg-white p-7 transition hover:border-ink hover:shadow-sm">
             <div className="flex items-start justify-between gap-3">
               <Presentation size={26}/>
-              <span className="bg-lime px-3 py-1 text-xs font-bold">Đã có nội dung</span>
+              
             </div>
-            <p className="mt-8 text-xs font-bold uppercase tracking-widest text-zinc-500">{course.title} · {lesson.label}</p>
+            <p className="mt-8 text-xs font-bold uppercase tracking-widest text-zinc-500">{course.title}</p>
             <h3 className="mt-2 text-2xl font-semibold tracking-tight">{lesson.title}</h3>
             <p className="mt-3 text-sm leading-6 text-zinc-600">{lesson.subtitle}</p>
             <div className="mt-auto flex items-center justify-between border-t border-zinc-200 pt-5 text-sm">
@@ -58,18 +58,6 @@ export default function PresentationLibraryPage() {
               <span className="inline-flex items-center gap-2 font-semibold">Trình chiếu <ArrowRight size={16}/></span>
             </div>
           </Link>)}
-        </div>
-      </section>
-      <section className="mt-14 border-t border-zinc-200 pt-10">
-        <div className="flex items-center gap-2"><Users size={20}/><h2 className="text-2xl font-bold tracking-tight">Lớp học</h2></div>
-        <div className="mt-5 grid gap-4 sm:grid-cols-2">
-          {presentationClasses.map(group=><div key={group.id} className="flex flex-wrap items-center justify-between gap-5 border border-zinc-200 bg-white p-6">
-            <div><span className="text-xs font-bold uppercase tracking-widest text-zinc-500">{group.schoolYear}</span>
-              <h3 className="mt-2 text-xl font-semibold">{group.name}</h3><p className="mt-2 text-sm text-zinc-500">Tin học cơ bản · {group.lessonIds.length} phần nội dung</p>
-            </div>
-            <Link href={"/cong-cu/trinh-chieu/"+group.lessonIds[0]+"?class="+group.id}
-              className="inline-flex items-center gap-2 bg-ink px-4 py-2.5 text-sm font-semibold text-white">Mở phần <ArrowRight size={15}/></Link>
-          </div>)}
         </div>
       </section>
       <section className="mt-14 border-t border-zinc-200 pt-10">

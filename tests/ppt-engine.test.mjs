@@ -95,14 +95,35 @@ test("cover heading spans full width and objectives align with Explorer illustra
 
 test("Tin học presentation is organized by topic, not by teaching sessions",()=>{
  assert.equal(fileExplorerLesson.id,"quan-ly-tep-va-thu-muc");
- assert.equal(fileExplorerLesson.label,"Phần 1");
+ assert.equal(fileExplorerLesson.label,"Quản lý tệp và thư mục");
  assert.equal(fileExplorerLesson.title,"Quản lý tệp và thư mục");
- assert.match(fileExplorerLesson.slides[0].eyebrow,/PHẦN 1/);
- assert.match(fileExplorerLesson.slides[0].blocks[0].eyebrow,/PHẦN 1/);
+ assert.doesNotMatch(fileExplorerLesson.slides[0].eyebrow,/PHẦN\s*\d+/i);
+ assert.doesNotMatch(fileExplorerLesson.slides[0].blocks[0].eyebrow,/PHẦN\s*\d+/i);
  assert.doesNotMatch(fileExplorerLesson.slides.map(s=>s.eyebrow??"").join(" " ),/BÀI 01|BUỔI 01/i);
  const catalog=readFileSync("src/features/presentations/catalog.ts","utf8");
  const playerRoute=readFileSync("src/app/(presentation)/cong-cu/trinh-chieu/[lessonId]/page.tsx","utf8");
  assert.match(catalog,/legacyPresentationLessonIds/);
  assert.match(catalog,/"buoi-01-file-explorer": "quan-ly-tep-va-thu-muc"/);
  assert.match(playerRoute,/permanentRedirect/);
+});
+
+test("presentation library has no fixed classes and no numbered content badge",()=>{
+ const catalog=readFileSync("src/features/presentations/catalog.ts","utf8");
+ const library=readFileSync("src/app/(public)/cong-cu/trinh-chieu/page.tsx","utf8");
+ assert.doesNotMatch(catalog,/export const presentationClasses/);
+ assert.doesNotMatch(library,/Đã có nội dung|Lớp học|Mở bài/);
+ assert.doesNotMatch(fileExplorerLesson.label,/\d/);
+});
+test("presentation asks for a class on entry, with all actions in the right pill",()=>{
+ const player=readFileSync("src/features/presentations/components/player.tsx","utf8");
+ const toolbar=player.substring(player.indexOf('className="xcn-presentation-toolbar"'));
+ const left=toolbar.substring(0,toolbar.indexOf('<nav aria-label="Điều khiển trình chiếu"'));
+ assert.match(player,/Nhập tên lớp/);
+ assert.match(player,/Bắt đầu trình chiếu/);
+ assert.match(player,/xcn-presentation-class-name/);
+ assert.match(left,/xcn-presentation-subject-name/);
+ assert.doesNotMatch(left,/Quay lại thư viện|Làm lại tương tác|Ghi chú giảng viên/);
+ assert.match(toolbar,/xcn-mobile-tools-menu/);
+ assert.match(toolbar,/Đổi tên lớp/);
+ assert.match(toolbar,/requestFullscreen/);
 });
