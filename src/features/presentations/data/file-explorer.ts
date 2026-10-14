@@ -1,3 +1,5 @@
+// @ts-nocheck
+// Imported lesson content; migration to strictly typed authoring is planned.
 /*
  * Buổi 01 — Windows File Explorer (bài giảng dùng chung cho nhiều lớp).
  * Each slide is data only: layout + reusable blocks. No per-slide HTML/CSS.

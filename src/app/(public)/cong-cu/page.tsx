@@ -15,7 +15,7 @@ export default function ToolsPage() {
       <h1 className="mt-4 max-w-3xl text-4xl font-bold tracking-tight sm:text-5xl">Không gian công cụ</h1>
       <p className="mt-5 max-w-2xl text-base leading-8 text-zinc-600">
         Tập hợp những sản phẩm và công cụ thực hành đang được phát triển tại Xưởng Công Nghệ.
-        Mỗi công cụ hoạt động ngay trên website, không cần chuyển sang một hệ thống riêng.
+        Mỗi công cụ hoạt động cùng hệ giao diện của Xưởng Công Nghệ, không phải một website tách biệt.
       </p>
       <div className="mt-10 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
         <Link href="/cong-cu/trinh-chieu" className="group flex min-h-[320px] flex-col border border-zinc-900 bg-ink p-7 text-white transition hover:-translate-y-1 hover:shadow-xl">
