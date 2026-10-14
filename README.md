@@ -36,6 +36,7 @@ Xem `docs/SUPABASE_SETUP.md` để cấu hình từng bước. Tóm tắt:
 | `/student/quiz/ket-qua/[attemptId]` | Xem kết quả |
 | `/dang-nhap`, `/dang-ky`, `/quen-mat-khau` | Xác thực |
 | `/admin`, `/admin/khoa-hoc` | Quản trị (cần quyền admin ở live mode) |
+| `/admin/kho-tai-lieu` | Kho tài liệu riêng tư Supabase Storage (Admin trong live mode) |
 
 ## Kiểm thử
 
@@ -46,3 +47,7 @@ pnpm build
 ```
 
 GitHub Actions kiểm tra tự động. Không đưa service role key, mật khẩu hoặc dữ liệu học viên thực vào repo.
+
+## Kho tài liệu
+
+Dùng Supabase Storage, chưa cần Cloudflare R2. Xem `docs/SUPABASE_STORAGE.md` về thiết lập và quyền truy cập.
