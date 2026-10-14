@@ -76,35 +76,3 @@ h1, h2, h3, h4 { font-family: var(--font-display), sans-serif; }
 @media (max-width: 640px) {
   .xcn-home-hero, .xcn-home-visual { min-height: 0; }
 }
-
-/*
- * Homepage only: each section fills the visible area below the sticky header.
- * Native scroll-snap glides to its top; tall sections can grow and remain readable.
- */
-html:has(.xcn-home-snap) {
-  scroll-padding-top: var(--xcn-snap-header-height, 68px);
-  scroll-snap-type: y proximity;
-}
-.xcn-home-snap > section {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  min-height: calc(100vh - var(--xcn-snap-header-height, 68px));
-  min-height: calc(100dvh - var(--xcn-snap-header-height, 68px));
-  scroll-snap-align: start;
-}
-html:has(.xcn-home-snap) .xcn-ui > footer {
-  scroll-snap-align: start;
-}
-@media (min-width: 901px) and (min-height: 650px) and (prefers-reduced-motion: no-preference) {
-  html:has(.xcn-home-snap) { scroll-snap-type: y mandatory; }
-}
-@media (prefers-reduced-motion: reduce) {
-  html:has(.xcn-home-snap) {
-    scroll-snap-type: none;
-    scroll-behavior: auto;
-  }
-  .xcn-home-snap > section, html:has(.xcn-home-snap) .xcn-ui > footer {
-    scroll-snap-align: none;
-  }
-}

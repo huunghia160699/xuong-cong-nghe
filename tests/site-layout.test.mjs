@@ -63,27 +63,3 @@ test("public library and tool cards follow content height with fluid vertical sp
  assert.match(home,/xcn-home-hero/);
  assert.doesNotMatch(home,/min-h-\[560px\]|min-h-\[480px\]|min-h-72/);
 });
-
-test("homepage snaps full-height sections precisely below its measured sticky header",()=>{
- const home=read("src/app/(public)/page.tsx");
- const css=read("src/app/globals.css");
- const header=read("src/components/public-header.tsx");
- const detector=read("src/components/home-section-snap.tsx");
- assert.match(home,/className="xcn-home-snap"/);
- assert.match(home,/<HomeSectionSnap\s*\/>/);
- assert.equal((home.match(/<section\b/g)||[]).length,6);
- assert.match(header,/data-xcn-public-header/);
- assert.match(detector,/ResizeObserver/);
- assert.match(detector,/getBoundingClientRect\(\)\.height/);
- assert.match(detector,/observer\?\.disconnect\(\)/);
- assert.match(css,/html:has\(\.xcn-home-snap\)\s*\{/);
- assert.match(css,/scroll-padding-top:\s*var\(--xcn-snap-header-height/);
- assert.match(css,/\.xcn-home-snap\s*>\s*section\s*\{/);
- assert.match(css,/min-height:\s*calc\(100dvh\s*-\s*var\(--xcn-snap-header-height/);
- assert.match(css,/scroll-snap-align:\s*start/);
- assert.match(css,/scroll-snap-type:\s*y mandatory/);
- assert.match(css,/scroll-snap-type:\s*y proximity/);
- assert.match(css,/@media \(prefers-reduced-motion:\s*reduce\)/);
- assert.doesNotMatch(read("src/app/(public)/cong-cu/page.tsx"),/xcn-home-snap/);
- assert.doesNotMatch(read("src/features/presentations/components/player.tsx"),/xcn-home-snap/);
-});
