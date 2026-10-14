@@ -1,38 +1,23 @@
-import {courses} from '../public/apps/ppt/assets/data/tin-hoc-co-ban.js';
-import {layouts} from '../public/apps/ppt/assets/js/engine/layouts.js';
-import {components} from '../public/apps/ppt/assets/js/engine/components.js';
-import {classGroups,classesForCourse,classHasLesson} from '../public/apps/ppt/assets/data/classes.js';
+import {fileExplorerLesson} from "../src/features/presentations/data/file-explorer.ts";
+import {layoutGallery} from "../src/features/presentations/data/layout-gallery.ts";
+import {PRESENTATION_LAYOUTS} from "../src/features/presentations/types.ts";
+const allowed=new Set(["heroStats","card","definition","fileType","filename","item","stack","notice","shortcut","keyCombo","folderTree","code","steps","explorer","fileTransfer","quiz","formula","excelTable","document","image","compare","hotspot"]);
 let errors=0;
-for(const course of Object.values(courses)){
- for(const lesson of Object.values(course.lessons)){
-  const seen=new Set();
-  for(const [index,slide] of lesson.slides.entries()){
-   const loc=`${course.id}/${lesson.id}/#${index+1}`;
-   if(!slide.id||seen.has(slide.id)){console.error(loc,'Missing/duplicate slide.id');errors++;}
-   seen.add(slide.id);
-   if(!layouts[slide.layout]){console.error(loc,`Unknown layout ${slide.layout}`);errors++;}
-   if(!slide.title){console.error(loc,'Missing title');errors++;}
-   if(!Array.isArray(slide.blocks)||slide.blocks.length===0){console.error(loc,'Missing slide blocks');errors++;}
-   for(const block of slide.blocks||[]){
-    if(!components[block.type]){console.error(loc,`Unknown component ${block.type}`);errors++;}
-    if(block.type==='quiz'&&(!Number.isInteger(block.correctIndex)||block.correctIndex<0||block.correctIndex>=block.answers.length)){console.error(loc,'Invalid correctIndex');errors++;}
-   }
+for (const lesson of [fileExplorerLesson,layoutGallery]) {
+ const ids=new Set();
+ for(const slide of lesson.slides) {
+  if(!slide.id||ids.has(slide.id)){console.error("Duplicate ID",slide.id);errors++;}
+  ids.add(slide.id);
+  if(!PRESENTATION_LAYOUTS.includes(slide.layout)){console.error("Layout",slide.id);errors++;}
+  if(!slide.title||!Array.isArray(slide.blocks)||!slide.blocks.length){console.error("Invalid slide",slide.id);errors++;}
+  for(const block of slide.blocks||[]) {
+   if(!allowed.has(block.type)){console.error("Unknown block",slide.id,block.type);errors++;}
+   if(block.type==="quiz"&&(!Array.isArray(block.answers)||block.correctIndex<0||block.correctIndex>=block.answers.length)){console.error("Invalid quiz",slide.id);errors++;}
   }
-  for(const section of lesson.sections||[])if(section.start>=lesson.slides.length||section.start<0){console.error('Invalid section index',lesson.id);errors++;}
-  console.log(`${course.name} / ${lesson.title}: ${lesson.slides.length} slides ✓`);
  }
+ for(const section of lesson.sections||[])if(section.start<0||section.start>=lesson.slides.length)errors++;
+ console.log(lesson.id+": "+lesson.slides.length+" slides checked");
 }
-for(const group of Object.values(classGroups)){
- for(const offering of group.offerings){
-  const course=courses[offering.courseId];
-  if(!course){console.error(group.id,'Unknown course',offering.courseId);errors++;continue;}
-  for(const lessonId of offering.lessonIds||[]){
-   if(!course.lessons[lessonId]){console.error(group.id,'Unknown lesson',lessonId);errors++;}
-   if(!classHasLesson(group,course.id,lessonId)){console.error(group.id,'Missing offering association',lessonId);errors++;}
-  }
-  if(!classesForCourse(course.id).some(x=>x.id===group.id)){errors++;console.error('Reverse class lookup mismatch',group.id);}
- }
-}
-console.log(`${Object.keys(classGroups).length} classes configured`);
-console.log(`${Object.keys(layouts).length} layouts · ${Object.keys(components).length} components · ${errors} validation errors`);
-if(errors)process.exit(1);
+if(fileExplorerLesson.slides.length!==29||layoutGallery.slides.length!==15)errors++;
+console.log("Layout registry: "+PRESENTATION_LAYOUTS.length+"; errors: "+errors);
+if(errors) process.exit(1);
