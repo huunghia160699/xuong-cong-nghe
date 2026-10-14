@@ -25,6 +25,17 @@
 
 ## III. Lịch sử
 
+### 2026-10-14 — Nâng cấp chuyên sâu slide Word cơ bản bằng mô phỏng CSS
+- **Mục tiêu:** làm bộ Word cơ bản thật chi tiết, chuyên nghiệp; minh họa giao diện Word bằng CSS/React, hướng dẫn từng bước dễ hiểu.
+- **Thay đổi và file:** `data/word-visual-guides.ts`, `components/word-workspace.tsx`, `word-workspace.css`, `data/word-basics.ts`, `components/blocks.tsx`, route trình chiếu, kiểm thử, chuẩn trình chiếu và CHANGELOG.
+- **Nội dung:** giữ 75 slide Word hiện có, thêm 49 slide Word UI mô phỏng (tổng 124), đủ 4 chủ đề: giao diện/lưu; định dạng; trang/bảng/ảnh/mục lục; rà soát/in/PDF. Mỗi mô phỏng có 3 bước, vị trí lệnh, giải thích, kết quả, lưu ý và ghi chú giảng viên.
+- **Quy tắc:** tiếp tục màu navy/blue/cyan/ice; mô phỏng **không** phải ứng dụng Word chạy thật; sử dụng dữ liệu/hình minh họa tự tạo CSS, không sử dụng tài sản thương hiệu của bên thứ ba; Excel không thay đổi.
+- **Kiểm thử:** chạy validator, unit tests, typecheck, build và smoke routes trong GitHub Actions; xác nhận bằng kết quả CI tương ứng commit.
+- **GitHub commit:** xem commit với tiêu đề `feat(word): immersive step-by-step CSS Word slides` trong Git history.
+- **Vercel Production:** chỉ xác nhận khi deployment READY và trùng GitHub main SHA.
+- **Giới hạn:** kiểm thử tự động không thay thế review thực tế trên máy chiếu hoặc Microsoft Word các phiên bản khác nhau.
+
+
 ### 2026-10-14 — Bổ sung giáo trình slide Word và Excel cơ bản
 - **Mục tiêu:** 2 khóa trình chiếu độc lập Word cơ bản / Excel cơ bản, đủ nền tảng, có ví dụ, thực hành và quiz.
 - **Thay đổi và file:** `src/features/presentations/data/basics-builder.ts`, `word-basics.ts`, `excel-basics.ts`, `catalog.ts`, route trình chiếu, trang thư viện, kiểm thử, tài liệu chuẩn trình chiếu.

@@ -74,3 +74,13 @@ Không gắn bài trình chiếu Tin học với số buổi hoặc số bài. D
 - Mỗi lesson sử dụng dữ liệu TypeScript và 15 bố cục có sẵn; hướng dẫn chi tiết và đáp án để trong `notes`. Không sao chép các slide Word/Excel vào thư viện bố cục mẫu.
 - Excel có thể dùng dấu `,` hoặc `;` để phân tách tham số tùy vùng/cài đặt; ví dụ trong slide dùng dấu phẩy, ghi chú giải thích sự khác biệt.
 - Ảnh minh họa bảng và tài liệu là mô phỏng cấu trúc, không coi là tài liệu Word/Excel đang chạy; bài thực hành yêu cầu người học mở phần mềm thật.
+
+## 9. Word cơ bản — mô phỏng giao diện CSS (14/10/2026)
+
+- Chỉ nâng cấp phần Word; giữ nguyên Excel và File Explorer.
+- Giao diện Word mô phỏng do dự án dựng bằng CSS/React, **không phải ảnh chụp sản phẩm Microsoft, không có chức năng biên tập Word thật**.
+- 49 slide hướng dẫn có các thẻ File, Home, Insert, Layout, References, Review, View; thanh Ribbon, thước, mặt giấy, bảng, ảnh minh họa, trạng thái, chế độ Backstage và từng bước thao tác. Người học bấm số bước, Trước/Tiếp hoặc các lệnh đang liên kết trong Ribbon.
+- Mỗi bước gồm vị trí lệnh, mô tả thao tác và kết quả cần kiểm tra; lưu ghi chú giảng viên dài trong `slide.notes` để không nhồi chữ lên màn chiếu.
+- Cơ sở dữ liệu Word gốc 75 slide được **giữ lại toàn bộ**, gắn thêm 49 minh họa thành 124 slide. Nội dung chia bốn chương theo chủ đề, không chia cứng theo buổi.
+- Tương thích responsive: giao diện Word rút gọn Ribbon có thể cuộn ngang; trên màn hẹp bảng hướng dẫn xuống bên dưới; không tự chạy animation.
+- Trình chiếu không cố giả lập đầy đủ mọi phiên bản Word; ghi rõ vị trí menu có thể thay đổi. Bài thực hành thật phải mở Word được cài trên máy.
