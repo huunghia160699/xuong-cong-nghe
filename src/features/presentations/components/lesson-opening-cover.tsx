@@ -60,5 +60,6 @@ export function LessonOpeningCover({block}: {block: PresentationBlock}) {
         <div className="xcn-explorer-status">4 mục　·　Documents / BAI_TAP</div>
       </div>
     </div>
+    </div>
   </div>;
 }
