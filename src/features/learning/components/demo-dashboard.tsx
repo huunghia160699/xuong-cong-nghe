@@ -27,17 +27,17 @@ export default function DemoDashboard() {
     })),
   ].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()).slice(0, 5);
 
-  return <div className="mx-auto max-w-[1400px]">
+  return <div className="w-full">
     <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
       <div>
         <Badge>Không gian học thử • dữ liệu trên thiết bị</Badge>
-        <h1 className="mt-3 text-3xl font-bold tracking-tight">Hành trình học tập của bạn</h1>
+        <h1 className="mt-3 text-4xl font-bold tracking-tight">Hành trình học tập của bạn</h1>
         <p className="mt-2 text-sm text-zinc-500">Tiếp tục bài học hoặc thực hành trắc nghiệm để củng cố kiến thức.</p>
       </div>
       <Button href="/student/quiz" variant="outline"><Play size={16} className="mr-2" /> Luyện trắc nghiệm</Button>
     </div>
 
-    <div className="mt-8 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+    <div className="mt-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
       {[
         { label: "Khóa đang học", value: "01", note: "Excel căn bản" },
         { label: "Bài hoàn thành", value: ready ? `${completed}/${excelLessons.length}` : "—", note: "Lưu trên trình duyệt này" },
@@ -50,7 +50,7 @@ export default function DemoDashboard() {
       </Card>)}
     </div>
 
-    <div className="mt-6 grid gap-6 xl:grid-cols-[1.25fr_.75fr]">
+    <div className="mt-6 grid gap-5 xl:grid-cols-[1.25fr_.75fr]">
       <Card className="overflow-hidden bg-ink text-white">
         <div className="grid-paper flex min-h-72 flex-col p-7">
           <Badge className="w-fit border-white/20 bg-white/5 text-zinc-300">{completed === excelLessons.length ? "Đã hoàn tất lộ trình" : "Tiếp tục học"}</Badge>
