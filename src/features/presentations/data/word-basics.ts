@@ -4,7 +4,18 @@ import {enhanceWordLessons} from "./word-visual-guides.ts";
 /** Word fundamentals, organized by durable topics instead of class sessions. */
 export const wordBasicsLessons = enhanceWordLessons([
   moduleLesson("word-lam-quen","Làm quen Word và lưu văn bản","Tạo, nhập, mở, lưu và quản lý tài liệu Word.",[
-    B.cover("cover","Làm quen Microsoft Word",["Nhận diện giao diện","Tạo và nhập văn bản","Lưu đúng tên, đúng nơi"],"Giải thích Word là trình xử lý văn bản, dùng cho thông báo, đơn, báo cáo; phân biệt bản đang mở và tệp đã lưu."),
+    {
+      ...B.cover("cover","Làm quen Microsoft Word",["Nhận diện giao diện","Tạo và nhập văn bản","Lưu đúng tên, đúng nơi"],"Giải thích Word là trình xử lý văn bản, dùng cho thông báo, đơn, báo cáo; phân biệt bản đang mở và tệp đã lưu. Slide mở đầu lấy cảm hứng trực tiếp từ Hero trang chủ Xưởng Công Nghệ: nền navy kẻ ô, tiêu đề ba dòng, điểm nhấn cyan, hai thẻ minh họa chồng và CTA mở slide tiếp theo."),
+      blocks:[{
+        type:"wordHomeHero",
+        eyebrow:"WORD CƠ BẢN · CHỦ ĐỀ 01",
+        goals:[
+          {title:"Nhận diện giao diện",detail:"Biết vùng soạn thảo và thanh Ribbon."},
+          {title:"Tạo và nhập văn bản",detail:"Gõ, sửa và trình bày nội dung cơ bản."},
+          {title:"Lưu đúng tệp",detail:"Đặt tên, chọn thư mục và mở lại .docx."}
+        ]
+      }]
+    },
     B.concepts("word-use","Word dùng để làm gì?",["Soạn thảo","Tạo và chỉnh sửa nội dung chữ, bảng, hình ảnh trong tài liệu."],["Trình bày","Định dạng một tài liệu rõ ràng, đúng mục đích để in hoặc gửi."],"Liên hệ thông báo lớp, đơn xin nghỉ học, báo cáo ngắn. Word không thay thế Excel khi cần tính toán bảng dữ liệu."),
     B.cards("interface","Nhận diện cửa sổ Word",[["Ribbon","Các thẻ Home, Insert, Layout, Review và lệnh đi kèm."],["Vùng trang","Nơi gõ, sửa và trình bày nội dung."],["Thanh trạng thái","Cho biết trang, số từ, chế độ xem và Zoom."]],"Mở Word thực tế, lần lượt chỉ thanh tiêu đề, Quick Access Toolbar nếu hiện, Ribbon, vùng trang và thanh trạng thái."),
     B.steps("new-document","Tạo văn bản mới",[["Mở Word","Chọn Blank document hoặc File → New."],["Nhập nội dung","Bấm vào vùng trang, gõ một đoạn ngắn."],["Đặt tên tệp","Dùng File → Save As khi lưu lần đầu."]],"Có thể dùng Ctrl + N để tạo tài liệu trống. Với một số giao diện Microsoft 365, lệnh Save As nằm trong menu File."),

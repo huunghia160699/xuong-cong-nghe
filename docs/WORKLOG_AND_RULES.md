@@ -25,6 +25,17 @@
 
 ## III. Lịch sử
 
+### 2026-10-15 — Slide mở đầu bài Word đầu tiên theo Hero trang chủ
+- **Mục tiêu:** riêng slide số 01 của chủ đề `word-lam-quen` sử dụng concept Hero phần đầu trang chủ Xưởng Công Nghệ.
+- **Thay đổi và file:** `components/word-home-hero.tsx`, `components/player.tsx`, `data/word-basics.ts`, `scripts/validate-ppt.mjs`, `tests/presentation-basics.test.mjs`, `docs/PRESENTATION_DESIGN_STANDARD.md`, `CHANGELOG.md` và nhật ký này.
+- **Quyết định:** tái sử dụng `grid-paper`, `xcn-container`, nền navy, tiêu đề ba dòng, cyan, CTA blue và thẻ mô phỏng xếp chồng hai góc như homepage. CTA **Bắt đầu bài học** điều hướng slide tiếp theo qua trình phát; không tạo header/footer website trong slide.
+- **Phạm vi:** Word chủ đề đầu tiên, slide đầu tiên; giữ nguyên 123 slide Word còn lại, toàn bộ Excel và File Explorer.
+- **Kiểm thử:** chạy validator, unit, TypeScript, build và smoke route qua CI trên PR.
+- **GitHub commit:** xem git history theo tiêu đề `feat(word): homepage-inspired opening slide for lesson one`.
+- **Vercel Production:** kiểm tra READY và cùng GitHub main SHA khi triển khai.
+- **Tồn đọng:** bố cục responsive cần đối chiếu bằng mắt trên máy chiếu thực tế; giao diện Word là minh họa CSS, không phải phần mềm Word thật.
+
+
 ### 2026-10-14 — Nâng cấp chuyên sâu slide Word cơ bản bằng mô phỏng CSS
 - **Mục tiêu:** làm bộ Word cơ bản thật chi tiết, chuyên nghiệp; minh họa giao diện Word bằng CSS/React, hướng dẫn từng bước dễ hiểu.
 - **Thay đổi và file:** `data/word-visual-guides.ts`, `components/word-workspace.tsx`, `word-workspace.css`, `data/word-basics.ts`, `components/blocks.tsx`, route trình chiếu, kiểm thử, chuẩn trình chiếu và CHANGELOG.

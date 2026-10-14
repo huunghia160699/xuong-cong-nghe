@@ -100,3 +100,25 @@ test("Word UI mocks are interactive and responsive with high-contrast brand colo
   assert.match(renderer,/case "wordWorkspace"/);
   assert.match(route,/word-workspace.css/);
 });
+
+test("only Word first lesson cover mirrors the public homepage Hero and advances",()=>{
+  const first=wordBasicsLessons[0].slides[0];
+  assert.equal(first.id,"cover");
+  assert.equal(first.layout,"cover");
+  assert.equal(first.blocks.length,1);
+  assert.equal(first.blocks[0].type,"wordHomeHero");
+  assert.equal(first.blocks[0].goals.length,3);
+  for(const lesson of wordBasicsLessons.slice(1))assert.equal(lesson.slides[0].blocks[0].type,"heroStats");
+  for(const lesson of excelBasicsLessons)assert.equal(lesson.slides[0].blocks[0].type,"heroStats");
+  assert.equal(wordBasicsLessons.reduce((n,m)=>n+m.slides.length,0),124);
+  const hero=readFileSync("src/features/presentations/components/word-home-hero.tsx","utf8");
+  const player=readFileSync("src/features/presentations/components/player.tsx","utf8");
+  assert.match(hero,/grid-paper/);
+  assert.match(hero,/bg-ink text-white/);
+  assert.match(hero,/text-cyan/);
+  assert.match(hero,/lg:grid-cols-\\[1\\.12fr_\\.88fr\\]/);
+  assert.match(hero,/rotate-\\[-4deg\\]/);
+  assert.match(hero,/rotate-\\[3deg\\]/);
+  assert.match(hero,/onClick=\\{onStart\\}/);
+  assert.match(player,/onAdvance=\\{\\(\\) => move\\(current \\+ 1\\)\\}/);
+});

@@ -9,16 +9,24 @@ import {
 import type { PresentationLesson, PresentationSlide } from "../types";
 import { PRESENTATION_LAYOUTS } from "../types";
 import { PresentationBlockView } from "./blocks";
+import { WordHomeHero } from "./word-home-hero";
 
 const layoutSet = new Set<string>(PRESENTATION_LAYOUTS);
 
-function SlideCanvas({slide, index, count, reset}: {
-  slide: PresentationSlide; index: number; count: number; reset: number;
+function SlideCanvas({slide, index, count, reset, onAdvance}: {
+  slide: PresentationSlide; index: number; count: number; reset: number; onAdvance: ()=>void;
 }) {
   const cover = slide.layout === "cover";
   const layout = layoutSet.has(slide.layout) ? slide.layout : "full";
   const extras = slide.blocks.filter(block => block.type === "notice");
   const blocks = slide.blocks.filter(block => block.type !== "notice");
+  // Word lesson 1 reuses the homepage hero rhythm with an accessible working start button.
+  if (cover && blocks[0]?.type === "wordHomeHero") {
+    return <section aria-label={"Slide " + (index+1) + ": " + slide.title}
+      className="xcn-slide relative h-full min-h-0 overflow-y-auto overscroll-contain bg-ink text-white">
+      <WordHomeHero block={blocks[0]} onStart={onAdvance}/>
+    </section>;
+  }
   // An opening slide uses a dedicated visual teaching cover rather than
   // the normal heading + block layout.
   if ((cover && blocks[0]?.type === "lessonCover") || blocks[0]?.type === "warmUpComparison") {
@@ -116,7 +124,7 @@ export function PresentationPlayer({lesson, courseTitle, initialClassName = ""}:
   return <div ref={hostRef} className="xcn-presentation-viewport relative h-[100dvh] w-full overflow-hidden bg-paper text-ink">
     <main className="xcn-presentation-stage">
       <div className="xcn-presentation-frame">
-        <SlideCanvas slide={slide} index={current} count={count} reset={reset}/>
+        <SlideCanvas slide={slide} index={current} count={count} reset={reset} onAdvance={() => move(current + 1)}/>
       </div>
     </main>
 

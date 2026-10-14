@@ -3,7 +3,7 @@ import {layoutGallery} from "../src/features/presentations/data/layout-gallery.t
 import {wordBasicsLessons} from "../src/features/presentations/data/word-basics.ts";
 import {excelBasicsLessons} from "../src/features/presentations/data/excel-basics.ts";
 import {PRESENTATION_LAYOUTS} from "../src/features/presentations/types.ts";
-const allowed=new Set(["lessonCover","warmUpComparison","heroStats","card","definition","fileType","filename","item","stack","notice","shortcut","keyCombo","folderTree","code","steps","explorer","fileTransfer","quiz","formula","excelTable","document","image","compare","hotspot","wordWorkspace"]);
+const allowed=new Set(["lessonCover","warmUpComparison","heroStats","card","definition","fileType","filename","item","stack","notice","shortcut","keyCombo","folderTree","code","steps","explorer","fileTransfer","quiz","formula","excelTable","document","image","compare","hotspot","wordWorkspace","wordHomeHero"]);
 let errors=0;
 for (const lesson of [fileExplorerLesson,layoutGallery,...wordBasicsLessons,...excelBasicsLessons]) {
  const ids=new Set();
@@ -32,6 +32,7 @@ for (const lesson of [fileExplorerLesson,layoutGallery,...wordBasicsLessons,...e
       (!block.messyText||!block.tidyText||!block.prompt||!block.revealLabel)) {
       console.error("Warm-up comparison missing stages",slide.id);errors++;
    }
+   if(block.type==="wordHomeHero" && (!Array.isArray(block.goals)||block.goals.length!==3||block.goals.some(goal=>!goal.title||!goal.detail))){console.error("Word hero goals invalid",slide.id);errors++;}
    if(block.type==="wordWorkspace"&&(!block.scene||!Array.isArray(block.steps)||block.steps.length<3||block.steps.length>6||block.steps.some(step=>!step.tab||!step.command||!step.detail))){console.error("Invalid Word workspace guide",slide.id);errors++;}
    if(block.type==="quiz"&&(!Array.isArray(block.answers)||block.correctIndex<0||block.correctIndex>=block.answers.length)){console.error("Invalid quiz",slide.id);errors++;}
   }
