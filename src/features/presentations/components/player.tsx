@@ -70,6 +70,8 @@ export function PresentationPlayer({lesson, courseTitle, className}: {
     function keyboard(event: KeyboardEvent) {
       const target=event.target as HTMLElement | null;
       if(target?.closest("input,textarea,select,[contenteditable=true]")||event.altKey||event.metaKey||event.ctrlKey) return;
+      // Space must activate the focused reveal button instead of skipping the slide.
+      if(event.key===" " && target?.closest("button,a,[role=button]")) return;
       const key=event.key.toLowerCase();
       if(["arrowright","arrowdown","pagedown"," "].includes(key)) {
         event.preventDefault();move(current+1);
