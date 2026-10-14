@@ -116,9 +116,9 @@ test("only Word first lesson cover mirrors the public homepage Hero and advances
   assert.match(hero,/grid-paper/);
   assert.match(hero,/bg-ink text-white/);
   assert.match(hero,/text-cyan/);
-  assert.match(hero,/lg:grid-cols-\\[1\\.12fr_\\.88fr\\]/);
-  assert.match(hero,/rotate-\\[-4deg\\]/);
-  assert.match(hero,/rotate-\\[3deg\\]/);
-  assert.match(hero,/onClick=\\{onStart\\}/);
-  assert.match(player,/onAdvance=\\{\\(\\) => move\\(current \\+ 1\\)\\}/);
+  assert.match(hero,/lg:grid-cols-\[1\.12fr_\.88fr\]/);
+  assert.match(hero,/rotate-\[-4deg\]/);
+  assert.match(hero,/rotate-\[3deg\]/);
+  assert.match(hero,/onClick=\{onStart\}/);
+  assert.match(player,/onAdvance=\{\(\) => move\(current \+ 1\)\}/);
 });
