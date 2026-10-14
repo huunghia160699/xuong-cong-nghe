@@ -75,9 +75,9 @@ const guides:Record<string,Guide[]>={
   s("Home","Center","Căn giữa dòng tiêu đề","Chỉ đặt con trỏ ở đoạn tiêu đề rồi Ctrl + E."),
   s("Home","Justify","Căn đều khi phù hợp","Chọn đoạn thân bài rồi Justify (Ctrl + J), kiểm tra khoảng trắng giữa các từ.","Nội dung chính và tiêu đề dùng căn phù hợp.")],"THÔNG BÁO",sample),
  g("align-keys","Quan sát thay đổi khi căn lề bằng phím","paragraph","Đặt con trỏ trong đoạn trước khi nhấn phím; không phải lúc nào cũng cần bôi đen.",[
-  s("Home","Align Left","Ctrl + L","Căn trái đoạn đang chứa con trỏ, giữ đầu dòng sát lề trái."),
-  s("Home","Center","Ctrl + E","Căn giữa đoạn tiêu đề, không cần chèn dấu cách."),
-  s("Home","Justify","Ctrl + J","Căn đều hai mép đoạn văn dài, sau đó đọc soát.","Biết lựa chọn 3 cách căn cơ bản.")]),
+  s("Home","Align Left","Ctrl + L – Căn trái","Căn trái đoạn đang chứa con trỏ, giữ đầu dòng sát lề trái."),
+  s("Home","Center","Ctrl + E – Căn giữa","Căn giữa đoạn tiêu đề, không cần chèn dấu cách."),
+  s("Home","Justify","Ctrl + J – Căn đều","Căn đều hai mép đoạn văn dài, sau đó đọc soát.","Biết lựa chọn 3 cách căn cơ bản.")]),
  g("spacing","Phân biệt giãn dòng với cách đoạn","paragraph","Dùng Paragraph → Before / After và Line Spacing; không chèn Enter rỗng thay cho giãn cách đoạn.",[
   s("Home","Line Spacing","Chọn đoạn có nhiều dòng","Chọn một đoạn có ít nhất hai dòng để nhìn rõ sự thay đổi khoảng cách dòng."),
   s("Home","Line Spacing","Chọn Line Spacing","Trong menu, chọn 1.0, 1.5 hoặc mức được yêu cầu."),
