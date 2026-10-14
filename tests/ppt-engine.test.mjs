@@ -1,5 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
+import {readFileSync} from "node:fs";
 import {fileExplorerLesson} from "../src/features/presentations/data/file-explorer.ts";
 import {layoutGallery} from "../src/features/presentations/data/layout-gallery.ts";
 import {PRESENTATION_LAYOUTS} from "../src/features/presentations/types.ts";
@@ -80,4 +81,14 @@ test("slide 02 owns the warm-up question and before/after reveal",()=>{
   assert.match(warmup.messyText,/bài tập/);
   assert.match(warmup.tidyText,/thư mục/);
   assert.equal(fileExplorerLesson.slides.length,29);
+});
+
+test("cover heading spans full width and objectives align with Explorer illustration",()=>{
+ const cover=readFileSync("src/features/presentations/components/lesson-opening-cover.tsx","utf8");
+ const css=readFileSync("src/features/presentations/presentation.css","utf8");
+ assert.ok(cover.indexOf('className="xcn-lesson-opening-intro"')<cover.indexOf('className="xcn-lesson-opening-body"'));
+ assert.ok(cover.includes('className="xcn-lesson-opening-body"'));
+ assert.ok(cover.indexOf('className="xcn-lesson-opening-goals"')<cover.indexOf('className="xcn-lesson-opening-visual"'));
+ assert.match(css,/\.xcn-lesson-opening-title\s*\{[^}]*white-space:\s*nowrap;/s);
+ assert.match(css,/\.xcn-lesson-opening-body\s*\{[^}]*grid-template-columns:\s*minmax\(0,\s*\.84fr\) minmax\(0,\s*1\.16fr\)/s);
 });
