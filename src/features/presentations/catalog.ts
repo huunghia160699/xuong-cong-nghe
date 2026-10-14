@@ -27,7 +27,7 @@ export const presentationCourses:PresentationCourse[] = [
 
 /** Preserve old bookmarked presentation links; never rewrite other course IDs. */
 export const legacyPresentationLessonIds:Record<string,string> = {
-  "buoi-01-file-explorer":"quan-ly-tep-va-thu-muc"
+  "buoi-01-file-explorer": "quan-ly-tep-va-thu-muc"
 };
 export function canonicalPresentationLessonId(id:string) {
   return legacyPresentationLessonIds[id]??id;
