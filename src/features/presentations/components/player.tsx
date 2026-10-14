@@ -27,11 +27,11 @@ function SlideCanvas({slide, index, count, reset}: {
       <div className={cover ? "max-w-4xl" : "mb-4"}>
         <p className={"text-[11px] font-bold uppercase tracking-[.16em] " + (cover ? "text-lime" : "text-zinc-500")}>{slide.eyebrow ?? "BÀI GIẢNG"}</p>
         {cover ?
-          <h1 className="mt-4 max-w-4xl font-bold leading-[1.05] tracking-[-.055em]" style={{fontSize:"clamp(2rem, 7vh, 5rem)"}}>{slide.title}</h1> :
-          <h2 className="mt-2 font-bold leading-[1.1] tracking-[-.045em]" style={{fontSize:"clamp(1.5rem, 4.8vh, 3.3rem)"}}>{slide.title}</h2>}
-        {slide.subtitle && <p className={"mt-2 text-sm leading-6 sm:text-base " + (cover ? "text-zinc-300" : "text-zinc-600")}>{slide.subtitle}</p>}
+          <h1 className="mt-4 max-w-4xl font-bold leading-[1.05] tracking-[-.055em]" style={{fontSize:"clamp(2.8rem, 8dvh, 5.6rem)"}}>{slide.title}</h1> :
+          <h2 className="mt-2 font-bold leading-[1.1] tracking-[-.045em]" style={{fontSize:"clamp(2.35rem, 7dvh, 4.65rem)"}}>{slide.title}</h2>}
+        {slide.subtitle && <p className={"mt-3 text-base leading-snug sm:text-lg lg:text-2xl " + (cover ? "text-zinc-300" : "text-zinc-600")}>{slide.subtitle}</p>}
       </div>
-      <div key={slide.id + "-rev-" + reset} className={"xcn-presentation-grid xcn-presentation-layout-" + layout + " mt-4"}>
+      <div key={slide.id + "-rev-" + reset} className={"xcn-presentation-grid xcn-presentation-layout-" + layout + " mt-3 sm:mt-5"}>
         {blocks.map((block,i) => <div key={i} className="xcn-presentation-block min-h-0 min-w-0">
           <PresentationBlockView block={block}/>
         </div>)}
@@ -85,9 +85,6 @@ export function PresentationPlayer({lesson, courseTitle, className}: {
     return ()=>window.removeEventListener("keydown",keyboard);
   },[move,current,count,slide.layout]);
 
-  const sections=lesson.sections?.length?lesson.sections:[{label:"Bài giảng",start:0}];
-  const sectionIndex=sections.reduce((result,section,i)=>current>=section.start?i:result,0);
-  const sectionName=sections[sectionIndex]?.label??"Bài giảng";
   const notes=slide.notes??"";
 
 
@@ -121,18 +118,15 @@ export function PresentationPlayer({lesson, courseTitle, className}: {
 
     <div className="xcn-presentation-toolbar" aria-label="Thanh công cụ trình chiếu">
       <div className="xcn-presentation-context flex min-w-0 items-center gap-1 rounded-full border border-zinc-200 bg-white/95 p-1.5 shadow-lg"
-        title={lesson.label + " · " + lesson.title + " / " + (className || "Thư viện chung")}>
+        title={(className || "Lớp chung") + " · " + courseTitle}>
         <Link href="/cong-cu/trinh-chieu" aria-label="Quay lại thư viện" title="Quay lại thư viện"
           className="xcn-presentation-action grid shrink-0 place-items-center rounded-full transition hover:bg-lime">
           <ArrowLeft size={18}/>
         </Link>
-        <div className="xcn-presentation-lesson-label min-w-0 px-1.5">
-          <p className="hidden truncate text-[10px] font-semibold uppercase tracking-[.08em] text-zinc-500 sm:block">
-            {courseTitle} · {lesson.label} · {sectionName}
-          </p>
-          <p className="truncate text-xs font-bold" title={lesson.title + " · " + (className || "Thư viện chung")}>
-            <span className="hidden sm:inline">{lesson.title} · </span>{className || "Thư viện chung"}
-          </p>
+        <div className="xcn-presentation-lesson-label flex min-w-0 items-center gap-2 px-2">
+          <span className="shrink-0 text-xs font-bold sm:text-sm">{className || "Lớp chung"}</span>
+          <span aria-hidden="true" className="h-4 shrink-0 border-l border-zinc-300"/>
+          <span className="truncate text-xs font-semibold sm:text-sm">{courseTitle}</span>
         </div>
         <button type="button" onClick={() => setReset(value => value + 1)}
           title="Làm lại tương tác (R)" aria-label="Làm lại tương tác"

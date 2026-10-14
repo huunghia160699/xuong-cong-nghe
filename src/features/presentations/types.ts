@@ -28,6 +28,8 @@ export interface PresentationLesson {
   label: string;
   kind?: string;
   sections?: {label: string; start: number}[];
+  /** Three narrative phases: introduction, development, conclusion. */
+  phases?: {label: string; start: number}[];
   slides: PresentationSlide[];
 }
 

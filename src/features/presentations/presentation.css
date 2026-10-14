@@ -60,8 +60,9 @@
 .xcn-presentation-layout-summary {
   grid-template-columns: repeat(3, minmax(0,1fr));
 }
+/* Four teaching points are shown in a 2 × 2 grid, not four tiny columns. */
 .xcn-presentation-layout-grid-4 {
-  grid-template-columns: repeat(4, minmax(0,1fr));
+  grid-template-columns: repeat(2, minmax(0,1fr));
 }
 .xcn-presentation-layout-split-reverse > :first-child { grid-column: 2; grid-row: 1; }
 .xcn-presentation-layout-split-reverse > :nth-child(2) { grid-column: 1; grid-row: 1; }
@@ -217,4 +218,48 @@
 :fullscreen { background: #fafaf8; }
 @media (prefers-reduced-motion: reduce) {
   .xcn-presentation-rail-dot { transition: none; }
+}
+
+/* Classroom typography scale: keep large-screen content readable at the
+   back of the room; preserve compact sizing for phones and narrow windows. */
+@media (min-width: 1100px) and (min-height: 620px) {
+  .xcn-slide-block-title {
+    font-size: clamp(1.875rem, 2.4vw, 2.5rem);
+    line-height: 1.2;
+  }
+  .xcn-slide-body {
+    font-size: clamp(1.3125rem, 1.65vw, 1.6875rem);
+    line-height: 1.45;
+  }
+  .xcn-slide-choice {
+    font-size: clamp(1.375rem, 1.65vw, 1.75rem);
+    line-height: 1.35;
+  }
+  .xcn-slide-step-title,
+  .xcn-slide-stack-title {
+    font-size: clamp(1.375rem, 1.65vw, 1.75rem);
+    line-height: 1.25;
+  }
+  .xcn-slide-step-text,
+  .xcn-slide-stack-text,
+  .xcn-slide-shortcut-label {
+    font-size: clamp(1.25rem, 1.5vw, 1.5625rem);
+    line-height: 1.38;
+  }
+  .xcn-slide-file-name {
+    font-size: clamp(1.375rem, 1.7vw, 1.75rem);
+  }
+}
+/* Dense interactive Windows simulations retain familiar UI proportions. They
+   must never inherit oversized text intended for main teaching statements. */
+.xcn-slide .xcn-presentation-block {
+  overflow-wrap: anywhere;
+}
+@media (max-width: 767px) {
+  .xcn-presentation-layout-grid-4 {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .xcn-presentation-context .xcn-presentation-lesson-label {
+    gap: .35rem;
+  }
 }

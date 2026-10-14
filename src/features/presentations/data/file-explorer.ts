@@ -21,6 +21,11 @@ export const fileExplorerLesson={
   title:'Windows File Explorer',
   subtitle:'Tệp, thư mục và thao tác quản lý dữ liệu',
   label:'Buổi 01',
+  phases:[
+    {label:'Mở đầu',start:0},
+    {label:'Thân bài',start:4},
+    {label:'Kết luận',start:28}
+  ],
   sections:[
     {label:'Khởi động',start:0}, {label:'Tệp & thư mục',start:3},
     {label:'File Explorer',start:7}, {label:'Thao tác',start:14},
@@ -36,11 +41,11 @@ export const fileExplorerLesson={
       note('Trao đổi tình huống: đã từng tải tệp nhưng không biết tìm lại ở đâu?')
     ],notes:'Học viên trả lời 1 (chưa tìm thấy) hoặc 2 (đã tìm được) trong khung chat.'},
     {id:'goals',layout:'grid-4',eyebrow:'MỤC TIÊU',title:'4 kỹ năng cần nắm vững',subtitle:'Nền tảng để thực hành Word và Excel trong buổi học trực tiếp.',blocks:[
-      card('Hiểu cấu trúc dữ liệu','Phân biệt tệp, thư mục, phần mở rộng và đường dẫn.',{number:'01',icon:'folder'}),
-      card('Thao tác với tệp','Tạo, đổi tên, sao chép, di chuyển, xóa và khôi phục.',{number:'02',icon:'copy'}),
-      card('Tìm đúng tài liệu','Sử dụng File Explorer và thư mục Downloads.',{number:'03',icon:'search'}),
-      card('Lưu và nộp bài','Lưu bài Word–Excel đúng tên, đúng vị trí, đúng định dạng.',{number:'04',icon:'check'})
-    ]},
+      card('Hiểu cấu trúc dữ liệu','Tệp, thư mục và đường dẫn.',{number:'01',icon:'folder'}),
+      card('Thao tác với tệp','Tạo, sửa tên, sao chép, di chuyển.',{number:'02',icon:'copy'}),
+      card('Tìm đúng tài liệu','Dùng File Explorer và Downloads.',{number:'03',icon:'search'}),
+      card('Lưu và nộp bài','Đúng tên, nơi lưu, định dạng.',{number:'04',icon:'check'})
+    ],notes:'Mục tiêu đầy đủ: phân biệt tệp, thư mục, phần mở rộng, đường dẫn; tạo, đổi tên, sao chép, di chuyển, xóa và khôi phục; biết tìm tài liệu qua File Explorer/Downloads; lưu Word–Excel đúng tên, vị trí, định dạng.'},
     {id:'file-vs-folder',layout:'grid-2',eyebrow:'KHÁI NIỆM CƠ BẢN',title:'Tệp và thư mục',subtitle:'Hai khái niệm quan trọng để tổ chức dữ liệu.',blocks:[
       {type:'definition',icon:'file',label:'FILE',title:'Tệp tin',text:'Dữ liệu được lưu thành một tệp có tên riêng.',example:'Bang_diem.xlsx'},
       {type:'definition',icon:'folder',label:'FOLDER',title:'Thư mục',text:'Nơi chứa và sắp xếp các tệp hoặc thư mục con.',example:'ON_TAP_TIN_HOC'},
@@ -140,14 +145,13 @@ export const fileExplorerLesson={
     ]},
     q('quiz-submit','Trước khi nộp bài Word–Excel, cần làm gì?',['Đổi hình nền máy tính','Đóng mọi cửa sổ mà không lưu','Lưu đúng nơi và mở lại kiểm tra','Xóa các thư mục tạm'],2,'Kiểm tra tên, định dạng, nơi lưu và mở lại tệp trước khi nộp.'),
     {id:'shortcuts',layout:'grid-3',eyebrow:'ÔN TẬP NHANH',title:'Các phím tắt thường dùng',subtitle:'Những thao tác quan trọng nhất khi quản lý tệp và thư mục.',blocks:[
-      key('Win + E','Mở File Explorer'),key('Ctrl + Shift + N','Tạo thư mục mới'),key('F2','Đổi tên'),
-      key('Ctrl + C','Sao chép'),key('Ctrl + X','Cắt để di chuyển'),key('Ctrl + V','Dán'),
-      key('Delete','Xóa thông thường'),key('Ctrl + Z','Hoàn tác (khi được hỗ trợ)'),key('Ctrl + S','Lưu trong Word/Excel')
-    ]},
+      key('Win + E','Mở File Explorer'),key('Ctrl + Shift + N','Tạo thư mục'),key('F2','Đổi tên'),
+      key('Ctrl + C','Sao chép'),key('Ctrl + X','Cắt để di chuyển'),key('Ctrl + V','Dán')
+    ],notes:'Ba phím bổ sung để thực hành: Delete — xóa thông thường; Ctrl + Z — hoàn tác khi được hỗ trợ; Ctrl + S — lưu trong Word/Excel. Gợi ý yêu cầu học viên luyện đủ chín phím, nhưng chỉ trình chiếu sáu phím cốt lõi để tránh quá tải.'},
     {id:'summary',layout:'grid-3',eyebrow:'TỔNG KẾT',title:'Ba nguyên tắc cần ghi nhớ',subtitle:'Nền tảng để bắt đầu thực hành Word và Excel.',blocks:[
-      card('File khác Folder','Tệp chứa dữ liệu; thư mục dùng để tổ chức dữ liệu.',{number:'01'}),
-      card('Copy khác Move','Copy giữ bản gốc; Move đưa tệp sang vị trí mới.',{number:'02'}),
-      card('Lưu đúng – kiểm tra lại','Trước khi nộp phải biết tệp nằm ở đâu và mở lại được.',{number:'03'}),
+      card('File khác Folder','Tệp chứa; thư mục sắp xếp.',{number:'01'}),
+      card('Copy khác Move','Copy giữ gốc; Move chuyển vị trí.',{number:'02'}),
+      card('Lưu đúng – kiểm tra lại','Đúng tên, đúng nơi, mở được.',{number:'03'}),
       note('Chuẩn bị buổi tiếp theo: Microsoft Word – nhập liệu và định dạng văn bản.')
     ],notes:'Mỗi học viên chọn một nguyên tắc để tóm tắt trong một câu. Giao nhiệm vụ tạo ON_TAP_TIN_HOC với WORD, EXCEL, NOP_BAI.'}
   ]

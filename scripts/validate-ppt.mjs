@@ -10,6 +10,15 @@ for (const lesson of [fileExplorerLesson,layoutGallery]) {
   ids.add(slide.id);
   if(!PRESENTATION_LAYOUTS.includes(slide.layout)){console.error("Layout",slide.id);errors++;}
   if(!slide.title||!Array.isArray(slide.blocks)||!slide.blocks.length){console.error("Invalid slide",slide.id);errors++;}
+  // Classroom principle: keep each slide focused (5 ± 2 key ideas).
+  // 6x6 is an editorial target, not a hard limit for Vietnamese, file paths or code.
+  const teachingItems=slide.blocks.filter(block=>block.type!=="notice");
+  if(teachingItems.length>7){console.error("Too many teaching blocks",slide.id,teachingItems.length);errors++;}
+  for(const block of teachingItems) {
+   if(["steps","stack","heroStats"].includes(block.type) && (block.items?.length??0)>7){
+    console.error("Too many items in one block",slide.id,block.type);errors++;
+   }
+  }
   for(const block of slide.blocks||[]) {
    if(!allowed.has(block.type)){console.error("Unknown block",slide.id,block.type);errors++;}
    if(block.type==="quiz"&&(!Array.isArray(block.answers)||block.correctIndex<0||block.correctIndex>=block.answers.length)){console.error("Invalid quiz",slide.id);errors++;}
@@ -17,6 +26,12 @@ for (const lesson of [fileExplorerLesson,layoutGallery]) {
  }
  for(const section of lesson.sections||[])if(section.start<0||section.start>=lesson.slides.length)errors++;
  console.log(lesson.id+": "+lesson.slides.length+" slides checked");
+}
+const phases=fileExplorerLesson.phases??[];
+if(phases.length!==3||phases[0]?.start!==0||phases[2]?.start!==28||
+   phases.some((phase,i)=>phase.start<0||phase.start>=fileExplorerLesson.slides.length||
+   (i>0&&phase.start<=phases[i-1].start))){
+ console.error("Lesson must have ordered opening, body, conclusion");errors++;
 }
 if(fileExplorerLesson.slides.length!==29||layoutGallery.slides.length!==15)errors++;
 console.log("Layout registry: "+PRESENTATION_LAYOUTS.length+"; errors: "+errors);
