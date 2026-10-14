@@ -6,7 +6,7 @@ import { isLiveMode } from "@/lib/supabase/config";
 
 export function PublicHeader() {
   const live = isLiveMode();
-  return <header className="sticky top-0 z-40 border-b border-zinc-200/80 bg-white/95">
+  return <header data-xcn-public-header className="sticky top-0 z-40 border-b border-zinc-200/80 bg-white/95">
     <div className="xcn-container xcn-header-inner">
       <Brand />
       <nav className="xcn-header-nav" aria-label="Điều hướng chính">
