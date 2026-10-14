@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
 import { notFound, permanentRedirect } from "next/navigation";
-import { canonicalPresentationLessonId, findPresentationLesson, legacyPresentationLessonIds } from "@/features/presentations/catalog";
+import { allPresentationLessons, canonicalPresentationLessonId, findPresentationLesson, legacyPresentationLessonIds } from "@/features/presentations/catalog";
 import { PresentationPlayer } from "@/features/presentations/components/player";
 import "@/features/presentations/presentation.css";
 
 export function generateStaticParams() {
-  return ["quan-ly-tep-va-thu-muc","layout-gallery",...Object.keys(legacyPresentationLessonIds)].map(lessonId=>({lessonId}));
+  return [...new Set([...allPresentationLessons.map(record=>record.lesson.id),...Object.keys(legacyPresentationLessonIds)])].map(lessonId=>({lessonId}));
 }
 
 export async function generateMetadata({params}: {params:Promise<{lessonId:string}>}):Promise<Metadata> {
