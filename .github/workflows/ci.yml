@@ -58,13 +58,30 @@ jobs:
             echo "Presentation controls are missing"
             exit 1
           fi
-          # Reference-inspired chrome: right dot rail, center pill and left lesson/class pill.
-          for marker in 'aria-label="Điều hướng nhanh giữa các slide"' 'xcn-presentation-pill' 'xcn-presentation-context'; do
+          # Full-bleed presentation with exactly two bottom-corner pills and an overlaid right rail.
+          for marker in 'aria-label="Điều hướng nhanh giữa các slide"' 'xcn-presentation-toolbar' 'xcn-presentation-pill' 'xcn-presentation-context'; do
             if ! grep -q "$marker" <<< "$presentation_html"; then
               echo "Presentation control missing: $marker"
               exit 1
             fi
           done
+          # Keep the slide itself full-bleed (no centered stage or top toolbar).
+          if grep -q 'xcn-presentation-stage grid' <<< "$presentation_html"; then
+            echo "Slide stage must not use the legacy grid and inset"
+            exit 1
+          fi
+          if ! grep -q 'class="xcn-presentation-frame"' <<< "$presentation_html"; then
+            echo "Full-viewport slide frame is missing"
+            exit 1
+          fi
+          if ! grep -q 'aria-label="Làm lại tương tác"' <<< "$presentation_html"; then
+            echo "Bottom-left function buttons are missing"
+            exit 1
+          fi
+          if ! grep -q 'aria-label="Trình chiếu toàn màn hình"' <<< "$presentation_html"; then
+            echo "Bottom-right fullscreen control is missing"
+            exit 1
+          fi
           dot_count="$(grep -o 'xcn-presentation-rail-button' <<< "$presentation_html" | wc -l)"
           if [ "$dot_count" -ne 29 ]; then
             echo "Expected 29 slide pagination dots, found $dot_count"
