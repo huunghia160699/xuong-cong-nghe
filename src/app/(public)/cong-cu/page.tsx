@@ -9,47 +9,46 @@ export const metadata: Metadata = {
 };
 
 export default function ToolsPage() {
-  return <main className="min-h-[75vh] bg-paper">
-    <div className="xcn-container py-14 lg:py-16">
+  return <main className="bg-paper">
+    <div className="xcn-container xcn-page-pad">
       <span className="text-xs font-bold uppercase tracking-[.2em] text-zinc-500">Xưởng Công Nghệ / Công cụ</span>
-      <h1 className="mt-4 max-w-3xl text-4xl font-bold tracking-tight sm:text-5xl">Không gian công cụ</h1>
-      <p className="mt-5 max-w-2xl text-base leading-8 text-zinc-600">
-        Tập hợp những sản phẩm và công cụ thực hành đang được phát triển tại Xưởng Công Nghệ.
-        Mỗi công cụ hoạt động cùng hệ giao diện của Xưởng Công Nghệ, không phải một website tách biệt.
+      <h1 className="mt-2 max-w-3xl text-4xl font-bold tracking-tight sm:text-5xl">Không gian công cụ</h1>
+      <p className="mt-3 max-w-3xl text-base leading-8 text-zinc-600">
+        Các công cụ học tập, trình chiếu và thực hành trên cùng nền tảng Xưởng Công Nghệ.
       </p>
-      <div className="mt-7 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
-        <Link href="/cong-cu/trinh-chieu" className="group flex min-h-[275px] flex-col border border-zinc-900 bg-ink p-5 text-white transition hover:-translate-y-1 hover:shadow-xl">
+      <div className="xcn-section-gap grid items-stretch gap-4 md:grid-cols-2 xl:grid-cols-3">
+        <Link href="/cong-cu/trinh-chieu" className="group flex min-h-0 flex-col border border-zinc-900 bg-ink p-5 text-white transition hover:-translate-y-1 hover:shadow-xl">
           <div className="flex items-start justify-between">
             <Presentation className="text-lime" size={34}/>
             <Badge className="border-lime/40 bg-lime/15 text-lime">Sử dụng được</Badge>
           </div>
-          <div className="mt-auto">
+          <div className="mt-5">
             <span className="text-xs font-medium uppercase tracking-widest text-zinc-400">Công cụ trình chiếu</span>
-            <h2 className="mt-3 text-2xl font-semibold">Trình chiếu theo phần</h2>
-            <p className="mt-3 text-sm leading-7 text-zinc-300">
+            <h2 className="mt-2 text-2xl font-semibold">Trình chiếu theo phần</h2>
+            <p className="mt-2 text-sm leading-6 text-zinc-300">
               Học theo phần nội dung: quản lý tệp, File Explorer, câu hỏi tương tác và mô phỏng.
             </p>
             <div className="mt-6 flex items-center gap-2 text-sm font-semibold text-lime">Mở trình chiếu <ArrowRight size={16}/></div>
           </div>
         </Link>
-        <div className="flex min-h-[320px] flex-col border border-zinc-200 bg-white p-5">
+        <div className="flex min-h-0 flex-col border border-zinc-200 bg-white p-5">
           <FileSpreadsheet size={32}/>
-          <div className="mt-auto">
+          <div className="mt-5">
             <span className="text-xs text-zinc-500">Đang phát triển</span>
-            <h2 className="mt-3 text-2xl font-semibold">Excel Lab</h2>
-            <p className="mt-3 text-sm leading-7 text-zinc-600">Luyện thao tác bảng tính và công thức ngay trong trình duyệt.</p>
+            <h2 className="mt-2 text-2xl font-semibold">Excel Lab</h2>
+            <p className="mt-2 text-sm leading-6 text-zinc-600">Luyện thao tác bảng tính và công thức ngay trong trình duyệt.</p>
           </div>
         </div>
-        <div className="flex min-h-[320px] flex-col border border-zinc-200 bg-white p-5">
+        <div className="flex min-h-0 flex-col border border-zinc-200 bg-white p-5">
           <FileText size={32}/>
-          <div className="mt-auto">
+          <div className="mt-5">
             <span className="text-xs text-zinc-500">Đang phát triển</span>
-            <h2 className="mt-3 text-2xl font-semibold">Word Lab</h2>
-            <p className="mt-3 text-sm leading-7 text-zinc-600">Thực hành định dạng và biên soạn văn bản theo tình huống.</p>
+            <h2 className="mt-2 text-2xl font-semibold">Word Lab</h2>
+            <p className="mt-2 text-sm leading-6 text-zinc-600">Thực hành định dạng và biên soạn văn bản theo tình huống.</p>
           </div>
         </div>
       </div>
-      <div className="mt-10 flex items-center gap-3 text-sm text-zinc-500"><BookOpen size={17}/><span>Công cụ trình chiếu được xây dựng theo các phần chủ đề, chưa hỗ trợ xuất tệp .pptx.</span></div>
+      <div className="xcn-section-gap flex items-center gap-3 border-t border-zinc-200 pt-4 text-sm text-zinc-500"><BookOpen size={17}/><span>Công cụ trình chiếu được xây dựng theo các phần chủ đề, chưa hỗ trợ xuất tệp .pptx.</span></div>
     </div>
   </main>;
 }
