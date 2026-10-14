@@ -1,5 +1,11 @@
 # Changelog
 
+## 2026-10-15 — Hero trang chủ cho slide mở đầu Word
+
+- Thiết kế lại riêng slide mở đầu `Làm quen Microsoft Word` dựa trên Hero trang chủ: navy kẻ ô, tiêu đề lớn điểm nhấn cyan, hai thẻ minh họa xếp chồng và ba mục tiêu.
+- Nút **Bắt đầu bài học** chuyển sang slide kế tiếp, có hỗ trợ bàn phím/focus; giữ nguyên 124 slide Word và các chương trình khác.
+- Ghi quy tắc bố cục vào chuẩn trình chiếu và nhật ký dự án.
+
 ## 2026-10-14 — Word cơ bản chuyên sâu với mô phỏng CSS
 
 - Giữ 75 slide Word có sẵn, thêm 49 slide hướng dẫn thao tác Microsoft Word qua mô phỏng Ribbon, thước, trang giấy, hộp thoại File/Print/Export, bảng và ảnh vẽ bằng CSS/React.

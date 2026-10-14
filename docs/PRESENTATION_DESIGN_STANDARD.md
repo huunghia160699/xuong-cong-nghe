@@ -84,3 +84,10 @@ Không gắn bài trình chiếu Tin học với số buổi hoặc số bài. D
 - Cơ sở dữ liệu Word gốc 75 slide được **giữ lại toàn bộ**, gắn thêm 49 minh họa thành 124 slide. Nội dung chia bốn chương theo chủ đề, không chia cứng theo buổi.
 - Tương thích responsive: giao diện Word rút gọn Ribbon có thể cuộn ngang; trên màn hẹp bảng hướng dẫn xuống bên dưới; không tự chạy animation.
 - Trình chiếu không cố giả lập đầy đủ mọi phiên bản Word; ghi rõ vị trí menu có thể thay đổi. Bài thực hành thật phải mở Word được cài trên máy.
+
+## 10. Slide 01 Word đầu tiên — đồng bộ Hero trang chủ (15/10/2026)
+
+- Chỉ slide mở đầu `word-lam-quen` dùng `wordHomeHero`; các slide và bài học khác giữ nguyên thiết kế.
+- Bố cục lấy trực tiếp ngôn ngữ thị giác của Hero trang chủ: nền navy kẻ ô (`grid-paper`), nhãn pill, tiêu đề ba dòng lớn và dòng cuối cyan, nút hành động blue, khối ảnh minh họa Word và thẻ mục tiêu chồng góc. Hình Word do HTML/CSS tạo.
+- Nút `Bắt đầu bài học` phải hoạt động và chuyển sang slide 02 bằng trình phát, không chỉ dùng để trang trí. Vẫn giữ điều khiển trình chiếu và chế độ nhập lớp hiện có.
+- Trên màn nhỏ, hai cột xếp dọc và nội dung có thể cuộn; chữ không bị cắt, không bắt buộc thiết lập chiều cao cố định.
