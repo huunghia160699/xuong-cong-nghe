@@ -200,3 +200,12 @@ Ngày: 15/10/2026. Đường dẫn: `/cong-cu/mo-phong-word`.
 - Giữ vùng lựa chọn văn bản khi mở/chọn menu. Popup render ngoài Ribbon để không bị cắt bởi cuộn ngang. Menu đóng khi bấm ra ngoài, Escape hoặc cuộn Ribbon; các nút chính và mũi tên có nhãn truy cập tách biệt.
 - Không tách mũi tên chức năng (Increase/Decrease Font Size, Increase/Decrease Indent, ký hiệu mũi tên dọc của Line Spacing), vì chúng là một phần của biểu tượng lệnh.
 - Các CSS cũ có thể còn ghi nhãn mô phỏng một nút duy nhất; quy tắc mới này có ưu tiên cao hơn, tách chức năng thực nhưng không thay đổi kích thước hàng 27px, thứ tự nhóm hoặc logic disabled.
+
+
+## 2026-10-16 — Styles dạng gallery Word, Editing sát trái, responsive theo số style
+
+- **Styles** không còn `flex:1` chiếm khoảng trống; cả nhóm Styles và **Editing** nằm sát nhau, căn về bên trái sau Paragraph. Editing giữ ba hành động Find, Replace, Select.
+- Khung Styles là **một dải chữ nhật phẳng** viền xám, cao `69px`, chứa bốn lựa chọn trực tiếp `Normal`, `No Spacing`, `Heading 1`, `Heading 2` theo thứ tự trong ảnh tham chiếu, rồi tới một khoang mũi tên xuống `13px` ở mép phải. Không dùng hiệu ứng gradient, glassmorphism hoặc bo góc trang trí.
+- Chọn style trực tiếp có `aria-pressed` và dấu chọn viền nhẹ. Mũi tên mở menu bao gồm đủ 6 kiểu (`Normal`, `No Spacing`, `Heading 1`, `Heading 2`, `Title`, `Subtitle`); mỗi lựa chọn gọi `applyStyle` thật.
+- Số ô style hiển thị giảm theo độ rộng viewport: **4** (trên 1480px), **3** (đến 1480px), **2** (đến 1350px), **1** (đến 1210px), **0** (từ 1090px trở xuống). Khi không còn ô, chỉ hiển thị nút mũi tên để mở tất cả styles. Ẩn **nguyên ô**; không tạo thanh cuộn ngang riêng hoặc cắt một nửa tên kiểu.
+- Không thay đổi kích thước nhóm Font/Paragraph, lệnh Editing, số hàng Ribbon, lệnh lưu/khôi phục nội dung và chế độ disabled của các nút.
