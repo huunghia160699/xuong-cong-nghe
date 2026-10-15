@@ -705,6 +705,9 @@ test("Word Styles gallery matches reference strip, anchors Editing to the left a
  assert.match(css,/\.wsl-home-styles \.wsl-style-gallery\{[\s\S]*?overflow:hidden;/);
  assert.match(css,/\.wsl-home-styles \.wsl-style-tile\{[\s\S]*?flex:0 0 123px;/);
  assert.match(css,/\.wsl-home-styles \.wsl-style-tile\[aria-pressed="true"\]/);
+ assert.doesNotMatch(css,/\.wsl-home-styles \.wsl-style-no-spacing\s*\{[^}]*border/);
+ assert.match(css,/\.wsl-home-styles \.wsl-style-tile\{[^}]*border:1px solid transparent;/);
+ assert.match(css,/\.wsl-home-styles \.wsl-style-tile:hover,[\s\S]*?border-color:#9eafc0;/);
  assert.match(css,/\.wsl-home-styles \.wsl-style-heading-1 span\{/);
  assert.match(css,/\.wsl-home-styles \.wsl-style-heading-2 span\{/);
  assert.match(css,/\.wsl-home-styles \.wsl-styles-scroll\{[\s\S]*?border-left:1px solid #b8b9bc;/);
