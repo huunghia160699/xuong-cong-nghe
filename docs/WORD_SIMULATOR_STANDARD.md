@@ -167,3 +167,11 @@ Ngày: 15/10/2026. Đường dẫn: `/cong-cu/mo-phong-word`.
 - Đồng bộ các ký hiệu Font (đậm/nghiêng/U/chỉ số trên/dưới), bộ chọn màu và công cụ disabled trong ô cao 27px. Các icon màu được căn lại trên/dưới sao cho cụm icon/swatch cân xứng; hai mũi tên chọn màu nằm giữa ô bằng `top:50%`.
 - **Mọi vạch phân cách nhỏ Font/Paragraph:** 1px × 18px, màu `#c9ced6`, `box-sizing:border-box`, cùng vị trí `align-self:center`; chỉ là trang trí, không hover.
 - Giữ đúng hai hàng và thứ tự lệnh. Không thay handlers, màu chủ đạo, hoặc trạng thái disabled. Các kiểm thử hồi quy phải kiểm tra chiều cao, anchor/gap và vạch dọc, không dựa vào tọa độ `right` cũ.
+
+
+## 2026-10-15 — Indent 4 dòng, mũi tên 70%, Line Spacing 3 dòng
+
+- **Decrease Indent** và **Increase Indent** sử dụng đúng bốn đường ngang xám tại các mức `y=3, 8.3, 13.7, 19`; hai đường giữa bắt đầu tại `x=13` để không chồng lên mũi tên. Đây là yêu cầu mới và **thay thế** quy tắc ba đường indent trước đó.
+- Thu nhỏ **cả hai** mũi tên Indent xuống `scale(0.7)` quanh tâm hình cũ, giữ nguyên màu `#168fca`, chiều trái/phải và thao tác của nút.
+- **Line Spacing** phải hiển thị đúng ba nét ngang riêng biệt tại `y=4, 11, 18`; giữ nguyên mũi tên dọc hai chiều bên trái và lệnh `lineSpacing`.
+- Không sửa kích thước hai hàng Ribbon, trạng thái disabled, kiểu hover, thứ tự các nút hoặc nhóm Font.
