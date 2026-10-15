@@ -363,6 +363,12 @@ export function WordSimulator(){
     }
     if(name==="removeHighlight"){command("hiliteColor","transparent");return;}
     if(name==="pasteRich"){
+      if(clipboardMode&&stagedClipboard.current!==null){
+        const content=stagedClipboard.current;
+        setClipboardMode(null);stagedClipboard.current=null;
+        command("insertText",content);
+        return;
+      }
       const range=savedSelection.current?.cloneRange()??null;
       if(!navigator.clipboard?.read){setStatus("Trình duyệt không hỗ trợ dán giữ định dạng; hãy dùng Ctrl+V");return;}
       void navigator.clipboard.read().then(async items=>{
@@ -376,6 +382,12 @@ export function WordSimulator(){
       return;
     }
     if(name==="paste"){
+      if(clipboardMode&&stagedClipboard.current!==null){
+        const content=stagedClipboard.current;
+        setClipboardMode(null);stagedClipboard.current=null;
+        command("insertText",content);
+        return;
+      }
       const range=savedSelection.current?.cloneRange()??null;
       if(!navigator.clipboard?.readText){setStatus("Dùng Ctrl+V để dán văn bản");return;}
       void navigator.clipboard.readText().then(content=>{
@@ -388,19 +400,21 @@ export function WordSimulator(){
       restoreSelection();
       const selected=window.getSelection()?.toString()??"";
       if(!selected){setStatus("Chọn văn bản trước khi "+(name==="copy"?"sao chép":"cắt"));return;}
-      const range=savedSelection.current?.cloneRange()??null;
-      const success=document.execCommand(name);
-      if(success){if(name==="cut")markChanged();else setStatus("Đã sao chép vào clipboard");return;}
-      if(!navigator.clipboard?.writeText){setStatus("Dùng Ctrl+"+(name==="copy"?"C":"X")+" để thao tác");return;}
-      void navigator.clipboard.writeText(selected).then(()=>{
-        if(name==="copy"){setStatus("Đã sao chép vào clipboard");return;}
-        if(range && editor.current?.contains(range.startContainer)){
-          savedSelection.current=range;
-          restoreSelection();
-          document.execCommand("delete");
-          markChanged();
+      stagedClipboard.current=selected;
+      const success=document.execCommand(name,false);
+      if(name==="cut"){
+        if(!success)document.execCommand("delete");
+        rememberSelection();markChanged();
+      }else{
+        window.getSelection()?.collapseToEnd();
+        rememberSelection();
+        if(!success&&navigator.clipboard?.writeText){
+          void navigator.clipboard.writeText(selected).catch(()=>{});
         }
-      }).catch(()=>setStatus("Clipboard bị chặn; dùng Ctrl+"+(name==="copy"?"C":"X")));
+      }
+      setClipboardMode(name);
+      setPaintArmed(false);paintFormat.current=null;
+      setStatus(name==="copy"?"Đã sao chép. Chọn vị trí rồi bấm Paste; Esc để hủy.":"Đã cắt. Chọn vị trí rồi bấm Paste; Esc để hủy.");
       return;
     }
     if(name==="formatPainter"){
