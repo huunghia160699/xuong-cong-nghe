@@ -347,7 +347,7 @@ test("Word Font group has deliberate two-row alignment, real color swatches and 
   assert.doesNotMatch(font,/label="Text Effects".*run=/);
   assert.match(font,/style=\{\{backgroundColor:highlightColor\}\}/);
   assert.match(font,/style=\{\{backgroundColor:textColor\}\}/);
-  assert.match(css,/grid-template-columns: 136px 43px repeat\(4, 27px\)/);
+  assert.match(css,/grid-template-columns: 136px 43px repeat\(2, 27px\) 1px 27px 1px 27px/);
   assert.match(css,/grid-template-rows: 27px 27px/);
   assert.match(css,/\.wsl-home-font \.wsl-font-select-chevron/);
   assert.match(css,/\.wsl-home-font \.wsl-font-color-swatch/);
@@ -378,4 +378,34 @@ test("Word Font glyphs use sans-serif B/U, matched A baselines and full-width se
   assert.match(bottom[1],/justify-content:\s*space-between/);
   assert.match(bottom[1],/gap:\s*0/);
   assert.equal((group.match(/run=\{\(\)=>run\("/g)||[]).length>=7,true);
+});
+
+
+test("Word Font spaces both rows, separates Change Case and superscript, and uses the Eraser icon",()=>{
+  const source=readFileSync("src/features/word-simulator/word-home-ribbon.tsx","utf8");
+  const css=readFileSync("src/features/word-simulator/word-font-ribbon.css","utf8");
+  const standard=readFileSync("docs/WORD_SIMULATOR_STANDARD.md","utf8");
+  const group=source.slice(source.indexOf('<Group name="Font"'),source.indexOf('<Group name="Paragraph"'));
+  const first=group.slice(group.indexOf('<div className="wsl-font-top">'),group.indexOf('<div className="wsl-font-bottom">'));
+  const second=group.slice(group.indexOf('<div className="wsl-font-bottom">'));
+  const line='<span className="wsl-font-divider" aria-hidden="true"/>';
+  assert.equal(first.split(line).length-1,2,"two dividers around Aa");
+  assert.equal(second.split(line).length-1,1,"one divider after superscript");
+  const beforeAa=first.indexOf(line);
+  const aa=first.indexOf('label="Change Case"');
+  const afterAa=first.indexOf(line,beforeAa+line.length);
+  const eraser=first.indexOf('label="Clear All Formatting"');
+  assert.ok(beforeAa<aa&&aa<afterAa&&afterAa<eraser,"Aa is enclosed by dividers");
+  assert.ok(second.indexOf('label="Superscript"')<second.indexOf(line)&&second.indexOf(line)<second.indexOf('wsl-font-effect-disabled'));
+  assert.match(first,/label="Clear All Formatting" icon=\{<Eraser size=\{20\}/);
+  assert.match(first,/run=\{\(\)=>run\("removeFormat"\)\}/);
+  assert.doesNotMatch(first,/wsl-font-clear/);
+  const top=css.match(/\.wsl-home-font \.wsl-font-top\s*\{([^}]+)\}/);
+  assert.ok(top);
+  assert.match(top[1],/column-gap:\s*0/);
+  assert.match(top[1],/justify-content:\s*space-between/);
+  assert.match(css,/\.wsl-home-font \.wsl-font-divider\s*\{[\s\S]*?width:\s*1px/);
+  assert.match(css,/\.wsl-home-font \.wsl-font-divider\s*\{[\s\S]*?height:\s*18px/);
+  assert.match(css,/\.wsl-home-font \.wsl-font-divider\s*\{[\s\S]*?pointer-events:\s*none/);
+  assert.match(standard,/Khoảng cách hàng trên và vạch phân nhóm/);
 });

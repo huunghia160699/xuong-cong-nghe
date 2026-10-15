@@ -25,6 +25,16 @@
 
 ## III. Lịch sử
 
+### 2026-10-15 — Giãn đều hàng trên Font, phân cách Aa/x² và sửa icon Clear Formatting
+- **Yêu cầu:** hàng trên nhóm Font phân bố đều như hàng dưới; có hai đường đứng nhỏ trước/sau Aa và một đường sau x²; Clear Formatting dùng hình cục tẩy rõ.
+- **File thay đổi:** `src/features/word-simulator/word-home-ribbon.tsx`, `src/features/word-simulator/word-font-ribbon.css`, `docs/WORD_SIMULATOR_STANDARD.md`, `tests/presentation-basics.test.mjs`, `CHANGELOG.md`, `docs/WORKLOG_AND_RULES.md`.
+- **Cách làm:** grid hàng trên giữ độ rộng hai ô chọn, dãn 4 nút và ba phân cách bằng `justify-content: space-between`; vạch ngăn mảnh `1px × 18px`, `aria-hidden`, không ăn chuột. Thay icon Clear Formatting từ A đè tẩy sang Eraser nguyên vẹn; lệnh `removeFormat` giữ nguyên.
+- **Kiểm thử:** GitHub CI gồm validator, unit tests, TypeScript, production build và route smoke; xem kết quả tại PR.
+- **Commit GitHub:** xem squash merge PR `style/word-font-top-spacing-separators`.
+- **Vercel Production:** chỉ xác nhận khi READY, SHA trùng `main` và domain chính đã gán.
+- **Giới hạn:** không có kiểm thử visual browser/pixel-perfect trong lần này.
+
+
 ### 2026-10-15 — Chỉnh nét chữ B/U, chân chữ A và giãn đều hàng dưới Font
 - **Mục tiêu:** làm B và U không chân; sửa biểu tượng tăng/giảm phông để hai chữ A dù khác cỡ vẫn cùng đường chân; dàn đều hàng 2 Font từ trái sang phải.
 - **Thay đổi/file:** `src/features/word-simulator/word-home-ribbon.tsx`, `src/features/word-simulator/word-font-ribbon.css`, `docs/WORD_SIMULATOR_STANDARD.md`, `tests/presentation-basics.test.mjs`, `CHANGELOG.md`, `docs/WORKLOG_AND_RULES.md`.

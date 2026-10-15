@@ -1,5 +1,12 @@
 # Changelog
 
+## 2026-10-15 — Căn hàng trên và các vạch ngăn nhóm Font
+
+- Dàn đều các công cụ hàng trên của nhóm Font từ trái sang phải tương tự hàng dưới.
+- Thêm hai vạch dọc xám mảnh bao quanh nút **Aa** và một vạch bên phải **x²**.
+- Thay biểu tượng Clear Formatting bằng hình cục tẩy nguyên vẹn; giữ nguyên thao tác xóa định dạng và toàn bộ các nút khác.
+
+
 ## 2026-10-15 — Căn chỉnh các biểu tượng nhóm Font
 
 - Thay phông **B** và **U** bằng chữ không chân (Arial/Segoe UI).
