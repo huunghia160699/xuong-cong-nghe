@@ -25,6 +25,7 @@ Xưởng Công Nghệ is a Vietnamese learning and practice platform for digital
 10. Only claim GitHub and Vercel are synchronized after confirming the production deployment commit SHA matches the GitHub `main` head, READY state, and production domain alias.
 11. For all slide creation or edits, read `docs/SLIDE_STANDARD.md`; do not render generic slide-type eyebrow labels above headings. Preserve meaningful labels within teaching simulations.
 12. Slides are **teacher-led teaching materials**, not student-facing software instructions. Never add generic prompts to click/watch/follow along, repeated explanations, or implementation disclaimers (CSS/React/mock) to slide surfaces. Keep them in presenter notes/documentation. Preserve meaningful course content, real steps, answer feedback and interactive controls.
+13. For the independent Word simulator, read `docs/WORD_SIMULATOR_STANDARD.md`; keep full Word Lab gated until roadmap release. Do not claim DOCX compatibility without a real OOXML engine or mislabel HTML as DOCX.
 
 ## Definition of done
 

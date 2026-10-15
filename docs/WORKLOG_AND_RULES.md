@@ -25,6 +25,18 @@
 
 ## III. Lịch sử
 
+### 2026-10-15 — Công cụ mô phỏng Word độc lập với slide
+- **Yêu cầu:** thiết kế công cụ giống bố cục Microsoft Word bản Windows, dùng trực tiếp trên website Xưởng Công Nghệ.
+- **Thay đổi:** `src/features/word-simulator/word-simulator.tsx`, `word-simulator.css`, route `/cong-cu/mo-phong-word`, thẻ trang Công cụ, `docs/WORD_SIMULATOR_STANDARD.md`, AGENTS, tests, CHANGELOG.
+- **Tương tác:** Ribbon File/Home/Insert/Layout/Review/View, trình soạn thảo thật với A4 và thước, font/bold/italic/list/align, bảng/ảnh, tìm, in/PDF, lưu localStorage và HTML/TXT. Không sử dụng Supabase.
+- **Giới hạn:** chỉ là bản thử; chưa hỗ trợ `.docx` nhập/xuất, Word pagination hay đồng tác giả. Dùng `contentEditable` + `execCommand` (deprecated), cần engine chuyên dụng ở giai đoạn sau. Word Lab roadmap giữ riêng sau feature flag.
+- **Quy tắc:** lệnh phải có tác dụng, không giả DOCX, tránh tài sản Microsoft, ghi chú đúng tính năng.
+- **Kiểm thử:** GitHub CI gồm unit/typecheck/build/route smoke; trình duyệt thật cần được kiểm thử bổ sung.
+- **Commit:** xem PR theo tiêu đề `feat(word): standalone desktop Word simulator`.
+- **Vercel:** chỉ báo khi READY, SHA trùng main và domain được gán.
+- **Tồn đọng:** engine editor, DOCX, pagination, browser E2E.
+
+
 ### 2026-10-15 — Loại bỏ lời dẫn, chỉ dẫn và chú thích kỹ thuật thừa trên slide Word
 - **Yêu cầu:** bài giảng do giáo viên trực tiếp giảng; không bồi thêm những câu như “Chọn để xem...”, “Hướng dẫn thao tác...” hoặc giải thích kỹ thuật CSS/React không có giá trị đối với người học.
 - **Thay đổi/file:** `src/features/presentations/components/word-purpose-slide.tsx`, `word-purpose.css`, `components/word-workspace.tsx`, `docs/SLIDE_STANDARD.md`, `AGENTS.md`, `CHANGELOG.md`, `tests/presentation-basics.test.mjs`.

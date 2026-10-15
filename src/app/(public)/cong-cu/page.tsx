@@ -31,6 +31,18 @@ export default function ToolsPage() {
             <div className="mt-6 flex items-center gap-2 text-sm font-semibold text-cyan">Mở trình chiếu <ArrowRight size={16}/></div>
           </div>
         </Link>
+        <Link href="/cong-cu/mo-phong-word" className="group flex min-h-0 flex-col border border-zinc-200 bg-white p-5 transition hover:-translate-y-1 hover:border-blue hover:shadow-lg focus-visible:outline-2 focus-visible:outline-blue">
+          <div className="flex items-start justify-between gap-4">
+            <FileText size={34} className="text-blue"/>
+            <Badge className="border-blue/25 bg-paper text-blue">Dùng thử</Badge>
+          </div>
+          <div className="mt-5">
+            <span className="text-xs font-medium uppercase tracking-widest text-zinc-500">Công cụ giả lập</span>
+            <h2 className="mt-2 text-2xl font-semibold">Mô phỏng Microsoft Word</h2>
+            <p className="mt-2 text-sm leading-6 text-zinc-600">Gõ và định dạng văn bản trên trang A4, sử dụng Ribbon, bảng và hình ảnh ngay trong trình duyệt.</p>
+            <div className="mt-6 flex items-center gap-2 text-sm font-semibold text-blue">Mở công cụ <ArrowRight size={16}/></div>
+          </div>
+        </Link>
         <div className="flex min-h-0 flex-col border border-zinc-200 bg-white p-5">
           <FileSpreadsheet size={32}/>
           <div className="mt-5">

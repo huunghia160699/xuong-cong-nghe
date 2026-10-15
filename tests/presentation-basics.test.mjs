@@ -205,3 +205,29 @@ test("teacher-led Word slides show subject matter without instructional filler",
   assert.equal(wordBasicsLessons.reduce((n,m)=>n+m.slides.length,0),124);
   assert.equal(excelBasicsLessons.reduce((n,m)=>n+m.slides.length,0),96);
 });
+
+
+test("independent Word simulator has functional editor, a tools entry and honest file limits",()=>{
+  const page=readFileSync("src/app/(word-simulator)/cong-cu/mo-phong-word/page.tsx","utf8");
+  const layout=readFileSync("src/app/(word-simulator)/cong-cu/mo-phong-word/layout.tsx","utf8");
+  const toolPage=readFileSync("src/app/(public)/cong-cu/page.tsx","utf8");
+  const editor=readFileSync("src/features/word-simulator/word-simulator.tsx","utf8");
+  const css=readFileSync("src/features/word-simulator/word-simulator.css","utf8");
+  const rules=readFileSync("docs/WORD_SIMULATOR_STANDARD.md","utf8");
+  assert.match(page,/WordSimulator/);
+  assert.match(layout,/word-simulator.css/);
+  assert.match(toolPage,/\/cong-cu\/mo-phong-word/);
+  assert.match(toolPage,/Word Lab/);
+  for(const word of ["contentEditable","onInput","onPaste","localStorage","execCommand","sanitize","insertTable","insertImage","importFile","exportHTML","exportText","setOrientation","setMargins","setZoom","window.print"])
+    assert.ok(editor.includes(word),word);
+  assert.match(editor,/MAX_IMPORT_BYTES=1024\*1024/);
+  assert.match(editor,/FORBIDDEN_TAGS/);
+  assert.match(editor,/\.html"/);
+  assert.match(css,/wsl-ribbon/);
+  assert.match(css,/wsl-paper/);
+  assert.match(css,/@media\(max-width:650px\)/);
+  assert.match(css,/@media print/);
+  assert.match(rules,/Chưa thể mở hoặc xuất DOCX thật/);
+  assert.equal(wordBasicsLessons.reduce((n,m)=>n+m.slides.length,0),124);
+  assert.equal(excelBasicsLessons.reduce((n,m)=>n+m.slides.length,0),96);
+});
