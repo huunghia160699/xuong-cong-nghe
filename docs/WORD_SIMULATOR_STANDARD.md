@@ -209,3 +209,13 @@ Ngày: 15/10/2026. Đường dẫn: `/cong-cu/mo-phong-word`.
 - Chọn style trực tiếp có `aria-pressed` và dấu chọn viền nhẹ. Mũi tên mở menu bao gồm đủ 6 kiểu (`Normal`, `No Spacing`, `Heading 1`, `Heading 2`, `Title`, `Subtitle`); mỗi lựa chọn gọi `applyStyle` thật.
 - Số ô style hiển thị giảm theo độ rộng viewport: **4** (trên 1480px), **3** (đến 1480px), **2** (đến 1350px), **1** (đến 1210px), **0** (từ 1090px trở xuống). Khi không còn ô, chỉ hiển thị nút mũi tên để mở tất cả styles. Ẩn **nguyên ô**; không tạo thanh cuộn ngang riêng hoặc cắt một nửa tên kiểu.
 - Không thay đổi kích thước nhóm Font/Paragraph, lệnh Editing, số hàng Ribbon, lệnh lưu/khôi phục nội dung và chế độ disabled của các nút.
+
+
+## 2026-10-16 — Trạng thái nhập liệu, Clipboard, launcher nhóm, tab active
+
+- **Sáu nút Font:** Bold, Italic, Underline, Strikethrough, Subscript và Superscript phải có trạng thái **active bền** dựa trên `document.queryCommandState` tại vùng chữ/chỗ đặt con trỏ. Nhấn bật định dạng khi con trỏ thu gọn vẫn áp dụng cho ký tự nhập tiếp theo; nhấn lần nữa để tắt. Đồng bộ cả khi thay đổi vùng chọn, gõ chữ hay dịch con trỏ. Underline giữ kiểu nút tách đôi, vùng lệnh chính hiển thị active nhưng mũi tên vẫn mở menu riêng.
+- **Văn bản được chọn** trong vùng soạn thảo dùng màu nền xanh nhạt `#eaf2fb`, đồng màu nền hover Ribbon, vẫn giữ chữ tối để đọc.
+- **Clipboard stage:** sau khi chọn chữ và bấm Copy hoặc Cut, chính lệnh đó sáng active, hai nút còn lại trong bộ Cut/Copy/Format Painter ẩn; Paste vẫn hiển thị. Cho phép di chuyển con trỏ rồi Paste tại vị trí mới. Lưu bản sao văn bản trong session để dán ngay cả khi trình duyệt hạn chế quyền clipboard; đồng thời cố sử dụng Clipboard API khi có thể. Bấm Escape hủy trạng thái chờ dán hoặc Format Painter; Escape không tự đảo ngược việc Cut đã hoàn tất (Undo xử lý riêng).
+- **Mọi nhóm Home Ribbon** (Clipboard, Font, Paragraph, Styles, Editing) có một launcher mũi tên nhỏ ở **góc dưới bên phải**, mở hộp thoại chi tiết với những hành động thật đã được trình soạn thảo hỗ trợ. Hộp thoại đóng bằng Escape, X hoặc bấm ra ngoài; không hiện các tùy chọn không hoạt động.
+- **Editing** có nét phân cách dọc cuối nhóm như các nhóm khác, 1px màu `#d8d8dc`.
+- **Tab đang chọn:** chữ đậm `font-weight:700` và một gạch chân **3px** rõ ràng, giữ giao diện tối giản, không gradient.
