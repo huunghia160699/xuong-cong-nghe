@@ -135,7 +135,7 @@ export function WordHomeRibbon({
        <Btn className="wsl-font-icon-button" label="Increase Font Size" icon={<span className="wsl-font-size-symbol wsl-font-grow" aria-hidden="true"><span className="wsl-font-size-letter">A<svg className="wsl-font-size-direction" viewBox="0 0 9 8" focusable="false"><path d="M1.4 5.8 4.5 2.7 7.6 5.8" fill="none" stroke="currentColor" strokeWidth="2.1" strokeLinecap="square" strokeLinejoin="miter"/></svg></span></span>} run={()=>editSize(String(Math.min(7,size+1)))}/>
        <Btn className="wsl-font-icon-button" label="Decrease Font Size" icon={<span className="wsl-font-size-symbol wsl-font-shrink" aria-hidden="true"><span className="wsl-font-size-letter">A<svg className="wsl-font-size-direction" viewBox="0 0 9 8" focusable="false"><path d="M1.4 2.2 4.5 5.3 7.6 2.2" fill="none" stroke="currentColor" strokeWidth="2.1" strokeLinecap="square" strokeLinejoin="miter"/></svg></span></span>} run={()=>editSize(String(Math.max(1,size-1)))}/>
        <span className="wsl-font-divider" aria-hidden="true"/>
-       <Btn className="wsl-font-icon-button" label="Change Case" icon={<span className="wsl-font-change-case" aria-hidden="true">Aa<ChevronDown size={RIBBON_EXPAND_ARROW_SIZE}/></span>} run={changeCase}/>
+       <Btn className="wsl-font-icon-button wsl-font-change-case-button" label="Change Case" icon={<span className="wsl-font-change-case" aria-hidden="true">Aa<ChevronDown size={RIBBON_EXPAND_ARROW_SIZE}/></span>} run={changeCase}/>
        <span className="wsl-font-divider" aria-hidden="true"/>
        <Btn className="wsl-font-icon-button" label="Clear All Formatting" icon={<Eraser size={20} strokeWidth={1.75} aria-hidden="true"/>} run={()=>run("removeFormat")}/>
      </div>
