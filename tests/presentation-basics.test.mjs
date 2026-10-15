@@ -470,3 +470,37 @@ test("Word Paragraph ribbon follows reference layout, correct command mapping an
   assert.match(layout,/word-paragraph-ribbon.css/);
   assert.ok(layout.indexOf('word-paragraph-ribbon.css')>layout.indexOf('word-font-ribbon.css'));
 });
+
+
+test("Word ribbon icons use Word-like arrows, nested list and correct sort/spacing glyph layout",()=>{
+  const source=readFileSync("src/features/word-simulator/word-home-ribbon.tsx","utf8");
+  const fontCSS=readFileSync("src/features/word-simulator/word-font-ribbon.css","utf8");
+  const paragraphCSS=readFileSync("src/features/word-simulator/word-paragraph-ribbon.css","utf8");
+  const standard=readFileSync("docs/WORD_SIMULATOR_STANDARD.md","utf8");
+  const font=source.slice(source.indexOf('<Group name="Font"'),source.indexOf('<Group name="Paragraph"'));
+  const paragraph=source.slice(source.indexOf('<Group name="Paragraph"'),source.indexOf('<Group name="Styles"'));
+  assert.match(font,/wsl-font-grow[^]*?<svg className="wsl-font-size-direction" viewBox="0 0 12 12"/);
+  assert.match(font,/wsl-font-shrink[^]*?<svg className="wsl-font-size-direction" viewBox="0 0 12 12"/);
+  assert.doesNotMatch(font,/wsl-font-size-direction">[↑↓]/);
+  assert.match(fontCSS,/\.wsl-home-font \.wsl-font-size-direction[\s\S]*?top: -2px;/);
+  assert.match(fontCSS,/\.wsl-home-font \.wsl-font-size-direction[\s\S]*?right: -1px;/);
+  for(const glyph of ["WordListGlyph","WordIndentGlyph","WordLineSpacingGlyph","WordSortGlyph"])
+    assert.match(source,new RegExp("function "+glyph+"\\("));
+  assert.match(source,/kind==="multilevel"/);
+  assert.match(source,/<text x="0\.3" y="6\.4">1\.<\/text>/);
+  assert.match(source,/<text x="4" y="13\.2">a\.<\/text>/);
+  assert.match(source,/<text x="8" y="20">i\.<\/text>/);
+  assert.match(source,/<path d="M9 4H25M12\.5 10\.8H25M16 17\.5H25"/);
+  assert.match(paragraph,/label="Decrease Indent" icon=\{<WordIndentGlyph direction="decrease"\/>\}/);
+  assert.match(paragraph,/label="Increase Indent" icon=\{<WordIndentGlyph direction="increase"\/>\}/);
+  assert.match(paragraph,/label="Sort" icon=\{<WordSortGlyph\/>\}/);
+  assert.match(paragraph,/label="Line Spacing 1\.5"[\s\S]*?<WordLineSpacingGlyph\/>/);
+  assert.match(source,/M5 19\.5V2\.5/);
+  assert.match(source,/fill="#167fc0">A<\/text>/);
+  assert.match(source,/x="2" y="19\.2" fill="#3f4c5a">Z<\/text>/);
+  for(const command of ['run("outdent")','run("indent")','run("lineSpacing")'])
+    assert.ok(paragraph.includes(command),command);
+  assert.match(paragraphCSS,/\.wsl-home-paragraph \.wsl-paragraph-indent-glyph/);
+  assert.match(paragraphCSS,/\.wsl-home-paragraph \.wsl-paragraph-sort-glyph/);
+  assert.match(standard,/Tinh chỉnh biểu tượng Word Home Ribbon/);
+});

@@ -1,5 +1,13 @@
 # Changelog
 
+## 2026-10-15 — Icon tăng cỡ chữ và Paragraph gần Word hơn
+
+- Mũi tên tăng/giảm cỡ chữ chuyển sang dạng tam giác nằm trên đầu phía bên phải chữ A.
+- Multilevel List hiển thị ba cấp thụt dần 1/a/i; hai icon Indent là dòng văn bản và mũi tên xanh trái/phải.
+- Giãn dòng hiển thị hai đầu mũi tên chung một trục dọc; Sort có A xanh/Z đậm ở trái và mũi tên xuống bên phải.
+- Chỉ thay SVG/CSS và không đổi chức năng, vị trí Ribbon, hành vi disabled.
+
+
 ## 2026-10-15 — Hoàn thiện nhóm Paragraph Word
 
 - Thiết kế lại nhóm Paragraph thành hai hàng icon nhỏ chuẩn kiểu Word, giãn đều từ trái sang phải và có các vạch phân nhóm.

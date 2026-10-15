@@ -106,3 +106,13 @@ Ngày: 15/10/2026. Đường dẫn: `/cong-cu/mo-phong-word`.
 - **Chức năng thật:** Bullets dùng `insertUnorderedList`, Numbering dùng `insertOrderedList`, Multilevel chèn `ol` lồng `ol` thay vì nút giả tăng thụt lề, căn đoạn giữ nguyên các lệnh `justify*`, Line Spacing bật/tắt 1.0 và 1.5, Shading tô trực tiếp nền đoạn thay vì tô nền chữ, Borders bật/tắt viền dưới đoạn. Hiển thị mũi tên nhỏ trong nút (không giả làm menu chưa triển khai).
 - Disabled luôn dùng `cursor: default`, không hiệu ứng hover và không tooltip. Hành vi thực của nút có thể phụ thuộc `document.execCommand` đã deprecated, không tuyên bố giống hoàn toàn Word.
 - Test hồi quy số nút, thứ tự, divider và mapping; kiểm thử TypeScript/build/smoke; browser visual ở 360/768/1280 khi có môi trường browser.
+
+## 2026-10-15 — Tinh chỉnh biểu tượng Word Home Ribbon (ưu tiên hình thức)
+
+- **Grow / Shrink Font:** dùng mũi tên dạng tam giác có thân ngắn đặt nổi ở **phía trên bên phải chữ A**; hai chữ A giữ chung đường chân theo quy tắc đã chốt. SVG phải dùng `currentColor` và CSS `top/right` để căn rõ, không dùng ký tự Unicode ↑ hoặc ↓.
+- **Multilevel List:** icon đúng cấu trúc ba mức `1.`, `a.`, `i.`; các hàng đường kẻ nằm ở độ sâu tăng dần, không được vẽ ba đường cùng điểm bắt đầu rồi chỉ đổi ký tự số.
+- **Increase/Decrease Indent:** biểu tượng gồm **các dòng chữ xám** và **mũi tên xanh nằm ngang** chỉ trái/phải trên một hàng ở trung tâm, không dùng icon Lucide khác hình ảnh tham khảo.
+- **Line Spacing:** hai đầu mũi tên lên và xuống phải cùng nằm trên **một trục dọc duy nhất ở bên trái** ba đường kẻ, không dùng `ArrowUpDown` (vốn vẽ mũi tên lệch hai bên).
+- **Sort:** chữ `A` màu xanh phía trên, chữ `Z` tối bên dưới, mũi tên đi xuống phía **bên phải**; kích thước tương thích 26px nút Word.
+- Chỉ thay UI (SVG/CSS); giữ nguyên props, aria-label, onClick, mapping các lệnh hiện hữu. Không phát triển menu/tính năng khác trong lần chỉnh này. Disabled vẫn mờ, con trỏ thường, không hover.
+- Kiểm tra regression về vị trí/glyph SVG và các nút; build/CI cần pass. Không tuyên bố pixel-perfect khi chưa đối chiếu browser thật.

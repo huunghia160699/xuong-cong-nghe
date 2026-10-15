@@ -147,10 +147,12 @@
 }
 .wsl-home-font .wsl-font-size-direction {
   position: absolute;
-  top: -1px;
-  right: 0;
-  font: 700 12px/12px "Segoe UI", Arial, sans-serif;
+  top: -2px;
+  right: -1px;
+  width: 10px;
+  height: 10px;
   color: #247bbb;
+  pointer-events: none;
 }
 .wsl-home-font .wsl-font-change-case {
   display: flex;

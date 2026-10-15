@@ -25,6 +25,17 @@
 
 ## III. Lịch sử
 
+### 2026-10-15 — Tinh chỉnh SVG icon Font/Paragraph gần Word desktop
+- **Yêu cầu:** mũi tên tăng cỡ chữ dạng tam giác ở trên bên phải A; Multilevel List, hai nút Indent, Line Spacing, Sort cần sát hình Word hơn. Ưu tiên CSS/giao diện, làm chức năng từng bước sau.
+- **File:** `src/features/word-simulator/word-home-ribbon.tsx`, `src/features/word-simulator/word-font-ribbon.css`, `src/features/word-simulator/word-paragraph-ribbon.css`, `docs/WORD_SIMULATOR_STANDARD.md`, `docs/WORKLOG_AND_RULES.md`, `CHANGELOG.md`, `tests/presentation-basics.test.mjs`.
+- **Thiết kế:** arrowhead hình tam giác phía trên góc phải của A; multilevel với 3 bậc 1/a/i và đường kẻ thụt dần; indent mũi tên xanh trái/phải trước các dòng văn bản; giãn dòng 2 mũi tên cùng trục đứng; Sort A xanh/Z đậm bên trái và mũi tên xuống bên phải. SVG dùng đường mảnh chống mờ.
+- **Phạm vi:** không thay handlers, mapping lệnh, layout nhóm, hay cài thêm menus; các công cụ đang hoạt động giữ nguyên. Responsive Ribbon dạng cuộn ngang và quy tắc disabled giữ nguyên.
+- **Kiểm thử:** unit tests, typecheck, production build, route smoke trên GitHub Actions; ghi rõ hạn chế visual/E2E nếu chưa kiểm tra thực tế.
+- **GitHub:** PR `style/word-ribbon-icon-fidelity`, squash commit xem lịch sử Git.
+- **Vercel:** deploy Production sau CI, chỉ công bố READY nếu main SHA = Vercel SHA và alias `xuong-cong-nghe.vercel.app`.
+- **Tồn đọng:** chưa đối chiếu pixel bằng trình duyệt, các menu nâng cao vẫn chưa triển khai.
+
+
 ### 2026-10-15 — Hoàn thiện nhóm Paragraph giả lập Word theo ảnh
 - **Yêu cầu:** nhóm Paragraph giống Word desktop về số nút, thứ tự, icon và khoảng cách phân bố đều hai bên, đồng thời các nút phải hoạt động đúng.
 - **File:** `src/features/word-simulator/word-home-ribbon.tsx`, `word-simulator.tsx`, `word-paragraph-ribbon.css` (mới), `src/app/(word-simulator)/cong-cu/mo-phong-word/layout.tsx`, `docs/WORD_SIMULATOR_STANDARD.md`, `tests/presentation-basics.test.mjs`, `CHANGELOG.md`, `docs/WORKLOG_AND_RULES.md`.
