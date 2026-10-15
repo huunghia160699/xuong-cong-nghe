@@ -1,5 +1,11 @@
 # Changelog
 
+## 2026-10-15 — Icon Indent còn bốn dòng
+
+- Đơn giản hóa Decrease/Increase Indent: mỗi icon chỉ có bốn đường kẻ ngang, hai dòng giữa nhường chỗ cho mũi tên xanh, dễ nhìn hơn.
+- Giữ nguyên thao tác tăng/giảm thụt lề và các công cụ Word khác.
+
+
 ## 2026-10-15 — Icon tăng cỡ chữ và Paragraph gần Word hơn
 
 - Mũi tên tăng/giảm cỡ chữ chuyển sang dạng tam giác nằm trên đầu phía bên phải chữ A.

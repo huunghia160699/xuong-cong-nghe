@@ -25,6 +25,15 @@
 
 ## III. Lịch sử
 
+### 2026-10-15 — Giản lược hai icon Indent còn bốn đường kẻ
+- **Yêu cầu:** icon Decrease/Increase Indent bị rối, chỉ cần bốn hàng ngang.
+- **File:** `src/features/word-simulator/word-home-ribbon.tsx`, `docs/WORD_SIMULATOR_STANDARD.md`, `docs/WORKLOG_AND_RULES.md`, `CHANGELOG.md`, `tests/presentation-basics.test.mjs`.
+- **Quyết định:** giảm từ sáu xuống bốn path ngang mỗi icon, hai đường trên/dưới dài, hai đường giữa ngắn để dành không gian cho mũi tên xanh; chỉnh mũi tên gọn tương ứng. Không chỉnh CSS bố cục, sự kiện hoặc nhóm Ribbon khác.
+- **Kiểm thử:** unit tests, typecheck, production build và route smoke qua GitHub Actions; chưa kiểm tra E2E trên browser.
+- **GitHub:** PR `fix/word-indent-four-lines`, commit xem lịch sử Git sau merge.
+- **Vercel:** deploy Production SHA trùng main, chỉ báo hoàn tất nếu READY và alias chính đã gán.
+
+
 ### 2026-10-15 — Tinh chỉnh SVG icon Font/Paragraph gần Word desktop
 - **Yêu cầu:** mũi tên tăng cỡ chữ dạng tam giác ở trên bên phải A; Multilevel List, hai nút Indent, Line Spacing, Sort cần sát hình Word hơn. Ưu tiên CSS/giao diện, làm chức năng từng bước sau.
 - **File:** `src/features/word-simulator/word-home-ribbon.tsx`, `src/features/word-simulator/word-font-ribbon.css`, `src/features/word-simulator/word-paragraph-ribbon.css`, `docs/WORD_SIMULATOR_STANDARD.md`, `docs/WORKLOG_AND_RULES.md`, `CHANGELOG.md`, `tests/presentation-basics.test.mjs`.
