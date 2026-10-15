@@ -49,7 +49,7 @@ function WordListGlyph({kind}:{kind:"bullets"|"numbering"|"multilevel"}){
             <text x="0" y="6.5">1</text><text x="0" y="13">2</text><text x="0" y="19.5">3</text>
           </g>}
       </svg>}
-    <ChevronDown size={9}/>
+    <ChevronDown size={RIBBON_EXPAND_ARROW_SIZE}/>
   </span>;
 }
 
@@ -93,6 +93,8 @@ function WordSortGlyph(){
 
 const fontSizes=[["1","8"],["2","10"],["3","12"],["4","14"],["5","18"],["6","24"],["7","36"]];
 const FONTS=["Aptos","Arial","Calibri","Times New Roman","Georgia","Verdana"];
+// Shared display size for every expand/dropdown chevron in the Home ribbon.
+const RIBBON_EXPAND_ARROW_SIZE=13;
 
 export function WordHomeRibbon({
  font,fontSize,showMarks,hasSelection,paintArmed,run,editFont,editSize,changeCase,sortLines,
@@ -105,7 +107,7 @@ export function WordHomeRibbon({
    <Group name="Clipboard" className="wsl-home-clipboard">
      <div className="wsl-home-paste">
        <Btn className="wsl-hb-paste" label="Paste — Dán" icon={<span className="wsl-clipboard-paste-art"><Clipboard size={31} strokeWidth={1.45}/></span>} run={()=>run("paste")}/>
-       <span>Paste <ChevronDown size={10}/></span>
+       <span>Paste <ChevronDown size={RIBBON_EXPAND_ARROW_SIZE}/></span>
      </div>
      <div className="wsl-home-clipboard-stack">
        <Btn className="wsl-hb-with-text" label="Cut — Cắt" disabled={!hasSelection} icon={<><Scissors size={14}/><span>Cut</span></>} run={()=>run("cut")}/>
@@ -121,26 +123,26 @@ export function WordHomeRibbon({
          <select aria-label="Font" value={font} onChange={event=>editFont(event.target.value)}>
            {FONTS.map(name=><option value={name} key={name}>{name==="Aptos"?"Aptos (Body)":name}</option>)}
          </select>
-         <ChevronDown size={12} aria-hidden="true" className="wsl-font-select-chevron"/>
+         <ChevronDown size={RIBBON_EXPAND_ARROW_SIZE} aria-hidden="true" className="wsl-font-select-chevron"/>
        </label>
        <label className="wsl-font-select wsl-font-size">
          <span className="sr-only">Cỡ chữ</span>
          <select aria-label="Font Size" value={fontSize} onChange={event=>editSize(event.target.value)}>
            {fontSizes.map(([value,text])=><option key={value} value={value}>{text}</option>)}
          </select>
-         <ChevronDown size={11} aria-hidden="true" className="wsl-font-select-chevron"/>
+         <ChevronDown size={RIBBON_EXPAND_ARROW_SIZE} aria-hidden="true" className="wsl-font-select-chevron"/>
        </label>
        <Btn className="wsl-font-icon-button" label="Increase Font Size" icon={<span className="wsl-font-size-symbol wsl-font-grow" aria-hidden="true"><span className="wsl-font-size-letter">A<svg className="wsl-font-size-direction" viewBox="0 0 9 8" focusable="false"><path d="M1.4 5.8 4.5 2.7 7.6 5.8" fill="none" stroke="currentColor" strokeWidth="2.1" strokeLinecap="square" strokeLinejoin="miter"/></svg></span></span>} run={()=>editSize(String(Math.min(7,size+1)))}/>
        <Btn className="wsl-font-icon-button" label="Decrease Font Size" icon={<span className="wsl-font-size-symbol wsl-font-shrink" aria-hidden="true"><span className="wsl-font-size-letter">A<svg className="wsl-font-size-direction" viewBox="0 0 9 8" focusable="false"><path d="M1.4 2.2 4.5 5.3 7.6 2.2" fill="none" stroke="currentColor" strokeWidth="2.1" strokeLinecap="square" strokeLinejoin="miter"/></svg></span></span>} run={()=>editSize(String(Math.max(1,size-1)))}/>
        <span className="wsl-font-divider" aria-hidden="true"/>
-       <Btn className="wsl-font-icon-button" label="Change Case" icon={<span className="wsl-font-change-case" aria-hidden="true">Aa<ChevronDown size={9}/></span>} run={changeCase}/>
+       <Btn className="wsl-font-icon-button" label="Change Case" icon={<span className="wsl-font-change-case" aria-hidden="true">Aa<ChevronDown size={RIBBON_EXPAND_ARROW_SIZE}/></span>} run={changeCase}/>
        <span className="wsl-font-divider" aria-hidden="true"/>
        <Btn className="wsl-font-icon-button" label="Clear All Formatting" icon={<Eraser size={20} strokeWidth={1.75} aria-hidden="true"/>} run={()=>run("removeFormat")}/>
      </div>
      <div className="wsl-font-bottom">
        <Btn className="wsl-font-icon-button" label="Bold" icon={<span className="wsl-font-bold" aria-hidden="true">B</span>} run={()=>run("bold")}/>
        <Btn className="wsl-font-icon-button" label="Italic" icon={<span className="wsl-font-italic" aria-hidden="true">I</span>} run={()=>run("italic")}/>
-       <Btn className="wsl-font-icon-button wsl-font-underline-button" label="Underline" icon={<span className="wsl-font-underline" aria-hidden="true">U<ChevronDown size={9}/></span>} run={()=>run("underline")}/>
+       <Btn className="wsl-font-icon-button wsl-font-underline-button" label="Underline" icon={<span className="wsl-font-underline" aria-hidden="true">U<ChevronDown size={RIBBON_EXPAND_ARROW_SIZE}/></span>} run={()=>run("underline")}/>
        <Btn className="wsl-font-icon-button" label="Strikethrough" icon={<span className="wsl-font-strike" aria-hidden="true">ab</span>} run={()=>run("strikeThrough")}/>
        <Btn className="wsl-font-icon-button" label="Subscript" icon={<span className="wsl-font-sub" aria-hidden="true">x<sub>2</sub></span>} run={()=>run("subscript")}/>
        <Btn className="wsl-font-icon-button" label="Superscript" icon={<span className="wsl-font-super" aria-hidden="true">x<sup>2</sup></span>} run={()=>run("superscript")}/>
@@ -149,13 +151,13 @@ export function WordHomeRibbon({
        <label className="wsl-font-color-control" aria-label="Text Highlight Color">
          <Highlighter size={17} strokeWidth={1.8} aria-hidden="true"/>
          <span className="wsl-font-color-swatch" style={{backgroundColor:highlightColor}} aria-hidden="true"/>
-         <ChevronDown size={9} className="wsl-font-color-chevron" aria-hidden="true"/>
+         <ChevronDown size={RIBBON_EXPAND_ARROW_SIZE} className="wsl-font-color-chevron" aria-hidden="true"/>
          <input type="color" value={highlightColor} aria-label="Text Highlight Color" onChange={event=>{setHighlightColor(event.target.value);run("hiliteColor",event.target.value);}}/>
        </label>
        <label className="wsl-font-color-control" aria-label="Font Color">
          <span className="wsl-font-color-letter" aria-hidden="true">A</span>
          <span className="wsl-font-color-swatch" style={{backgroundColor:textColor}} aria-hidden="true"/>
-         <ChevronDown size={9} className="wsl-font-color-chevron" aria-hidden="true"/>
+         <ChevronDown size={RIBBON_EXPAND_ARROW_SIZE} className="wsl-font-color-chevron" aria-hidden="true"/>
          <input type="color" value={textColor} aria-label="Font Color" onChange={event=>{setTextColor(event.target.value);run("foreColor",event.target.value);}}/>
        </label>
      </div>
@@ -179,9 +181,9 @@ export function WordHomeRibbon({
        <Btn className="wsl-paragraph-icon-button" label="Align Right" icon={<AlignRight size={18}/>} run={()=>run("justifyRight")}/>
        <Btn className="wsl-paragraph-icon-button" label="Justify" icon={<AlignJustify size={18}/>} run={()=>run("justifyFull")}/>
        <span className="wsl-paragraph-divider" aria-hidden="true"/>
-       <Btn className="wsl-paragraph-icon-button wsl-paragraph-combo-button" label="Line Spacing 1.5" title="Giãn dòng 1.5 (bấm lại để về 1.0)" icon={<span className="wsl-paragraph-combo wsl-paragraph-line-spacing"><WordLineSpacingGlyph/><ChevronDown size={9}/></span>} run={()=>run("lineSpacing")}/>
-       <Btn className="wsl-paragraph-icon-button wsl-paragraph-combo-button" label="Paragraph Shading" title="Bật/tắt tô nền đoạn văn" icon={<span className="wsl-paragraph-combo wsl-paragraph-shading"><PaintBucket size={18}/><span className="wsl-paragraph-shading-swatch"/><ChevronDown size={9}/></span>} run={()=>run("paragraphShading")}/>
-       <Btn className="wsl-paragraph-icon-button wsl-paragraph-combo-button" label="Borders" title="Bật/tắt viền dưới đoạn văn" icon={<span className="wsl-paragraph-combo wsl-paragraph-borders"><Grid2X2 size={17}/><ChevronDown size={9}/></span>} run={()=>run("paragraphBorder")}/>
+       <Btn className="wsl-paragraph-icon-button wsl-paragraph-combo-button" label="Line Spacing 1.5" title="Giãn dòng 1.5 (bấm lại để về 1.0)" icon={<span className="wsl-paragraph-combo wsl-paragraph-line-spacing"><WordLineSpacingGlyph/><ChevronDown size={RIBBON_EXPAND_ARROW_SIZE}/></span>} run={()=>run("lineSpacing")}/>
+       <Btn className="wsl-paragraph-icon-button wsl-paragraph-combo-button" label="Paragraph Shading" title="Bật/tắt tô nền đoạn văn" icon={<span className="wsl-paragraph-combo wsl-paragraph-shading"><PaintBucket size={18}/><span className="wsl-paragraph-shading-swatch"/><ChevronDown size={RIBBON_EXPAND_ARROW_SIZE}/></span>} run={()=>run("paragraphShading")}/>
+       <Btn className="wsl-paragraph-icon-button wsl-paragraph-combo-button" label="Borders" title="Bật/tắt viền dưới đoạn văn" icon={<span className="wsl-paragraph-combo wsl-paragraph-borders"><Grid2X2 size={17}/><ChevronDown size={RIBBON_EXPAND_ARROW_SIZE}/></span>} run={()=>run("paragraphBorder")}/>
      </div>
    </Group>
 
@@ -200,7 +202,7 @@ export function WordHomeRibbon({
          <span>{label}</span>
        </button>)}
      </div>
-     <div className="wsl-styles-scroll" aria-hidden="true"><ChevronDown size={13}/></div>
+     <div className="wsl-styles-scroll" aria-hidden="true"><ChevronDown size={RIBBON_EXPAND_ARROW_SIZE}/></div>
    </Group>
 
    <Group name="Editing" className="wsl-home-editing">
