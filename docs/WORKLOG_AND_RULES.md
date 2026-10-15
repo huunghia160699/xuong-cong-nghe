@@ -25,6 +25,16 @@
 
 ## III. Lịch sử
 
+### 2026-10-15 — Thiết kế chuyên sâu lại nhóm Font của Word Simulator
+- **Yêu cầu:** nhóm Font trước chưa đẹp, cần chỉnh kỹ cho giống giao diện Word desktop người dùng đã cung cấp.
+- **Thay đổi và file:** `src/features/word-simulator/word-home-ribbon.tsx`, thêm `src/features/word-simulator/word-font-ribbon.css`, import tại `src/app/(word-simulator)/cong-cu/mo-phong-word/layout.tsx`, cập nhật `docs/WORD_SIMULATOR_STANDARD.md`, `tests/presentation-basics.test.mjs`, `CHANGELOG.md` và nhật ký này.
+- **Quyết định:** cô lập CSS nhóm Font tránh xung đột style cũ; căn 2 hàng chuẩn gồm font, cỡ chữ, 4 nút hàng trên và 9 vị trí hàng dưới; dùng glyph tùy biến B/I/U, Aa, x₂, x² và mũi tên nhỏ, giữ Color Picker hoạt động và swatch đồng bộ giá trị màu; Text Effects vẫn disabled không hover và không tooltip. Không sửa các nhóm Ribbon khác.
+- **Kiểm thử:** GitHub Actions chạy validator, unit, typecheck, production build và route smoke. Chưa có browser visual/E2E nên kết quả pixel-perfect cần đối chiếu trực tiếp.
+- **GitHub commit:** xem PR `style/word-font-group-refinement` và squash commit sau merge.
+- **Vercel Production:** chỉ xác nhận khi READY, trùng SHA `main` và alias `xuong-cong-nghe.vercel.app`.
+- **Tồn đọng:** engine Word thật, phép hiển thị font và bảng màu phụ thuộc trình duyệt; cần kiểm tra giao diện thực tế trên máy học viên.
+
+
 ### 2026-10-15 — Chuẩn hóa trạng thái disabled của nút công cụ Word
 - **Yêu cầu:** nút vô hiệu hóa không hiện con trỏ cấm (đỏ), không có hiệu ứng hover, giữ mũi tên chuột bình thường.
 - **Thay đổi và file:** `src/features/word-simulator/word-home-ribbon.css`, `word-window-bar.css`, `word-simulator.css`, `word-home-ribbon.tsx`, `docs/WORD_SIMULATOR_STANDARD.md`, `tests/presentation-basics.test.mjs`, `CHANGELOG.md` và nhật ký này.
