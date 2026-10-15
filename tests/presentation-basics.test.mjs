@@ -483,7 +483,7 @@ test("Word ribbon icons use Word-like arrows, nested list and correct sort/spaci
   assert.match(font,/wsl-font-shrink[^]*?<svg className="wsl-font-size-direction" viewBox="0 0 9 8"/);
   assert.doesNotMatch(font,/wsl-font-size-direction">[↑↓]/);
   assert.match(fontCSS,/\.wsl-home-font \.wsl-font-size-direction[\s\S]*?top: 6px;/);
-  assert.match(fontCSS,/\.wsl-home-font \.wsl-font-size-direction[\s\S]*?right: 2px;/);
+  assert.match(fontCSS,/\.wsl-home-font \.wsl-font-size-direction[\s\S]*?right: 3\.25px;/);
   for(const glyph of ["WordListGlyph","WordIndentGlyph","WordLineSpacingGlyph","WordSortGlyph"])
     assert.match(source,new RegExp("function "+glyph+"\\("));
   assert.match(source,/kind==="multilevel"/);
