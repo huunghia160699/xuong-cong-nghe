@@ -25,6 +25,16 @@
 
 ## III. Lịch sử
 
+### 2026-10-15 — Bỏ nhãn loại slide ở phía trên tiêu đề và chốt chuẩn slide
+- **Yêu cầu:** xóa các dòng chung chung như KIẾN THỨC, THAO TÁC, THỰC HÀNH, CÂU HỎI ÔN TẬP… trên tiêu đề của bài giảng; ghi thành quy tắc cố định.
+- **Thay đổi/file:** `src/features/presentations/components/player.tsx`, `lesson-opening-cover.tsx`, `blocks.tsx`, `docs/SLIDE_STANDARD.md`, `docs/PRESENTATION_DESIGN_STANDARD.md`, `AGENTS.md`, `tests/presentation-basics.test.mjs`, `CHANGELOG.md`, `docs/WORKLOG_AND_RULES.md`.
+- **Quy tắc:** Tiêu đề nội dung là dòng đầu tiên, nổi bật; không có eyebrow/breadcrumb vô nghĩa. Giữ nhận diện môn học có ý nghĩa ở bìa Word và giữ tên lệnh trong mockup/cấu trúc dữ liệu. Không xóa `slide.eyebrow` khỏi nguồn để bảo toàn ghi chú và logic.
+- **Kiểm thử:** GitHub Actions chạy validator, unit tests, typecheck, build và smoke test; ghi kết quả thực tế ở workflow/commit.
+- **GitHub commit:** xem commit của PR `fix: clean presentation headings and document slide rules`.
+- **Vercel Production:** chỉ xác nhận khi READY, trùng SHA GitHub và domain `xuong-cong-nghe.vercel.app` gán thành công.
+- **Hạn chế:** chưa thay thế kiểm tra trực quan trên máy chiếu thực tế.
+
+
 ### 2026-10-15 — Phóng lớn chữ và tối giản Hero Word mở đầu
 - **Mục tiêu:** tăng đáng kể font chữ cho slide đầu tiên của chủ đề Word; chỉ giữ nhan đề “Làm quen với Microsoft Word”; xóa nhãn phụ cạnh nút và thay số lớn viền “01” bằng “WORD”.
 - **Thay đổi và file:** `src/features/presentations/components/word-home-hero.tsx`, `tests/presentation-basics.test.mjs`, `docs/PRESENTATION_DESIGN_STANDARD.md`, `docs/WORKLOG_AND_RULES.md`, `CHANGELOG.md`.

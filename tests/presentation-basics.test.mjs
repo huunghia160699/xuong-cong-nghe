@@ -137,3 +137,19 @@ test("Word first hero uses large type, concise title and WORD outline",()=>{
   assert.equal(wordBasicsLessons.reduce((n,m)=>n+m.slides.length,0),124);
   assert.equal(excelBasicsLessons.reduce((n,m)=>n+m.slides.length,0),96);
 });
+
+test("slide headings never render generic eyebrow labels above their titles",()=>{
+  const player=readFileSync("src/features/presentations/components/player.tsx","utf8");
+  const explorerCover=readFileSync("src/features/presentations/components/lesson-opening-cover.tsx","utf8");
+  const blocks=readFileSync("src/features/presentations/components/blocks.tsx","utf8");
+  const rules=readFileSync("docs/SLIDE_STANDARD.md","utf8");
+  assert.doesNotMatch(player,/slide\.eyebrow\s*\?\?/);
+  assert.doesNotMatch(player,/>BÀI GIẢNG<\/p>/);
+  assert.doesNotMatch(explorerCover,/xcn-lesson-opening-eyebrow|PHẦN NỘI DUNG/);
+  assert.doesNotMatch(blocks,/block\.number\s*\?\?\s*"KIẾN THỨC"/);
+  assert.doesNotMatch(blocks,/block\.label\s*\?\?\s*"KHÁI NIỆM"/);
+  assert.match(player,/\{slide\.title\}/);
+  assert.match(rules,/Không hiển thị/);
+  assert.match(rules,/slide\.eyebrow/);
+  assert.match(rules,/Checklist nghiệm thu/);
+});

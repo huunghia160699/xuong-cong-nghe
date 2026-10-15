@@ -41,10 +41,9 @@ function SlideCanvas({slide, index, count, reset, onAdvance}: {
       (cover ? "bg-ink text-white" : "bg-paper text-ink")}>
     <div className={"flex min-h-0 flex-1 flex-col px-5 py-5 pb-24 pr-14 sm:px-8 sm:py-7 sm:pb-28 sm:pr-16 lg:px-10 lg:py-8 lg:pb-28 lg:pr-20 " + (cover ? "justify-center" : "")}>
       <div className={cover ? "max-w-4xl" : "mb-4"}>
-        <p className={"text-[11px] font-bold uppercase tracking-[.16em] " + (cover ? "text-cyan" : "text-zinc-500")}>{slide.eyebrow ?? "BÀI GIẢNG"}</p>
         {cover ?
-          <h1 className="mt-4 max-w-4xl font-bold leading-[1.05] tracking-[-.055em]" style={{fontSize:"clamp(2.8rem, 8dvh, 5.6rem)"}}>{slide.title}</h1> :
-          <h2 className="mt-2 font-bold leading-[1.1] tracking-[-.045em]" style={{fontSize:"clamp(2.35rem, 7dvh, 4.65rem)"}}>{slide.title}</h2>}
+          <h1 className="max-w-4xl font-bold leading-[1.05] tracking-[-.055em]" style={{fontSize:"clamp(2.8rem, 8dvh, 5.6rem)"}}>{slide.title}</h1> :
+          <h2 className="font-bold leading-[1.1] tracking-[-.045em]" style={{fontSize:"clamp(2.35rem, 7dvh, 4.65rem)"}}>{slide.title}</h2>}
       </div>
       <div key={slide.id + "-rev-" + reset} className={"xcn-presentation-grid xcn-presentation-layout-" + layout + " mt-3 sm:mt-5"}>
         {blocks.map((block,i) => <div key={i} className="xcn-presentation-block min-h-0 min-w-0">
