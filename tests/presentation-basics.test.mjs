@@ -633,6 +633,8 @@ test("Word Ribbon splits icon actions and 13px dropdown menus without fake contr
  assert.match(component,/onMouseDown=\{e=>e.preventDefault\(\)\}/);
  assert.match(component,/createPortal/);
  assert.match(component,/event.key==="Escape"/);
+ assert.match(component,/event.key==="ArrowDown"/);
+ assert.match(component,/focus\(\{preventScroll:true\}\)/);
  assert.match(component,/<ChevronDown size=\{13\}/);
  assert.match(layout,/word-split-ribbon.css/);
  assert.ok(layout.indexOf("word-split-ribbon.css")>layout.indexOf("word-paragraph-ribbon.css"));
