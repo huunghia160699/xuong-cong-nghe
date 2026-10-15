@@ -194,7 +194,7 @@
 .wsl-home-font .wsl-font-italic {
   font: italic 17px/1 Georgia, serif;
 }
-.wsl-home-font .wsl-hb.wsl-font-underline-button {width: 34px; min-width: 34px;}
+.wsl-home-font .wsl-hb.wsl-font-underline-button {width: 37px; min-width: 37px;}
 .wsl-home-font .wsl-font-underline {
   display: flex;
   align-items: center;
