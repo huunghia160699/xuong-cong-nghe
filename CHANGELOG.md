@@ -1,5 +1,13 @@
 # Changelog
 
+## 2026-10-15 — Công cụ mô phỏng Microsoft Word
+
+- Bổ sung đường dẫn `/cong-cu/mo-phong-word` với Ribbon và trình soạn thảo A4 để thực hành Word trên web.
+- Có thao tác định dạng, căn lề, danh sách, heading, bảng, ảnh, tìm kiếm, zoom, in/PDF, tự lưu localStorage và xuất HTML/TXT.
+- Thêm thẻ công cụ trên trang Công cụ; giữ nguyên slide Word/Excel và Word Lab đang lên kế hoạch.
+- Chưa hỗ trợ định dạng DOCX thật hoặc dàn trang tương đương Word.
+
+
 ## 2026-10-15 — Slide Word gọn và tập trung nội dung giảng dạy
 
 - Bỏ dòng “Chọn một chức năng để xem sự thay đổi...”, chú thích kỹ thuật về CSS, lời dẫn thừa và phần tóm tắt lặp lại ở slide 02.
