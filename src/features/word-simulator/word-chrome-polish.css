@@ -1,0 +1,59 @@
+/* Unified Word chrome: light-grey tab strip, raised white Home tools. */
+.wsl-shell .wsl-tabs{
+  background:#e8e7eb;
+  border-bottom:1px solid #d1cfd4;
+}
+.wsl-shell .wsl-tabs .wsl-tab{
+  height:32px;
+  padding:7px 13px;
+  color:#34343a;
+  font:500 12.5px/1.3 Arial,"Segoe UI",sans-serif;
+  background:transparent;
+}
+.wsl-shell .wsl-tabs .wsl-tab:hover{background:#dddce1}
+.wsl-shell .wsl-tabs .wsl-tab.is-active{
+  color:#20252e;
+  font-weight:900;
+}
+.wsl-shell .wsl-tabs .wsl-tab.is-active::after{
+  position:absolute;
+  content:"";
+  left:11px;
+  right:11px;
+  height:3px;
+  bottom:4px;
+  border-radius:0;
+  background:#245c91;
+}
+.wsl-shell .wsl-ribbon:has(.wsl-home-ribbon){
+  height:96px;
+  min-height:96px;
+  max-height:96px;
+  padding:4px 8px 5px;
+  background:#e8e7eb;
+  border-bottom:1px solid #d0cfd5;
+}
+.wsl-shell .wsl-ribbon:has(.wsl-home-ribbon)>.wsl-home-ribbon{
+  flex:0 0 auto;
+  align-self:center;
+  width:max-content;
+  min-width:max-content;
+  height:85px;
+  padding:0 4px;
+  border:1px solid #d0cfd3;
+  border-radius:5px;
+  background:#fff;
+  box-shadow:0 1px 4px rgba(35,35,45,.09);
+}
+.wsl-shell .wsl-home-ribbon .wsl-home-group{
+  background:transparent;
+}
+@media(max-width:650px){
+ .wsl-shell .wsl-tabs .wsl-tab{height:34px;font-size:12.5px}
+ .wsl-shell .wsl-ribbon:has(.wsl-home-ribbon){
+   height:96px;min-height:96px;max-height:96px;padding:4px 6px 5px;
+ }
+}
+@media print{
+ .wsl-shell .wsl-ribbon{box-shadow:none!important}
+}
