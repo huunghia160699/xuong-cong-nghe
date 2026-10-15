@@ -679,3 +679,41 @@ test("Word split hover outlines the entire control but fills only the hovered ha
  assert.match(component,/onClick=\{toggle\}/);
  assert.match(component,/onClick=\{\(\)=>\{setOpen\(false\);option\.run\(\);\}\}/);
 });
+
+
+test("Word Styles gallery matches reference strip, anchors Editing to the left and reduces visible styles responsively",()=>{
+ const home=readFileSync("src/features/word-simulator/word-home-ribbon.tsx","utf8");
+ const css=readFileSync("src/features/word-simulator/word-styles-ribbon.css","utf8");
+ const oldCss=readFileSync("src/features/word-simulator/word-home-ribbon.css","utf8");
+ const layout=readFileSync("src/app/(word-simulator)/cong-cu/mo-phong-word/layout.tsx","utf8");
+ const styles=home.slice(home.indexOf('<Group name="Styles"'),home.indexOf('<Group name="Editing"'));
+ const editing=home.slice(home.indexOf('<Group name="Editing"'));
+ assert.match(styles,/className="wsl-style-picker" aria-label="Bộ sưu tập kiểu văn bản"/);
+ assert.match(styles,/className="wsl-style-gallery"/);
+ assert.match(styles,/\["Normal","No Spacing","Heading 1","Heading 2"\]\.map\(style=>/);
+ assert.match(styles,/aria-pressed=\{selectedStyle===style\}/);
+ assert.match(styles,/onClick=\{\(\)=>selectStyle\(style\)\}/);
+ assert.match(styles,/className="wsl-styles-scroll"/);
+ assert.match(styles,/WordSplitButton arrowOnly/);
+ assert.match(styles,/options=\{\["Normal","No Spacing","Heading 1","Heading 2","Title","Subtitle"\]/);
+ assert.match(styles,/run:\(\)=>selectStyle\(value\)/);
+ assert.match(home,/const selectStyle=\(style:string\)=>\{applyStyle\(style\);setSelectedStyle\(style\);\}/);
+ for(const handler of ["findText","replaceText","selectAll"])assert.ok(editing.includes(handler));
+ assert.ok(home.indexOf('<Group name="Styles"')<home.indexOf('<Group name="Editing"'));
+ assert.match(css,/\.wsl-home-styles\{\s*flex:0 0 auto;\s*width:auto;\s*min-width:0;/);
+ assert.match(css,/\.wsl-home-styles \.wsl-style-picker\{[\s\S]*?height:69px;[\s\S]*?border:1px solid #b8b9bc;/);
+ assert.match(css,/\.wsl-home-styles \.wsl-style-gallery\{[\s\S]*?overflow:hidden;/);
+ assert.match(css,/\.wsl-home-styles \.wsl-style-tile\{[\s\S]*?flex:0 0 123px;/);
+ assert.match(css,/\.wsl-home-styles \.wsl-style-tile\[aria-pressed="true"\]/);
+ assert.match(css,/\.wsl-home-styles \.wsl-style-heading-1 span\{/);
+ assert.match(css,/\.wsl-home-styles \.wsl-style-heading-2 span\{/);
+ assert.match(css,/\.wsl-home-styles \.wsl-styles-scroll\{[\s\S]*?border-left:1px solid #b8b9bc;/);
+ assert.match(css,/\.wsl-home-editing\{\s*flex:0 0 111px;/);
+ assert.match(css,/\.wsl-home-editing \.wsl-home-group-content\{[\s\S]*?align-items:flex-start;/);
+ assert.match(css,/@media\(max-width:1480px\)\{\s*\.wsl-home-styles \.wsl-style-tile:nth-child\(n\+4\)\{display:none\}/);
+ assert.match(css,/@media\(max-width:1350px\)\{\s*\.wsl-home-styles \.wsl-style-tile:nth-child\(n\+3\)\{display:none\}/);
+ assert.match(css,/@media\(max-width:1210px\)\{\s*\.wsl-home-styles \.wsl-style-tile:nth-child\(n\+2\)\{display:none\}/);
+ assert.match(css,/@media\(max-width:1090px\)\{\s*\.wsl-home-styles \.wsl-style-gallery\{display:none\}/);
+ assert.match(oldCss,/wsl-style-gallery/);
+ assert.ok(layout.indexOf("word-styles-ribbon.css")>layout.indexOf("word-split-ribbon.css"));
+});
