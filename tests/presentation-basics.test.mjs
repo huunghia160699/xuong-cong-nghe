@@ -289,11 +289,11 @@ test("Clipboard and Font correctly map each visible control and respect selectio
    assert.ok(home.includes(value),value);
  for(const value of ["Increase Font Size","Decrease Font Size","Change Case","Clear All Formatting","Format Painter","Text Highlight Color","Font Color"])
    assert.ok(home.includes(value),value);
- assert.match(home,/disabled=\{!hasSelection\}/);
+ assert.match(home,/disabled=\{!hasSelection&&!clipboardMode\}/);
  assert.match(home,/active=\{paintArmed\}/);
  assert.match(home,/className="wsl-font-effect-disabled" aria-hidden="true"/);
  assert.doesNotMatch(home,/label="Text Effects".*run=/);
- assert.match(editor,/const success=document\.execCommand\(name\)/);
+ assert.match(editor,/const success=document\.execCommand\(name,false\)/);
  assert.match(editor,/if\(success\)\{if\(name==="cut"\)markChanged\(\);else setStatus\("Đã sao chép/);
  assert.match(editor,/navigator\.clipboard\.readText\(\)/);
  assert.match(editor,/range=savedSelection\.current\?\.cloneRange\(\)/);
@@ -320,7 +320,7 @@ test("Word disabled ribbon buttons keep normal cursor and never animate on hover
   assert.match(simulatorCss,/\.wsl-tool:disabled\{opacity:\.4;cursor:default\}/);
   assert.doesNotMatch(homeCss+windowCss+simulatorCss,/cursor:not-allowed/);
   assert.match(home,/title=\{disabled\?undefined:/);
-  assert.match(home,/disabled=\{!hasSelection\}/);
+  assert.match(home,/disabled=\{!hasSelection&&!clipboardMode\}/);
   assert.doesNotMatch(home,/className="wsl-font-effect-disabled" title=/);
   assert.match(standard,/cursor: default/);
 });
@@ -719,4 +719,63 @@ test("Word Styles gallery matches reference strip, anchors Editing to the left a
  assert.match(css,/@media\(max-width:1090px\)\{\s*\.wsl-home-styles \.wsl-style-gallery\{display:none\}/);
  assert.match(oldCss,/wsl-style-gallery/);
  assert.ok(layout.indexOf("word-styles-ribbon.css")>layout.indexOf("word-split-ribbon.css"));
+});
+
+
+test("Word Font maintains six active typing formats and synchronizes them with selection",()=>{
+ const home=readFileSync("src/features/word-simulator/word-home-ribbon.tsx","utf8");
+ const editor=readFileSync("src/features/word-simulator/word-simulator.tsx","utf8");
+ const split=readFileSync("src/features/word-simulator/word-split-button.tsx","utf8");
+ const css=readFileSync("src/features/word-simulator/word-interactions.css","utf8");
+ for(const name of ["bold","italic","underline","strikeThrough","subscript","superscript"]){
+   assert.match(home,new RegExp("active=\\{formatActive\\."+name+"\\}"));
+   assert.ok(editor.includes(name+":false"),name);
+ }
+ assert.match(editor,/document\.queryCommandState\(key\)/);
+ assert.match(editor,/document\.addEventListener\("selectionchange",changed\)/);
+ assert.match(editor,/syncFormatState\(\)/);
+ assert.match(split,/aria-pressed=\{active\|\|undefined\}/);
+ assert.match(css,/\.wsl-home-font \.wsl-hb\.wsl-font-icon-button\.is-active/);
+ assert.match(css,/\.wsl-home-font \.wsl-font-underline-button \.wsl-hb\.wsl-split-main\.is-active/);
+ assert.match(css,/\.wsl-editor::selection,\.wsl-editor \*::selection\{background:#eaf2fb;/);
+});
+test("Word Clipboard stages Copy or Cut until Paste and cancels with Escape",()=>{
+ const home=readFileSync("src/features/word-simulator/word-home-ribbon.tsx","utf8");
+ const editor=readFileSync("src/features/word-simulator/word-simulator.tsx","utf8");
+ assert.match(home,/clipboardMode==="cut"/);
+ assert.match(home,/clipboardMode==="copy"/);
+ assert.match(home,/active=\{clipboardMode==="copy"\}/);
+ assert.match(home,/active=\{clipboardMode==="cut"\}/);
+ assert.match(home,/\(!clipboardMode\|\|paintArmed\)/);
+ assert.match(editor,/const stagedClipboard=useRef<string\|null>\(null\)/);
+ assert.match(editor,/setClipboardMode\(name\)/);
+ assert.match(editor,/if\(clipboardMode&&stagedClipboard\.current!==null\)/);
+ assert.match(editor,/event\.key!=="Escape"/);
+ assert.match(editor,/setClipboardMode\(null\);stagedClipboard\.current=null;/);
+ assert.match(editor,/command\("insertText",content\)/);
+});
+test("All five Word groups have functional detail dialog launchers and Editing divider",()=>{
+ const home=readFileSync("src/features/word-simulator/word-home-ribbon.tsx","utf8");
+ const dialog=readFileSync("src/features/word-simulator/word-ribbon-dialog.tsx","utf8");
+ const css=readFileSync("src/features/word-simulator/word-interactions.css","utf8");
+ const layout=readFileSync("src/app/(word-simulator)/cong-cu/mo-phong-word/layout.tsx","utf8");
+ for(const group of ["Clipboard","Font","Paragraph","Styles","Editing"]){
+   assert.ok(home.includes('onDetails={()=>setDialog("'+group+'")}'),group);
+ }
+ assert.equal((home.match(/onDetails=\{\(\)=>setDialog\("/g)||[]).length,5);
+ assert.match(home,/ArrowDownRight size=\{12\}/);
+ assert.match(home,/WordRibbonDialog name=\{dialog\} actions=\{dialogActions\}/);
+ assert.match(dialog,/role="dialog" aria-modal="true"/);
+ assert.match(dialog,/onClick=\{\(\)=>\{onClose\(\);action\.run\(\);\}\}/);
+ assert.match(css,/\.wsl-home-ribbon \.wsl-group-launcher\{/);
+ assert.match(css,/bottom:1px;/);
+ assert.match(css,/\.wsl-home-ribbon \.wsl-home-editing\{border-right:1px solid #d8d8dc\}/);
+ assert.match(layout,/word-interactions.css/);
+});
+test("Selected Word tab has a bold label and a clear 3px underline",()=>{
+ const css=readFileSync("src/features/word-simulator/word-interactions.css","utf8");
+ const home=readFileSync("src/features/word-simulator/word-home-ribbon.css","utf8");
+ assert.match(css,/\.wsl-tabs \.wsl-tab\.is-active\{[^}]*font-weight:700;/);
+ assert.match(css,/\.wsl-tabs \.wsl-tab\.is-active:after\{[^}]*height:3px;/);
+ assert.match(home,/\.wsl-tabs \.wsl-tab\.is-active:after\{height:2px/);
 });
