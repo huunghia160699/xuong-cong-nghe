@@ -1,6 +1,6 @@
 "use client";
 import {useState} from "react";
-import {ArrowLeft,ArrowRight,CheckCircle2,ChevronDown,FileText,Image as ImageIcon,Info} from "lucide-react";
+import {ArrowLeft,ArrowRight,CheckCircle2,ChevronDown,FileText,Image as ImageIcon} from "lucide-react";
 import type {PresentationBlock} from "../types";
 
 type DemoStep={tab:string;command:string;title:string;detail:string;result?:string};
@@ -58,22 +58,20 @@ export function WordWorkspace({block}:{block:PresentationBlock}) {
  function go(next:number){setIndex(Math.max(0,Math.min(steps.length-1,next)));setTabOverride(null);}
  return <div className="xcn-word-teaching" data-word-workspace="true">
   <div className="xcn-word-window">
-   <div className="xcn-word-titlebar"><span className="xcn-word-product-logo" aria-label="Word mô phỏng">W</span><span className="xcn-word-window-name">{data.filename??"Bai_thuc_hanh.docx"}</span><span className="xcn-word-mock-warning">MÔ PHỎNG WORD · CSS/REACT</span><span className="xcn-word-window-chrome" aria-hidden="true">—　□　×</span></div>
+   <div className="xcn-word-titlebar"><span className="xcn-word-product-logo" aria-label="Word mô phỏng">W</span><span className="xcn-word-window-name">{data.filename??"Bai_thuc_hanh.docx"}</span><span className="xcn-word-window-chrome" aria-hidden="true">—　□　×</span></div>
    <div className="xcn-word-tabs" role="tablist" aria-label="Thẻ Ribbon mô phỏng">{tabs.map(item=><button type="button" role="tab" key={item} aria-selected={tab===item} className={"xcn-word-tab "+(tab===item?"is-active":"")} onClick={()=>setTabOverride(item)}>{item}</button>)}</div>
    <Ribbon tab={tab} step={step} steps={steps} onJump={go}/>
    <div className="xcn-word-content">{backstage?<div className="xcn-word-backstage">
     <div className="xcn-word-backstage-nav"><strong>File</strong>{["New","Open","Save","Save As","Print","Export"].map(v=><span key={v} className={step.command===v?"is-active":""}>{v}</span>)}</div>
-    <div className="xcn-word-backstage-pane"><span className="xcn-word-backstage-eyebrow">VÙNG TỆP / BACKSTAGE</span><h3>{data.scene==="print"?"Print":data.scene==="export"?"Export":data.scene==="open"?"Open":"Save As"}</h3><div className="xcn-word-file-option"><FileText size={29} aria-hidden="true"/><div><strong>{data.filename??"Bai_thuc_hanh.docx"}</strong><span>Documents / TIN_HOC / WORD</span></div></div><div className="xcn-word-backstage-note">{data.scene==="print"?"Print Preview · A4 · Portrait":data.scene==="export"?"Create PDF/XPS · PDF (.pdf)":data.scene==="open"?"Browse · Chọn tệp .docx tin cậy":"Chọn vị trí lưu · Đặt tên · Xác nhận Save"}</div></div>
+    <div className="xcn-word-backstage-pane"><h3>{data.scene==="print"?"Print":data.scene==="export"?"Export":data.scene==="open"?"Open":"Save As"}</h3><div className="xcn-word-file-option"><FileText size={29} aria-hidden="true"/><div><strong>{data.filename??"Bai_thuc_hanh.docx"}</strong><span>Documents / TIN_HOC / WORD</span></div></div><div className="xcn-word-backstage-note">{data.scene==="print"?"Print Preview · A4 · Portrait":data.scene==="export"?"Create PDF/XPS · PDF (.pdf)":data.scene==="open"?"Browse · Chọn tệp .docx tin cậy":"Chọn vị trí lưu · Đặt tên · Xác nhận Save"}</div></div>
    </div>:<Paper data={data} at={index}/>}</div>
    <div className="xcn-word-status"><span>Trang 1 / 1</span><span>Ngôn ngữ: Tiếng Việt</span><span>100%　━━━━●━━</span></div>
   </div>
   <aside className="xcn-word-guide">
-   <div className="xcn-word-guide-head"><span>HƯỚNG DẪN THAO TÁC</span><strong>{index+1}/{steps.length}</strong></div>
+   <div className="xcn-word-guide-head"><span className="sr-only">Tiến trình các bước</span><strong>{index+1}/{steps.length}</strong></div>
    <div className="xcn-word-step-controls" aria-label="Các bước minh họa">{steps.map((item,i)=><button type="button" key={i} className={"xcn-word-step-chip "+(i===index?"is-active":"")} aria-current={i===index?"step":undefined} onClick={()=>go(i)} title={item.title}>{i+1}</button>)}</div>
    <div className="xcn-word-step-detail" aria-live="polite"><span className="xcn-word-command-path">{step.tab} <ChevronDown size={12} aria-hidden="true"/> {step.command}</span><h3>{step.title}</h3><p>{step.detail}</p>{step.result&&<div className="xcn-word-result"><CheckCircle2 size={17} aria-hidden="true"/><span>{step.result}</span></div>}</div>
-   {data.tip&&<div className="xcn-word-tip"><Info size={17} aria-hidden="true"/><p>{data.tip}</p></div>}
    <div className="xcn-word-guide-actions"><button type="button" onClick={()=>go(index-1)} disabled={index===0}><ArrowLeft size={16}/> Trước</button><button type="button" onClick={()=>go(index+1)} disabled={index===steps.length-1}>Tiếp <ArrowRight size={16}/></button></div>
-   <p className="xcn-word-demo-disclaimer">Minh họa bằng CSS, không chỉnh sửa tệp Word thật. Lệnh có thể khác theo phiên bản.</p>
   </aside>
  </div>;
 }

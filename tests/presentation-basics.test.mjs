@@ -183,3 +183,25 @@ test("Word slide 02 has accessible, interactive CSS mock with large presentation
   assert.match(route,/word-purpose\.css/);
   assert.doesNotMatch(component,/\bKIẾN THỨC\b|\bTHAO TÁC\b/);
 });
+
+test("teacher-led Word slides show subject matter without instructional filler",()=>{
+  const purpose=readFileSync("src/features/presentations/components/word-purpose-slide.tsx","utf8");
+  const workspace=readFileSync("src/features/presentations/components/word-workspace.tsx","utf8");
+  const guide=readFileSync("docs/SLIDE_STANDARD.md","utf8");
+  const agents=readFileSync("AGENTS.md","utf8");
+  for(const phrase of ["Chọn một chức năng để xem", "Giao diện Word được mô phỏng bằng CSS", "xcn-word-purpose-instruction", "xcn-word-purpose-outcome"])
+    assert.ok(!purpose.includes(phrase),phrase);
+  assert.match(purpose,/role="group" aria-live="polite"/);
+  assert.match(purpose,/Soạn thảo/);
+  assert.match(purpose,/Trình bày/);
+  assert.match(purpose,/Thời gian: 8 giờ, thứ Sáu/);
+  assert.doesNotMatch(purpose,/Nội dung mới được thêm vào văn bản/);
+  for(const phrase of ["MÔ PHỎNG WORD · CSS/REACT","HƯỚNG DẪN THAO TÁC","Minh họa bằng CSS, không chỉnh sửa", "{data.tip&&"])
+    assert.ok(!workspace.includes(phrase),phrase);
+  assert.match(workspace,/xcn-word-step-detail/);
+  assert.match(workspace,/data-word-workspace/);
+  assert.match(guide,/Slide dùng để giảng/);
+  assert.match(agents,/teacher-led teaching materials/);
+  assert.equal(wordBasicsLessons.reduce((n,m)=>n+m.slides.length,0),124);
+  assert.equal(excelBasicsLessons.reduce((n,m)=>n+m.slides.length,0),96);
+});

@@ -25,6 +25,18 @@
 
 ## III. Lịch sử
 
+### 2026-10-15 — Loại bỏ lời dẫn, chỉ dẫn và chú thích kỹ thuật thừa trên slide Word
+- **Yêu cầu:** bài giảng do giáo viên trực tiếp giảng; không bồi thêm những câu như “Chọn để xem...”, “Hướng dẫn thao tác...” hoặc giải thích kỹ thuật CSS/React không có giá trị đối với người học.
+- **Thay đổi/file:** `src/features/presentations/components/word-purpose-slide.tsx`, `word-purpose.css`, `components/word-workspace.tsx`, `docs/SLIDE_STANDARD.md`, `AGENTS.md`, `CHANGELOG.md`, `tests/presentation-basics.test.mjs`.
+- **Quyết định:** slide 2 chỉ giữ chủ đề Word dùng để làm gì, hai khái niệm Soạn thảo/Trình bày và tài liệu minh họa thay đổi định dạng; bỏ câu yêu cầu học viên click, mô tả lợi ích trùng lặp và dòng chú thích mô phỏng CSS. Cùng một ví dụ văn bản được giữ nguyên giữa hai lựa chọn; chỉ khác cách trình bày.
+- **Trong 49 Word walkthrough:** loại bỏ dòng giới thiệu CSS/React, disclaimer cuối, nhãn HƯỚNG DẪN THAO TÁC và tip dành cho người dạy khỏi màn chiếu; giữ thao tác Word, nút bước, Ribbon và nội dung bài.
+- **Quy tắc:** mọi nhận xét sư phạm, lưu ý về công nghệ/giới hạn mô phỏng và lời dẫn nên chuyển sang `notes`, không hiện trên slide.
+- **Kiểm thử:** xác nhận kết quả CI cho PR này, gồm validator, tests, typecheck, build, route smoke.
+- **GitHub commit:** xem commit tiêu đề `fix(slides): teacher-led Word slides without meta instructions`.
+- **Vercel Production:** chỉ xác nhận sau khi READY, cùng commit `main`, alias chính đã gán.
+- **Giới hạn:** chưa kiểm tra trực quan trên máy chiếu.
+
+
 ### 2026-10-15 — Thiết kế riêng slide số 2 bài Làm quen Word
 - **Yêu cầu:** không dùng bố cục mẫu ở slide 02 của bài Word đầu tiên; làm đẹp và dễ hiểu bằng thiết kế tùy biến.
 - **Thay đổi/file:** `src/features/presentations/components/word-purpose-slide.tsx`, `src/features/presentations/word-purpose.css`, `components/player.tsx`, `data/word-basics.ts`, trang trình chiếu [lessonId], validator, tests, `docs/SLIDE_STANDARD.md`, CHANGELOG và WORKLOG.

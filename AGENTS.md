@@ -24,6 +24,7 @@ Xưởng Công Nghệ is a Vietnamese learning and practice platform for digital
 9. For EVERY user-requested code, UI, configuration, or release change: **read and append** a dated record to `docs/WORKLOG_AND_RULES.md` (request, exact files, decisions, tests, commit, deployment status, caveats). Do not overwrite prior entries. Update `CHANGELOG.md` for visible changes.
 10. Only claim GitHub and Vercel are synchronized after confirming the production deployment commit SHA matches the GitHub `main` head, READY state, and production domain alias.
 11. For all slide creation or edits, read `docs/SLIDE_STANDARD.md`; do not render generic slide-type eyebrow labels above headings. Preserve meaningful labels within teaching simulations.
+12. Slides are **teacher-led teaching materials**, not student-facing software instructions. Never add generic prompts to click/watch/follow along, repeated explanations, or implementation disclaimers (CSS/React/mock) to slide surfaces. Keep them in presenter notes/documentation. Preserve meaningful course content, real steps, answer feedback and interactive controls.
 
 ## Definition of done
 
