@@ -539,7 +539,7 @@ test("Word font size chevrons match the two reference images and preserve editin
  assert.match(shrink,/run=\{\(\)=>editSize\(String\(Math.max\(1,size-1\)\)\)\}/);
  const rule=css.match(/\.wsl-home-font \.wsl-font-size-direction\s*\{([^}]+)\}/);
  assert.ok(rule);
- for(const prop of ["top: 0;","right: -1px;","width: 9px;","height: 8px;","color: #2197ce;"])
+ for(const prop of ["top: 6px;","right: 2px;","width: 5px;","height: 4px;","color: #2197ce;"])
    assert.ok(rule[1].includes(prop),prop);
  assert.match(css,/transform-origin:\s*left bottom/);
  assert.match(css,/transform:\s*scale\(\.77\)/);
@@ -562,4 +562,28 @@ test("Word Indent image fidelity and Font blue arrows survive legacy CSS cascade
  const para=home.slice(home.indexOf('<Group name="Paragraph"'),home.indexOf('<Group name="Styles"'));
  assert.match(para,/run=\{\(\)=>run\("outdent"\)\}/);
  assert.match(para,/run=\{\(\)=>run\("indent"\)\}/);
+});
+
+
+test("Word Font Size: half-sized chevrons align to smaller A cap and have matching visible gaps",()=>{
+ const css=readFileSync("src/features/word-simulator/word-font-ribbon.css","utf8");
+ const home=readFileSync("src/features/word-simulator/word-home-ribbon.tsx","utf8");
+ const arrow=css.match(/\.wsl-home-font \.wsl-font-size-direction\s*\{([^}]+)\}/);
+ const shrink=css.match(/\.wsl-home-font \.wsl-font-shrink \.wsl-font-size-direction\s*\{([^}]+)\}/);
+ assert.ok(arrow&&shrink,"both absolute anchor and small-A alignment overrides exist");
+ assert.match(arrow[1],/position:\s*absolute/);
+ for(const expected of ["top: 6px;","right: 2px;","width: 5px;","height: 4px;"])
+   assert.ok(arrow[1].includes(expected),expected);
+ assert.match(shrink[1],/right:\s*5px/);
+ assert.doesNotMatch(arrow[1],/width:\s*9px|height:\s*8px/);
+ const letter=css.match(/\.wsl-home-font \.wsl-font-size-letter\s*\{([^}]+)\}/);
+ assert.ok(letter);
+ assert.match(letter[1],/bottom:\s*1px/);
+ assert.match(letter[1],/transform-origin:\s*left bottom/);
+ assert.match(css,/\.wsl-home-font \.wsl-font-shrink \.wsl-font-size-letter\s*\{[\s\S]*?scale\(\.77\)/);
+ const group=home.slice(home.indexOf('<Group name="Font"'),home.indexOf('<Group name="Paragraph"'));
+ assert.match(group,/label="Increase Font Size"[\s\S]*?wsl-font-grow/);
+ assert.match(group,/label="Decrease Font Size"[\s\S]*?wsl-font-shrink/);
+ assert.match(group,/run=\{\(\)=>editSize\(String\(Math\.min\(7,size\+1\)\)\)\}/);
+ assert.match(group,/run=\{\(\)=>editSize\(String\(Math\.max\(1,size-1\)\)\)\}/);
 });

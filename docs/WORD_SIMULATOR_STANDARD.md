@@ -145,3 +145,10 @@ Ngày: 15/10/2026. Đường dẫn: `/cong-cu/mo-phong-word`.
 - **Tương phản:** mũi tên trên A xanh lam `#2197ce`, SVG chevron 9×8; icon indent ba dòng màu xám đậm `#43494e`, mũi tên xanh `#168fca`; nền trắng.
 - Test CSS phải xác nhận không có selector ghi đè `.wsl-font-size-direction`; test icon kiểm tra ba nét và 2 mũi tên. Không thay đổi command handler, kích thước nút, trạng thái disabled, hoặc layout.
 - Không gọi bản cập nhật là đã so sánh trực quan Production nếu không có screenshot từ trình duyệt chạy domain thật.
+
+## 2026-10-15 — Đồng bộ khoảng cách hai mũi tên Font Size với đầu chữ A nhỏ
+
+- Hai mũi tên SVG tăng/giảm cỡ chữ được **thu nhỏ khoảng một nửa** kích thước hiển thị, từ `9×8px` còn `5×4px` (SVG `viewBox` và lệnh giữ nguyên). Đường nét, sắc xanh và hướng tăng/giảm không thay đổi.
+- Cả hai mũi tên dùng `position: absolute; top: 6px`, cùng một đường ngang tương ứng vị trí đỉnh **A nhỏ**, tránh mũi tên lệch độ cao theo cỡ A.
+- Vì chữ A nhỏ hẹp hơn chữ A lớn, chỉnh `right: 5px` riêng cho Shrink so với `right: 2px` của Grow để **khoảng trống thấy được giữa A và mũi tên** cân đối gần tương đương nhau.
+- Giữ nguyên baseline hai chữ A, `scale(.77)` trên chữ nhỏ, bố cục Ribbon và onClick. Test hồi quy kiểm tra CSS anchor và size, tránh các khai báo chung làm mất màu/mất vị trí.

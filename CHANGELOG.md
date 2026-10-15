@@ -1,5 +1,12 @@
 # Changelog
 
+## 2026-10-15 — Thu nhỏ, căn đều khoảng trống giữa A và mũi tên
+
+- Thu hai mũi tên tăng/giảm Font Size còn khoảng nửa kích thước, cùng một hàng ngang trên đỉnh A nhỏ.
+- Điều chỉnh riêng tọa độ ngang của mũi tên nút A nhỏ để khoảng cách giữa A và mũi tên cân bằng với nút A lớn.
+- Giữ nguyên thao tác và mọi nhóm Ribbon khác.
+
+
 ## 2026-10-15 — Sửa icon Font Size và Indent không đúng hình mẫu
 
 - Sửa selector CSS cũ ghi đè màu chevron xanh trên chữ A thành xám; màu xanh nay được áp dụng đúng.
