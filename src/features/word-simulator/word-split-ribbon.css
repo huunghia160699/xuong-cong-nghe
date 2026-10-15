@@ -26,11 +26,17 @@
   background:transparent;
   cursor:pointer;
 }
+/* Hovering either half highlights the full split control, while click targets remain separate. */
+.wsl-split:hover:not(:has(> .wsl-hb:disabled)),
+.wsl-split:has(> .wsl-split-arrow[aria-expanded="true"]){
+  background:#eaf2fb;
+  box-shadow:inset 0 0 0 1px #b9d1eb;
+}
 .wsl-split .wsl-hb.wsl-split-main:hover,
 .wsl-split .wsl-hb.wsl-split-arrow:hover,
 .wsl-split .wsl-hb.wsl-split-arrow[aria-expanded="true"]{
-  background:#eaf2fb;
-  border-color:#b9d1eb;
+  background:transparent;
+  border-color:transparent;
 }
 .wsl-split .wsl-hb:focus-visible{outline:2px solid #005bfd;outline-offset:1px;z-index:1}
 .wsl-split .wsl-hb:disabled,
