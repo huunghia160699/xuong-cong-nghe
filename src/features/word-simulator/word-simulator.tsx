@@ -1,7 +1,7 @@
 "use client";
 
 import {useCallback,useEffect,useRef,useState} from "react";
-import {WordHomeRibbon} from "./word-home-ribbon";
+import {WordHomeRibbon,type WordFormatKey} from "./word-home-ribbon";
 import {WordWindowBar} from "./word-window-bar";
 import {
   AlignCenter,AlignJustify,AlignLeft,AlignRight,ArrowLeft,BookOpen,Check,ChevronDown,
@@ -112,6 +112,7 @@ export function WordSimulator(){
   const fileInput=useRef<HTMLInputElement>(null);
   const imageInput=useRef<HTMLInputElement>(null);
   const savedSelection=useRef<Range|null>(null);
+  const stagedClipboard=useRef<string|null>(null);
   const [activeTab,setActiveTab]=useState<Tab>("Home");
   const [filename,setFilename]=useState("Document1");
   const [zoom,setZoom]=useState(100);
@@ -130,6 +131,10 @@ export function WordSimulator(){
   const [showMarks,setShowMarks]=useState(false);
   const [hasSelection,setHasSelection]=useState(false);
   const [paintArmed,setPaintArmed]=useState(false);
+  const [clipboardMode,setClipboardMode]=useState<"copy"|"cut"|null>(null);
+  const [formatActive,setFormatActive]=useState<Record<WordFormatKey,boolean>>({
+    bold:false,italic:false,underline:false,strikeThrough:false,subscript:false,superscript:false
+  });
   const paintFormat=useRef<{font:string;color:string;bold:boolean;italic:boolean}|null>(null);
 
   const updateStats=useCallback(()=>{
@@ -142,6 +147,7 @@ export function WordSimulator(){
     if(!editor.current)return;
     editor.current.innerHTML=sanitize(html);
     savedSelection.current=null;
+    setClipboardMode(null);stagedClipboard.current=null;
     updateStats();setRevision(value=>value+1);
   },[updateStats]);
 
@@ -176,11 +182,38 @@ export function WordSimulator(){
     return ()=>window.clearTimeout(handle);
   },[revision,filename,orientation,margins,isReady]);
 
+  const formatKeys:WordFormatKey[]=["bold","italic","underline","strikeThrough","subscript","superscript"];
+  function syncFormatState(){
+    const selection=window.getSelection();
+    if(!selection?.anchorNode||!editor.current?.contains(selection.anchorNode))return;
+    const next={} as Record<WordFormatKey,boolean>;
+    for(const key of formatKeys){
+      try{next[key]=document.queryCommandState(key);}catch{next[key]=false;}
+    }
+    setFormatActive(current=>formatKeys.every(key=>current[key]===next[key])?current:next);
+  }
+  useEffect(()=>{
+    const changed=()=>syncFormatState();
+    document.addEventListener("selectionchange",changed);
+    return ()=>document.removeEventListener("selectionchange",changed);
+  });
+  useEffect(()=>{
+    const escape=(event:KeyboardEvent)=>{
+      if(event.key!=="Escape"||(!clipboardMode&&!paintArmed))return;
+      event.preventDefault();
+      setClipboardMode(null);stagedClipboard.current=null;
+      paintFormat.current=null;setPaintArmed(false);
+      setStatus("Đã hủy thao tác. Nhấn Copy hoặc Cut để thực hiện lại.");
+    };
+    document.addEventListener("keydown",escape);
+    return ()=>document.removeEventListener("keydown",escape);
+  },[clipboardMode,paintArmed]);
   function rememberSelection(){
     const selection=window.getSelection();
     if(selection&&selection.rangeCount&&editor.current?.contains(selection.anchorNode)){
       savedSelection.current=selection.getRangeAt(0).cloneRange();
       setHasSelection(!selection.isCollapsed && Boolean(selection.toString()));
+      syncFormatState();
     }
   }
   function restoreSelection(){
@@ -199,6 +232,7 @@ export function WordSimulator(){
       return;
     }
     rememberSelection();
+    syncFormatState();
     markChanged();
   }
   function saveDraft(){
@@ -466,6 +500,7 @@ export function WordSimulator(){
       {activeTab==="File"&&<Group name="Tệp">{fileActions.map(item=><ToolButton key={item.label} item={{id:item.label,label:item.label,run:item.action,icon:item.icon}}/>)}</Group>}
       {activeTab==="Home"&&<WordHomeRibbon
         font={font} fontSize={fontSize} showMarks={showMarks} hasSelection={hasSelection} paintArmed={paintArmed}
+        formatActive={formatActive} clipboardMode={clipboardMode}
         run={runHome} editFont={editFont} editSize={editSize}
         changeCase={changeCase} sortLines={sortLines} replaceText={replaceText}
         findText={()=>setSearchOpen(true)}
