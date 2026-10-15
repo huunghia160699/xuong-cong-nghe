@@ -129,3 +129,11 @@ Ngày: 15/10/2026. Đường dẫn: `/cong-cu/mo-phong-word`.
 - Increase Font Size là tam giác **hướng lên** trên đỉnh bên phải chữ A; Decrease Font Size là tam giác **hướng xuống** cùng vị trí.
 - Mũi tên màu `#111111`, SVG `12×11`, cố định `top: -2px; right: -1px` trong `.wsl-font-size-symbol`. Hai chữ A giữ cùng chân, chữ A nhỏ tiếp tục `scale(.77)` từ gốc trái dưới.
 - Đây chỉ là cập nhật hình dạng SVG và màu/icon CSS, giữ nguyên nhãn truy cập, `run` tăng/giảm cỡ chữ và mọi phần còn lại của Word Ribbon.
+
+## 2026-10-15 — Đối chiếu chính xác hai ảnh Font Size và Indent
+
+- Ảnh Font Size người dùng gửi cho thấy **A lớn và A nhỏ màu xám đậm, hai đường chân cùng mức**, mũi tên **dạng dấu nhọn (chevron)** nhỏ xíu màu xanh lam sáng đặt trên góc phải chữ A; dấu tăng mở xuống, đỉnh hướng lên; dấu giảm mở lên, đỉnh hướng xuống. **Không dùng tam giác đặc màu đen** trong bản tham khảo mới.
+- Mũi tên dùng SVG nét không tô (`fill="none"`, `stroke="currentColor"`), kích thước **9×8px**, màu `#2d9ed8`, ngay phía trên phải, không có thân.
+- Ảnh Indent: chỉ **bốn dòng ngang xám đậm**, hai dòng ở giữa bắt đầu sau mũi tên; mũi tên **xanh nhỏ nét mảnh** chỉ trái/phải nằm ở giữa, không phải mũi tên khối đặc; dùng SVG stroke xấp xỉ 2px, không tô.
+- Chỉ thay JSX SVG và CSS của hai cặp biểu tượng, **giữ nguyên** toàn bộ trình xử lý Increase/Decrease Font Size, Decrease/Increase Indent; không thay đổi kích thước nút, vị trí Ribbon, các chức năng khác. Quy tắc `disabled` giữ nguyên.
+- Với các lần chỉnh icon theo ảnh mới, bản tham khảo mới hơn được ưu tiên trước mô tả cũ trong tài liệu. Thực hiện test tĩnh và CI; không khẳng định đã kiểm tra thị giác pixel-by-pixel trên website khi chưa có browser QA.

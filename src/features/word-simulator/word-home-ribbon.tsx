@@ -59,8 +59,8 @@ function WordIndentGlyph({direction}:{direction:"decrease"|"increase"}){
       <path d="M2 3.5H22M12 8.5H22M12 13.5H22M2 18.5H22"/>
     </g>
     {direction==="decrease"
-      ?<path d="M11 8.8H6V6.5L1 11l5 4.5v-2.3h5Z" fill="#1679be"/>
-      :<path d="M1 8.8h5V6.5l5 4.5-5 4.5v-2.3H1Z" fill="#1679be"/>}
+      ?<path d="M12 11H3M3 11l3.8-3.5M3 11l3.8 3.5" stroke="#2499d4" strokeWidth="2" strokeLinecap="square" strokeLinejoin="miter" fill="none"/>
+      :<path d="M2 11h9M11 11 7.2 7.5M11 11l-3.8 3.5" stroke="#2499d4" strokeWidth="2" strokeLinecap="square" strokeLinejoin="miter" fill="none"/>}
   </svg>;
 }
 
@@ -122,8 +122,8 @@ export function WordHomeRibbon({
          </select>
          <ChevronDown size={11} aria-hidden="true" className="wsl-font-select-chevron"/>
        </label>
-       <Btn className="wsl-font-icon-button" label="Increase Font Size" icon={<span className="wsl-font-size-symbol wsl-font-grow" aria-hidden="true"><span className="wsl-font-size-letter">A</span><svg className="wsl-font-size-direction" viewBox="0 0 12 12" focusable="false"><path d="M6 2.2Q6.5 2.2 6.9 2.7L10.8 7.3Q11.7 8.5 10.2 8.5H1.8Q.3 8.5 1.2 7.3L5.1 2.7Q5.5 2.2 6 2.2Z" fill="currentColor"/></svg></span>} run={()=>editSize(String(Math.min(7,size+1)))}/>
-       <Btn className="wsl-font-icon-button" label="Decrease Font Size" icon={<span className="wsl-font-size-symbol wsl-font-shrink" aria-hidden="true"><span className="wsl-font-size-letter">A</span><svg className="wsl-font-size-direction" viewBox="0 0 12 12" focusable="false"><path d="M1.8 3.5H10.2Q11.7 3.5 10.8 4.7L6.9 9.3Q6 10.4 5.1 9.3L1.2 4.7Q.3 3.5 1.8 3.5Z" fill="currentColor"/></svg></span>} run={()=>editSize(String(Math.max(1,size-1)))}/>
+       <Btn className="wsl-font-icon-button" label="Increase Font Size" icon={<span className="wsl-font-size-symbol wsl-font-grow" aria-hidden="true"><span className="wsl-font-size-letter">A</span><svg className="wsl-font-size-direction" viewBox="0 0 9 8" focusable="false"><path d="M1.4 5.8 4.5 2.7 7.6 5.8" fill="none" stroke="currentColor" strokeWidth="2.1" strokeLinecap="square" strokeLinejoin="miter"/></svg></span>} run={()=>editSize(String(Math.min(7,size+1)))}/>
+       <Btn className="wsl-font-icon-button" label="Decrease Font Size" icon={<span className="wsl-font-size-symbol wsl-font-shrink" aria-hidden="true"><span className="wsl-font-size-letter">A</span><svg className="wsl-font-size-direction" viewBox="0 0 9 8" focusable="false"><path d="M1.4 2.2 4.5 5.3 7.6 2.2" fill="none" stroke="currentColor" strokeWidth="2.1" strokeLinecap="square" strokeLinejoin="miter"/></svg></span>} run={()=>editSize(String(Math.max(1,size-1)))}/>
        <span className="wsl-font-divider" aria-hidden="true"/>
        <Btn className="wsl-font-icon-button" label="Change Case" icon={<span className="wsl-font-change-case" aria-hidden="true">Aa<ChevronDown size={9}/></span>} run={changeCase}/>
        <span className="wsl-font-divider" aria-hidden="true"/>

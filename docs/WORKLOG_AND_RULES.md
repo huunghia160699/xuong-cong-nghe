@@ -25,6 +25,15 @@
 
 ## III. Lịch sử
 
+### 2026-10-15 — Làm lại icon Font Size và Indent theo hai ảnh cắt gốc
+- **Yêu cầu:** tái hiện đúng hai ảnh tham khảo mới cho nút A lớn/A nhỏ và Decrease/Increase Indent.
+- **File:** `src/features/word-simulator/word-home-ribbon.tsx`, `src/features/word-simulator/word-font-ribbon.css`, `docs/WORD_SIMULATOR_STANDARD.md`, `docs/WORKLOG_AND_RULES.md`, `CHANGELOG.md`, `tests/presentation-basics.test.mjs`.
+- **Quyết định:** thay tam giác đen đặc thành chevron xanh lam nhạt 9×8px không thân trên góc phải A; giữ baseline chung. Indent giữ 4 đường xám đúng yêu cầu, đổi mũi tên đặc thành mũi tên stroke xanh mảnh ở giữa; không sửa hành vi các nút.
+- **Kiểm thử:** xác thực số nét, màu sắc, SVG geometry, mapping handler và CI (test, TypeScript, production build, smoke); chưa QA ảnh render trên browser.
+- **GitHub:** PR `style/word-font-indent-image-7-8`, SHA squash merge xác nhận trên main sau CI.
+- **Vercel:** kiểm tra READY, Vercel SHA trùng main, domain `xuong-cong-nghe.vercel.app` đã gán trước khi báo hoàn tất.
+
+
 ### 2026-10-15 — Thay caret tăng/giảm Font Size theo ảnh tham khảo
 - **Yêu cầu:** thay arrow trong hai nút tăng/giảm cỡ chữ thành tam giác đặc đáy ngang, hơi bo góc như ảnh, đặt ngay đầu bên phải chữ A.
 - **File:** `src/features/word-simulator/word-home-ribbon.tsx`, `word-font-ribbon.css`, `docs/WORD_SIMULATOR_STANDARD.md`, `tests/presentation-basics.test.mjs`, `CHANGELOG.md`, `docs/WORKLOG_AND_RULES.md`.
