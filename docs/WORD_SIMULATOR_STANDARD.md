@@ -175,3 +175,9 @@ Ngày: 15/10/2026. Đường dẫn: `/cong-cu/mo-phong-word`.
 - Thu nhỏ **cả hai** mũi tên Indent xuống `scale(0.7)` quanh tâm hình cũ, giữ nguyên màu `#168fca`, chiều trái/phải và thao tác của nút.
 - **Line Spacing** phải hiển thị đúng ba nét ngang riêng biệt tại `y=4, 11, 18`; giữ nguyên mũi tên dọc hai chiều bên trái và lệnh `lineSpacing`.
 - Không sửa kích thước hai hàng Ribbon, trạng thái disabled, kiểu hover, thứ tự các nút hoặc nhóm Font.
+
+## 2026-10-15 — Line Spacing 4 dòng
+
+- Thay yêu cầu Line Spacing 3 dòng trước đó bằng **4 đường ngang**, cách đều ở các mức `y=3, 8.3, 13.7, 19` trong SVG hiện tại.
+- Giữ mũi tên lên/xuống ở bên trái, màu sắc, kích thước icon, chức năng `lineSpacing` và toàn bộ các nút khác không đổi.
+- Kiểm thử hồi quy phải xác nhận đúng thứ tự và số lượng 4 nét ngang.
