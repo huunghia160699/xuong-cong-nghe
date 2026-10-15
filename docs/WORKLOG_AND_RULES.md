@@ -25,6 +25,17 @@
 
 ## III. Lịch sử
 
+### 2026-10-15 — Sửa nguyên nhân hàng trên Font vẫn bị dồn trái
+- **Yêu cầu:** hàng trên nhóm Font chưa giãn đều hai bên như hàng dưới, dù đã yêu cầu chỉnh.
+- **Nguyên nhân:** CSS `src/features/word-simulator/word-font-ribbon.css` có hai `justify-content` trong cùng block `.wsl-font-top`; `start` ở cuối ghi đè `space-between`.
+- **File sửa:** `src/features/word-simulator/word-font-ribbon.css`, `tests/presentation-basics.test.mjs`, `docs/WORD_SIMULATOR_STANDARD.md`, `docs/WORKLOG_AND_RULES.md`, `CHANGELOG.md`.
+- **Quyết định:** xóa đúng khai báo `justify-content: start` gây xung đột; giữ tất cả kích thước, các nút và vạch ngăn. Bổ sung kiểm thử kiểm tra chính xác chỉ có một `justify-content: space-between`, tránh lỗi tái phát.
+- **Kiểm thử:** GitHub Actions validator, unit tests, typecheck, build, route smoke; chưa đo bằng browser thực tế nên không khẳng định pixel-perfect.
+- **GitHub commit:** xem PR `fix/word-font-top-space-between-override` và squash commit khi merge.
+- **Vercel Production:** chỉ xác nhận khi READY, SHA khớp `main`, domain chính được gán.
+- **Giới hạn:** chưa kiểm tra trực quan bằng ảnh sau triển khai.
+
+
 ### 2026-10-15 — Giãn đều hàng trên Font, phân cách Aa/x² và sửa icon Clear Formatting
 - **Yêu cầu:** hàng trên nhóm Font phân bố đều như hàng dưới; có hai đường đứng nhỏ trước/sau Aa và một đường sau x²; Clear Formatting dùng hình cục tẩy rõ.
 - **File thay đổi:** `src/features/word-simulator/word-home-ribbon.tsx`, `src/features/word-simulator/word-font-ribbon.css`, `docs/WORD_SIMULATOR_STANDARD.md`, `tests/presentation-basics.test.mjs`, `CHANGELOG.md`, `docs/WORKLOG_AND_RULES.md`.
