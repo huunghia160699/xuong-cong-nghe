@@ -351,7 +351,8 @@ test("Word Font group has deliberate two-row alignment, real color swatches and 
   assert.match(css,/grid-template-rows: 27px 27px/);
   assert.match(css,/\.wsl-home-font \.wsl-font-select-chevron/);
   assert.match(css,/\.wsl-home-font \.wsl-font-color-swatch/);
-  assert.match(css,/\.wsl-home-font \.wsl-font-color-control:focus-within/);
+  assert.match(home,/className="wsl-font-split wsl-font-color-split"/);
+  assert.match(layout,/word-split-ribbon.css/);
   assert.match(css,/\.wsl-home-font \.wsl-font-effect-disabled:hover/);
   assert.match(css,/cursor: default/);
   assert.doesNotMatch(css,/cursor:\s*not-allowed/);
@@ -617,32 +618,41 @@ test("Word Font toolbar has centered 27px controls, 0px intrinsic caret gap, mat
 });
 
 
-test("Word expand chevrons have a shared 13px size and enough room in all Ribbon controls",()=>{
+test("Word Ribbon splits icon actions and 13px dropdown menus without fake controls",()=>{
  const home=readFileSync("src/features/word-simulator/word-home-ribbon.tsx","utf8");
- const font=readFileSync("src/features/word-simulator/word-font-ribbon.css","utf8");
- const paragraph=readFileSync("src/features/word-simulator/word-paragraph-ribbon.css","utf8");
- const windowBar=readFileSync("src/features/word-simulator/word-window-bar.tsx","utf8");
- assert.match(home,/const RIBBON_EXPAND_ARROW_SIZE=13;/);
- assert.equal((home.match(/<ChevronDown size=\{RIBBON_EXPAND_ARROW_SIZE\}/g)||[]).length,12);
- assert.doesNotMatch(home,/<ChevronDown size=\{\d+\}/);
- assert.match(windowBar,/<ChevronDown size=\{13\}/);
- assert.match(home,/className="wsl-font-icon-button wsl-font-change-case-button" label="Change Case"/);
- assert.match(font,/grid-template-columns: 136px 43px repeat\(2, 27px\) 1px 37px 1px 27px/);
- assert.match(font,/\.wsl-home-font \.wsl-hb\.wsl-font-change-case-button \{width: 37px; min-width: 37px;\}/);
- for(const selector of ["wsl-font-select-chevron","wsl-font-color-chevron"]){
-   const rule=font.match(new RegExp("\\.wsl-home-font \\."+selector+" \\{([^}]+)\\}"));
-   assert.ok(rule,selector);
-   assert.match(rule[1],/width: 13px;/);
-   assert.match(rule[1],/height: 13px;/);
- }
- for(const selector of ["wsl-font-change-case","wsl-font-underline"]){
-   assert.match(font,new RegExp("\\.wsl-home-font \\."+selector+" svg \\{[^}]*width: 13px; height: 13px;"));
- }
- assert.match(font,/\.wsl-home-font \.wsl-font-color-control \{[\s\S]*?width: 37px;[\s\S]*?min-width: 37px;/);
- for(const type of ["list","combo"]){
-   assert.match(paragraph,new RegExp("\\.wsl-home-paragraph \\.wsl-hb\\.wsl-paragraph-"+type+"-button \\{width: 43px;min-width: 43px;\\}"));
- }
- assert.match(paragraph,/\.wsl-home-paragraph \.wsl-paragraph-list-glyph>svg:last-child \{width: 13px;height: 13px;flex: 0 0 13px;\}/);
- assert.match(paragraph,/\.wsl-home-paragraph \.wsl-paragraph-combo>svg:last-child \{[\s\S]*?width: 13px;[\s\S]*?height: 13px;[\s\S]*?flex: 0 0 13px;/);
- assert.match(paragraph,/\.wsl-home-paragraph \.wsl-paragraph-line-spacing>svg:last-child \{width:13px;height:13px;flex:0 0 13px;\}/);
+ const editor=readFileSync("src/features/word-simulator/word-simulator.tsx","utf8");
+ const component=readFileSync("src/features/word-simulator/word-split-button.tsx","utf8");
+ const splitCSS=readFileSync("src/features/word-simulator/word-split-ribbon.css","utf8");
+ const layout=readFileSync("src/app/(word-simulator)/cong-cu/mo-phong-word/layout.tsx","utf8");
+ assert.equal((home.match(/<WordSplitButton/g)||[]).length,12);
+ assert.match(component,/className="wsl-hb wsl-split-arrow"/);
+ assert.match(component,/className=\{"wsl-hb wsl-split-main"/);
+ assert.match(component,/aria-haspopup="menu"/);
+ assert.match(component,/aria-expanded=\{open\}/);
+ assert.match(component,/role="menuitem"/);
+ assert.match(component,/onMouseDown=\{e=>e.preventDefault\(\)\}/);
+ assert.match(component,/createPortal/);
+ assert.match(component,/event.key==="Escape"/);
+ assert.match(component,/<ChevronDown size=\{13\}/);
+ assert.match(layout,/word-split-ribbon.css/);
+ assert.ok(layout.indexOf("word-split-ribbon.css")>layout.indexOf("word-paragraph-ribbon.css"));
+ assert.match(splitCSS,/\.wsl-split-menu\{/);
+ assert.match(splitCSS,/z-index:12000/);
+ assert.match(splitCSS,/\.wsl-font-split \.wsl-split-arrow\{width:14px\}/);
+ assert.match(splitCSS,/\.wsl-paragraph-split \.wsl-split-arrow\{width:16px\}/);
+ const names=["Paste — Dán","Change Case","Underline","Text Highlight Color","Font Color",
+              "Bullets","Numbering","Multilevel List","Line Spacing 1.5","Paragraph Shading","Borders","Styles"];
+ for(const label of names)assert.ok(home.includes('label="'+label+'"'),label);
+ for(const action of ['run("pasteRich")','run("changeCaseMode","upper")','run("underlineMode","on")',
+                       'run("hiliteColor",highlightColor)','run("foreColor",textColor)',
+                       'run("lineSpacing",value)','run("paragraphShading","#dbeafe")',
+                       'run("paragraphBorder","top")'])
+   assert.ok(home.includes(action),action);
+ for(const action of ['if(name==="pasteRich")','if(name==="changeCaseMode")','if(name==="underlineMode")',
+                       'if(name==="lineSpacing"||name==="paragraphBorder")'])
+   assert.ok(editor.includes(action),action);
+ assert.match(editor,/sanitize\(await blob\.text\(\)\)/);
+ assert.match(editor,/block\.style\.borderTop=/);
+ assert.match(editor,/block\.style\.lineHeight=/);
+ assert.match(editor,/selectedChange\(text=>text\.toLocaleUpperCase/);
 });
