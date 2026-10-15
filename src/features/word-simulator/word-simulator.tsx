@@ -567,8 +567,8 @@ export function WordSimulator(){
           {showRuler&&<div className="wsl-ruler" aria-hidden="true">{Array.from({length:16},(_,i)=><span key={i}>{i+1}</span>)}</div>}
           <div className={"wsl-paper "+(orientation==="landscape"?"is-landscape ":"")+(margins==="narrow"?"is-narrow":"")}>
             <div ref={editor} className={"wsl-editor "+(showMarks?"show-paragraph-marks":"")} aria-label="Nội dung tài liệu Word" role="textbox" aria-multiline="true" contentEditable suppressContentEditableWarning spellCheck={spellcheck}
-              onInput={markChanged} onKeyUp={rememberSelection} onMouseUp={handleEditorMouseUp}
-              onFocus={rememberSelection} onPaste={event=>{event.preventDefault();command("insertText",event.clipboardData.getData("text/plain"));}}
+              onInput={()=>{rememberSelection();markChanged();}} onKeyUp={rememberSelection} onMouseUp={handleEditorMouseUp}
+              onFocus={rememberSelection} onPaste={event=>{event.preventDefault();setClipboardMode(null);stagedClipboard.current=null;command("insertText",event.clipboardData.getData("text/plain"));}}
               onDrop={event=>event.preventDefault()}/>
           </div>
         </div>
