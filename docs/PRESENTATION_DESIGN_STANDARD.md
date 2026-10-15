@@ -2,6 +2,8 @@
 
 Áp dụng cho công cụ `/cong-cu/trinh-chieu` và các bài giảng tạo mới.
 
+**Tiêu chuẩn riêng cho từng slide (bắt buộc):** [`docs/SLIDE_STANDARD.md`](SLIDE_STANDARD.md).
+
 ## 1. Nội dung: Mở đầu → Thân bài → Kết luận
 
 - **Mở đầu:** tiêu đề, tình huống khởi động, mục tiêu và khái niệm cần có.
@@ -47,7 +49,7 @@ Kiểm tra trực quan trên 1280×720, 1920×1080, tablet/điện thoại và m
 
 ## 6. Bố cục tiêu đề slide nội dung (cập nhật)
 
-- **Mặc định:** Nhãn chủ đề ngắn (nếu cần) → một tiêu đề nội dung lớn, có thông điệp → **khối nội dung trực tiếp** (mô phỏng, bảng, thao tác, đối chiếu hoặc quiz). **Không tự động đặt subtitle/câu mô tả nhỏ dưới tiêu đề lớn.**
+- **Mặc định (cập nhật 15/10/2026):** **Tiêu đề nội dung lớn là dòng đầu tiên** → khối nội dung trực tiếp (mô phỏng, bảng, thao tác, đối chiếu hoặc quiz). Không hiển thị eyebrow/nhãn loại slide như `KIẾN THỨC`, `THAO TÁC`, `THỰC HÀNH`, `BÀI GIẢNG`, `TỔNG KẾT` phía trên tiêu đề, và **không tự động đặt subtitle** dưới tiêu đề.
 - Giữ `slide.subtitle` trong dữ liệu cũ để bảo toàn nội dung, nhưng chỉ hiển thị nó trong ghi chú giảng viên; không xóa dữ liệu gốc khi thay bố cục.
 - Chỉ dùng dòng phụ trong chính một thành phần (ví dụ nhãn File Explorer, chú thích ảnh, lời giải đáp án), nếu nó tạo thêm giá trị, không lặp ý của tiêu đề.
 - Mở đầu bài File Explorer dùng khối `lessonCover` tái sử dụng: tiêu đề, **ba mục tiêu ngắn**, mockup File Explorer, một câu hỏi khởi động. Bỏ hoàn toàn thống kê số slide/số câu hỏi ở trang mở đầu.
@@ -97,3 +99,10 @@ Không gắn bài trình chiếu Tin học với số buổi hoặc số bài. D
 - Tiêu đề chính chỉ gồm “Làm quen với Microsoft Word” (trong hai dòng với Microsoft Word màu cyan), không thêm “qua thực hành.”.
 - Không hiển thị dòng phụ “Nhập liệu · Chỉnh sửa · Lưu văn bản”; CTA “Bắt đầu bài học” vẫn chuyển slide tiếp theo.
 - Toàn bộ chữ trên Hero (mô tả, CTA, mục tiêu và mockup) cần đọc dễ khi trình chiếu; dùng cỡ chữ responsive theo `clamp()` hoặc breakpoint. Decorative outline dùng “WORD”, không dùng số “01” lớn.
+
+## 12. Quy tắc bắt buộc: không có nhãn loại slide phía trên tiêu đề (15/10/2026)
+
+- Áp dụng cho tất cả slide nội dung Word, Excel, File Explorer và các bài tương lai. Trình phát không render `slide.eyebrow` trên đầu tiêu đề. Dữ liệu metadata giữ nguyên khi cần phục vụ tác giả/kiểm thử.
+- Bìa Word có nhận diện môn học có ý nghĩa vẫn được phép có pill nhận diện theo thiết kế riêng; không được hiện các từ `KIẾN THỨC`, `BÀI GIẢNG` vô nghĩa. Mockup giữ tên các lệnh/hạng mục cần học.
+- Các thẻ nội dung không được có nhãn mặc định `KIẾN THỨC` hoặc `KHÁI NIỆM` chung chung; số thứ tự hoặc tên so sánh có nghĩa có thể giữ.
+- Tài liệu chuẩn nhất ở [`SLIDE_STANDARD.md`](SLIDE_STANDARD.md). Mọi thay đổi trình chiếu phải kiểm tra và cập nhật file này.

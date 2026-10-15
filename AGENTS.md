@@ -23,6 +23,7 @@ Xưởng Công Nghệ is a Vietnamese learning and practice platform for digital
 8. Keep teacher workspace, payments, AI tutor, and Word Lab behind feature flags until their roadmap phase.
 9. For EVERY user-requested code, UI, configuration, or release change: **read and append** a dated record to `docs/WORKLOG_AND_RULES.md` (request, exact files, decisions, tests, commit, deployment status, caveats). Do not overwrite prior entries. Update `CHANGELOG.md` for visible changes.
 10. Only claim GitHub and Vercel are synchronized after confirming the production deployment commit SHA matches the GitHub `main` head, READY state, and production domain alias.
+11. For all slide creation or edits, read `docs/SLIDE_STANDARD.md`; do not render generic slide-type eyebrow labels above headings. Preserve meaningful labels within teaching simulations.
 
 ## Definition of done
 
@@ -34,4 +35,4 @@ Xưởng Công Nghệ is a Vietnamese learning and practice platform for digital
 
 ## Key references
 
-Read `docs/WORKLOG_AND_RULES.md` first, then `docs/PRODUCT.md`, `docs/ARCHITECTURE.md`, `docs/DESIGN_SYSTEM.md`, and `docs/DECISIONS.md` before large changes.
+Read `docs/WORKLOG_AND_RULES.md` first; for presentation work also read `docs/SLIDE_STANDARD.md`, then `docs/PRODUCT.md`, `docs/ARCHITECTURE.md`, `docs/DESIGN_SYSTEM.md`, and `docs/DECISIONS.md` before large changes.

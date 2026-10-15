@@ -1,5 +1,12 @@
 # Changelog
 
+## 2026-10-15 — Loại bỏ các nhãn thừa trên tiêu đề slide
+
+- Ẩn các dòng như **KIẾN THỨC**, **THAO TÁC**, **THỰC HÀNH**, **CÂU HỎI ÔN TẬP**, **BÀI GIẢNG** phía trên tiêu đề tất cả slide nội dung.
+- Gỡ nhãn phụ không cần thiết ở bìa File Explorer và thẻ khái niệm; giữ nguyên tiêu đề, nội dung, tương tác, nhãn chuyên môn cần thiết và nhận diện môn ở bìa Word.
+- Thêm tài liệu quy tắc **`docs/SLIDE_STANDARD.md`**, tham chiếu bắt buộc trong `AGENTS.md` và chuẩn trình chiếu; có test ngăn nhãn thừa quay lại.
+
+
 ## 2026-10-15 — Chữ lớn hơn trên slide mở đầu Word
 
 - Chỉ giữ tiêu đề **Làm quen với Microsoft Word**, làm lớn đáng kể typography phần Hero, nút và thẻ mục tiêu.

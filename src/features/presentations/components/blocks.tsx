@@ -148,14 +148,14 @@ export function PresentationBlockView({block}: {block: PresentationBlock}) {
       </div>;
     case "card":
       return <article className={panel}>
-        <span className={eyebrow}>{block.number ?? "KIẾN THỨC"}</span>
-        <h3 className={"mt-4 " + heading}>{block.title}</h3>
+        {block.number != null && <span className={eyebrow}>{block.number}</span>}
+        <h3 className={(block.number != null ? "mt-4 " : "") + heading}>{block.title}</h3>
         <p className="xcn-slide-body mt-3 text-base leading-relaxed text-zinc-700 sm:text-lg">{block.text}</p>
       </article>;
     case "definition":
       return <article className={panel}>
-        <span className={eyebrow}>{block.label ?? "KHÁI NIỆM"}</span>
-        <h3 className={"mt-4 " + heading}>{block.title}</h3>
+        {block.label && !/^NỘI DUNG\s+\d+$/i.test(block.label) && <span className={eyebrow}>{block.label}</span>}
+        <h3 className={(block.label && !/^NỘI DUNG\s+\d+$/i.test(block.label) ? "mt-4 " : "") + heading}>{block.title}</h3>
         <p className="xcn-slide-body mt-3 text-base leading-relaxed text-zinc-700 sm:text-lg">{block.text}</p>
         {block.example && <div className="mt-5 break-all bg-zinc-100 p-3 font-mono text-sm font-medium">{block.example}</div>}
       </article>;
