@@ -48,3 +48,10 @@
 - [ ] Tương tác có tác dụng thật; ghi chú và đáp án hoạt động
 - [ ] Không làm hỏng các chương trình Word, Excel và File Explorer khác
 - [ ] Kiểm thử đạt, cập nhật nhật ký và xác nhận cùng SHA GitHub/Vercel khi triển khai
+
+## 7. Khi slide có mục tiêu trực quan cụ thể (15/10/2026)
+
+- Có thể tạo **component và CSS riêng cho đúng một slide** thay vì dùng mẫu grid/card, nếu giúp học viên hiểu thao tác hoặc sự khác nhau giữa hai kết quả nhanh hơn.
+- Ví dụ slide 02 Word: lựa chọn **Soạn thảo** / **Trình bày** thay đổi vùng trang Word CSS minh họa; nội dung gốc và ghi chú giảng viên phải được bảo toàn, không tăng số slide chỉ vì đổi layout.
+- Tiêu đề vẫn phải là điểm nhìn đầu tiên, chữ lớn, không dùng nhãn `KIẾN THỨC` hoặc nhãn mẫu chung. Vùng tương tác phải có nút thật, hỗ trợ keyboard focus, `aria-pressed`, phản hồi `aria-live` và mobile responsive.
+- Tương tác phải mô tả đúng hành vi, ghi rõ là mô phỏng Word bằng CSS nếu không thao tác trên tệp Word thật.

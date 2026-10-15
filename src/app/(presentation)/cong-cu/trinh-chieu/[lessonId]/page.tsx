@@ -4,6 +4,7 @@ import { allPresentationLessons, canonicalPresentationLessonId, findPresentation
 import { PresentationPlayer } from "@/features/presentations/components/player";
 import "@/features/presentations/presentation.css";
 import "@/features/presentations/word-workspace.css";
+import "@/features/presentations/word-purpose.css";
 
 export function generateStaticParams() {
   return [...new Set([...allPresentationLessons.map(record=>record.lesson.id),...Object.keys(legacyPresentationLessonIds)])].map(lessonId=>({lessonId}));
