@@ -2,6 +2,7 @@
 
 import {useCallback,useEffect,useRef,useState} from "react";
 import {WordHomeRibbon} from "./word-home-ribbon";
+import {WordWindowBar} from "./word-window-bar";
 import {
   AlignCenter,AlignJustify,AlignLeft,AlignRight,ArrowLeft,BookOpen,Check,ChevronDown,
   Clipboard,Copy,Download,FilePlus2,FileText,FolderOpen,ImagePlus,Italic,
@@ -74,6 +75,8 @@ function sanitize(html:string):string {
     if(/^(?:0|\d{1,2}px)$/.test(marginBottom))safeStyles.push("margin-bottom:"+marginBottom);
     const borderBottom=style.borderBottom;
     if(/^1px solid (?:#[0-9a-f]{3,8}|rgb\([\d\s,.%]+\))$/i.test(borderBottom))safeStyles.push("border-bottom:"+borderBottom);
+    const background=style.backgroundColor;
+    if(/^#[0-9a-f]{3,8}$/i.test(background)||/^rgb\([\d\s,.%]+\)$/i.test(background))safeStyles.push("background-color:"+background);
     const font=style.fontFamily;
     if(/^(Arial|Aptos|Calibri|Times New Roman|Georgia|Verdana)(,\s*sans-serif|,\s*serif)?$/i.test(font))safeStyles.push("font-family:"+font);
     for(const attr of Array.from(element.attributes))element.removeAttribute(attr.name);
@@ -123,6 +126,8 @@ export function WordSimulator(){
   const [searchOpen,setSearchOpen]=useState(false);
   const [query,setQuery]=useState("");
   const [showMarks,setShowMarks]=useState(false);
+  const [hasSelection,setHasSelection]=useState(false);
+  const [paintArmed,setPaintArmed]=useState(false);
   const paintFormat=useRef<{font:string;color:string;bold:boolean;italic:boolean}|null>(null);
 
   const updateStats=useCallback(()=>{
@@ -145,7 +150,7 @@ export function WordSimulator(){
         const stored=JSON.parse(raw) as {html?:string;name?:string;orientation?:Orientation;margins?:Margins};
         if(stored.html&&editor.current){
           editor.current.innerHTML=sanitize(stored.html);
-          setFilename(safeName(stored.name??"Thong_bao_lop"));
+          setFilename(safeName(stored.name??"Document1"));
           if(stored.orientation==="landscape")setOrientation("landscape");
           if(stored.margins==="narrow")setMargins("narrow");
           setStatus("Đã khôi phục bản nháp");
@@ -171,8 +176,10 @@ export function WordSimulator(){
 
   function rememberSelection(){
     const selection=window.getSelection();
-    if(selection&&selection.rangeCount&&editor.current?.contains(selection.anchorNode))
+    if(selection&&selection.rangeCount&&editor.current?.contains(selection.anchorNode)){
       savedSelection.current=selection.getRangeAt(0).cloneRange();
+      setHasSelection(!selection.isCollapsed && Boolean(selection.toString()));
+    }
   }
   function restoreSelection(){
     editor.current?.focus();
@@ -186,6 +193,15 @@ export function WordSimulator(){
     document.execCommand(cmd,false,value);
     rememberSelection();
     markChanged();
+  }
+  function saveDraft(){
+    if(!editor.current)return;
+    try{
+      window.localStorage.setItem(STORAGE_KEY,JSON.stringify({
+        html:sanitize(editor.current.innerHTML),name:safeName(filename),orientation,margins
+      }));
+      setStatus("Đã lưu bản nháp trên trình duyệt");
+    }catch{setStatus("Không đủ dung lượng để lưu bản nháp; hãy tải tệp HTML");}
   }
   function blockCommand(tag:string){command("formatBlock",tag);}
   function editFont(next:string){setFont(next);command("fontName",next);}
@@ -283,9 +299,35 @@ export function WordSimulator(){
   }
   function runHome(name:string,value?:string){
     if(name==="paste"){
-      void navigator.clipboard.readText().then(content=>command("insertText",content)).catch(()=>setStatus("Dùng Ctrl+V để dán"));return;
+      const range=savedSelection.current?.cloneRange()??null;
+      if(!navigator.clipboard?.readText){setStatus("Dùng Ctrl+V để dán văn bản");return;}
+      void navigator.clipboard.readText().then(content=>{
+        if(range && editor.current?.contains(range.startContainer))savedSelection.current=range;
+        if(content)command("insertText",content);
+        else setStatus("Clipboard đang trống");
+      }).catch(()=>setStatus("Không được cấp quyền clipboard; dùng Ctrl+V"));return;
+    }
+    if(name==="cut"||name==="copy"){
+      restoreSelection();
+      const selected=window.getSelection()?.toString()??"";
+      if(!selected){setStatus("Chọn văn bản trước khi "+(name==="copy"?"sao chép":"cắt"));return;}
+      const range=savedSelection.current?.cloneRange()??null;
+      const success=document.execCommand(name);
+      if(success){if(name==="cut")markChanged();else setStatus("Đã sao chép vào clipboard");return;}
+      if(!navigator.clipboard?.writeText){setStatus("Dùng Ctrl+"+(name==="copy"?"C":"X")+" để thao tác");return;}
+      void navigator.clipboard.writeText(selected).then(()=>{
+        if(name==="copy"){setStatus("Đã sao chép vào clipboard");return;}
+        if(range && editor.current?.contains(range.startContainer)){
+          savedSelection.current=range;
+          restoreSelection();
+          document.execCommand("delete");
+          markChanged();
+        }
+      }).catch(()=>setStatus("Clipboard bị chặn; dùng Ctrl+"+(name==="copy"?"C":"X")));
+      return;
     }
     if(name==="formatPainter"){
+      if(!hasSelection){setStatus("Chọn đoạn văn bản làm mẫu định dạng");return;}
       restoreSelection();
       paintFormat.current={
         font:document.queryCommandValue("fontName")||font,
@@ -293,6 +335,7 @@ export function WordSimulator(){
         bold:document.queryCommandState("bold"),
         italic:document.queryCommandState("italic")
       };
+      setPaintArmed(true);
       setStatus("Đã sao chép định dạng; chọn chữ đích");return;
     }
     if(name==="lineSpacing"||name==="paragraphBorder"){
@@ -310,6 +353,7 @@ export function WordSimulator(){
     const selection=window.getSelection();
     if(!paint||!selection||selection.isCollapsed)return;
     paintFormat.current=null;
+    setPaintArmed(false);
     restoreSelection();
     if(/^(Aptos|Arial|Calibri|Georgia|Verdana|Times New Roman)$/i.test(paint.font))
       document.execCommand("fontName",false,paint.font);
@@ -349,17 +393,18 @@ export function WordSimulator(){
   return <div className="wsl-shell" ref={shell}>
     <input type="file" accept=".html,.htm,.txt,text/html,text/plain" ref={fileInput} hidden onChange={event=>{const file=event.target.files?.[0];if(file)void importFile(file);event.target.value="";}}/>
     <input type="file" accept="image/png,image/jpeg,image/webp,image/gif" ref={imageInput} hidden onChange={event=>{const file=event.target.files?.[0];if(file)void insertImage(file);event.target.value="";}}/>
+    <WordWindowBar filename={filename}
+      onRename={value=>setFilename(value.replace(/[<>:"/\\|?*\u0000-\u001f]/g,"").slice(0,90))}
+      onSave={saveDraft} onUndo={()=>command("undo")} onRedo={()=>command("redo")}
+      onNew={newDocument} onPrint={()=>window.print()} onClose={saveDraft} status={status}/>
     <nav className="wsl-tabs" aria-label="Các thẻ lệnh Word">
-      <a href="/cong-cu" className="wsl-tabs-back" title="Về Công cụ" aria-label="Quay lại Công cụ"><ArrowLeft size={17}/></a>
       {TABS.map(tab=><button key={tab} type="button" className={"wsl-tab "+(tab===activeTab?"is-active":"")} aria-current={tab===activeTab?"page":undefined} onClick={()=>setActiveTab(tab)}>{tab}</button>)}
       <span className="wsl-tabs-spacer"/>
-      <span className="wsl-tabs-file-label"><FileText size={13}/><span>{filename}</span></span>
-      <button className="wsl-quick-save" onClick={exportHTML} type="button"><Download size={16}/><span>Tải bản HTML</span></button>
     </nav>
     <div className="wsl-ribbon" role="toolbar" aria-label={"Lệnh "+activeTab}>
       {activeTab==="File"&&<Group name="Tệp">{fileActions.map(item=><ToolButton key={item.label} item={{id:item.label,label:item.label,run:item.action,icon:item.icon}}/>)}</Group>}
       {activeTab==="Home"&&<WordHomeRibbon
-        font={font} fontSize={fontSize} showMarks={showMarks}
+        font={font} fontSize={fontSize} showMarks={showMarks} hasSelection={hasSelection} paintArmed={paintArmed}
         run={runHome} editFont={editFont} editSize={editSize}
         changeCase={changeCase} sortLines={sortLines} replaceText={replaceText}
         findText={()=>setSearchOpen(true)}
