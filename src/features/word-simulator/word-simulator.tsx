@@ -317,7 +317,7 @@ export function WordSimulator(){
     if(name==="changeCaseMode"){
       if(value==="upper")selectedChange(text=>text.toLocaleUpperCase("vi"));
       else if(value==="lower")selectedChange(text=>text.toLocaleLowerCase("vi"));
-      else if(value==="title")selectedChange(text=>text.toLocaleLowerCase("vi").replace(/(^|\\s)(\\p{L})/gu,(_,space,letter:string)=>space+letter.toLocaleUpperCase("vi")));
+      else if(value==="title")selectedChange(text=>text.toLocaleLowerCase("vi").replace(/(^|\s)(\p{L})/gu,(_,space,letter:string)=>space+letter.toLocaleUpperCase("vi")));
       else if(value==="sentence")selectedChange(text=>text.charAt(0).toLocaleUpperCase("vi")+text.slice(1).toLocaleLowerCase("vi"));
       return;
     }
