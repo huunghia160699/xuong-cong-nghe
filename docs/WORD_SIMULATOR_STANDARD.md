@@ -190,3 +190,13 @@ Ngày: 15/10/2026. Đường dẫn: `/cong-cu/mo-phong-word`.
 - Ô **Change Case**, **Underline**, nút màu và các nút danh sách/định dạng đoạn được nới ngang vừa đủ để mũi tên không tràn lên biểu tượng bên cạnh. Hàng Font vẫn cao 27px, nhóm Paragraph vẫn giữ bố cục hai hàng.
 - Không tăng hoặc đổi vị trí các mũi tên *thao tác* như tăng/giảm cỡ chữ, thụt lề trái/phải hay mũi tên dọc lên/xuống trong biểu tượng Line Spacing.
 - Giữ nguyên command handler, thứ tự công cụ, keyboard focus, màu sắc và trạng thái disabled. Kiểm thử cần bắt cả kích thước JSX lẫn CSS thực tế.
+
+
+## 2026-10-15 — Split buttons: lệnh chính và mũi tên hoạt động độc lập
+
+- Với các nút Home Ribbon có biểu tượng **và** mũi tên mở rộng, giao diện trở thành `split button`: **bấm biểu tượng/vùng chính** để áp dụng lệnh đang có, **bấm riêng mũi tên 13px** để mở menu tùy chọn. Không chạy lệnh chính chỉ vì người dùng mở menu.
+- Áp dụng cho **Paste, Change Case, Underline, Highlight Color, Font Color, Bullets, Numbering, Multilevel List, Line Spacing, Paragraph Shading và Borders**. Mũi tên Styles mở danh sách kiểu và các ô chọn phông/cỡ chữ vẫn hoạt động như hộp chọn thông thường.
+- Tùy chọn menu phải có tác dụng thật: chọn kiểu chữ hoa/thường; bật/tắt underline; dán văn bản hoặc dán HTML an toàn khi Clipboard API hỗ trợ; chọn màu hoặc xóa highlight; chuyển kiểu danh sách; chọn giãn dòng 1/1.15/1.5/2; đặt/xóa nền đoạn hoặc viền trên/dưới. Không tạo nút giả.
+- Giữ vùng lựa chọn văn bản khi mở/chọn menu. Popup render ngoài Ribbon để không bị cắt bởi cuộn ngang. Menu đóng khi bấm ra ngoài, Escape hoặc cuộn Ribbon; các nút chính và mũi tên có nhãn truy cập tách biệt.
+- Không tách mũi tên chức năng (Increase/Decrease Font Size, Increase/Decrease Indent, ký hiệu mũi tên dọc của Line Spacing), vì chúng là một phần của biểu tượng lệnh.
+- Các CSS cũ có thể còn ghi nhãn mô phỏng một nút duy nhất; quy tắc mới này có ưu tiên cao hơn, tách chức năng thực nhưng không thay đổi kích thước hàng 27px, thứ tự nhóm hoặc logic disabled.
