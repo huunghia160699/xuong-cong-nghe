@@ -2,9 +2,9 @@
 
 import {useState,type ReactNode} from "react";
 import {
-  AlignCenter,AlignJustify,AlignLeft,AlignRight,ArrowDownAZ,ArrowDownToLine,
+  AlignCenter,AlignJustify,AlignLeft,AlignRight,ArrowDownAZ,ArrowUpDown,
   ArrowRightToLine,ChevronDown,Clipboard,Copy,Eraser,
-  Highlighter,IndentDecrease,IndentIncrease,List,ListOrdered,
+  Grid2X2,Highlighter,IndentDecrease,IndentIncrease,List,PaintBucket,
   Paintbrush,Scissors,Search,
   WholeWord
 } from "lucide-react";
@@ -28,6 +28,20 @@ function Btn({label,icon,run,active=false,disabled=false,className="",title}:{la
   return <button type="button" className={"wsl-hb "+className+(active?" is-active":"")}
     title={disabled?undefined:(title??label)} aria-label={label} aria-pressed={active||undefined} disabled={disabled}
     onMouseDown={event=>event.preventDefault()} onClick={run}>{icon}</button>;
+}
+
+function WordListGlyph({kind}:{kind:"bullets"|"numbering"|"multilevel"}){
+  return <span className="wsl-paragraph-list-glyph" aria-hidden="true">
+    <svg viewBox="0 0 23 21" focusable="false">
+      <path d="M7 4h14M7 10.5h14M7 17h14" stroke="#495663" strokeWidth="1.35"/>
+      {kind==="bullets"
+        ?<g fill="#1767a8"><circle cx="2.6" cy="4" r="1.45"/><circle cx="2.6" cy="10.5" r="1.45"/><circle cx="2.6" cy="17" r="1.45"/></g>
+        :<g fontSize="7" fontFamily="Arial,sans-serif" fontWeight="600" fill="#1767a8">
+          <text x="0" y="6.5">1</text><text x={kind==="multilevel"?"2":"0"} y="13">{kind==="multilevel"?"a":"2"}</text><text x={kind==="multilevel"?"3":"0"} y="19.5">{kind==="multilevel"?"i":"3"}</text>
+        </g>}
+    </svg>
+    <ChevronDown size={9}/>
+  </span>;
 }
 const fontSizes=[["1","8"],["2","10"],["3","12"],["4","14"],["5","18"],["6","24"],["7","36"]];
 const FONTS=["Aptos","Arial","Calibri","Times New Roman","Georgia","Verdana"];
@@ -100,25 +114,26 @@ export function WordHomeRibbon({
    </Group>
 
    <Group name="Paragraph" className="wsl-home-paragraph">
-     <div className="wsl-paragraph-row">
-       <Btn label="Bullets" icon={<List size={18}/>} run={()=>run("insertUnorderedList")}/>
-       <Btn label="Numbering" icon={<ListOrdered size={18}/>} run={()=>run("insertOrderedList")}/>
-       <Btn label="Multilevel List" icon={<span className="wsl-multi-list">1.<small>1.1</small></span>} run={()=>run("indent")} title="Thụt danh sách sang cấp tiếp theo"/>
-       <span className="wsl-group-rule"/>
-       <Btn label="Decrease Indent" icon={<IndentDecrease size={18}/>} run={()=>run("outdent")}/>
-       <Btn label="Increase Indent" icon={<IndentIncrease size={18}/>} run={()=>run("indent")}/>
-       <Btn label="Sort" icon={<ArrowDownAZ size={18}/>} run={sortLines}/>
-       <Btn label="Show/Hide ¶" icon={<span className="wsl-pilcrow">¶</span>} active={showMarks} run={toggleMarks}/>
+     <div className="wsl-paragraph-top">
+       <Btn className="wsl-paragraph-icon-button wsl-paragraph-list-button" label="Bullets" icon={<WordListGlyph kind="bullets"/>} run={()=>run("insertUnorderedList")}/>
+       <Btn className="wsl-paragraph-icon-button wsl-paragraph-list-button" label="Numbering" icon={<WordListGlyph kind="numbering"/>} run={()=>run("insertOrderedList")}/>
+       <Btn className="wsl-paragraph-icon-button wsl-paragraph-list-button" label="Multilevel List" icon={<WordListGlyph kind="multilevel"/>} run={()=>run("multilevelList")}/>
+       <span className="wsl-paragraph-divider" aria-hidden="true"/>
+       <Btn className="wsl-paragraph-icon-button" label="Decrease Indent" icon={<IndentDecrease size={17}/>} run={()=>run("outdent")}/>
+       <Btn className="wsl-paragraph-icon-button" label="Increase Indent" icon={<IndentIncrease size={17}/>} run={()=>run("indent")}/>
+       <span className="wsl-paragraph-divider" aria-hidden="true"/>
+       <Btn className="wsl-paragraph-icon-button" label="Sort" icon={<ArrowDownAZ size={17}/>} run={sortLines}/>
+       <Btn className="wsl-paragraph-icon-button" label="Show/Hide ¶" icon={<span className="wsl-paragraph-pilcrow">¶</span>} active={showMarks} run={toggleMarks}/>
      </div>
-     <div className="wsl-paragraph-row">
-       <Btn label="Align Left" icon={<AlignLeft size={18}/>} run={()=>run("justifyLeft")}/>
-       <Btn label="Center" icon={<AlignCenter size={18}/>} run={()=>run("justifyCenter")}/>
-       <Btn label="Align Right" icon={<AlignRight size={18}/>} run={()=>run("justifyRight")}/>
-       <Btn label="Justify" icon={<AlignJustify size={18}/>} run={()=>run("justifyFull")}/>
-       <span className="wsl-group-rule"/>
-       <Btn label="Line Spacing 1.5" icon={<ArrowDownToLine size={18}/>} run={()=>run("lineSpacing")} title="Giãn dòng 1.5"/>
-       <Btn label="Paragraph Shading" icon={<span className="wsl-shading-symbol">▨</span>} run={()=>run("backColor","#f0f6fd")}/>
-       <Btn label="Borders" icon={<span className="wsl-border-symbol">▦</span>} run={()=>run("paragraphBorder")}/>
+     <div className="wsl-paragraph-bottom">
+       <Btn className="wsl-paragraph-icon-button" label="Align Left" icon={<AlignLeft size={18}/>} run={()=>run("justifyLeft")}/>
+       <Btn className="wsl-paragraph-icon-button" label="Center" icon={<AlignCenter size={18}/>} run={()=>run("justifyCenter")}/>
+       <Btn className="wsl-paragraph-icon-button" label="Align Right" icon={<AlignRight size={18}/>} run={()=>run("justifyRight")}/>
+       <Btn className="wsl-paragraph-icon-button" label="Justify" icon={<AlignJustify size={18}/>} run={()=>run("justifyFull")}/>
+       <span className="wsl-paragraph-divider" aria-hidden="true"/>
+       <Btn className="wsl-paragraph-icon-button wsl-paragraph-combo-button" label="Line Spacing 1.5" title="Giãn dòng 1.5 (bấm lại để về 1.0)" icon={<span className="wsl-paragraph-combo wsl-paragraph-line-spacing"><ArrowUpDown size={15}/><List size={16}/><ChevronDown size={9}/></span>} run={()=>run("lineSpacing")}/>
+       <Btn className="wsl-paragraph-icon-button wsl-paragraph-combo-button" label="Paragraph Shading" title="Bật/tắt tô nền đoạn văn" icon={<span className="wsl-paragraph-combo wsl-paragraph-shading"><PaintBucket size={18}/><span className="wsl-paragraph-shading-swatch"/><ChevronDown size={9}/></span>} run={()=>run("paragraphShading")}/>
+       <Btn className="wsl-paragraph-icon-button wsl-paragraph-combo-button" label="Borders" title="Bật/tắt viền dưới đoạn văn" icon={<span className="wsl-paragraph-combo wsl-paragraph-borders"><Grid2X2 size={17}/><ChevronDown size={9}/></span>} run={()=>run("paragraphBorder")}/>
      </div>
    </Group>
 
