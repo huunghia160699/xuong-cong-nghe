@@ -249,7 +249,7 @@ test("Word simulator shows complete classic Ribbon tabs and Home groups but no b
   assert.match(css,/wsl-style-gallery/);
   assert.match(css,/@media\(max-width:650px\)/);
   assert.match(route,/word-home-ribbon.css/);
-  assert.match(source,/wsl-vertical-ruler/);
+  assert.match(source,/<WordPageRulers landscape=/);
   assert.match(source,/replaceText/);
   assert.match(source,/showMarks/);
   assert.match(source,/applyStyle/);
@@ -778,4 +778,57 @@ test("Selected Word tab has a bold label and a clear 3px underline",()=>{
  assert.match(css,/\.wsl-tabs \.wsl-tab\.is-active\{[^}]*font-weight:700;/);
  assert.match(css,/\.wsl-tabs \.wsl-tab\.is-active:after\{[^}]*height:3px;/);
  assert.match(home,/\.wsl-tabs \.wsl-tab\.is-active:after\{height:2px/);
+});
+
+
+test("Word rulers measure cm within A4 page margins and follow scroll/zoom/orientation",()=>{
+ const source=readFileSync("src/features/word-simulator/word-simulator.tsx","utf8");
+ const rulers=readFileSync("src/features/word-simulator/word-page-rulers.tsx","utf8");
+ const css=readFileSync("src/features/word-simulator/word-page-rulers.css","utf8");
+ const layout=readFileSync("src/app/(word-simulator)/cong-cu/mo-phong-word/layout.tsx","utf8");
+ assert.match(rulers,/const PIXELS_PER_CM=96\/2\.54/);
+ assert.match(rulers,/const QUARTER_CM=PIXELS_PER_CM\/4/);
+ assert.match(rulers,/const paperWidth=landscape\?1123:794/);
+ assert.match(rulers,/const paperHeight=landscape\?794:1123/);
+ assert.match(rulers,/const hMargin=narrow\?48:87/);
+ assert.match(rulers,/const vMargin=narrow\?48:86/);
+ assert.match(rulers,/const printableWidth=paperWidth-2\*hMargin/);
+ assert.match(rulers,/const printableHeight=paperHeight-2\*vMargin/);
+ assert.match(rulers,/mark\.whole&&mark\.index>0/);
+ assert.match(rulers,/MarginMarker side="left"/);
+ assert.match(rulers,/MarginMarker side="right"/);
+ assert.match(rulers,/translateX\(-\$\{scrollLeft\}px\)/);
+ assert.match(rulers,/translateY\(-\$\{scrollTop\}px\)/);
+ assert.match(source,/showRuler&&<WordPageRulers/);
+ assert.match(source,/setRulerScroll\(current=>/);
+ assert.match(source,/wsl-word-page-body/);
+ assert.doesNotMatch(source,/Array\.from\(\{length:16\}.*wsl-ruler/);
+ assert.doesNotMatch(source,/wsl-vertical-ruler/);
+ assert.match(css,/\.wsl-word-ruler-horizontal-printable/);
+ assert.match(css,/\.wsl-word-ruler-vertical-printable/);
+ assert.match(css,/@media print\{/);
+ assert.match(layout,/word-page-rulers.css/);
+ for(const landscape of [false,true])for(const narrow of [false,true])for(const zoom of [60,100,130,160]){
+   const w=landscape?1123:794,h=landscape?794:1123;
+   const mx=narrow?48:87,my=narrow?48:86;
+   const ratio=zoom/100;
+   assert.ok((w-2*mx)*ratio>0);
+   assert.ok((h-2*my)*ratio>0);
+   assert.ok(mx*ratio+(w-2*mx)*ratio+mx*ratio===w*ratio ||
+    Math.abs(mx*ratio+(w-2*mx)*ratio+mx*ratio-w*ratio)<1e-9);
+ }
+});
+test("Word gray tab strip and floating 5px Home ribbon match the requested frame",()=>{
+ const chrome=readFileSync("src/features/word-simulator/word-chrome-polish.css","utf8");
+ const layout=readFileSync("src/app/(word-simulator)/cong-cu/mo-phong-word/layout.tsx","utf8");
+ assert.match(chrome,/\.wsl-shell \.wsl-tabs\{\s*background:#e8e7eb;/);
+ assert.match(chrome,/font:500 12\.5px\/1\.3/);
+ assert.match(chrome,/font-weight:900;/);
+ assert.match(chrome,/bottom:4px;/);
+ assert.match(chrome,/\.wsl-shell \.wsl-tabs \.wsl-tab\.is-active::after/);
+ assert.match(chrome,/\.wsl-ribbon:has\(\.wsl-home-ribbon\)/);
+ assert.match(chrome,/padding:4px 8px 5px;/);
+ assert.match(chrome,/border-radius:5px;/);
+ assert.match(chrome,/box-shadow:0 1px 4px rgba\(35,35,45,.09\)/);
+ assert.match(layout,/word-chrome-polish.css/);
 });
