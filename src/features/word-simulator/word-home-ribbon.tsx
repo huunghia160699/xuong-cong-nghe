@@ -186,9 +186,27 @@ export function WordHomeRibbon({
 
    <Group name="Paragraph" className="wsl-home-paragraph">
      <div className="wsl-paragraph-top">
-       <Btn className="wsl-paragraph-icon-button wsl-paragraph-list-button" label="Bullets" icon={<WordListGlyph kind="bullets"/>} run={()=>run("insertUnorderedList")}/>
-       <Btn className="wsl-paragraph-icon-button wsl-paragraph-list-button" label="Numbering" icon={<WordListGlyph kind="numbering"/>} run={()=>run("insertOrderedList")}/>
-       <Btn className="wsl-paragraph-icon-button wsl-paragraph-list-button" label="Multilevel List" icon={<WordListGlyph kind="multilevel"/>} run={()=>run("multilevelList")}/>
+       <WordSplitButton className="wsl-paragraph-split wsl-paragraph-list-button" label="Bullets"
+         icon={<WordListGlyph kind="bullets"/>} run={()=>run("insertUnorderedList")}
+         options={[
+           {label:"Danh sách dấu đầu dòng",run:()=>run("insertUnorderedList")},
+           {label:"Danh sách đánh số",run:()=>run("insertOrderedList")},
+           {label:"Danh sách nhiều cấp",run:()=>run("multilevelList")}
+         ]}/>
+       <WordSplitButton className="wsl-paragraph-split wsl-paragraph-list-button" label="Numbering"
+         icon={<WordListGlyph kind="numbering"/>} run={()=>run("insertOrderedList")}
+         options={[
+           {label:"Danh sách dấu đầu dòng",run:()=>run("insertUnorderedList")},
+           {label:"Danh sách đánh số",run:()=>run("insertOrderedList")},
+           {label:"Danh sách nhiều cấp",run:()=>run("multilevelList")}
+         ]}/>
+       <WordSplitButton className="wsl-paragraph-split wsl-paragraph-list-button" label="Multilevel List"
+         icon={<WordListGlyph kind="multilevel"/>} run={()=>run("multilevelList")}
+         options={[
+           {label:"Danh sách dấu đầu dòng",run:()=>run("insertUnorderedList")},
+           {label:"Danh sách đánh số",run:()=>run("insertOrderedList")},
+           {label:"Danh sách nhiều cấp",run:()=>run("multilevelList")}
+         ]}/>
        <span className="wsl-paragraph-divider" aria-hidden="true"/>
        <Btn className="wsl-paragraph-icon-button" label="Decrease Indent" icon={<WordIndentGlyph direction="decrease"/>} run={()=>run("outdent")}/>
        <Btn className="wsl-paragraph-icon-button" label="Increase Indent" icon={<WordIndentGlyph direction="increase"/>} run={()=>run("indent")}/>
@@ -202,9 +220,27 @@ export function WordHomeRibbon({
        <Btn className="wsl-paragraph-icon-button" label="Align Right" icon={<AlignRight size={18}/>} run={()=>run("justifyRight")}/>
        <Btn className="wsl-paragraph-icon-button" label="Justify" icon={<AlignJustify size={18}/>} run={()=>run("justifyFull")}/>
        <span className="wsl-paragraph-divider" aria-hidden="true"/>
-       <Btn className="wsl-paragraph-icon-button wsl-paragraph-combo-button" label="Line Spacing 1.5" title="Giãn dòng 1.5 (bấm lại để về 1.0)" icon={<span className="wsl-paragraph-combo wsl-paragraph-line-spacing"><WordLineSpacingGlyph/><ChevronDown size={RIBBON_EXPAND_ARROW_SIZE}/></span>} run={()=>run("lineSpacing")}/>
-       <Btn className="wsl-paragraph-icon-button wsl-paragraph-combo-button" label="Paragraph Shading" title="Bật/tắt tô nền đoạn văn" icon={<span className="wsl-paragraph-combo wsl-paragraph-shading"><PaintBucket size={18}/><span className="wsl-paragraph-shading-swatch"/><ChevronDown size={RIBBON_EXPAND_ARROW_SIZE}/></span>} run={()=>run("paragraphShading")}/>
-       <Btn className="wsl-paragraph-icon-button wsl-paragraph-combo-button" label="Borders" title="Bật/tắt viền dưới đoạn văn" icon={<span className="wsl-paragraph-combo wsl-paragraph-borders"><Grid2X2 size={17}/><ChevronDown size={RIBBON_EXPAND_ARROW_SIZE}/></span>} run={()=>run("paragraphBorder")}/>
+       <WordSplitButton className="wsl-paragraph-split wsl-paragraph-combo-button" label="Line Spacing 1.5"
+         icon={<span className="wsl-paragraph-combo wsl-paragraph-line-spacing"><WordLineSpacingGlyph/></span>}
+         run={()=>run("lineSpacing")}
+         options={["1","1.15","1.5","2"].map(value=>({label:"Giãn dòng "+value,run:()=>run("lineSpacing",value)}))}/>
+       <WordSplitButton className="wsl-paragraph-split wsl-paragraph-combo-button" label="Paragraph Shading"
+         icon={<span className="wsl-paragraph-combo wsl-paragraph-shading"><PaintBucket size={18}/><span className="wsl-paragraph-shading-swatch"/></span>}
+         run={()=>run("paragraphShading")}
+         options={[
+           {label:"Nền vàng",color:"#fff2a8",run:()=>run("paragraphShading","#fff2a8")},
+           {label:"Nền xanh",color:"#dbeafe",run:()=>run("paragraphShading","#dbeafe")},
+           {label:"Nền xanh lá",color:"#dcfce7",run:()=>run("paragraphShading","#dcfce7")},
+           {label:"Không tô nền",run:()=>run("paragraphShading","none")}
+         ]}/>
+       <WordSplitButton className="wsl-paragraph-split wsl-paragraph-combo-button" label="Borders"
+         icon={<span className="wsl-paragraph-combo wsl-paragraph-borders"><Grid2X2 size={17}/></span>}
+         run={()=>run("paragraphBorder")}
+         options={[
+           {label:"Viền dưới",run:()=>run("paragraphBorder","bottom")},
+           {label:"Viền trên",run:()=>run("paragraphBorder","top")},
+           {label:"Bỏ viền",run:()=>run("paragraphBorder","none")}
+         ]}/>
      </div>
    </Group>
 
@@ -223,7 +259,8 @@ export function WordHomeRibbon({
          <span>{label}</span>
        </button>)}
      </div>
-     <div className="wsl-styles-scroll" aria-hidden="true"><ChevronDown size={RIBBON_EXPAND_ARROW_SIZE}/></div>
+     <div className="wsl-styles-scroll"><WordSplitButton arrowOnly className="wsl-style-menu-button" label="Styles"
+         options={["Normal","No Spacing","Heading 1","Heading 2","Title","Subtitle"].map(value=>({label:value,run:()=>applyStyle(value)}))}/></div>
    </Group>
 
    <Group name="Editing" className="wsl-home-editing">
