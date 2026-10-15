@@ -2,9 +2,9 @@
 
 import {useState,type ReactNode} from "react";
 import {
-  AlignCenter,AlignJustify,AlignLeft,AlignRight,ArrowDownAZ,ArrowUpDown,
+  AlignCenter,AlignJustify,AlignLeft,AlignRight,
   ArrowRightToLine,ChevronDown,Clipboard,Copy,Eraser,
-  Grid2X2,Highlighter,IndentDecrease,IndentIncrease,List,PaintBucket,
+  Grid2X2,Highlighter,PaintBucket,
   Paintbrush,Scissors,Search,
   WholeWord
 } from "lucide-react";
@@ -32,17 +32,57 @@ function Btn({label,icon,run,active=false,disabled=false,className="",title}:{la
 
 function WordListGlyph({kind}:{kind:"bullets"|"numbering"|"multilevel"}){
   return <span className="wsl-paragraph-list-glyph" aria-hidden="true">
-    <svg viewBox="0 0 23 21" focusable="false">
-      <path d="M7 4h14M7 10.5h14M7 17h14" stroke="#495663" strokeWidth="1.35"/>
-      {kind==="bullets"
-        ?<g fill="#1767a8"><circle cx="2.6" cy="4" r="1.45"/><circle cx="2.6" cy="10.5" r="1.45"/><circle cx="2.6" cy="17" r="1.45"/></g>
-        :<g fontSize="7" fontFamily="Arial,sans-serif" fontWeight="600" fill="#1767a8">
-          <text x="0" y="6.5">1</text><text x={kind==="multilevel"?"2":"0"} y="13">{kind==="multilevel"?"a":"2"}</text><text x={kind==="multilevel"?"3":"0"} y="19.5">{kind==="multilevel"?"i":"3"}</text>
-        </g>}
-    </svg>
+    {kind==="multilevel"?
+      <svg className="wsl-paragraph-multilevel-mark" viewBox="0 0 26 21" focusable="false">
+        <g fill="#1c6da8" fontFamily="Arial,sans-serif" fontSize="7.6" fontWeight="600">
+          <text x="0.3" y="6.4">1.</text><text x="4" y="13.2">a.</text><text x="8" y="20">i.</text>
+        </g>
+        <g stroke="#505c69" strokeWidth="1.45" strokeLinecap="square">
+          <path d="M9 4H25M12.5 10.8H25M16 17.5H25"/>
+        </g>
+      </svg>:
+      <svg viewBox="0 0 23 21" focusable="false">
+        <path d="M7 4h14M7 10.5h14M7 17h14" stroke="#495663" strokeWidth="1.35"/>
+        {kind==="bullets"
+          ?<g fill="#1767a8"><circle cx="2.6" cy="4" r="1.45"/><circle cx="2.6" cy="10.5" r="1.45"/><circle cx="2.6" cy="17" r="1.45"/></g>
+          :<g fontSize="7" fontFamily="Arial,sans-serif" fontWeight="600" fill="#1767a8">
+            <text x="0" y="6.5">1</text><text x="0" y="13">2</text><text x="0" y="19.5">3</text>
+          </g>}
+      </svg>}
     <ChevronDown size={9}/>
   </span>;
 }
+
+function WordIndentGlyph({direction}:{direction:"decrease"|"increase"}){
+  return <svg className="wsl-paragraph-indent-glyph" viewBox="0 0 24 22" aria-hidden="true" focusable="false">
+    <g stroke="#505c69" strokeWidth="1.3" strokeLinecap="square" fill="none">
+      <path d="M2 2.8H22M2 6.2H22M12 9.7H22M12 13.3H22M2 16.8H22M2 20.2H22"/>
+    </g>
+    {direction==="decrease"
+      ?<path d="M11 9.2H6V6.6L.8 11.5 6 16.2v-2.6h5Z" fill="#1679be"/>
+      :<path d="M1 9.2h5V6.6l5.2 4.9L6 16.2v-2.6H1Z" fill="#1679be"/>}
+  </svg>;
+}
+
+function WordLineSpacingGlyph(){
+  return <svg className="wsl-paragraph-line-glyph" viewBox="0 0 28 22" aria-hidden="true" focusable="false">
+    <path d="M11.5 4H27M11.5 11H27M11.5 18H27" stroke="#556170" strokeWidth="1.45" strokeLinecap="square"/>
+    <g stroke="#157fc4" strokeWidth="1.35" fill="none" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M5 19.5V2.5M1.8 5.7 5 2.5l3.2 3.2M1.8 16.3 5 19.5l3.2-3.2"/>
+    </g>
+  </svg>;
+}
+
+function WordSortGlyph(){
+  return <svg className="wsl-paragraph-sort-glyph" viewBox="0 0 24 22" aria-hidden="true" focusable="false">
+    <g fontFamily="Arial,sans-serif" fontWeight="700" fontSize="11">
+      <text x="2" y="9.2" fill="#167fc0">A</text>
+      <text x="2" y="19.2" fill="#3f4c5a">Z</text>
+    </g>
+    <path d="M18 2v15.5m-3.5-3.5 3.5 3.5 3.5-3.5" stroke="#3e4a58" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" fill="none"/>
+  </svg>;
+}
+
 const fontSizes=[["1","8"],["2","10"],["3","12"],["4","14"],["5","18"],["6","24"],["7","36"]];
 const FONTS=["Aptos","Arial","Calibri","Times New Roman","Georgia","Verdana"];
 
@@ -82,8 +122,8 @@ export function WordHomeRibbon({
          </select>
          <ChevronDown size={11} aria-hidden="true" className="wsl-font-select-chevron"/>
        </label>
-       <Btn className="wsl-font-icon-button" label="Increase Font Size" icon={<span className="wsl-font-size-symbol wsl-font-grow" aria-hidden="true"><span className="wsl-font-size-letter">A</span><span className="wsl-font-size-direction">↑</span></span>} run={()=>editSize(String(Math.min(7,size+1)))}/>
-       <Btn className="wsl-font-icon-button" label="Decrease Font Size" icon={<span className="wsl-font-size-symbol wsl-font-shrink" aria-hidden="true"><span className="wsl-font-size-letter">A</span><span className="wsl-font-size-direction">↓</span></span>} run={()=>editSize(String(Math.max(1,size-1)))}/>
+       <Btn className="wsl-font-icon-button" label="Increase Font Size" icon={<span className="wsl-font-size-symbol wsl-font-grow" aria-hidden="true"><span className="wsl-font-size-letter">A</span><svg className="wsl-font-size-direction" viewBox="0 0 12 12" focusable="false"><path d="M6 1 11 6H8v5H4V6H1Z" fill="currentColor"/></svg></span>} run={()=>editSize(String(Math.min(7,size+1)))}/>
+       <Btn className="wsl-font-icon-button" label="Decrease Font Size" icon={<span className="wsl-font-size-symbol wsl-font-shrink" aria-hidden="true"><span className="wsl-font-size-letter">A</span><svg className="wsl-font-size-direction" viewBox="0 0 12 12" focusable="false"><path d="M4 1h4v5h3l-5 5-5-5h3Z" fill="currentColor"/></svg></span>} run={()=>editSize(String(Math.max(1,size-1)))}/>
        <span className="wsl-font-divider" aria-hidden="true"/>
        <Btn className="wsl-font-icon-button" label="Change Case" icon={<span className="wsl-font-change-case" aria-hidden="true">Aa<ChevronDown size={9}/></span>} run={changeCase}/>
        <span className="wsl-font-divider" aria-hidden="true"/>
@@ -119,10 +159,10 @@ export function WordHomeRibbon({
        <Btn className="wsl-paragraph-icon-button wsl-paragraph-list-button" label="Numbering" icon={<WordListGlyph kind="numbering"/>} run={()=>run("insertOrderedList")}/>
        <Btn className="wsl-paragraph-icon-button wsl-paragraph-list-button" label="Multilevel List" icon={<WordListGlyph kind="multilevel"/>} run={()=>run("multilevelList")}/>
        <span className="wsl-paragraph-divider" aria-hidden="true"/>
-       <Btn className="wsl-paragraph-icon-button" label="Decrease Indent" icon={<IndentDecrease size={17}/>} run={()=>run("outdent")}/>
-       <Btn className="wsl-paragraph-icon-button" label="Increase Indent" icon={<IndentIncrease size={17}/>} run={()=>run("indent")}/>
+       <Btn className="wsl-paragraph-icon-button" label="Decrease Indent" icon={<WordIndentGlyph direction="decrease"/>} run={()=>run("outdent")}/>
+       <Btn className="wsl-paragraph-icon-button" label="Increase Indent" icon={<WordIndentGlyph direction="increase"/>} run={()=>run("indent")}/>
        <span className="wsl-paragraph-divider" aria-hidden="true"/>
-       <Btn className="wsl-paragraph-icon-button" label="Sort" icon={<ArrowDownAZ size={17}/>} run={sortLines}/>
+       <Btn className="wsl-paragraph-icon-button" label="Sort" icon={<WordSortGlyph/>} run={sortLines}/>
        <Btn className="wsl-paragraph-icon-button" label="Show/Hide ¶" icon={<span className="wsl-paragraph-pilcrow">¶</span>} active={showMarks} run={toggleMarks}/>
      </div>
      <div className="wsl-paragraph-bottom">
@@ -131,7 +171,7 @@ export function WordHomeRibbon({
        <Btn className="wsl-paragraph-icon-button" label="Align Right" icon={<AlignRight size={18}/>} run={()=>run("justifyRight")}/>
        <Btn className="wsl-paragraph-icon-button" label="Justify" icon={<AlignJustify size={18}/>} run={()=>run("justifyFull")}/>
        <span className="wsl-paragraph-divider" aria-hidden="true"/>
-       <Btn className="wsl-paragraph-icon-button wsl-paragraph-combo-button" label="Line Spacing 1.5" title="Giãn dòng 1.5 (bấm lại để về 1.0)" icon={<span className="wsl-paragraph-combo wsl-paragraph-line-spacing"><ArrowUpDown size={15}/><List size={16}/><ChevronDown size={9}/></span>} run={()=>run("lineSpacing")}/>
+       <Btn className="wsl-paragraph-icon-button wsl-paragraph-combo-button" label="Line Spacing 1.5" title="Giãn dòng 1.5 (bấm lại để về 1.0)" icon={<span className="wsl-paragraph-combo wsl-paragraph-line-spacing"><WordLineSpacingGlyph/><ChevronDown size={9}/></span>} run={()=>run("lineSpacing")}/>
        <Btn className="wsl-paragraph-icon-button wsl-paragraph-combo-button" label="Paragraph Shading" title="Bật/tắt tô nền đoạn văn" icon={<span className="wsl-paragraph-combo wsl-paragraph-shading"><PaintBucket size={18}/><span className="wsl-paragraph-shading-swatch"/><ChevronDown size={9}/></span>} run={()=>run("paragraphShading")}/>
        <Btn className="wsl-paragraph-icon-button wsl-paragraph-combo-button" label="Borders" title="Bật/tắt viền dưới đoạn văn" icon={<span className="wsl-paragraph-combo wsl-paragraph-borders"><Grid2X2 size={17}/><ChevronDown size={9}/></span>} run={()=>run("paragraphBorder")}/>
      </div>
