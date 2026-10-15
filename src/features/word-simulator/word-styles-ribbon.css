@@ -72,7 +72,6 @@
   background:#edf3fa;
 }
 .wsl-home-styles .wsl-style-tile:focus-visible{outline:2px solid #005bfd;outline-offset:-2px}
-.wsl-home-styles .wsl-style-no-spacing{border-color:#d6d6d8}
 .wsl-home-styles .wsl-style-no-spacing span{font-size:13px}
 .wsl-home-styles .wsl-style-heading-1 span{
   color:#164c6a;
