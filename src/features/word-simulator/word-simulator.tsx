@@ -70,11 +70,13 @@ function sanitize(html:string):string {
     const fontSize=style.fontSize;
     if(/^(?:\d{1,2}(?:\.\d)?)(?:pt|px)$/.test(fontSize))safeStyles.push("font-size:"+fontSize);
     const lineHeight=style.lineHeight;
-    if(/^(?:1(?:\.[0-9])?|2(?:\.0)?)$/.test(lineHeight))safeStyles.push("line-height:"+lineHeight);
+    if(/^(?:1(?:\.(?:0|15|5))?|2(?:\.0)?)$/.test(lineHeight))safeStyles.push("line-height:"+lineHeight);
     const marginBottom=style.marginBottom;
     if(/^(?:0|\d{1,2}px)$/.test(marginBottom))safeStyles.push("margin-bottom:"+marginBottom);
     const borderBottom=style.borderBottom;
     if(/^1px solid (?:#[0-9a-f]{3,8}|rgb\([\d\s,.%]+\))$/i.test(borderBottom))safeStyles.push("border-bottom:"+borderBottom);
+    const borderTop=style.borderTop;
+    if(/^1px solid (?:#[0-9a-f]{3,8}|rgb\([\d\s,.%]+\))$/i.test(borderTop))safeStyles.push("border-top:"+borderTop);
     const background=style.backgroundColor;
     if(/^#[0-9a-f]{3,8}$/i.test(background)||/^rgb\([\d\s,.%]+\)$/i.test(background))safeStyles.push("background-color:"+background);
     const font=style.fontFamily;
@@ -312,6 +314,33 @@ export function WordSimulator(){
     command("insertHTML","<ol><li>"+first+"<ol>"+children+"</ol></li></ol>");
   }
   function runHome(name:string,value?:string){
+    if(name==="changeCaseMode"){
+      if(value==="upper")selectedChange(text=>text.toLocaleUpperCase("vi"));
+      else if(value==="lower")selectedChange(text=>text.toLocaleLowerCase("vi"));
+      else if(value==="title")selectedChange(text=>text.toLocaleLowerCase("vi").replace(/(^|\\s)(\\p{L})/gu,(_,space,letter:string)=>space+letter.toLocaleUpperCase("vi")));
+      else if(value==="sentence")selectedChange(text=>text.charAt(0).toLocaleUpperCase("vi")+text.slice(1).toLocaleLowerCase("vi"));
+      return;
+    }
+    if(name==="underlineMode"){
+      if(value!=="on"&&value!=="off")return;
+      restoreSelection();
+      if(document.queryCommandState("underline")!==(value==="on"))command("underline");
+      return;
+    }
+    if(name==="removeHighlight"){command("hiliteColor","transparent");return;}
+    if(name==="pasteRich"){
+      const range=savedSelection.current?.cloneRange()??null;
+      if(!navigator.clipboard?.read){setStatus("Trình duyệt không hỗ trợ dán giữ định dạng; hãy dùng Ctrl+V");return;}
+      void navigator.clipboard.read().then(async items=>{
+        const html=items.find(item=>item.types.includes("text/html"));
+        const plain=items.find(item=>item.types.includes("text/plain"));
+        if(range&&editor.current?.contains(range.startContainer))savedSelection.current=range;
+        if(html){const blob=await html.getType("text/html");command("insertHTML",sanitize(await blob.text()));}
+        else if(plain){const blob=await plain.getType("text/plain");command("insertText",await blob.text());}
+        else setStatus("Clipboard không có dữ liệu văn bản phù hợp");
+      }).catch(()=>setStatus("Không được cấp quyền đọc clipboard; hãy dùng Ctrl+V"));
+      return;
+    }
     if(name==="paste"){
       const range=savedSelection.current?.cloneRange()??null;
       if(!navigator.clipboard?.readText){setStatus("Dùng Ctrl+V để dán văn bản");return;}
@@ -357,14 +386,24 @@ export function WordSimulator(){
       restoreSelection();
       const block=currentBlock();
       if(!block||!editor.current?.contains(block)){setStatus("Đặt con trỏ trong đoạn văn");return;}
-      block.style.backgroundColor=block.style.backgroundColor?"":"#fff2a8";
+      block.style.backgroundColor=value==="none"?"":value&&/^#[0-9a-f]{6}$/i.test(value)?value:block.style.backgroundColor?"":"#fff2a8";
       markChanged();return;
     }
     if(name==="lineSpacing"||name==="paragraphBorder"){
+      restoreSelection();
       const block=currentBlock();
-      if(!block){setStatus("Đặt con trỏ trong đoạn văn");return;}
-      if(name==="lineSpacing")block.style.lineHeight=block.style.lineHeight==="1.5"?"1":"1.5";
-      else block.style.borderBottom=block.style.borderBottom?"":"1px solid #9ca3af";
+      if(!block||!editor.current?.contains(block)){setStatus("Đặt con trỏ trong đoạn văn");return;}
+      if(name==="lineSpacing"){
+        block.style.lineHeight=["1","1.15","1.5","2"].includes(value??"")?value!:block.style.lineHeight==="1.5"?"1":"1.5";
+      }else if(value==="none"){
+        block.style.borderBottom="";block.style.borderTop="";
+      }else if(value==="top"){
+        block.style.borderTop="1px solid #9ca3af";block.style.borderBottom="";
+      }else if(value==="bottom"){
+        block.style.borderBottom="1px solid #9ca3af";block.style.borderTop="";
+      }else{
+        block.style.borderBottom=block.style.borderBottom?"":"1px solid #9ca3af";
+      }
       markChanged();return;
     }
     command(name,value);
