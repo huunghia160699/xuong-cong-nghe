@@ -58,3 +58,10 @@ Ngày: 15/10/2026. Đường dẫn: `/cong-cu/mo-phong-word`.
 - **Clipboard:** Paste là nút lớn; Cut/Copy/Format Painter xếp dọc. Cut/Copy/Format Painter không hoạt động khi chưa chọn chữ. Copy không làm tăng revision/lưu giả; Cut chỉ cập nhật khi cắt thành công; Paste đọc clipboard với fallback Ctrl+V khi browser chặn; Format Painter chụp định dạng nguồn và áp dụng lên vùng đích.
 - **Font:** chọn phông và cỡ, tăng/giảm cỡ, Change Case, Clear Formatting, Bold/Italic/Underline/Strike, Subscript/Superscript, highlight color và font color. Icons được căn vị trí/thang 25–30px giống ảnh. Text Effects (không có triển khai đúng) chỉ là biểu tượng mờ không tương tác, không được gán giả thành Bold.
 - Bổ sung kiểm thử chống hồi quy cho vị trí thanh, chức năng lưu, sự kiện Cut/Copy/Paste và không làm sai định dạng. Kiểm tra browser tương tác thực tế vẫn phải được làm riêng (không được gọi kiểm thử tĩnh là test E2E).
+
+## 15/10/2026 — Trạng thái nút vô hiệu hóa trong Ribbon
+
+- Nút `disabled` vẫn hiện diện, giảm độ đậm như Word và **không chạy lệnh**.
+- Con trỏ di qua nút vô hiệu hóa là **mũi tên bình thường** (`cursor: default`), tuyệt đối không dùng `cursor: not-allowed` hoặc biểu tượng cấm màu đỏ.
+- Không tạo hiệu ứng `hover` (màu nền, viền, bóng, đổi trạng thái) và không hiển thị tooltip hướng dẫn của nút khi bị vô hiệu hóa.
+- Nút đang khả dụng vẫn giữ hiệu ứng hover/focus bình thường. Áp dụng nhất quán cho Home Ribbon và các nút lệnh Ribbon còn lại. Không thay đổi điều kiện hoạt động Cut/Copy/Format Painter hay các thao tác tài liệu.

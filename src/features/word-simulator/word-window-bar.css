@@ -43,8 +43,8 @@
 .wsl-home-font .wsl-font-top .wsl-hb svg{color:#516073}
 .wsl-home-font .wsl-font-bottom .wsl-hb svg{color:#344258}
 .wsl-home-font .wsl-hb[disabled]{opacity:.34}
-.wsl-home-clipboard .wsl-hb[disabled]{opacity:.32;cursor:not-allowed}
-.wsl-home-clipboard .wsl-hb[disabled]:hover{background:transparent;border-color:transparent}
+.wsl-home-clipboard .wsl-hb[disabled]{opacity:.32;cursor:default}
+.wsl-home-clipboard .wsl-hb[disabled]:hover,.wsl-home-font .wsl-hb[disabled]:hover{background:transparent;border-color:transparent;box-shadow:none}
 .wsl-home-clipboard .wsl-hb.is-armed{background:#e8f2ff;border-color:#99bfed}
 .wsl-word-color-effect{position:relative;width:18px;height:21px;font-weight:800;font-family:Georgia,serif;font-size:19px;line-height:21px;color:#1b7ec4;text-shadow:1px 1px 0 #a8ddf7}
 .wsl-word-color-effect::after{content:"";position:absolute;bottom:0;left:2px;width:13px;height:2px;background:#348bc6}

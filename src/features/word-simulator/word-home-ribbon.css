@@ -8,9 +8,9 @@
 .wsl-home-paste{display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:0;padding:2px}
 .wsl-home-paste>span{display:flex;gap:3px;align-items:center;font-size:11px;white-space:nowrap}
 .wsl-hb{display:inline-flex;justify-content:center;align-items:center;flex-shrink:0;width:25px;height:25px;padding:3px;border:1px solid transparent;border-radius:2px;background:transparent;color:#444;cursor:pointer}
-.wsl-hb:hover,.wsl-hb.is-active{border-color:#b8cde5;background:#e9f2ff}
+.wsl-hb:hover:not(:disabled),.wsl-hb.is-active:not(:disabled){border-color:#b8cde5;background:#e9f2ff}
 .wsl-hb:focus-visible{outline:2px solid #005bfd;outline-offset:1px}
-.wsl-hb:disabled{opacity:.35;cursor:not-allowed}
+.wsl-hb:disabled{opacity:.35;cursor:default;pointer-events:auto}
 .wsl-hb svg{flex-shrink:0}
 .wsl-hb-paste{width:38px;height:37px}
 .wsl-home-clipboard-stack{display:flex;flex-direction:column;align-items:flex-start;gap:0}
