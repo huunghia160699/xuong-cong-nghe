@@ -347,7 +347,7 @@ test("Word Font group has deliberate two-row alignment, real color swatches and 
   assert.doesNotMatch(font,/label="Text Effects".*run=/);
   assert.match(font,/style=\{\{backgroundColor:highlightColor\}\}/);
   assert.match(font,/style=\{\{backgroundColor:textColor\}\}/);
-  assert.match(css,/grid-template-columns: 136px 43px repeat\(2, 27px\) 1px 27px 1px 27px/);
+  assert.match(css,/grid-template-columns: 136px 43px repeat\(2, 27px\) 1px 37px 1px 27px/);
   assert.match(css,/grid-template-rows: 27px 27px/);
   assert.match(css,/\.wsl-home-font \.wsl-font-select-chevron/);
   assert.match(css,/\.wsl-home-font \.wsl-font-color-swatch/);
@@ -369,7 +369,7 @@ test("Word Font glyphs use sans-serif B/U, matched A baselines and full-width se
   }
   assert.match(css,/\.wsl-home-font \.wsl-font-bold\s*\{\s*font:\s*700 17px\/1 Arial/);
   assert.match(css,/\.wsl-home-font \.wsl-font-underline\s*\{[\s\S]*?font:\s*16px\/1 Arial/);
-  assert.match(css,/font: 500 20px\/21px/);
+  assert.match(css,/font: 500 20px\/1/);
   assert.match(css,/width: max-content/);
   assert.match(css,/font-size: 15\.4px/);
   const bottom=css.match(/\.wsl-home-font \.wsl-font-bottom\s*\{([^}]+)\}/);
@@ -418,7 +418,7 @@ test("Word top Font row has no CSS override defeating space-between alignment",(
   const properties=[...rules[0][1].matchAll(/justify-content\s*:\s*([^;]+)\s*;/g)].map(m=>m[1].trim());
   assert.deepEqual(properties,["space-between"],"later justify-content must not override space-between");
   assert.match(rules[0][1],/width:\s*100%/);
-  assert.match(rules[0][1],/grid-template-columns:\s*136px 43px repeat\(2, 27px\) 1px 27px 1px 27px/);
+  assert.match(rules[0][1],/grid-template-columns:\s*136px 43px repeat\(2, 27px\) 1px 37px 1px 27px/);
   assert.doesNotMatch(rules[0][1],/justify-content:\s*(?:start|flex-start)/);
   const standard=readFileSync("docs/WORD_SIMULATOR_STANDARD.md","utf8");
   assert.match(standard,/Sửa xung đột CSS khiến hàng trên Font không giãn đều/);
@@ -614,4 +614,35 @@ test("Word Font toolbar has centered 27px controls, 0px intrinsic caret gap, mat
    }
  }
  assert.match(rule(css,".wsl-home-font .wsl-font-shrink .wsl-font-size-letter"),/font-size: 15.4px/);
+});
+
+
+test("Word expand chevrons have a shared 13px size and enough room in all Ribbon controls",()=>{
+ const home=readFileSync("src/features/word-simulator/word-home-ribbon.tsx","utf8");
+ const font=readFileSync("src/features/word-simulator/word-font-ribbon.css","utf8");
+ const paragraph=readFileSync("src/features/word-simulator/word-paragraph-ribbon.css","utf8");
+ const windowBar=readFileSync("src/features/word-simulator/word-window-bar.tsx","utf8");
+ assert.match(home,/const RIBBON_EXPAND_ARROW_SIZE=13;/);
+ assert.equal((home.match(/<ChevronDown size=\{RIBBON_EXPAND_ARROW_SIZE\}/g)||[]).length,12);
+ assert.doesNotMatch(home,/<ChevronDown size=\{\d+\}/);
+ assert.match(windowBar,/<ChevronDown size=\{13\}/);
+ assert.match(home,/className="wsl-font-icon-button wsl-font-change-case-button" label="Change Case"/);
+ assert.match(font,/grid-template-columns: 136px 43px repeat\(2, 27px\) 1px 37px 1px 27px/);
+ assert.match(font,/\.wsl-home-font \.wsl-hb\.wsl-font-change-case-button \{width: 37px; min-width: 37px;\}/);
+ for(const selector of ["wsl-font-select-chevron","wsl-font-color-chevron"]){
+   const rule=font.match(new RegExp("\\.wsl-home-font \\."+selector+" \\{([^}]+)\\}"));
+   assert.ok(rule,selector);
+   assert.match(rule[1],/width: 13px;/);
+   assert.match(rule[1],/height: 13px;/);
+ }
+ for(const selector of ["wsl-font-change-case","wsl-font-underline"]){
+   assert.match(font,new RegExp("\\.wsl-home-font \\."+selector+" svg \\{[^}]*width: 13px; height: 13px;"));
+ }
+ assert.match(font,/\.wsl-home-font \.wsl-font-color-control \{[\s\S]*?width: 37px;[\s\S]*?min-width: 37px;/);
+ for(const type of ["list","combo"]){
+   assert.match(paragraph,new RegExp("\\.wsl-home-paragraph \\.wsl-hb\\.wsl-paragraph-"+type+"-button \\{width: 43px;min-width: 43px;\\}"));
+ }
+ assert.match(paragraph,/\.wsl-home-paragraph \.wsl-paragraph-list-glyph>svg:last-child \{width: 13px;height: 13px;flex: 0 0 13px;\}/);
+ assert.match(paragraph,/\.wsl-home-paragraph \.wsl-paragraph-combo>svg:last-child \{[\s\S]*?width: 13px;[\s\S]*?height: 13px;[\s\S]*?flex: 0 0 13px;/);
+ assert.match(paragraph,/\.wsl-home-paragraph \.wsl-paragraph-line-spacing>svg:last-child \{width:13px;height:13px;flex:0 0 13px;\}/);
 });
