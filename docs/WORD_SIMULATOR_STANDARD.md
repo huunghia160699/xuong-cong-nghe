@@ -181,3 +181,12 @@ Ngày: 15/10/2026. Đường dẫn: `/cong-cu/mo-phong-word`.
 - Thay yêu cầu Line Spacing 3 dòng trước đó bằng **4 đường ngang**, cách đều ở các mức `y=3, 8.3, 13.7, 19` trong SVG hiện tại.
 - Giữ mũi tên lên/xuống ở bên trái, màu sắc, kích thước icon, chức năng `lineSpacing` và toàn bộ các nút khác không đổi.
 - Kiểm thử hồi quy phải xác nhận đúng thứ tự và số lượng 4 nét ngang.
+
+
+## 2026-10-15 — Thống nhất kích thước mũi tên mở rộng (chevron)
+
+- Tất cả mũi tên **mở rộng ▼** của Home Ribbon (Clipboard/Paste, chọn phông/cỡ chữ, Change Case, Underline, màu chữ/tô sáng, danh sách, Line Spacing, Shading, Borders và Styles) dùng **13px × 13px**. Quick Access Toolbar cũng ở mức 13px.
+- Dùng một hằng `RIBBON_EXPAND_ARROW_SIZE=13` trong `word-home-ribbon.tsx`; các CSS cũ từng ép 8–10px phải được đồng bộ sang 13px để hiển thị đúng.
+- Ô **Change Case**, **Underline**, nút màu và các nút danh sách/định dạng đoạn được nới ngang vừa đủ để mũi tên không tràn lên biểu tượng bên cạnh. Hàng Font vẫn cao 27px, nhóm Paragraph vẫn giữ bố cục hai hàng.
+- Không tăng hoặc đổi vị trí các mũi tên *thao tác* như tăng/giảm cỡ chữ, thụt lề trái/phải hay mũi tên dọc lên/xuống trong biểu tượng Line Spacing.
+- Giữ nguyên command handler, thứ tự công cụ, keyboard focus, màu sắc và trạng thái disabled. Kiểm thử cần bắt cả kích thước JSX lẫn CSS thực tế.
