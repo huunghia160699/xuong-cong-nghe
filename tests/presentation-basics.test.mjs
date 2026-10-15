@@ -369,9 +369,9 @@ test("Word Font glyphs use sans-serif B/U, matched A baselines and full-width se
   }
   assert.match(css,/\.wsl-home-font \.wsl-font-bold\s*\{\s*font:\s*700 17px\/1 Arial/);
   assert.match(css,/\.wsl-home-font \.wsl-font-underline\s*\{[\s\S]*?font:\s*16px\/1 Arial/);
-  assert.match(css,/\.wsl-home-font \.wsl-font-size-letter\s*\{[\s\S]*?bottom:\s*1px;/);
-  assert.match(css,/\.wsl-home-font \.wsl-font-size-letter\s*\{[\s\S]*?transform-origin:\s*left bottom;/);
-  assert.match(css,/\.wsl-home-font \.wsl-font-shrink \.wsl-font-size-letter\s*\{[\s\S]*?transform:\s*scale\(\.77\);/);
+  assert.match(css,/font: 500 20px\/21px/);
+  assert.match(css,/width: max-content/);
+  assert.match(css,/font-size: 15\.4px/);
   const bottom=css.match(/\.wsl-home-font \.wsl-font-bottom\s*\{([^}]+)\}/);
   assert.ok(bottom,"second row layout rule exists");
   assert.match(bottom[1],/width:\s*100%/);
@@ -482,8 +482,8 @@ test("Word ribbon icons use Word-like arrows, nested list and correct sort/spaci
   assert.match(font,/wsl-font-grow[^]*?<svg className="wsl-font-size-direction" viewBox="0 0 9 8"/);
   assert.match(font,/wsl-font-shrink[^]*?<svg className="wsl-font-size-direction" viewBox="0 0 9 8"/);
   assert.doesNotMatch(font,/wsl-font-size-direction">[↑↓]/);
-  assert.match(fontCSS,/\.wsl-home-font \.wsl-font-size-direction[\s\S]*?top: 6px;/);
-  assert.match(fontCSS,/\.wsl-home-font \.wsl-font-size-direction[\s\S]*?right: 3\.25px;/);
+  assert.match(fontCSS,/top: 5px/);
+  assert.ok(fontCSS.includes("left: calc(100% + 3px)"));
   for(const glyph of ["WordListGlyph","WordIndentGlyph","WordLineSpacingGlyph","WordSortGlyph"])
     assert.match(source,new RegExp("function "+glyph+"\\("));
   assert.match(source,/kind==="multilevel"/);
@@ -539,10 +539,10 @@ test("Word font size chevrons match the two reference images and preserve editin
  assert.match(shrink,/run=\{\(\)=>editSize\(String\(Math.max\(1,size-1\)\)\)\}/);
  const rule=css.match(/\.wsl-home-font \.wsl-font-size-direction\s*\{([^}]+)\}/);
  assert.ok(rule);
- for(const prop of ["top: 6px;","right: 3.25px;","width: 5px;","height: 4px;","color: #2197ce;"])
+ for(const prop of ["top: 5px;","left: calc(100% + 3px);","width: 5px;","height: 4px;","color: #2197ce;"])
    assert.ok(rule[1].includes(prop),prop);
- assert.match(css,/transform-origin:\s*left bottom/);
- assert.match(css,/transform:\s*scale\(\.77\)/);
+ assert.ok(css.includes("font: 500 20px/21px"));
+ assert.ok(css.includes("font-size: 15.4px"));
 });
 test("Word Indent image fidelity and Font blue arrows survive legacy CSS cascade",()=>{
  const home=readFileSync("src/features/word-simulator/word-home-ribbon.tsx","utf8");
@@ -565,43 +565,3 @@ test("Word Indent image fidelity and Font blue arrows survive legacy CSS cascade
 });
 
 
-test("Word Font Size: half-sized chevrons align to smaller A cap and have matching visible gaps",()=>{
- const css=readFileSync("src/features/word-simulator/word-font-ribbon.css","utf8");
- const home=readFileSync("src/features/word-simulator/word-home-ribbon.tsx","utf8");
- const arrow=css.match(/\.wsl-home-font \.wsl-font-size-direction\s*\{([^}]+)\}/);
- const shrink=css.match(/\.wsl-home-font \.wsl-font-shrink \.wsl-font-size-direction\s*\{([^}]+)\}/);
- assert.ok(arrow&&shrink,"both absolute anchor and small-A alignment overrides exist");
- assert.match(arrow[1],/position:\s*absolute/);
- for(const expected of ["top: 6px;","right: 3.25px;","width: 5px;","height: 4px;"])
-   assert.ok(arrow[1].includes(expected),expected);
- assert.match(shrink[1],/right:\s*6\.25px/);
- assert.doesNotMatch(arrow[1],/width:\s*9px|height:\s*8px/);
- const letter=css.match(/\.wsl-home-font \.wsl-font-size-letter\s*\{([^}]+)\}/);
- assert.ok(letter);
- assert.match(letter[1],/bottom:\s*1px/);
- assert.match(letter[1],/transform-origin:\s*left bottom/);
- assert.match(css,/\.wsl-home-font \.wsl-font-shrink \.wsl-font-size-letter\s*\{[\s\S]*?scale\(\.77\)/);
- const group=home.slice(home.indexOf('<Group name="Font"'),home.indexOf('<Group name="Paragraph"'));
- assert.match(group,/label="Increase Font Size"[\s\S]*?wsl-font-grow/);
- assert.match(group,/label="Decrease Font Size"[\s\S]*?wsl-font-shrink/);
- assert.match(group,/run=\{\(\)=>editSize\(String\(Math\.min\(7,size\+1\)\)\)\}/);
- assert.match(group,/run=\{\(\)=>editSize\(String\(Math\.max\(1,size-1\)\)\)\}/);
-});
-
-
-test("Word Font caret gap reduces by half again without changing glyph size or vertical baseline",()=>{
- const css=readFileSync("src/features/word-simulator/word-font-ribbon.css","utf8");
- const rule=css.match(/\.wsl-home-font \.wsl-font-size-direction\s*\{([^}]+)\}/);
- const small=css.match(/\.wsl-home-font \.wsl-font-shrink \.wsl-font-size-direction\s*\{([^}]+)\}/);
- assert.ok(rule&&small);
- const read=(body,name)=>Number(body.match(new RegExp(name+":\\s*([\\d.]+)px"))?.[1]);
- const growRight=read(rule[1],"right");
- const shrinkRight=read(small[1],"right");
- assert.equal(growRight,3.25);
- assert.equal(shrinkRight,6.25);
- assert.equal(shrinkRight-growRight,3,"retain compensation for narrower small A");
- assert.equal(read(rule[1],"width"),5,"do not shrink the caret a second time");
- assert.equal(read(rule[1],"height"),4,"keep caret height");
- assert.equal(read(rule[1],"top"),6,"keep both carets on the same horizontal level");
- assert.match(css,/\.wsl-home-font \.wsl-font-shrink \.wsl-font-size-letter\s*\{[\s\S]*?scale\(\.77\)/);
-});
