@@ -140,7 +140,7 @@
   border-color: transparent;
   box-shadow: none;
 }
-/* Each A reserves 6px (1px gap + 5px arrow) in normal flex width. The
+/* Each A reserves 5px (0px gap + 5px arrow) in normal flex width. The
    glyph-and-arrow pair is centered as ONE unit for either font size. */
 .wsl-home-font .wsl-font-size-symbol {
   display: flex;
@@ -158,7 +158,7 @@
   align-items: flex-end;
   width: max-content;
   height: 21px;
-  margin-right: 6px;
+  margin-right: 5px;
   font: 500 20px/1 "Segoe UI", Arial, sans-serif;
   white-space: nowrap;
 }
@@ -168,7 +168,7 @@
 .wsl-home-font .wsl-font-size-direction {
   position: absolute;
   top: 2px;
-  left: calc(100% + 1px);
+  left: calc(100% + 0px);
   width: 5px;
   height: 4px;
   color: #2197ce;
