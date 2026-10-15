@@ -1,5 +1,13 @@
 # Changelog
 
+## 2026-10-15 — Căn chỉnh các biểu tượng nhóm Font
+
+- Thay phông **B** và **U** bằng chữ không chân (Arial/Segoe UI).
+- Hai chữ **A** lớn/nhỏ của nút tăng/giảm cỡ chữ cùng đường chân, dù khác kích thước; mũi tên không làm xê dịch biểu tượng.
+- Các công cụ của hàng thứ hai nhóm Font được giãn đều toàn bộ chiều ngang thay vì dồn về bên trái.
+- Giữ nguyên thứ tự các nút, thao tác thật và quy tắc disabled không hover.
+
+
 ## 2026-10-15 — Nhóm Font Word tinh chỉnh theo ảnh tham khảo
 
 - Thiết kế lại nhóm Font thành hai hàng thẳng hàng, cỡ chữ, viền và khoảng cách thống nhất; ô chọn phông chữ và cỡ chữ có mũi tên đúng vị trí.
