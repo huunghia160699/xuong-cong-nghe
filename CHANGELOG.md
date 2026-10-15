@@ -1,5 +1,13 @@
 # Changelog
 
+## 2026-10-15 — Chuẩn hóa nhóm Font hai hàng
+
+- Tất cả ô chọn phông, cỡ chữ và nút Font cao 27px; biểu tượng và mũi tên chọn được căn chính giữa theo chiều dọc.
+- Mũi tên xanh tăng/giảm cỡ chữ đặt ngay sát mép chữ A bằng khoảng trống CSS 3px, không còn phụ thuộc tọa độ tùy chỉnh riêng cho từng cỡ A.
+- Các vạch đứng nhỏ Font và Paragraph được chuẩn hóa cùng chiều rộng 1px, cao 18px, màu xám nhạt và vị trí căn giữa.
+- Giữ nguyên thứ tự nhóm Ribbon và chức năng.
+
+
 ## 2026-10-15 — Rút ngắn khoảng cách giữa chữ A và mũi tên Font Size
 
 - Dịch hai chevron xanh sát chữ A thêm 1,25px, giúp khoảng cách thị giác giảm khoảng một nửa.

@@ -34,8 +34,10 @@
   width: 1px;
   min-width: 1px;
   height: 18px;
+  flex: 0 0 1px;
+  box-sizing: border-box;
   align-self: center;
-  background-color: #c9ced6;
+  background: #c9ced6;
   pointer-events: none;
   user-select: none;
 }
@@ -53,9 +55,11 @@
   position: relative;
   display: flex;
   align-items: center;
-  height: 25px;
+  height: 27px;
+  min-height: 27px;
   min-width: 0;
   width: 100%;
+  box-sizing: border-box;
   border: 1px solid #b9bec8;
   border-radius: 2px;
   background: #fff;
@@ -87,7 +91,8 @@
 .wsl-home-font .wsl-font-select-chevron {
   position: absolute;
   right: 4px;
-  top: 5px;
+  top: 50%;
+  transform: translateY(-50%);
   color: #4b515d;
   pointer-events: none;
 }
@@ -99,8 +104,9 @@
   align-items: center;
   width: 27px;
   min-width: 27px;
-  height: 26px;
-  min-height: 26px;
+  height: 27px;
+  min-height: 27px;
+  box-sizing: border-box;
   padding: 2px;
   border: 1px solid transparent;
   border-radius: 2px;
@@ -124,43 +130,39 @@
   border-color: transparent;
   box-shadow: none;
 }
+/* The caret is anchored to the A glyph itself, not to an estimated right edge.
+   Thus both 20px and 15.4px letters keep a true 3px visual glyph-to-caret gap. */
 .wsl-home-font .wsl-font-size-symbol {
+  display: flex;
   position: relative;
-  display: block;
+  align-items: center;
+  justify-content: center;
   width: 23px;
   height: 23px;
   flex: 0 0 23px;
   color: #3c4654;
 }
-/* Both letters use the same bottom anchor. Scale the smaller glyph from
-   that anchor rather than centering two differently sized line boxes. */
 .wsl-home-font .wsl-font-size-letter {
-  position: absolute;
-  left: 1px;
-  bottom: 1px;
-  display: block;
-  font: 500 20px/20px "Segoe UI", Arial, sans-serif;
-  transform-origin: left bottom;
+  display: inline-block;
+  position: relative;
+  width: max-content;
+  height: 21px;
+  font: 500 20px/21px "Segoe UI", Arial, sans-serif;
+  white-space: nowrap;
+  /* Offset for the 3px gap and 5px chevron so the whole pair is centered. */
+  transform: translateX(-4px);
 }
 .wsl-home-font .wsl-font-shrink .wsl-font-size-letter {
-  transform: scale(.77);
+  font-size: 15.4px;
 }
-/* Half-size chevrons share a horizontal anchor at the small A's cap height.
-   The small A has a narrower glyph, so its caret shifts left to keep the
-   *visible space from the A* equal in both Font Size controls.
-   The final 1.25px inward shift halves the previous visible gap
-   without scaling the chevrons further. */
 .wsl-home-font .wsl-font-size-direction {
   position: absolute;
-  top: 6px;
-  right: 3.25px;
+  top: 5px;
+  left: calc(100% + 3px);
   width: 5px;
   height: 4px;
   color: #2197ce;
   pointer-events: none;
-}
-.wsl-home-font .wsl-font-shrink .wsl-font-size-direction {
-  right: 6.25px;
 }
 .wsl-home-font .wsl-font-change-case {
   display: flex;
@@ -216,7 +218,7 @@
   place-items: center;
   width: 27px;
   min-width: 27px;
-  height: 26px;
+  height: 27px;
   opacity: .36;
   cursor: default;
   user-select: none;
@@ -232,7 +234,7 @@
   place-items: center;
   width: 35px;
   min-width: 35px;
-  height: 26px;
+  height: 27px;
   border: 1px solid transparent;
   border-radius: 2px;
   cursor: pointer;
@@ -248,19 +250,19 @@
 .wsl-home-font .wsl-font-color-control>svg:first-child {
   position: absolute;
   left: 4px;
-  top: 1px;
+  top: 3px;
   color: #4e5864;
 }
 .wsl-home-font .wsl-font-color-letter {
   position: absolute;
   left: 5px;
-  top: 0;
+  top: 2px;
   font: 700 18px/20px Georgia, serif;
 }
 .wsl-home-font .wsl-font-color-swatch {
   position: absolute;
   left: 4px;
-  bottom: 1px;
+  bottom: 2px;
   width: 18px;
   height: 3px;
   pointer-events: none;
@@ -268,7 +270,8 @@
 .wsl-home-font .wsl-font-color-chevron {
   position: absolute;
   right: 1px;
-  top: 9px;
+  top: 50%;
+  transform: translateY(-50%);
   pointer-events: none;
   color: #555f6b;
 }

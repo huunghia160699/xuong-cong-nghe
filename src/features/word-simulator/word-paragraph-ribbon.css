@@ -32,8 +32,10 @@
   width: 1px;
   min-width: 1px;
   height: 18px;
+  flex: 0 0 1px;
+  box-sizing: border-box;
   align-self: center;
-  background: #cbd1d9;
+  background: #c9ced6;
   pointer-events: none;
   user-select: none;
 }

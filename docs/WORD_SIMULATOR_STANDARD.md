@@ -159,3 +159,11 @@ Ngày: 15/10/2026. Đường dẫn: `/cong-cu/mo-phong-word`.
 - Dịch ngang cả hai chevron lại sát chữ A thêm **1,25px** để khoảng cách thị giác giảm khoảng một nửa: Grow `right: 3.25px` (từ 2px), Shrink `right: 6.25px` (từ 5px).
 - Giữ độ lệch ngang 3px giữa hai nút nhằm cân đối bề ngang chữ A lớn/nhỏ. Vị trí dọc `top: 6px` không đổi, hai mũi tên vẫn cùng hàng ngang.
 - Chỉ sửa CSS; không thay JSX, SVG, hành vi nút, hoặc các nhóm khác. Regression test phải khóa `right` mới, size, top và độ lệch giữa hai nút.
+
+## 15/10/2026 — Chuẩn hóa kích thước và căn giữa tất cả nút Font
+
+- Hai ô chọn **phông chữ và cỡ chữ** và toàn bộ nút trong hai hàng Font cùng **cao 27px**, tương ứng chính xác chiều cao mỗi hàng 27px. Tất cả button dùng `align-items:center;justify-content:center`; select là 100% chiều cao trong khung, mũi tên dropdown canh `top:50%;transform:translateY(-50%)`.
+- **Khoảng cách chữ A–mũi tên = 3px**: đặt SVG chevron **bên trong phần tử chữ A** và dùng `position:absolute;left:calc(100% + 3px)` nên khoảng cách bám mép ký tự thay vì dò `right` của wrapper. Giữ size chevron 5×4px và hai chiều chữ A 20px/15.4px với line-height chung 21px. Dịch cả cặp trái 4px để tổng cụm A + 3px + chevron nằm giữa ô.
+- Đồng bộ các ký hiệu Font (đậm/nghiêng/U/chỉ số trên/dưới), bộ chọn màu và công cụ disabled trong ô cao 27px. Các icon màu được căn lại trên/dưới sao cho cụm icon/swatch cân xứng; hai mũi tên chọn màu nằm giữa ô bằng `top:50%`.
+- **Mọi vạch phân cách nhỏ Font/Paragraph:** 1px × 18px, màu `#c9ced6`, `box-sizing:border-box`, cùng vị trí `align-self:center`; chỉ là trang trí, không hover.
+- Giữ đúng hai hàng và thứ tự lệnh. Không thay handlers, màu chủ đạo, hoặc trạng thái disabled. Các kiểm thử hồi quy phải kiểm tra chiều cao, anchor/gap và vạch dọc, không dựa vào tọa độ `right` cũ.
