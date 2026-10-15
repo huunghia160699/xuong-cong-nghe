@@ -455,10 +455,15 @@ test("Word Paragraph ribbon follows reference layout, correct command mapping an
   assert.doesNotMatch(paragraph,/run\("backColor"/);
   assert.match(css,/\.wsl-home-paragraph \.wsl-home-group-content\s*\{[\s\S]*?grid-template-rows:\s*27px 27px/);
   for(const row of ["wsl-paragraph-top","wsl-paragraph-bottom"]){
-    const block=css.match(new RegExp("\\\\.wsl-home-paragraph \\\\."+row+"[^{}]*\\\\{([^}]+)\\\\}"));
-    assert.ok(block,row);
-    assert.deepEqual([...block[1].matchAll(/justify-content:\s*([^;]+);/g)].map(x=>x[1].trim()),["space-between"]);
-    assert.match(block[1],/width:\s*100%/);
+    const selector=".wsl-home-paragraph ."+row;
+    const at=css.indexOf(selector);
+    assert.ok(at>=0,row+" selector must exist");
+    const open=css.indexOf("{",at);
+    const close=css.indexOf("}",open);
+    assert.ok(open>at&&close>open,row+" CSS rule must exist");
+    const block=css.slice(open+1,close);
+    assert.deepEqual([...block.matchAll(/justify-content:\s*([^;]+);/g)].map(x=>x[1].trim()),["space-between"]);
+    assert.match(block,/width:\s*100%/);
   }
   assert.match(css,/\.wsl-home-paragraph \.wsl-hb\.wsl-paragraph-icon-button:disabled/);
   assert.doesNotMatch(css,/cursor:\s*not-allowed/);
