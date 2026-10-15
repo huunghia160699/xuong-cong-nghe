@@ -479,10 +479,10 @@ test("Word ribbon icons use Word-like arrows, nested list and correct sort/spaci
   const standard=readFileSync("docs/WORD_SIMULATOR_STANDARD.md","utf8");
   const font=source.slice(source.indexOf('<Group name="Font"'),source.indexOf('<Group name="Paragraph"'));
   const paragraph=source.slice(source.indexOf('<Group name="Paragraph"'),source.indexOf('<Group name="Styles"'));
-  assert.match(font,/wsl-font-grow[^]*?<svg className="wsl-font-size-direction" viewBox="0 0 12 12"/);
-  assert.match(font,/wsl-font-shrink[^]*?<svg className="wsl-font-size-direction" viewBox="0 0 12 12"/);
+  assert.match(font,/wsl-font-grow[^]*?<svg className="wsl-font-size-direction" viewBox="0 0 9 8"/);
+  assert.match(font,/wsl-font-shrink[^]*?<svg className="wsl-font-size-direction" viewBox="0 0 9 8"/);
   assert.doesNotMatch(font,/wsl-font-size-direction">[↑↓]/);
-  assert.match(fontCSS,/\.wsl-home-font \.wsl-font-size-direction[\s\S]*?top: -2px;/);
+  assert.match(fontCSS,/\.wsl-home-font \.wsl-font-size-direction[\s\S]*?top: 0;/);
   assert.match(fontCSS,/\.wsl-home-font \.wsl-font-size-direction[\s\S]*?right: -1px;/);
   for(const glyph of ["WordListGlyph","WordIndentGlyph","WordLineSpacingGlyph","WordSortGlyph"])
     assert.match(source,new RegExp("function "+glyph+"\\("));
@@ -533,7 +533,7 @@ test("Word font size chevrons match the two reference images and preserve editin
  for(const glyph of [grow,shrink]){
    assert.match(glyph,/className="wsl-font-size-direction" viewBox="0 0 9 8"/);
    assert.match(glyph,/fill="none" stroke="currentColor" strokeWidth="2\.1"/);
-   assert.doesNotMatch(glyph,/viewBox="0 0 12 12"/);
+   assert.doesNotMatch(glyph,/viewBox="0 0 9 8"/);
  }
  assert.match(grow,/d="M1\.4 5\.8 4\.5 2\.7 7\.6 5\.8"/);
  assert.match(shrink,/d="M1\.4 2\.2 4\.5 5\.3 7\.6 2\.2"/);
