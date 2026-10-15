@@ -219,3 +219,14 @@ Ngày: 15/10/2026. Đường dẫn: `/cong-cu/mo-phong-word`.
 - **Mọi nhóm Home Ribbon** (Clipboard, Font, Paragraph, Styles, Editing) có một launcher mũi tên nhỏ ở **góc dưới bên phải**, mở hộp thoại chi tiết với những hành động thật đã được trình soạn thảo hỗ trợ. Hộp thoại đóng bằng Escape, X hoặc bấm ra ngoài; không hiện các tùy chọn không hoạt động.
 - **Editing** có nét phân cách dọc cuối nhóm như các nhóm khác, 1px màu `#d8d8dc`.
 - **Tab đang chọn:** chữ đậm `font-weight:700` và một gạch chân **3px** rõ ràng, giữ giao diện tối giản, không gradient.
+
+
+## 2026-10-16 — Thước Word đo theo giấy và giao diện Ribbon nổi
+
+- Thay thước ngang/dọc phân bố nhãn đều giả lập bằng thước thật theo **1cm = 96/2.54 CSS px ở zoom 100%**, vạch nhỏ cách 1/4cm; vạch dài và nhãn số ở mỗi 1cm.
+- Giấy A4 mặc định: dọc **794 × 1123px**, ngang **1123 × 794px**. Lề thường ngang 87px và trên/dưới 86px; lề hẹp 48px. Phần trắng trên thước thể hiện chính xác vùng được phép gõ; phần nằm ngoài lề có nền xám. Có dấu tam giác chỉ giới hạn trái/phải và chỉ báo góc dạng chữ L.
+- Cả hai thước được hiển thị khi bật `showRuler`, ẩn khi tắt. Thước ngang giữ vị trí trong header workspace, cập nhật theo `scrollLeft`; thước dọc neo phía trái, cập nhật theo `scrollTop`. Cùng áp dụng `zoom/100`; thay khổ giấy/lề không cần tự sửa tọa độ thước.
+- Trang giấy, thước và vùng gõ phải dùng **cùng dữ liệu kích thước** thay vì thay đổi width riêng khi responsive. Trên màn nhỏ, cuộn trang ngang thay vì làm giả khổ A4 hẹp khác kích thước.
+- Thanh tab có nền xám chung `#e8e7eb`, nhãn bình thường `font-weight:500`, đang chọn `font-weight:900`, pseudo-element underline dày **3px**, `bottom:4px` gần chân chữ và **không bo tròn** nét.
+- Ribbon Home sử dụng nền xám chung, khung công cụ trắng nổi vừa phải, có khoảng đệm hai phía, **bo góc 5px**, viền xám mảnh và bóng nhẹ; không áp gradient/glassmorphism.
+- Kiểm thử tự động bắt buộc cho production: `node --test tests/word-home-qa.test.mjs tests/presentation-basics.test.mjs` trước `next build`. File QA chạy **10 vòng kiểm tra đường nối mã nguồn cho từng nút Home và mục menu**, kiểm tra hình học ruler 16 tổ hợp mỗi vòng. Đây là **kiểm thử hợp đồng mã nguồn, không phải E2E nhấp chuột**, nên kiểm thử trình duyệt thực tế vẫn là một bước xác nhận riêng.
