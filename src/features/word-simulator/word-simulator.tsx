@@ -3,6 +3,7 @@
 import {useCallback,useEffect,useRef,useState} from "react";
 import {WordHomeRibbon,type WordFormatKey} from "./word-home-ribbon";
 import {WordWindowBar} from "./word-window-bar";
+import {WordPageRulers} from "./word-page-rulers";
 import {
   AlignCenter,AlignJustify,AlignLeft,AlignRight,ArrowLeft,BookOpen,Check,ChevronDown,
   Clipboard,Copy,Download,FilePlus2,FileText,FolderOpen,ImagePlus,Italic,
@@ -112,6 +113,7 @@ export function WordSimulator(){
   const fileInput=useRef<HTMLInputElement>(null);
   const imageInput=useRef<HTMLInputElement>(null);
   const savedSelection=useRef<Range|null>(null);
+  const [rulerScroll,setRulerScroll]=useState({left:0,top:0});
   const stagedClipboard=useRef<string|null>(null);
   const [activeTab,setActiveTab]=useState<Tab>("Home");
   const [filename,setFilename]=useState("Document1");
@@ -560,16 +562,29 @@ export function WordSimulator(){
       <Search size={18}/><input value={query} onChange={event=>setQuery(event.target.value)} aria-label="Tìm trong tài liệu" placeholder="Tìm trong tài liệu"/>
       <button type="submit">Tìm</button><button type="button" onClick={()=>setSearchOpen(false)} aria-label="Đóng tìm kiếm">×</button>
     </form>}
-    <main className="wsl-workspace">
-      <div className="wsl-page-scroll" aria-label="Vùng trang tài liệu">
-        <div className="wsl-vertical-ruler" aria-hidden="true">{Array.from({length:15},(_,i)=><span key={i}>{i+1}</span>)}</div>
-        <div className="wsl-scale" style={{transform:"scale("+zoom/100+")",transformOrigin:"top center",marginBottom:(zoom-100)*5+"px"}}>
-          {showRuler&&<div className="wsl-ruler" aria-hidden="true">{Array.from({length:16},(_,i)=><span key={i}>{i+1}</span>)}</div>}
-          <div className={"wsl-paper "+(orientation==="landscape"?"is-landscape ":"")+(margins==="narrow"?"is-narrow":"")}>
+    <main className="wsl-workspace wsl-word-layout" style={{
+      "--wsl-paper-width":(orientation==="landscape"?1123:794)+"px",
+      "--wsl-paper-height":(orientation==="landscape"?794:1123)+"px",
+      "--wsl-paper-side-margin":(margins==="narrow"?48:87)+"px",
+      "--wsl-paper-top-margin":(margins==="narrow"?48:86)+"px"
+    } as React.CSSProperties}>
+      {showRuler&&<WordPageRulers landscape={orientation==="landscape"} narrow={margins==="narrow"}
+        zoom={zoom} scrollLeft={rulerScroll.left} scrollTop={rulerScroll.top}/>}
+      <div className="wsl-word-page-body">
+        <div className="wsl-page-scroll" aria-label="Vùng trang tài liệu"
+          onScroll={event=>{const node=event.currentTarget;setRulerScroll(current=>
+            current.left===node.scrollLeft&&current.top===node.scrollTop?current:{left:node.scrollLeft,top:node.scrollTop});}}>
+          <div className="wsl-scale" style={{
+            width:(orientation==="landscape"?1123:794)*zoom/100,
+            minHeight:(orientation==="landscape"?794:1123)*zoom/100
+          }}>
+            <div className={"wsl-paper "+(orientation==="landscape"?"is-landscape ":"")+(margins==="narrow"?"is-narrow":"")}
+              style={{transform:"scale("+zoom/100+")",transformOrigin:"top left"}}>
             <div ref={editor} className={"wsl-editor "+(showMarks?"show-paragraph-marks":"")} aria-label="Nội dung tài liệu Word" role="textbox" aria-multiline="true" contentEditable suppressContentEditableWarning spellCheck={spellcheck}
               onInput={()=>{rememberSelection();markChanged();}} onKeyUp={rememberSelection} onMouseUp={handleEditorMouseUp}
               onFocus={rememberSelection} onPaste={event=>{event.preventDefault();setClipboardMode(null);stagedClipboard.current=null;command("insertText",event.clipboardData.getData("text/plain"));}}
               onDrop={event=>event.preventDefault()}/>
+            </div>
           </div>
         </div>
       </div>
