@@ -1,0 +1,157 @@
+/* Styles gallery based on desktop Word: one framed strip, anchored at the left.
+   Keep the Editing group immediately adjacent rather than distributing spare width. */
+.wsl-home-styles{
+  flex:0 0 auto;
+  width:auto;
+  min-width:0;
+  padding:4px 7px 1px;
+}
+.wsl-home-styles .wsl-home-group-content{
+  display:flex;
+  min-width:0;
+  align-items:center;
+  justify-content:flex-start;
+  gap:0;
+  padding:0;
+}
+.wsl-home-styles .wsl-style-picker{
+  display:inline-flex;
+  flex:0 0 auto;
+  align-items:stretch;
+  height:69px;
+  box-sizing:border-box;
+  background:#fff;
+  border:1px solid #b8b9bc;
+  border-radius:0;
+}
+.wsl-home-styles .wsl-style-gallery{
+  display:flex;
+  flex:0 0 auto;
+  align-items:stretch;
+  min-width:0;
+  max-width:none;
+  width:auto;
+  height:100%;
+  gap:0;
+  padding:2px;
+  overflow:hidden;
+  scrollbar-width:none;
+}
+.wsl-home-styles .wsl-style-tile{
+  display:flex;
+  flex:0 0 123px;
+  align-items:center;
+  justify-content:center;
+  width:123px;
+  min-width:123px;
+  height:100%;
+  box-sizing:border-box;
+  border:1px solid transparent;
+  border-radius:0;
+  padding:0 7px;
+  background:#fff;
+  color:#25282d;
+  cursor:pointer;
+  white-space:nowrap;
+}
+.wsl-home-styles .wsl-style-tile span{
+  max-width:100%;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  color:inherit;
+  font:14px/1.2 "Segoe UI",Arial,sans-serif;
+}
+.wsl-home-styles .wsl-style-tile[aria-pressed="true"]{
+  border-color:#a5a5a8;
+  background:#fafafa;
+  box-shadow:inset 0 0 0 1px #b9b9bb;
+}
+.wsl-home-styles .wsl-style-tile:hover,
+.wsl-home-styles .wsl-style-tile:focus-visible{
+  border-color:#9eafc0;
+  background:#edf3fa;
+}
+.wsl-home-styles .wsl-style-tile:focus-visible{outline:2px solid #005bfd;outline-offset:-2px}
+.wsl-home-styles .wsl-style-no-spacing{border-color:#d6d6d8}
+.wsl-home-styles .wsl-style-no-spacing span{font-size:13px}
+.wsl-home-styles .wsl-style-heading-1 span{
+  color:#164c6a;
+  font:500 23px/1.1 "Segoe UI",Arial,sans-serif;
+}
+.wsl-home-styles .wsl-style-heading-2 span{
+  color:#164c6a;
+  font:500 18px/1.2 "Segoe UI",Arial,sans-serif;
+}
+.wsl-home-styles .wsl-styles-scroll{
+  display:flex;
+  flex:0 0 29px;
+  align-items:stretch;
+  justify-content:center;
+  width:29px;
+  min-width:29px;
+  height:auto;
+  border-left:1px solid #b8b9bc;
+  color:#2c333b;
+}
+.wsl-home-styles .wsl-style-menu-button{
+  display:flex;
+  flex:0 0 28px;
+  width:28px;
+  min-width:28px;
+  height:100%;
+  border-radius:0;
+}
+.wsl-home-styles .wsl-style-menu-button .wsl-hb.wsl-split-arrow{
+  width:28px;
+  min-width:28px;
+  height:100%;
+  border:0;
+  border-radius:0;
+  color:#38414d;
+}
+.wsl-home-styles .wsl-style-menu-button:hover:not(:has(> .wsl-hb:disabled)),
+.wsl-home-styles .wsl-style-menu-button:has(> .wsl-split-arrow[aria-expanded="true"]){
+  box-shadow:none;
+}
+.wsl-home-styles .wsl-style-menu-button .wsl-hb.wsl-split-arrow:hover:not(:disabled){
+  background:#eaf2fb;
+}
+.wsl-home-editing{
+  flex:0 0 111px;
+  width:111px;
+  min-width:111px;
+  padding:4px 7px 1px;
+  border-right:0;
+}
+.wsl-home-editing .wsl-home-group-content{
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:flex-start;
+  gap:0;
+  padding:0;
+}
+.wsl-home-editing .wsl-hb.wsl-hb-with-text{
+  display:inline-flex;
+  justify-content:flex-start;
+  width:100%;
+  min-height:22px;
+  height:22px;
+  gap:6px;
+  padding:2px 4px;
+  font-size:12px;
+}
+/* Hide complete tiles, never crop a label mid-tile. All styles remain in the arrow menu. */
+@media(max-width:1480px){
+  .wsl-home-styles .wsl-style-tile:nth-child(n+4){display:none}
+}
+@media(max-width:1350px){
+  .wsl-home-styles .wsl-style-tile:nth-child(n+3){display:none}
+}
+@media(max-width:1210px){
+  .wsl-home-styles .wsl-style-tile:nth-child(n+2){display:none}
+}
+@media(max-width:1090px){
+  .wsl-home-styles .wsl-style-gallery{display:none}
+  .wsl-home-styles .wsl-style-picker{height:69px}
+}
