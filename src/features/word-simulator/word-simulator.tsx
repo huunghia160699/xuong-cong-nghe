@@ -1,6 +1,7 @@
 "use client";
 
 import {useCallback,useEffect,useRef,useState} from "react";
+import {WordHomeRibbon} from "./word-home-ribbon";
 import {
   AlignCenter,AlignJustify,AlignLeft,AlignRight,ArrowLeft,BookOpen,Check,ChevronDown,
   Clipboard,Copy,Download,FilePlus2,FileText,FolderOpen,ImagePlus,Italic,
@@ -8,15 +9,15 @@ import {
   Ruler,Save,Search,Strikethrough,Table2,Type,Underline,Undo2
 } from "lucide-react";
 
-type Tab="File"|"Home"|"Insert"|"Layout"|"Review"|"View";
+type Tab="File"|"Home"|"Insert"|"Design"|"Layout"|"References"|"Mailings"|"Review"|"View"|"Help";
 type Orientation="portrait"|"landscape";
 type Margins="normal"|"narrow";
 type Stats={words:number;characters:number};
 type RibbonCommand={id:string;label:string;run:()=>void;icon:React.ReactNode;disabled?:boolean;title?:string};
 
 const STORAGE_KEY="xcn_word_simulator_draft_v1";
-const DEFAULT_CONTENT='<h1>THÔNG BÁO</h1><p>Về việc tổ chức buổi thực hành Microsoft Word.</p><p>Học viên chuẩn bị tài liệu và có mặt đúng giờ tại phòng máy.</p><p><br></p><p>Người lập thông báo</p>';
-const TABS:Tab[]=["File","Home","Insert","Layout","Review","View"];
+const DEFAULT_CONTENT="<p><br></p>";
+const TABS:Tab[]=["File","Home","Insert","Design","Layout","References","Mailings","Review","View","Help"];
 const MAX_IMPORT_BYTES=1024*1024;
 const ALLOWED_TAGS=new Set(["P","BR","DIV","H1","H2","H3","H4","STRONG","B","EM","I","U","S","STRIKE","SUB","SUP","SPAN","BLOCKQUOTE","UL","OL","LI","TABLE","THEAD","TBODY","TR","TH","TD","A","IMG","HR","FONT"]);
 const FORBIDDEN_TAGS=new Set(["SCRIPT","STYLE","IFRAME","OBJECT","EMBED","SVG","MATH","TEMPLATE","META","LINK","FORM","INPUT","BUTTON","VIDEO","AUDIO","HEAD"]);
@@ -67,6 +68,12 @@ function sanitize(html:string):string {
     if(/^#[0-9a-f]{3,8}$/i.test(color)||/^rgb\([\d\s,.%]+\)$/i.test(color))safeStyles.push("color:"+color);
     const fontSize=style.fontSize;
     if(/^(?:\d{1,2}(?:\.\d)?)(?:pt|px)$/.test(fontSize))safeStyles.push("font-size:"+fontSize);
+    const lineHeight=style.lineHeight;
+    if(/^(?:1(?:\.[0-9])?|2(?:\.0)?)$/.test(lineHeight))safeStyles.push("line-height:"+lineHeight);
+    const marginBottom=style.marginBottom;
+    if(/^(?:0|\d{1,2}px)$/.test(marginBottom))safeStyles.push("margin-bottom:"+marginBottom);
+    const borderBottom=style.borderBottom;
+    if(/^1px solid (?:#[0-9a-f]{3,8}|rgb\([\d\s,.%]+\))$/i.test(borderBottom))safeStyles.push("border-bottom:"+borderBottom);
     const font=style.fontFamily;
     if(/^(Arial|Aptos|Calibri|Times New Roman|Georgia|Verdana)(,\s*sans-serif|,\s*serif)?$/i.test(font))safeStyles.push("font-family:"+font);
     for(const attr of Array.from(element.attributes))element.removeAttribute(attr.name);
@@ -101,7 +108,7 @@ export function WordSimulator(){
   const imageInput=useRef<HTMLInputElement>(null);
   const savedSelection=useRef<Range|null>(null);
   const [activeTab,setActiveTab]=useState<Tab>("Home");
-  const [filename,setFilename]=useState("Thong_bao_lop");
+  const [filename,setFilename]=useState("Document1");
   const [zoom,setZoom]=useState(100);
   const [orientation,setOrientation]=useState<Orientation>("portrait");
   const [margins,setMargins]=useState<Margins>("normal");
@@ -115,6 +122,8 @@ export function WordSimulator(){
   const [fontSize,setFontSize]=useState("3");
   const [searchOpen,setSearchOpen]=useState(false);
   const [query,setQuery]=useState("");
+  const [showMarks,setShowMarks]=useState(false);
+  const paintFormat=useRef<{font:string;color:string;bold:boolean;italic:boolean}|null>(null);
 
   const updateStats=useCallback(()=>{
     if(editor.current)setStats(textStats(editor.current.innerHTML));
@@ -193,8 +202,8 @@ export function WordSimulator(){
   }
   function newDocument(){
     if(!window.confirm("Tạo tài liệu mới? Nội dung hiện tại vẫn có thể xuất tệp trước khi thay thế."))return;
-    setDocument("<h1>TÀI LIỆU MỚI</h1><p><br></p>");
-    setFilename("Tai_lieu_moi");
+    setDocument(DEFAULT_CONTENT);
+    setFilename("Document1");
     setOrientation("portrait");setMargins("normal");setStatus("Đã tạo tài liệu mới");setActiveTab("Home");
   }
   function exportHTML(){
@@ -246,6 +255,89 @@ export function WordSimulator(){
     }
     setStatus("Không tìm thấy: "+query);
   }
+
+  function currentBlock():HTMLElement|null{
+    const node=savedSelection.current?.startContainer??window.getSelection()?.anchorNode;
+    if(!node)return null;
+    const element=node.nodeType===Node.ELEMENT_NODE?node as Element:node.parentElement;
+    return (element?.closest("p,div,li,h1,h2,h3,h4,blockquote,td,th")??null) as HTMLElement|null;
+  }
+  function selectedChange(fn:(text:string)=>string){
+    restoreSelection();
+    const selected=window.getSelection()?.toString()??"";
+    if(!selected){setStatus("Chọn văn bản trước khi sử dụng lệnh");return;}
+    document.execCommand("insertText",false,fn(selected));rememberSelection();markChanged();
+  }
+  function changeCase(){selectedChange(text=>text===text.toLocaleUpperCase("vi")?text.toLocaleLowerCase("vi"):text.toLocaleUpperCase("vi"));}
+  function sortLines(){selectedChange(text=>text.split(/\r?\n/).sort((a,b)=>a.localeCompare(b,"vi")).join("\n"));}
+  function applyStyle(name:string){
+    const tag:Record<string,string>={"Normal":"p","No Spacing":"p","Heading 1":"h1","Heading 2":"h2","Title":"h1","Subtitle":"h2"};
+    blockCommand(tag[name]??"p");
+    const block=currentBlock();
+    if(block){
+      if(name==="No Spacing")block.style.marginBottom="0px";
+      if(name==="Title")block.style.fontSize="36px";
+      if(name==="Subtitle")block.style.fontSize="20px";
+    }
+    markChanged();
+  }
+  function runHome(name:string,value?:string){
+    if(name==="paste"){
+      void navigator.clipboard.readText().then(content=>command("insertText",content)).catch(()=>setStatus("Dùng Ctrl+V để dán"));return;
+    }
+    if(name==="formatPainter"){
+      restoreSelection();
+      paintFormat.current={
+        font:document.queryCommandValue("fontName")||font,
+        color:document.queryCommandValue("foreColor")||"#04122d",
+        bold:document.queryCommandState("bold"),
+        italic:document.queryCommandState("italic")
+      };
+      setStatus("Đã sao chép định dạng; chọn chữ đích");return;
+    }
+    if(name==="lineSpacing"||name==="paragraphBorder"){
+      const block=currentBlock();
+      if(!block){setStatus("Đặt con trỏ trong đoạn văn");return;}
+      if(name==="lineSpacing")block.style.lineHeight=block.style.lineHeight==="1.5"?"1":"1.5";
+      else block.style.borderBottom=block.style.borderBottom?"":"1px solid #9ca3af";
+      markChanged();return;
+    }
+    command(name,value);
+  }
+  function handleEditorMouseUp(){
+    rememberSelection();
+    const paint=paintFormat.current;
+    const selection=window.getSelection();
+    if(!paint||!selection||selection.isCollapsed)return;
+    paintFormat.current=null;
+    restoreSelection();
+    if(/^(Aptos|Arial|Calibri|Georgia|Verdana|Times New Roman)$/i.test(paint.font))
+      document.execCommand("fontName",false,paint.font);
+    if(/^#[0-9a-f]{3,8}$/i.test(paint.color)||/^rgb\([\d\s,.%]+\)$/i.test(paint.color))
+      document.execCommand("foreColor",false,paint.color);
+    if(document.queryCommandState("bold")!==paint.bold)document.execCommand("bold");
+    if(document.queryCommandState("italic")!==paint.italic)document.execCommand("italic");
+    markChanged();setStatus("Đã áp dụng định dạng");
+  }
+  function replaceText(){
+    const find=window.prompt("Tìm nội dung:",query);
+    if(!find)return;
+    const replacement=window.prompt("Thay bằng:","");
+    if(replacement===null||!editor.current)return;
+    const walker=document.createTreeWalker(editor.current,NodeFilter.SHOW_TEXT);
+    while(walker.nextNode()){
+      const node=walker.currentNode,raw=node.textContent??"";
+      const at=raw.toLocaleLowerCase("vi").indexOf(find.toLocaleLowerCase("vi"));
+      if(at<0)continue;
+      const range=document.createRange();range.setStart(node,at);range.setEnd(node,at+find.length);
+      const selection=window.getSelection();selection?.removeAllRanges();selection?.addRange(range);
+      editor.current.focus();document.execCommand("insertText",false,replacement);
+      rememberSelection();markChanged();setStatus("Đã thay thế một kết quả");return;
+    }
+    setStatus("Không tìm thấy nội dung cần thay");
+  }
+  function selectAll(){editor.current?.focus();document.execCommand("selectAll");rememberSelection();}
+
   const commands=(items:RibbonCommand[])=>items.map(item=><ToolButton key={item.id} item={item}/>);
   const fileActions=[
     {icon:<FilePlus2 size={22}/>,label:"Tài liệu mới",action:newDocument},
@@ -257,60 +349,23 @@ export function WordSimulator(){
   return <div className="wsl-shell" ref={shell}>
     <input type="file" accept=".html,.htm,.txt,text/html,text/plain" ref={fileInput} hidden onChange={event=>{const file=event.target.files?.[0];if(file)void importFile(file);event.target.value="";}}/>
     <input type="file" accept="image/png,image/jpeg,image/webp,image/gif" ref={imageInput} hidden onChange={event=>{const file=event.target.files?.[0];if(file)void insertImage(file);event.target.value="";}}/>
-    <header className="wsl-titlebar">
-      <a href="/cong-cu" className="wsl-back" aria-label="Trở về Công cụ"><ArrowLeft size={18}/></a>
-      <span className="wsl-logo" aria-hidden="true">W</span>
-      <input className="wsl-document-name" aria-label="Tên tài liệu" value={filename} maxLength={90} onChange={event=>setFilename(safeName(event.target.value))}/>
-      <span className="wsl-document-ext">.html</span>
-      <span className="wsl-titlebar-separator" aria-hidden="true"/>
-      <span className="wsl-app-name">Mô phỏng Word</span>
-      <span className="wsl-titlebar-spacer"/>
-      <span className="wsl-saved-indicator"><Check size={15}/><span>{status}</span></span>
-    </header>
     <nav className="wsl-tabs" aria-label="Các thẻ lệnh Word">
+      <a href="/cong-cu" className="wsl-tabs-back" title="Về Công cụ" aria-label="Quay lại Công cụ"><ArrowLeft size={17}/></a>
       {TABS.map(tab=><button key={tab} type="button" className={"wsl-tab "+(tab===activeTab?"is-active":"")} aria-current={tab===activeTab?"page":undefined} onClick={()=>setActiveTab(tab)}>{tab}</button>)}
       <span className="wsl-tabs-spacer"/>
+      <span className="wsl-tabs-file-label"><FileText size={13}/><span>{filename}</span></span>
       <button className="wsl-quick-save" onClick={exportHTML} type="button"><Download size={16}/><span>Tải bản HTML</span></button>
     </nav>
     <div className="wsl-ribbon" role="toolbar" aria-label={"Lệnh "+activeTab}>
       {activeTab==="File"&&<Group name="Tệp">{fileActions.map(item=><ToolButton key={item.label} item={{id:item.label,label:item.label,run:item.action,icon:item.icon}}/>)}</Group>}
-      {activeTab==="Home"&&<>
-        <Group name="Clipboard">{commands([
-          {id:"copy",label:"Sao chép",run:()=>command("copy"),icon:<Copy size={21}/>},
-          {id:"cut",label:"Cắt",run:()=>command("cut"),icon:<Clipboard size={21}/>},
-          {id:"paste",label:"Dán",run:async()=>{try{const value=await navigator.clipboard.readText();command("insertText",value);}catch{setStatus("Nhấn Ctrl+V để dán nội dung");}},icon:<Clipboard size={21}/>},
-          {id:"undo",label:"Hoàn tác",run:()=>command("undo"),icon:<Undo2 size={21}/>},
-          {id:"redo",label:"Làm lại",run:()=>command("redo"),icon:<Redo2 size={21}/>}
-        ])}</Group>
-        <Group name="Font">
-          <label className="wsl-select"><span className="sr-only">Phông chữ</span><select value={font} onChange={event=>editFont(event.target.value)}>
-            {["Aptos","Arial","Calibri","Times New Roman","Georgia","Verdana"].map(item=><option key={item} value={item}>{item}</option>)}
-          </select></label>
-          <label className="wsl-select wsl-font-size"><span className="sr-only">Cỡ chữ</span><select value={fontSize} onChange={event=>editSize(event.target.value)}>
-            {[["1","8"],["2","10"],["3","12"],["4","14"],["5","18"],["6","24"],["7","36"]].map(([value,name])=><option key={value} value={value}>{name}</option>)}
-          </select></label>
-          {commands([
-            {id:"bold",label:"Đậm",run:()=>command("bold"),icon:<b className="wsl-letter-icon">B</b>},
-            {id:"italic",label:"Nghiêng",run:()=>command("italic"),icon:<Italic size={21}/>},
-            {id:"underline",label:"Gạch chân",run:()=>command("underline"),icon:<Underline size={21}/>},
-            {id:"strike",label:"Gạch ngang",run:()=>command("strikeThrough"),icon:<Strikethrough size={21}/>}
-          ])}
-          <label className="wsl-color"><span>Màu chữ</span><input type="color" defaultValue="#04122d" onChange={event=>command("foreColor",event.target.value)}/></label>
-        </Group>
-        <Group name="Paragraph">{commands([
-          {id:"left",label:"Căn trái",run:()=>command("justifyLeft"),icon:<AlignLeft size={21}/>},
-          {id:"center",label:"Căn giữa",run:()=>command("justifyCenter"),icon:<AlignCenter size={21}/>},
-          {id:"right",label:"Căn phải",run:()=>command("justifyRight"),icon:<AlignRight size={21}/>},
-          {id:"justify",label:"Căn đều",run:()=>command("justifyFull"),icon:<AlignJustify size={21}/>},
-          {id:"bullet",label:"Dấu đầu dòng",run:()=>command("insertUnorderedList"),icon:<List size={21}/>},
-          {id:"number",label:"Đánh số",run:()=>command("insertOrderedList"),icon:<ListOrdered size={21}/>},
-        ])}</Group>
-        <Group name="Styles">{commands([
-          {id:"normal",label:"Normal",run:()=>blockCommand("p"),icon:<Type size={21}/>},
-          {id:"heading1",label:"Heading 1",run:()=>blockCommand("h1"),icon:<span className="wsl-letter-icon">H1</span>},
-          {id:"heading2",label:"Heading 2",run:()=>blockCommand("h2"),icon:<span className="wsl-letter-icon">H2</span>}
-        ])}</Group>
-      </>}
+      {activeTab==="Home"&&<WordHomeRibbon
+        font={font} fontSize={fontSize} showMarks={showMarks}
+        run={runHome} editFont={editFont} editSize={editSize}
+        changeCase={changeCase} sortLines={sortLines} replaceText={replaceText}
+        findText={()=>setSearchOpen(true)}
+        selectAll={selectAll} toggleMarks={()=>setShowMarks(v=>!v)}
+        applyStyle={applyStyle}
+      />}
       {activeTab==="Insert"&&<>
         <Group name="Trang">{commands([
           {id:"hr",label:"Đường kẻ",run:()=>command("insertHorizontalRule"),icon:<Minus size={23}/>},
@@ -344,6 +399,7 @@ export function WordSimulator(){
         </Group>
         <Group name="Cửa sổ"><button className="wsl-tool" type="button" onClick={()=>{if(shell.current?.requestFullscreen)void shell.current.requestFullscreen().catch(()=>setStatus("Trình duyệt không cho phép toàn màn hình"));}}><Maximize2 size={22}/><span>Toàn màn hình</span></button></Group>
       </>}
+      {(["Design","References","Mailings","Help"] as Tab[]).includes(activeTab)&&<div className="wsl-tab-ribbon-empty">Các công cụ nâng cao chưa được hỗ trợ trong bản luyện tập này.</div>}
     </div>
     {searchOpen&&<form className="wsl-search" onSubmit={event=>{event.preventDefault();findText();}}>
       <Search size={18}/><input value={query} onChange={event=>setQuery(event.target.value)} aria-label="Tìm trong tài liệu" placeholder="Tìm trong tài liệu"/>
@@ -351,11 +407,12 @@ export function WordSimulator(){
     </form>}
     <main className="wsl-workspace">
       <div className="wsl-page-scroll" aria-label="Vùng trang tài liệu">
+        <div className="wsl-vertical-ruler" aria-hidden="true">{Array.from({length:15},(_,i)=><span key={i}>{i+1}</span>)}</div>
         <div className="wsl-scale" style={{transform:"scale("+zoom/100+")",transformOrigin:"top center",marginBottom:(zoom-100)*5+"px"}}>
           {showRuler&&<div className="wsl-ruler" aria-hidden="true">{Array.from({length:16},(_,i)=><span key={i}>{i+1}</span>)}</div>}
           <div className={"wsl-paper "+(orientation==="landscape"?"is-landscape ":"")+(margins==="narrow"?"is-narrow":"")}>
-            <div ref={editor} className="wsl-editor" aria-label="Nội dung tài liệu Word" role="textbox" aria-multiline="true" contentEditable suppressContentEditableWarning spellCheck={spellcheck}
-              onInput={markChanged} onKeyUp={rememberSelection} onMouseUp={rememberSelection}
+            <div ref={editor} className={"wsl-editor "+(showMarks?"show-paragraph-marks":"")} aria-label="Nội dung tài liệu Word" role="textbox" aria-multiline="true" contentEditable suppressContentEditableWarning spellCheck={spellcheck}
+              onInput={markChanged} onKeyUp={rememberSelection} onMouseUp={handleEditorMouseUp}
               onFocus={rememberSelection} onPaste={event=>{event.preventDefault();command("insertText",event.clipboardData.getData("text/plain"));}}
               onDrop={event=>event.preventDefault()}/>
           </div>
