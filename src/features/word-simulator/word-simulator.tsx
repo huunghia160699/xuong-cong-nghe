@@ -302,6 +302,15 @@ export function WordSimulator(){
     }
     markChanged();
   }
+  function insertMultilevelList(){
+    restoreSelection();
+    const selected=window.getSelection()?.toString().trim()??"";
+    const escapeHTML=(value:string)=>value.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+    const lines=selected.split(/\r?\n/).map(line=>line.trim()).filter(Boolean);
+    const first=lines.length?escapeHTML(lines[0]):"<br>";
+    const children=lines.slice(1).length?lines.slice(1).map(line=>"<li>"+escapeHTML(line)+"</li>").join(""):"<li><br></li>";
+    command("insertHTML","<ol><li>"+first+"<ol>"+children+"</ol></li></ol>");
+  }
   function runHome(name:string,value?:string){
     if(name==="paste"){
       const range=savedSelection.current?.cloneRange()??null;
@@ -342,6 +351,14 @@ export function WordSimulator(){
       };
       setPaintArmed(true);
       setStatus("Đã sao chép định dạng; chọn chữ đích");return;
+    }
+    if(name==="multilevelList"){insertMultilevelList();return;}
+    if(name==="paragraphShading"){
+      restoreSelection();
+      const block=currentBlock();
+      if(!block||!editor.current?.contains(block)){setStatus("Đặt con trỏ trong đoạn văn");return;}
+      block.style.backgroundColor=block.style.backgroundColor?"":"#fff2a8";
+      markChanged();return;
     }
     if(name==="lineSpacing"||name==="paragraphBorder"){
       const block=currentBlock();

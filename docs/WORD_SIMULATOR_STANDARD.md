@@ -96,3 +96,13 @@ Ngày: 15/10/2026. Đường dẫn: `/cong-cu/mo-phong-word`.
 - **Quy tắc:** hàng trên chỉ có **một** `justify-content: space-between` để khoảng trống tự chia đều giữa ô tên phông, cỡ chữ, hai nút tăng/giảm, hai vạch phân cách, nút Aa và nút cục tẩy. Nút cuối phải sát mép phải của nội dung nhóm Font; nút đầu sát mép trái.
 - Giữ nguyên độ rộng các ô chọn, `grid-template-columns`, ba vạch phân cách, kích thước nhóm Font, hàng dưới, trạng thái nút và chức năng.
 - Test hồi quy phải xác nhận `.wsl-font-top` có đúng một khai báo `justify-content` với giá trị `space-between`. Nếu phát sinh thêm khai báo, coi là lỗi.
+
+## 15/10/2026 — Chuẩn nhóm Paragraph từ ảnh Microsoft Word
+
+- Font và Paragraph là hai nhóm riêng, không dùng CSS chồng lên nhau. Stylesheet `word-paragraph-ribbon.css` phải import cuối trong route layout.
+- Nhóm Paragraph có hai hàng cao 27px, mỗi hàng `justify-content: space-between` **một lần duy nhất**, phân bố hết chiều ngang 274px, nhãn Paragraph căn giữa ở chân và viền ngăn bên phải.
+- Hàng 1: Bullets, Numbering, Multilevel List, vạch ngăn, Decrease/Increase Indent, vạch ngăn, Sort, Show/Hide ¶. Hàng 2: Left, Center, Right, Justify, vạch ngăn, Line Spacing, Paragraph Shading, Borders.
+- List icons phải mô phỏng các dòng và dấu đầu dòng/đánh số, các biểu tượng còn lại nét mảnh 17–18px, không dùng ký tự ▦ hoặc ▨ thay icon khi có icon phù hợp.
+- **Chức năng thật:** Bullets dùng `insertUnorderedList`, Numbering dùng `insertOrderedList`, Multilevel chèn `ol` lồng `ol` thay vì nút giả tăng thụt lề, căn đoạn giữ nguyên các lệnh `justify*`, Line Spacing bật/tắt 1.0 và 1.5, Shading tô trực tiếp nền đoạn thay vì tô nền chữ, Borders bật/tắt viền dưới đoạn. Hiển thị mũi tên nhỏ trong nút (không giả làm menu chưa triển khai).
+- Disabled luôn dùng `cursor: default`, không hiệu ứng hover và không tooltip. Hành vi thực của nút có thể phụ thuộc `document.execCommand` đã deprecated, không tuyên bố giống hoàn toàn Word.
+- Test hồi quy số nút, thứ tự, divider và mapping; kiểm thử TypeScript/build/smoke; browser visual ở 360/768/1280 khi có môi trường browser.

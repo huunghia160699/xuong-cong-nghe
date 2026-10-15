@@ -1,0 +1,126 @@
+/* Paragraph group mirrors Word desktop Home Ribbon: two evenly spaced rows. */
+.wsl-home-paragraph {
+  flex: 0 0 274px;
+  width: 274px;
+  min-width: 274px;
+  padding: 4px 8px 2px;
+  color: #2f3742;
+  font-family: "Segoe UI", Arial, sans-serif;
+}
+.wsl-home-paragraph .wsl-home-group-content {
+  display: grid;
+  grid-template-rows: 27px 27px;
+  align-content: center;
+  align-items: center;
+  justify-content: stretch;
+  gap: 5px;
+  padding: 0;
+  min-height: 0;
+}
+.wsl-home-paragraph .wsl-paragraph-top,
+.wsl-home-paragraph .wsl-paragraph-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  min-height: 27px;
+  height: 27px;
+  gap: 0;
+  flex-wrap: nowrap;
+}
+.wsl-home-paragraph .wsl-paragraph-divider {
+  width: 1px;
+  min-width: 1px;
+  height: 18px;
+  align-self: center;
+  background: #cbd1d9;
+  pointer-events: none;
+  user-select: none;
+}
+.wsl-home-paragraph .wsl-hb.wsl-paragraph-icon-button {
+  display: inline-flex;
+  position: relative;
+  flex: 0 0 auto;
+  justify-content: center;
+  align-items: center;
+  width: 26px;
+  min-width: 26px;
+  height: 26px;
+  min-height: 26px;
+  padding: 2px;
+  border: 1px solid transparent;
+  border-radius: 2px;
+  background: transparent;
+  color: #39424d;
+  cursor: pointer;
+}
+.wsl-home-paragraph .wsl-hb.wsl-paragraph-list-button {width: 34px;min-width: 34px;}
+.wsl-home-paragraph .wsl-hb.wsl-paragraph-combo-button {width: 38px;min-width: 38px;}
+.wsl-home-paragraph .wsl-hb.wsl-paragraph-icon-button:hover:not(:disabled) {
+  background: #eaf2fb;
+  border-color: #b9d1eb;
+}
+.wsl-home-paragraph .wsl-hb.wsl-paragraph-icon-button:focus-visible {
+  outline: 2px solid #005bfd;
+  outline-offset: 1px;
+}
+.wsl-home-paragraph .wsl-hb.wsl-paragraph-icon-button:disabled,
+.wsl-home-paragraph .wsl-hb.wsl-paragraph-icon-button:hover:disabled {
+  opacity: .35;
+  cursor: default;
+  background: transparent;
+  border-color: transparent;
+  box-shadow: none;
+}
+.wsl-home-paragraph .wsl-hb.wsl-paragraph-icon-button.is-active:not(:disabled) {
+  background: #e4eaf0;
+  border-color: #adb8c5;
+}
+.wsl-home-paragraph .wsl-paragraph-list-glyph {
+  display: inline-flex;
+  align-items: center;
+  width: 29px;
+  height: 21px;
+  gap: 1px;
+  pointer-events: none;
+}
+.wsl-home-paragraph .wsl-paragraph-list-glyph>svg:first-child {
+  width: 22px;
+  height: 20px;
+  flex: 0 0 22px;
+}
+.wsl-home-paragraph .wsl-paragraph-list-glyph>svg:last-child {width: 8px;height: 10px;flex-shrink: 0;}
+.wsl-home-paragraph .wsl-paragraph-pilcrow {
+  color: #34373d;
+  font: 700 20px/1 Georgia, serif;
+}
+.wsl-home-paragraph .wsl-paragraph-combo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1px;
+  width: 34px;
+  height: 23px;
+  pointer-events: none;
+}
+.wsl-home-paragraph .wsl-paragraph-combo>svg:last-child {
+  width: 8px;
+  height: 9px;
+  flex: 0 0 8px;
+}
+.wsl-home-paragraph .wsl-paragraph-line-spacing>svg:first-child {color:#2675ae;flex-shrink:0;}
+.wsl-home-paragraph .wsl-paragraph-line-spacing>svg:nth-child(2) {width: 12px;flex-shrink:0;}
+.wsl-home-paragraph .wsl-paragraph-shading {position:relative;}
+.wsl-home-paragraph .wsl-paragraph-shading>svg:first-child {width: 17px;flex-shrink:0;}
+.wsl-home-paragraph .wsl-paragraph-shading-swatch {
+  position: absolute;
+  height: 3px;
+  width: 18px;
+  left: 3px;
+  bottom: 1px;
+  background: #f2d66e;
+}
+.wsl-home-paragraph .wsl-paragraph-borders>svg:first-child {color:#4b5663;flex-shrink:0;}
+@media(max-width:650px) {
+  .wsl-home-paragraph {flex-basis:274px;min-width:274px;width:274px;}
+}

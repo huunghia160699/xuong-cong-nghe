@@ -1,5 +1,13 @@
 # Changelog
 
+## 2026-10-15 — Hoàn thiện nhóm Paragraph Word
+
+- Thiết kế lại nhóm Paragraph thành hai hàng icon nhỏ chuẩn kiểu Word, giãn đều từ trái sang phải và có các vạch phân nhóm.
+- Làm mới icon danh sách, thụt lề, sắp xếp, dấu ¶, căn đoạn, giãn dòng, tô nền và đường viền.
+- Multilevel List chèn danh sách lồng nhau, Shading tô nền cả đoạn; giữ nguyên hành vi các lệnh đúng trước đó.
+- CSS nhóm Paragraph riêng, import cuối để tránh xung đột nhóm Font.
+
+
 ## 2026-10-15 — Sửa hàng trên Font dàn đều đúng thực tế
 
 - Khắc phục khai báo `justify-content: start` vô tình ghi đè `space-between`, khiến hàng trên Font vẫn dồn trái.

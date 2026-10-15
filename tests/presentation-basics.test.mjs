@@ -423,3 +423,45 @@ test("Word top Font row has no CSS override defeating space-between alignment",(
   const standard=readFileSync("docs/WORD_SIMULATOR_STANDARD.md","utf8");
   assert.match(standard,/Sửa xung đột CSS khiến hàng trên Font không giãn đều/);
 });
+
+
+test("Word Paragraph ribbon follows reference layout, correct command mapping and avoids misleading buttons",()=>{
+  const home=readFileSync("src/features/word-simulator/word-home-ribbon.tsx","utf8");
+  const code=readFileSync("src/features/word-simulator/word-simulator.tsx","utf8");
+  const css=readFileSync("src/features/word-simulator/word-paragraph-ribbon.css","utf8");
+  const layout=readFileSync("src/app/(word-simulator)/cong-cu/mo-phong-word/layout.tsx","utf8");
+  const paragraph=home.slice(home.indexOf('<Group name="Paragraph"'),home.indexOf('<Group name="Styles"'));
+  const top=paragraph.slice(paragraph.indexOf('className="wsl-paragraph-top"'),paragraph.indexOf('className="wsl-paragraph-bottom"'));
+  const bottom=paragraph.slice(paragraph.indexOf('className="wsl-paragraph-bottom"'));
+  for(const [section,labels] of [[top,["Bullets","Numbering","Multilevel List","Decrease Indent","Increase Indent","Sort","Show/Hide ¶"]],[bottom,["Align Left","Center","Align Right","Justify","Line Spacing 1.5","Paragraph Shading","Borders"]]]){
+    let previous=-1;
+    for(const label of labels){
+      const index=section.indexOf('label="'+label+'"');
+      assert.ok(index>previous,label+" must appear in correct order");
+      previous=index;
+    }
+  }
+  assert.equal((paragraph.match(/className="wsl-paragraph-divider"/g)||[]).length,3);
+  assert.match(top,/run=\{\(\)=>run\("insertUnorderedList"\)\}/);
+  assert.match(top,/run=\{\(\)=>run\("insertOrderedList"\)\}/);
+  assert.match(top,/label="Multilevel List"[\s\S]*?run=\{\(\)=>run\("multilevelList"\)\}/);
+  assert.match(bottom,/run=\{\(\)=>run\("paragraphShading"\)\}/);
+  assert.match(bottom,/run=\{\(\)=>run\("paragraphBorder"\)\}/);
+  assert.match(home,/function WordListGlyph/);
+  assert.match(code,/function insertMultilevelList\(\)/);
+  assert.match(code,/if\(name==="multilevelList"\)\{insertMultilevelList\(\);return;\}/);
+  assert.match(code,/if\(name==="paragraphShading"\)/);
+  assert.match(code,/block\.style\.backgroundColor/);
+  assert.doesNotMatch(paragraph,/run\("backColor"/);
+  assert.match(css,/\.wsl-home-paragraph \.wsl-home-group-content\s*\{[\s\S]*?grid-template-rows:\s*27px 27px/);
+  for(const row of ["wsl-paragraph-top","wsl-paragraph-bottom"]){
+    const block=css.match(new RegExp("\\\\.wsl-home-paragraph \\\\."+row+"[^{}]*\\\\{([^}]+)\\\\}"));
+    assert.ok(block,row);
+    assert.deepEqual([...block[1].matchAll(/justify-content:\s*([^;]+);/g)].map(x=>x[1].trim()),["space-between"]);
+    assert.match(block[1],/width:\s*100%/);
+  }
+  assert.match(css,/\.wsl-home-paragraph \.wsl-hb\.wsl-paragraph-icon-button:disabled/);
+  assert.doesNotMatch(css,/cursor:\s*not-allowed/);
+  assert.match(layout,/word-paragraph-ribbon.css/);
+  assert.ok(layout.indexOf('word-paragraph-ribbon.css')>layout.indexOf('word-font-ribbon.css'));
+});

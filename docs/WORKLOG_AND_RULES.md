@@ -25,6 +25,17 @@
 
 ## III. Lịch sử
 
+### 2026-10-15 — Hoàn thiện nhóm Paragraph giả lập Word theo ảnh
+- **Yêu cầu:** nhóm Paragraph giống Word desktop về số nút, thứ tự, icon và khoảng cách phân bố đều hai bên, đồng thời các nút phải hoạt động đúng.
+- **File:** `src/features/word-simulator/word-home-ribbon.tsx`, `word-simulator.tsx`, `word-paragraph-ribbon.css` (mới), `src/app/(word-simulator)/cong-cu/mo-phong-word/layout.tsx`, `docs/WORD_SIMULATOR_STANDARD.md`, `tests/presentation-basics.test.mjs`, `CHANGELOG.md`, `docs/WORKLOG_AND_RULES.md`.
+- **Bố cục:** 274px, 2 hàng 27px, giãn đều `space-between`, vạch ngăn đúng nhóm; list icons tự dựng bằng SVG nét mảnh, nút căn đoạn, spacing, shading, border theo ảnh; không sửa Font/Clipboard/Styles.
+- **Chức năng:** Multilevel List giờ chèn danh sách lồng nhau chứ không còn gọi `indent` giả; Shading tô nền toàn đoạn thay vì chỉ chữ, Border toggle viền dưới đoạn; các lệnh còn lại giữ đúng mapping.
+- **Kiểm thử:** GitHub CI (tests, typecheck, production build, route smoke); browser E2E/visual chỉ ghi thành công khi thực hiện thật.
+- **GitHub:** PR `feat/word-paragraph-ribbon-accurate`; xem squash commit ở lịch sử Git.
+- **Vercel Production:** chỉ xác nhận READY khi trùng SHA GitHub main và alias `xuong-cong-nghe.vercel.app`.
+- **Giới hạn:** chưa có menus cho kiểu danh sách, khoảng cách hoặc đường viền khác nhau; `execCommand` có thể thay đổi theo trình duyệt.
+
+
 ### 2026-10-15 — Sửa nguyên nhân hàng trên Font vẫn bị dồn trái
 - **Yêu cầu:** hàng trên nhóm Font chưa giãn đều hai bên như hàng dưới, dù đã yêu cầu chỉnh.
 - **Nguyên nhân:** CSS `src/features/word-simulator/word-font-ribbon.css` có hai `justify-content` trong cùng block `.wsl-font-top`; `start` ở cuối ghi đè `space-between`.
