@@ -1,5 +1,13 @@
 # Changelog
 
+## 2026-10-15 — Slide Word gọn và tập trung nội dung giảng dạy
+
+- Bỏ dòng “Chọn một chức năng để xem sự thay đổi...”, chú thích kỹ thuật về CSS, lời dẫn thừa và phần tóm tắt lặp lại ở slide 02.
+- Giữ hai chế độ tương tác Soạn thảo / Trình bày; cùng một nội dung Word thực tế được trình bày theo hai kiểu để học viên thấy khác biệt.
+- Gỡ nhãn “HƯỚNG DẪN THAO TÁC”, chú thích CSS/React và tip của người dạy khỏi 49 slide mô phỏng Word; giữ điều khiển và thao tác có giá trị học tập.
+- Cập nhật tiêu chuẩn slide, AGENTS và kiểm thử để tránh lặp lại lỗi thiết kế này.
+
+
 ## 2026-10-15 — Slide 02 Word thiết kế tương tác độc lập
 
 - Thay bố cục hai thẻ lý thuyết ở slide số 2 của bài **Làm quen Word** bằng màn trình chiếu tùy biến, không sử dụng grid mẫu.

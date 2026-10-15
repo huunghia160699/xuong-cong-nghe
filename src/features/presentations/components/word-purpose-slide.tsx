@@ -1,7 +1,7 @@
 "use client";
 
 import {useState} from "react";
-import {ArrowRight,Check,FileText,LayoutTemplate,PencilLine} from "lucide-react";
+import {ArrowRight,FileText,LayoutTemplate,PencilLine} from "lucide-react";
 
 /**
  * Standalone, bespoke lesson-two slide. Not a generic presentation grid.
@@ -14,7 +14,6 @@ export function WordPurposeSlide(){
     <div className="xcn-word-purpose-inner">
       <div className="xcn-word-purpose-copy">
         <h2 className="xcn-word-purpose-title">Word dùng để<br/><span>làm gì?</span></h2>
-        <p className="xcn-word-purpose-lead">Word giúp tạo nội dung và trình bày tài liệu rõ ràng, chuyên nghiệp.</p>
         <div className="xcn-word-purpose-choices" role="group" aria-label="Chọn chức năng để xem minh họa">
           <button type="button" aria-pressed={isEdit} onClick={()=>setMode("edit")}
             className={"xcn-word-purpose-choice "+(isEdit?"is-selected":"")}>
@@ -35,12 +34,11 @@ export function WordPurposeSlide(){
             <ArrowRight size={22} className="xcn-word-purpose-choice-arrow" aria-hidden="true"/>
           </button>
         </div>
-        <p className="xcn-word-purpose-instruction"><span className="xcn-word-purpose-instruction-dot" aria-hidden="true"/> Chọn một chức năng để xem sự thay đổi trên tài liệu.</p>
       </div>
 
       <div className="xcn-word-purpose-stage">
         <div className="xcn-word-purpose-stage-edge" aria-hidden="true"/>
-        <div className="xcn-word-purpose-window" aria-label={"Minh họa tài liệu Word ở chế độ "+(isEdit?"soạn thảo":"trình bày")}>
+        <div className="xcn-word-purpose-window" role="group" aria-live="polite" aria-label={"Ví dụ tài liệu Word — "+(isEdit?"soạn thảo":"trình bày")}>
           <div className="xcn-word-purpose-window-top">
             <span className="xcn-word-purpose-word-icon" aria-hidden="true">W</span>
             <span className="xcn-word-purpose-filename">Thong_bao_lop.docx</span>
@@ -65,28 +63,17 @@ export function WordPurposeSlide(){
               <h3>THÔNG BÁO</h3>
               <p>Về việc tổ chức buổi thực hành Microsoft Word.</p>
               <p>Học viên chuẩn bị tài liệu và có mặt đúng giờ tại phòng máy.</p>
-              {isEdit?
-                <div className="xcn-word-purpose-inserted">
-                  <span>Nội dung mới được thêm vào văn bản.</span><span className="xcn-word-purpose-caret" aria-hidden="true"/>
-                </div>
-                :
-                <ul><li>Kiểm tra nội dung trước khi in.</li><li>Lưu đúng tên tài liệu.</li></ul>
-              }
+              <p className={"xcn-word-purpose-sample-detail "+(isEdit?"is-editing":"")}>
+                Thời gian: 8 giờ, thứ Sáu. Địa điểm: Phòng máy.
+                {isEdit&&<span className="xcn-word-purpose-caret" aria-hidden="true"/>}
+              </p>
               <p className="xcn-word-purpose-signature">Người lập thông báo</p>
             </article>
           </div>
           <div className="xcn-word-purpose-status" aria-hidden="true"><span>Trang 1 / 1</span><span>100%</span></div>
         </div>
-        <div className="xcn-word-purpose-outcome" aria-live="polite" aria-atomic="true">
-          <div className="xcn-word-purpose-outcome-icon"><Check size={22} aria-hidden="true"/></div>
-          <div>
-            <strong>{isEdit?"Tạo và chỉnh sửa nội dung":"Định dạng tài liệu dễ đọc"}</strong>
-            <span>{isEdit?"Thêm chữ, sửa câu, chèn nội dung vào vị trí cần thiết.":"Căn tiêu đề, phân cấp chữ và tổ chức các đoạn văn rõ ràng."}</span>
-          </div>
-        </div>
         <div className="xcn-word-purpose-corner-word" aria-hidden="true"><FileText size={54} strokeWidth={1}/></div>
       </div>
     </div>
-    <p className="xcn-word-purpose-disclaimer">Giao diện Word được mô phỏng bằng CSS phục vụ giảng dạy; không phải phần mềm Microsoft Word đang chạy.</p>
   </div>;
 }

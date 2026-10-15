@@ -55,3 +55,11 @@
 - Ví dụ slide 02 Word: lựa chọn **Soạn thảo** / **Trình bày** thay đổi vùng trang Word CSS minh họa; nội dung gốc và ghi chú giảng viên phải được bảo toàn, không tăng số slide chỉ vì đổi layout.
 - Tiêu đề vẫn phải là điểm nhìn đầu tiên, chữ lớn, không dùng nhãn `KIẾN THỨC` hoặc nhãn mẫu chung. Vùng tương tác phải có nút thật, hỗ trợ keyboard focus, `aria-pressed`, phản hồi `aria-live` và mobile responsive.
 - Tương tác phải mô tả đúng hành vi, ghi rõ là mô phỏng Word bằng CSS nếu không thao tác trên tệp Word thật.
+
+## 8. Slide dùng để giảng, không phải bảng hướng dẫn cho học viên (15/10/2026)
+
+- **Người sử dụng slide là giáo viên đang giảng.** Màn chiếu chỉ giữ **tiêu đề, kiến thức, ví dụ, hình minh họa và tương tác có giá trị học tập**. Không tự thêm lời dẫn, câu ra lệnh học viên, câu nhắc chọn/bấm, câu tóm tắt lặp lại nội dung hoặc chỉ dẫn sư phạm chung.
+- Không hiện các câu như “Chọn một chức năng để xem…”, “Hãy quan sát…”, “Sản phẩm này là mô phỏng CSS/React…”, “Minh họa bằng CSS, không chỉnh sửa tệp Word thật”, “Hướng dẫn thao tác” nếu chúng không trực tiếp giúp hiểu nội dung. Những chi tiết này thuộc **slide.notes / ghi chú giáo viên** hoặc tài liệu dành cho tác giả, không thuộc màn chiếu.
+- **Không xóa kiến thức thực tế:** tên lệnh File/Home/Insert, phím tắt, trình tự thao tác cần dạy, câu hỏi trắc nghiệm, ví dụ Word/Excel và mục tiêu của bài thực hành vẫn có thể hiển thị khi thực sự cần.
+- Với mô phỏng đổi trạng thái, ưu tiên **đưa ra sự khác biệt bằng hình ảnh/định dạng**; không thêm một bảng giải thích lặp lại hai lựa chọn vừa có. Không tạo “đoạn chữ giả” với nội dung không có nghĩa; dùng một ví dụ cụ thể, giữ nguyên dữ liệu gốc giữa các chế độ để người học nhìn thấy đúng sự thay đổi.
+- Không dùng màn hình slide để giải thích công nghệ triển khai (CSS, React, mô phỏng, phiên bản). Những lưu ý đúng/sai về giới hạn tương thích cần lưu trong **ghi chú giảng viên**, có thể công bố ở tài liệu sử dụng ngoài slide nếu cần.
