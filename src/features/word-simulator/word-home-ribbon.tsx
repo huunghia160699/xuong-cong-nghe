@@ -70,9 +70,10 @@ function WordIndentGlyph({direction}:{direction:"decrease"|"increase"}){
 function WordLineSpacingGlyph(){
   return <svg className="wsl-paragraph-line-glyph" viewBox="0 0 28 22" aria-hidden="true" focusable="false">
     <g stroke="#556170" strokeWidth="1.45" strokeLinecap="square" fill="none">
-      <path d="M11.5 4H27"/>
-      <path d="M11.5 11H27"/>
-      <path d="M11.5 18H27"/>
+      <path d="M11.5 3H27"/>
+      <path d="M11.5 8.3H27"/>
+      <path d="M11.5 13.7H27"/>
+      <path d="M11.5 19H27"/>
     </g>
     <g stroke="#157fc4" strokeWidth="1.35" fill="none" strokeLinecap="round" strokeLinejoin="round">
       <path d="M5 19.5V2.5M1.8 5.7 5 2.5l3.2 3.2M1.8 16.3 5 19.5l3.2-3.2"/>
