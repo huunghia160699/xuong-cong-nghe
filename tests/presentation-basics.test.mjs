@@ -506,17 +506,23 @@ test("Word ribbon icons use Word-like arrows, nested list and correct sort/spaci
 });
 
 
-test("Word Indent icons render three dark lines and clear cyan arrows, retaining command handlers",()=>{
+test("Word Indent icons show four thin lines and 70% arrows; Line Spacing shows three",()=>{
  const source=readFileSync("src/features/word-simulator/word-home-ribbon.tsx","utf8");
  const block=source.slice(source.indexOf("function WordIndentGlyph"),source.indexOf("function WordLineSpacingGlyph"));
  assert.match(block,/viewBox="0 0 24 22"/);
  const line=block.match(/<path d="([^"]+)"\/>/);
  assert.ok(line);
- assert.equal([...line[1].matchAll(/M[\d.]+ [\d.]+H22/g)].length,3);
- assert.match(line[1],/^M2 3\.5H22M13 11H22M2 18\.5H22$/);
+ assert.equal([...line[1].matchAll(/M[\d.]+ [\d.]+H22/g)].length,4);
+ assert.match(line[1],/^M2 3H22M13 8\.3H22M13 13\.7H22M2 19H22$/);
  assert.match(block,/stroke="#43494e"/);
  assert.match(block,/fill="#168fca"/);
- assert.equal((block.match(/fill="#168fca"/g)||[]).length,2);
+ assert.equal((block.match(/fill="#168fca"/g)||[]).length,1);
+ assert.match(block,/strokeWidth="1\.3"/);
+ assert.match(block,/transform="translate\(2\.025 3\.3\) scale\(0\.7\)"/);
+ const spacing=source.slice(source.indexOf("function WordLineSpacingGlyph"),source.indexOf("function WordSortGlyph"));
+ const rows=[...spacing.matchAll(/<path d="M11\.5 (4|11|18)H27"\/>/g)];
+ assert.deepEqual(rows.map(match=>Number(match[1])),[4,11,18]);
+ assert.match(spacing,/M5 19\.5V2\.5/);
  const paragraph=source.slice(source.indexOf('<Group name="Paragraph"'),source.indexOf('<Group name="Styles"'));
  assert.match(paragraph,/label="Decrease Indent"[\s\S]*?run=\{\(\)=>run\("outdent"\)\}/);
  assert.match(paragraph,/label="Increase Indent"[\s\S]*?run=\{\(\)=>run\("indent"\)\}/);
@@ -549,7 +555,8 @@ test("Word Indent image fidelity and Font blue arrows survive legacy CSS cascade
  const fontCss=readFileSync("src/features/word-simulator/word-font-ribbon.css","utf8");
  const legacy=readFileSync("src/features/word-simulator/word-window-bar.css","utf8");
  const indent=home.slice(home.indexOf("function WordIndentGlyph"),home.indexOf("function WordLineSpacingGlyph"));
- assert.match(indent,/M2 3\.5H22M13 11H22M2 18\.5H22/);
+ assert.match(indent,/M2 3H22M13 8\.3H22M13 13\.7H22M2 19H22/);
+ assert.match(indent,/transform="translate\(2\.025 3\.3\) scale\(0\.7\)"/);
  assert.match(indent,/stroke="#43494e"/);
  assert.match(indent,/fill="#168fca"/);
  assert.doesNotMatch(indent,/stroke="#2499d4"/);
