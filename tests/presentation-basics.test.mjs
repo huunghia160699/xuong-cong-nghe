@@ -122,3 +122,18 @@ test("only Word first lesson cover mirrors the public homepage Hero and advances
   assert.match(hero,/onClick=\{onStart\}/);
   assert.match(player,/onAdvance=\{\(\) => move\(current \+ 1\)\}/);
 });
+
+test("Word first hero uses large type, concise title and WORD outline",()=>{
+  const hero=readFileSync("src/features/presentations/components/word-home-hero.tsx","utf8");
+  assert.match(hero,/Làm quen với<br\/>\s*<span className="text-cyan">Microsoft Word<\/span>/);
+  assert.doesNotMatch(hero,/qua thực hành\.|Nhập liệu · Chỉnh sửa · Lưu văn bản/);
+  assert.match(hero,/min-h-14/);
+  assert.match(hero,/sm:text-3xl/);
+  assert.match(hero,/text-\[clamp\(2\.4rem,8vw,3\.5rem\)\]/);
+  assert.match(hero,/>WORD<\/span>/);
+  assert.doesNotMatch(hero,/aria-hidden="true">01<\/span>/);
+  assert.match(hero,/onClick=\{onStart\}/);
+  assert.equal(wordBasicsLessons[0].slides[0].blocks[0].type,"wordHomeHero");
+  assert.equal(wordBasicsLessons.reduce((n,m)=>n+m.slides.length,0),124);
+  assert.equal(excelBasicsLessons.reduce((n,m)=>n+m.slides.length,0),96);
+});

@@ -91,3 +91,9 @@ Không gắn bài trình chiếu Tin học với số buổi hoặc số bài. D
 - Bố cục lấy trực tiếp ngôn ngữ thị giác của Hero trang chủ: nền navy kẻ ô (`grid-paper`), nhãn pill, tiêu đề ba dòng lớn và dòng cuối cyan, nút hành động blue, khối ảnh minh họa Word và thẻ mục tiêu chồng góc. Hình Word do HTML/CSS tạo.
 - Nút `Bắt đầu bài học` phải hoạt động và chuyển sang slide 02 bằng trình phát, không chỉ dùng để trang trí. Vẫn giữ điều khiển trình chiếu và chế độ nhập lớp hiện có.
 - Trên màn nhỏ, hai cột xếp dọc và nội dung có thể cuộn; chữ không bị cắt, không bắt buộc thiết lập chiều cao cố định.
+
+## 11. Tăng typography slide Word đầu tiên (15/10/2026)
+
+- Tiêu đề chính chỉ gồm “Làm quen với Microsoft Word” (trong hai dòng với Microsoft Word màu cyan), không thêm “qua thực hành.”.
+- Không hiển thị dòng phụ “Nhập liệu · Chỉnh sửa · Lưu văn bản”; CTA “Bắt đầu bài học” vẫn chuyển slide tiếp theo.
+- Toàn bộ chữ trên Hero (mô tả, CTA, mục tiêu và mockup) cần đọc dễ khi trình chiếu; dùng cỡ chữ responsive theo `clamp()` hoặc breakpoint. Decorative outline dùng “WORD”, không dùng số “01” lớn.
