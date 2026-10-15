@@ -1,0 +1,279 @@
+/* Word Home / Font group. Screenshot-led 2-row ribbon, kept intentionally separate
+   from generic tool styles. The editor behavior remains in WordHomeRibbon. */
+.wsl-home-font {
+  flex: 0 0 339px;
+  width: 339px;
+  min-width: 339px;
+  padding: 4px 10px 2px;
+  font-family: "Segoe UI", Arial, sans-serif;
+  color: #292f38;
+}
+.wsl-home-font .wsl-home-group-content {
+  display: grid;
+  grid-template-rows: 27px 27px;
+  align-content: center;
+  align-items: center;
+  justify-content: stretch;
+  gap: 5px;
+  padding: 0;
+  min-height: 0;
+}
+.wsl-home-font .wsl-font-top {
+  display: grid;
+  grid-template-columns: 136px 43px repeat(4, 27px);
+  gap: 4px;
+  height: 27px;
+  min-height: 27px;
+  width: 100%;
+  align-items: center;
+  justify-content: start;
+}
+.wsl-home-font .wsl-font-bottom {
+  display: flex;
+  height: 27px;
+  min-height: 27px;
+  gap: 3px;
+  width: 100%;
+  justify-content: flex-start;
+  align-items: center;
+  flex-wrap: nowrap;
+}
+.wsl-home-font .wsl-font-select {
+  position: relative;
+  display: flex;
+  align-items: center;
+  height: 25px;
+  min-width: 0;
+  width: 100%;
+  border: 1px solid #b9bec8;
+  border-radius: 2px;
+  background: #fff;
+  box-shadow: inset 0 1px 1px #04122d08;
+}
+.wsl-home-font .wsl-font-select:focus-within {
+  outline: 2px solid #005bfd;
+  outline-offset: 1px;
+}
+.wsl-home-font .wsl-font-select:hover:not(:focus-within) {
+  border-color: #7c98b8;
+}
+.wsl-home-font .wsl-font-select select {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  padding: 0 23px 0 6px;
+  border: 0;
+  background: transparent;
+  outline: none;
+  color: #26282d;
+  font: 12px/1 "Segoe UI", Arial, sans-serif;
+  letter-spacing: -.015em;
+  cursor: pointer;
+}
+.wsl-home-font .wsl-font-size select { padding-left: 5px; }
+.wsl-home-font .wsl-font-select-chevron {
+  position: absolute;
+  right: 4px;
+  top: 5px;
+  color: #4b515d;
+  pointer-events: none;
+}
+.wsl-home-font .wsl-hb.wsl-font-icon-button {
+  display: inline-flex;
+  position: relative;
+  flex-shrink: 0;
+  justify-content: center;
+  align-items: center;
+  width: 27px;
+  min-width: 27px;
+  height: 26px;
+  min-height: 26px;
+  padding: 2px;
+  border: 1px solid transparent;
+  border-radius: 2px;
+  background: transparent;
+  color: #31353c;
+  cursor: pointer;
+}
+.wsl-home-font .wsl-hb.wsl-font-icon-button:hover:not(:disabled) {
+  background: #eaf2fb;
+  border-color: #b9d1eb;
+}
+.wsl-home-font .wsl-hb.wsl-font-icon-button:focus-visible {
+  outline: 2px solid #005bfd;
+  outline-offset: 1px;
+}
+.wsl-home-font .wsl-hb.wsl-font-icon-button:disabled,
+.wsl-home-font .wsl-hb.wsl-font-icon-button:hover:disabled {
+  cursor: default;
+  opacity: .34;
+  background: transparent;
+  border-color: transparent;
+  box-shadow: none;
+}
+.wsl-home-font .wsl-font-grow,
+.wsl-home-font .wsl-font-shrink {
+  position: relative;
+  display: inline-block;
+  width: 20px;
+  height: 23px;
+  font-family: "Segoe UI", Arial, sans-serif;
+  font-weight: 500;
+  font-size: 18px;
+  line-height: 23px;
+  color: #3c4654;
+  text-align: left;
+}
+.wsl-home-font .wsl-font-grow sup,
+.wsl-home-font .wsl-font-shrink sup {
+  position: absolute;
+  right: 0;
+  top: -2px;
+  font-size: 12px;
+  line-height: 14px;
+  font-weight: 700;
+  color: #247bbb;
+}
+.wsl-home-font .wsl-font-shrink {font-size: 15px;}
+.wsl-home-font .wsl-font-change-case {
+  display: flex;
+  align-items: baseline;
+  gap: 1px;
+  font: 13px/1 "Segoe UI", Arial, sans-serif;
+  letter-spacing: -.075em;
+}
+.wsl-home-font .wsl-font-change-case svg {align-self: center; margin-left: 2px;}
+.wsl-home-font .wsl-font-clear {
+  display: inline-flex;
+  position: relative;
+  align-items: flex-start;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  font: 18px/22px "Segoe UI", Arial, sans-serif;
+  color: #434d60;
+}
+.wsl-home-font .wsl-font-clear svg {
+  position: absolute;
+  right: -1px;
+  bottom: 0;
+  color: #af46ab;
+  transform: rotate(-29deg);
+}
+.wsl-home-font .wsl-font-bold {
+  font: 700 17px/1 Georgia, serif;
+}
+.wsl-home-font .wsl-font-italic {
+  font: italic 17px/1 Georgia, serif;
+}
+.wsl-home-font .wsl-hb.wsl-font-underline-button {width: 34px; min-width: 34px;}
+.wsl-home-font .wsl-font-underline {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  font: 16px/1 Georgia, serif;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.wsl-home-font .wsl-font-underline svg {align-self: center; margin-left: 2px;}
+.wsl-home-font .wsl-font-strike {
+  font: 14px/1 "Segoe UI", Arial, sans-serif;
+  text-decoration: line-through;
+  text-decoration-thickness: 1px;
+}
+.wsl-home-font .wsl-font-sub,
+.wsl-home-font .wsl-font-super {
+  position: relative;
+  width: 18px;
+  height: 20px;
+  line-height: 20px;
+  font-family: "Segoe UI", Arial, sans-serif;
+  font-size: 16px;
+}
+.wsl-home-font .wsl-font-sub sub,
+.wsl-home-font .wsl-font-super sup {
+  position: absolute;
+  right: -1px;
+  font-size: 10px;
+  font-weight: 600;
+  line-height: 10px;
+  color: #176cb7;
+}
+.wsl-home-font .wsl-font-sub sub {bottom: -2px;}
+.wsl-home-font .wsl-font-super sup {top: 0;}
+.wsl-home-font .wsl-font-effect-disabled {
+  display: grid;
+  place-items: center;
+  width: 27px;
+  min-width: 27px;
+  height: 26px;
+  opacity: .36;
+  cursor: default;
+  user-select: none;
+}
+.wsl-home-font .wsl-font-effect-disabled:hover {
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+}
+.wsl-home-font .wsl-font-color-control {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 35px;
+  min-width: 35px;
+  height: 26px;
+  border: 1px solid transparent;
+  border-radius: 2px;
+  cursor: pointer;
+}
+.wsl-home-font .wsl-font-color-control:hover {
+  border-color: #b9d1eb;
+  background: #eaf2fb;
+}
+.wsl-home-font .wsl-font-color-control:focus-within {
+  outline: 2px solid #005bfd;
+  outline-offset: 1px;
+}
+.wsl-home-font .wsl-font-color-control>svg:first-child {
+  position: absolute;
+  left: 4px;
+  top: 1px;
+  color: #4e5864;
+}
+.wsl-home-font .wsl-font-color-letter {
+  position: absolute;
+  left: 5px;
+  top: 0;
+  font: 700 18px/20px Georgia, serif;
+}
+.wsl-home-font .wsl-font-color-swatch {
+  position: absolute;
+  left: 4px;
+  bottom: 1px;
+  width: 18px;
+  height: 3px;
+  pointer-events: none;
+}
+.wsl-home-font .wsl-font-color-chevron {
+  position: absolute;
+  right: 1px;
+  top: 9px;
+  pointer-events: none;
+  color: #555f6b;
+}
+.wsl-home-font .wsl-font-color-control input {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+@media (max-width: 650px) {
+  .wsl-home-font{flex-basis: 339px;min-width:339px;width:339px;}
+}
