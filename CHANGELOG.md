@@ -1,5 +1,13 @@
 # Changelog
 
+## 2026-10-15 — Quick Access Toolbar và Clipboard/Font sát ảnh Word
+
+- Thêm thanh cửa sổ sáng: Quick Access Save/Undo/Redo/menu bên trái, tên tài liệu giữa, 3 biểu tượng cửa sổ phải với nút X thoát về Công cụ.
+- Căn lại nhóm Clipboard (Paste lớn, Cut/Copy/Format Painter dọc) và Font (hai hàng, font/cỡ, các icon 25–30px); thêm icon Text Effects mờ khi chưa hỗ trợ.
+- Kiểm tra và sửa clipboard: Copy không thay đổi bản nháp, Cut/Copy/Format Painter chỉ hoạt động khi có vùng chọn, Paste giữ selection với fallback Ctrl+V, Undo/Redo không báo lưu khi thất bại.
+- Giữ trang A4, các tab/nhóm khác, không thêm tính năng cloud.
+
+
 ## 2026-10-15 — Ribbon Home tương tự Word trên Windows
 
 - Bỏ thanh xanh phía trên; tất cả tab Ribbon Word desktop hiển thị ở hàng đầu tiên.

@@ -50,3 +50,12 @@
 .wsl-word-color-effect::after{content:"";position:absolute;bottom:0;left:2px;width:13px;height:2px;background:#348bc6}
 @media(max-width:650px){.wsl-window-bar{grid-template-columns:minmax(123px,1fr) minmax(92px,1fr) 90px}.wsl-qat{padding-left:4px}.wsl-qat-button{width:25px}.wsl-window-decor,.wsl-window-close{width:30px}.wsl-window-document{font-size:11px}.wsl-window-document input{font-size:11px}.wsl-home-font{min-width:320px}}
 @media print{.wsl-window-bar{display:none!important}}
+
+.wsl-clipboard-paste-art{display:grid;place-items:center;position:relative;width:33px;height:35px;color:#565e69}
+.wsl-clipboard-paste-art:before{content:"";position:absolute;left:2px;top:6px;width:23px;height:26px;border:1.5px solid #a78840;border-radius:1px;background:#fff9e6;z-index:0}
+.wsl-clipboard-paste-art svg{position:relative;z-index:1;transform:translate(3px,-3px)}
+.wsl-home-font .wsl-underline-dropdown{width:32px;gap:1px}
+.wsl-home-font .wsl-underline-dropdown svg:last-child{width:8px}
+.wsl-font-effect-disabled{display:grid;place-items:center;min-width:25px;width:25px;height:25px;opacity:.35;user-select:none}
+.wsl-home-font .wsl-color-compact svg{width:18px;height:18px}
+@media(max-width:650px){.wsl-home-font{min-width:335px}}

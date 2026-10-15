@@ -25,6 +25,17 @@
 
 ## III. Lịch sử
 
+### 2026-10-15 — Thanh Quick Access và bố cục Clipboard/Font theo ảnh Word
+- **Mục tiêu:** thêm thanh cửa sổ xám nhạt có Quick Access Toolbar trái, Document1 - Word giữa, 3 nút cửa sổ phải (chỉ X thoát); thiết kế lại Clipboard và Font sát ảnh cắt Word người dùng cung cấp.
+- **Phạm vi file:** `src/features/word-simulator/word-window-bar.tsx`, `word-window-bar.css`, `word-simulator.tsx`, `word-home-ribbon.tsx`, `word-home-ribbon.css`, route layout, `docs/WORD_SIMULATOR_STANDARD.md`, `docs/WORD_SIMULATOR_CONTROL_AUDIT.md`, tests, CHANGELOG và WORKLOG.
+- **Kiểm tra trước khi sửa:** đối chiếu từng nút với handler thật: Paste quyền clipboard, Cut/Copy vùng chọn, Format Painter, Font family/size, size+/−, Change Case, Clear Format, Bold/Italic/Underline/Strike, sub/superscript, highlight/text color. Nhận diện lỗi Copy làm thay đổi revision và Paste mất vùng chọn.
+- **Thực hiện:** Quick Save lưu localStorage tức thời; Undo/Redo gọi trình biên tập và không báo sửa khi không có lịch sử; tên tài liệu chỉnh trong thanh giữa; X lưu rồi chuyển về Công cụ; Min/Max chỉ biểu tượng; Clipboard disable theo selection, xử lý quyền clipboard; Font chỉnh icon, ngắt dòng, khoảng cách và không làm giả hiệu ứng chưa hỗ trợ.
+- **Kiểm thử:** GitHub CI validator, unit tests, typecheck, build, smoke; đối chiếu mã/hành vi của từng nút tại `docs/WORD_SIMULATOR_CONTROL_AUDIT.md`. Chưa chạy browser E2E.
+- **GitHub:** theo PR `feat/word-window-qat-and-clipboard-font`, SHA cuối sau squash merge ở lịch sử Git.
+- **Vercel Production:** xác nhận chỉ khi READY, commit SHA trùng main và alias `xuong-cong-nghe.vercel.app`.
+- **Giới hạn:** clipboard phụ thuộc quyền trình duyệt; `execCommand` deprecated và vẫn chưa có DOCX engine/pagination thật.
+
+
 ### 2026-10-15 — Chỉnh thanh Ribbon giả lập Word giống bản Windows được cung cấp
 - **Yêu cầu:** bỏ phần trên màu xanh, giữ đủ các tab Ribbon như ảnh, ưu tiên giống nhất các nhóm chức năng Home.
 - **File thay đổi:** `src/features/word-simulator/word-simulator.tsx`, `word-home-ribbon.tsx`, `word-home-ribbon.css`, `word-simulator.css`, route layout, `docs/WORD_SIMULATOR_STANDARD.md`, `tests/presentation-basics.test.mjs`, CHANGELOG và nhật ký.

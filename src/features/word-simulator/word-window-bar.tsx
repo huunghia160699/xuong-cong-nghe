@@ -24,7 +24,7 @@ export function WordWindowBar({
         </div>}
       </div>
     </div>
-    <div className="wsl-window-document"><input value={filename} maxLength={90} spellCheck={false} aria-label="Tên tài liệu" onChange={e=>onRename(e.target.value)} /><span> – Word</span></div>
+    <div className="wsl-window-document"><input value={filename} maxLength={90} spellCheck={false} aria-label="Tên tài liệu" onChange={e=>onRename(e.target.value)} /><span> - Word</span></div>
     <div className="wsl-window-controls">
       <span aria-hidden="true" className="wsl-window-decor"><Minus size={16}/></span>
       <span aria-hidden="true" className="wsl-window-decor"><Square size={13}/></span>

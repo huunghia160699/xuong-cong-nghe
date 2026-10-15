@@ -190,7 +190,12 @@ export function WordSimulator(){
   }
   function command(cmd:string,value?:string){
     restoreSelection();
-    document.execCommand(cmd,false,value);
+    const ok=document.execCommand(cmd,false,value);
+    if(!ok){
+      if(cmd==="undo"||cmd==="redo")setStatus(cmd==="undo"?"Không có thao tác để hoàn tác":"Không có thao tác để làm lại");
+      else setStatus("Trình duyệt chưa hỗ trợ lệnh này: "+cmd);
+      return;
+    }
     rememberSelection();
     markChanged();
   }

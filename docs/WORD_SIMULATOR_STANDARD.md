@@ -50,3 +50,11 @@ Ngày: 15/10/2026. Đường dẫn: `/cong-cu/mo-phong-word`.
 - Lệnh Home cần tương tác thật: format, size, tăng/giảm size, Change Case, clear format, sub/superscript, list/indent, align, line-spacing, border, shading, gallery style, Find/Replace/Select.
 - Giữ vùng soạn thảo giấy A4 với thước ngang và dọc, thanh trạng thái, zoom, tự lưu cục bộ. Màn nhỏ cuộn ngang Ribbon khi cần.
 - Vẫn chưa có engine DOCX, dàn trang nhiều trang Word chuẩn, và nhiều thao tác nâng cao; không được giới thiệu là Word Microsoft chính thức.
+
+## 15/10/2026 — Quick Access Toolbar, cửa sổ và Clipboard/Font chuẩn Word
+
+- Theo ảnh chụp người dùng cung cấp, thanh trên có nền **xám rất nhạt** (không quay lại nền xanh), Quick Access Toolbar bên trái (Save, Undo, Redo, mở menu), tên tài liệu giữa dạng `Document1 - Word`, bên phải đủ 3 biểu tượng Minimize, Maximize, Close. Chỉ **Close (X)** có tương tác thoát về `/cong-cu`; hai biểu tượng còn lại là trang trí, không giả lập khả năng điều khiển cửa sổ trình duyệt.
+- Save trong Quick Access **lưu dữ liệu localStorage ngay**; Undo/Redo thao tác trên rich-text editor; menu mũi tên nhỏ có Save/New/Print thực, không gắn một handler không liên quan.
+- **Clipboard:** Paste là nút lớn; Cut/Copy/Format Painter xếp dọc. Cut/Copy/Format Painter không hoạt động khi chưa chọn chữ. Copy không làm tăng revision/lưu giả; Cut chỉ cập nhật khi cắt thành công; Paste đọc clipboard với fallback Ctrl+V khi browser chặn; Format Painter chụp định dạng nguồn và áp dụng lên vùng đích.
+- **Font:** chọn phông và cỡ, tăng/giảm cỡ, Change Case, Clear Formatting, Bold/Italic/Underline/Strike, Subscript/Superscript, highlight color và font color. Icons được căn vị trí/thang 25–30px giống ảnh. Text Effects (không có triển khai đúng) chỉ là biểu tượng mờ không tương tác, không được gán giả thành Bold.
+- Bổ sung kiểm thử chống hồi quy cho vị trí thanh, chức năng lưu, sự kiện Cut/Copy/Paste và không làm sai định dạng. Kiểm tra browser tương tác thực tế vẫn phải được làm riêng (không được gọi kiểm thử tĩnh là test E2E).
