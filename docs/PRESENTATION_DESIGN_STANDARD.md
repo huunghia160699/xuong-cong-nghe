@@ -91,3 +91,18 @@ Không gắn bài trình chiếu Tin học với số buổi hoặc số bài. D
 - Bố cục lấy trực tiếp ngôn ngữ thị giác của Hero trang chủ: nền navy kẻ ô (`grid-paper`), nhãn pill, tiêu đề ba dòng lớn và dòng cuối cyan, nút hành động blue, khối ảnh minh họa Word và thẻ mục tiêu chồng góc. Hình Word do HTML/CSS tạo.
 - Nút `Bắt đầu bài học` phải hoạt động và chuyển sang slide 02 bằng trình phát, không chỉ dùng để trang trí. Vẫn giữ điều khiển trình chiếu và chế độ nhập lớp hiện có.
 - Trên màn nhỏ, hai cột xếp dọc và nội dung có thể cuộn; chữ không bị cắt, không bắt buộc thiết lập chiều cao cố định.
+
+test("Word first hero uses large type, concise title and WORD outline",()=>{
+  const hero=readFileSync("src/features/presentations/components/word-home-hero.tsx","utf8");
+  assert.match(hero,/Làm quen với<br\/>\s*<span className="text-cyan">Microsoft Word<\/span>/);
+  assert.doesNotMatch(hero,/qua thực hành\.|Nhập liệu · Chỉnh sửa · Lưu văn bản/);
+  assert.match(hero,/min-h-14/);
+  assert.match(hero,/sm:text-3xl/);
+  assert.match(hero,/text-\[clamp\(2\.4rem,8vw,3\.5rem\)\]/);
+  assert.match(hero,/>WORD<\/span>/);
+  assert.doesNotMatch(hero,/aria-hidden="true">01<\/span>/);
+  assert.match(hero,/onClick=\{onStart\}/);
+  assert.equal(wordBasicsLessons[0].slides[0].blocks[0].type,"wordHomeHero");
+  assert.equal(wordBasicsLessons.reduce((n,m)=>n+m.slides.length,0),124);
+  assert.equal(excelBasicsLessons.reduce((n,m)=>n+m.slides.length,0),96);
+});

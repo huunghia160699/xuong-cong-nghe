@@ -122,3 +122,9 @@ test("only Word first lesson cover mirrors the public homepage Hero and advances
   assert.match(hero,/onClick=\{onStart\}/);
   assert.match(player,/onAdvance=\{\(\) => move\(current \+ 1\)\}/);
 });
+
+## 11. Tăng typography slide Word đầu tiên (15/10/2026)
+
+- Tiêu đề chính chỉ gồm “Làm quen với Microsoft Word” (trong hai dòng với Microsoft Word màu cyan), không thêm “qua thực hành.”.
+- Không hiển thị dòng phụ “Nhập liệu · Chỉnh sửa · Lưu văn bản”; CTA “Bắt đầu bài học” vẫn chuyển slide tiếp theo.
+- Toàn bộ chữ trên Hero (mô tả, CTA, mục tiêu và mockup) cần đọc dễ khi trình chiếu; dùng cỡ chữ responsive theo `clamp()` hoặc breakpoint. Decorative outline dùng “WORD”, không dùng số “01” lớn.

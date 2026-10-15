@@ -1,5 +1,12 @@
 # Changelog
 
+## 2026-10-15 — Chữ lớn hơn trên slide mở đầu Word
+
+- Chỉ giữ tiêu đề **Làm quen với Microsoft Word**, làm lớn đáng kể typography phần Hero, nút và thẻ mục tiêu.
+- Bỏ dòng **qua thực hành.** khỏi tiêu đề và bỏ dòng **Nhập liệu · Chỉnh sửa · Lưu văn bản** cạnh nút.
+- Thay số lớn nét viền **01** bằng chữ **WORD**, giữ nền navy kẻ ô, hình Word CSS và điều hướng bài học.
+
+
 ## 2026-10-15 — Hero trang chủ cho slide mở đầu Word
 
 - Thiết kế lại riêng slide mở đầu `Làm quen Microsoft Word` dựa trên Hero trang chủ: navy kẻ ô, tiêu đề lớn điểm nhấn cyan, hai thẻ minh họa xếp chồng và ba mục tiêu.

@@ -25,6 +25,17 @@
 
 ## III. Lịch sử
 
+### 2026-10-15 — Phóng lớn chữ và tối giản Hero Word mở đầu
+- **Mục tiêu:** tăng đáng kể font chữ cho slide đầu tiên của chủ đề Word; chỉ giữ nhan đề “Làm quen với Microsoft Word”; xóa nhãn phụ cạnh nút và thay số lớn viền “01” bằng “WORD”.
+- **Thay đổi và file:** `src/features/presentations/components/word-home-hero.tsx`, `tests/presentation-basics.test.mjs`, `docs/PRESENTATION_DESIGN_STANDARD.md`, `docs/WORKLOG_AND_RULES.md`, `CHANGELOG.md`.
+- **Thiết kế:** giữ nền navy kẻ ô, bố cục hai thẻ chồng và màu cyan; tăng cỡ tiêu đề, mô tả, nút, mục tiêu, nhãn trên mô phỏng Word. Giữ khả năng responsive và điều hướng nút Bắt đầu bài học.
+- **Phạm vi:** chỉ slide đầu tiên của bài Word thứ nhất; các slide Word và Excel khác không thay đổi.
+- **Kiểm thử:** bổ sung kiểm thử kiểm tra văn bản mới và thành phần cần bỏ; GitHub Actions chạy unit, validator, TypeScript, Production build và smoke route.
+- **GitHub commit:** xem commit của PR “Increase Word opening hero typography” trong lịch sử.
+- **Vercel Production:** chỉ xác nhận sau khi READY, cùng SHA nhánh main và domain chính được gán.
+- **Lưu ý:** kiểm thử tự động không thay thế kiểm tra trực quan trên máy chiếu.
+
+
 ### 2026-10-15 — Slide mở đầu bài Word đầu tiên theo Hero trang chủ
 - **Mục tiêu:** riêng slide số 01 của chủ đề `word-lam-quen` sử dụng concept Hero phần đầu trang chủ Xưởng Công Nghệ.
 - **Thay đổi và file:** `components/word-home-hero.tsx`, `components/player.tsx`, `data/word-basics.ts`, `scripts/validate-ppt.mjs`, `tests/presentation-basics.test.mjs`, `docs/PRESENTATION_DESIGN_STANDARD.md`, `CHANGELOG.md` và nhật ký này.
