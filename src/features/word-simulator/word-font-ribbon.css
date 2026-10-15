@@ -147,18 +147,20 @@
 }
 /* Half-size chevrons share a horizontal anchor at the small A's cap height.
    The small A has a narrower glyph, so its caret shifts left to keep the
-   *visible space from the A* equal in both Font Size controls. */
+   *visible space from the A* equal in both Font Size controls.
+   The final 1.25px inward shift halves the previous visible gap
+   without scaling the chevrons further. */
 .wsl-home-font .wsl-font-size-direction {
   position: absolute;
   top: 6px;
-  right: 2px;
+  right: 3.25px;
   width: 5px;
   height: 4px;
   color: #2197ce;
   pointer-events: none;
 }
 .wsl-home-font .wsl-font-shrink .wsl-font-size-direction {
-  right: 5px;
+  right: 6.25px;
 }
 .wsl-home-font .wsl-font-change-case {
   display: flex;

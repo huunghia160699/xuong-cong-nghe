@@ -25,6 +25,15 @@
 
 ## III. Lịch sử
 
+### 2026-10-15 — Đưa hai chevron Font Size sát chữ A thêm một nửa
+- **Yêu cầu:** đưa mũi tên xanh của cả hai nút tăng/giảm Font Size gần chữ A hơn khoảng một nửa khoảng trống hiện tại, không đổi kích thước.
+- **File:** `src/features/word-simulator/word-font-ribbon.css`, `tests/presentation-basics.test.mjs`, `docs/WORD_SIMULATOR_STANDARD.md`, `docs/WORKLOG_AND_RULES.md`, `CHANGELOG.md`.
+- **Quyết định:** di chuyển vào trong thêm 1,25px: Grow `right:2px → 3.25px`, Shrink `right:5px → 6.25px`. Giữ `top:6px`, size `5×4px`, khoảng chênh 3px giữa hai nút và handlers.
+- **Kiểm thử:** test CSS tọa độ/kích thước/handler, GitHub CI typecheck/build/smoke; không có đo khoảng trống bằng browser screenshot.
+- **GitHub:** PR `style/word-caret-gap-halved-again`, SHA xem lịch sử sau merge.
+- **Vercel:** Production deploy SHA mới, xác nhận READY + alias domain chính + SHA main.
+
+
 ### 2026-10-15 — Thu nhỏ và căn ngang hai mũi tên tăng/giảm Font Size
 - **Yêu cầu:** hai mũi tên xanh trên A vẫn thấy khoảng cách không đều vì cỡ chữ A khác nhau; giảm mỗi mũi tên còn khoảng nửa size và đặt absolute ngang đầu A nhỏ.
 - **File:** `src/features/word-simulator/word-font-ribbon.css`, `tests/presentation-basics.test.mjs`, `docs/WORD_SIMULATOR_STANDARD.md`, `docs/WORKLOG_AND_RULES.md`, `CHANGELOG.md`.
