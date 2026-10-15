@@ -506,7 +506,7 @@ test("Word ribbon icons use Word-like arrows, nested list and correct sort/spaci
 });
 
 
-test("Word Indent icons show four thin lines and 70% arrows; Line Spacing shows three",()=>{
+test("Word Indent icons show four thin lines and 70% arrows; Line Spacing shows four",()=>{
  const source=readFileSync("src/features/word-simulator/word-home-ribbon.tsx","utf8");
  const block=source.slice(source.indexOf("function WordIndentGlyph"),source.indexOf("function WordLineSpacingGlyph"));
  assert.match(block,/viewBox="0 0 24 22"/);
@@ -520,8 +520,8 @@ test("Word Indent icons show four thin lines and 70% arrows; Line Spacing shows 
  assert.match(block,/strokeWidth="1\.3"/);
  assert.match(block,/transform="translate\(2\.025 3\.3\) scale\(0\.7\)"/);
  const spacing=source.slice(source.indexOf("function WordLineSpacingGlyph"),source.indexOf("function WordSortGlyph"));
- const rows=[...spacing.matchAll(/<path d="M11\.5 (4|11|18)H27"\/>/g)];
- assert.deepEqual(rows.map(match=>Number(match[1])),[4,11,18]);
+ const rows=[...spacing.matchAll(/<path d="M11\.5 (3|8\.3|13\.7|19)H27"\/>/g)];
+ assert.deepEqual(rows.map(match=>Number(match[1])),[3,8.3,13.7,19]);
  assert.match(spacing,/M5 19\.5V2\.5/);
  const paragraph=source.slice(source.indexOf('<Group name="Paragraph"'),source.indexOf('<Group name="Styles"'));
  assert.match(paragraph,/label="Decrease Indent"[\s\S]*?run=\{\(\)=>run\("outdent"\)\}/);
