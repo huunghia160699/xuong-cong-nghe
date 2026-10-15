@@ -1,12 +1,12 @@
 "use client";
 
-import type {ReactNode} from "react";
+import {useState,type ReactNode} from "react";
 import {
   AlignCenter,AlignJustify,AlignLeft,AlignRight,ArrowDownAZ,ArrowDownToLine,
-  ArrowRightToLine,CaseSensitive,ChevronDown,Clipboard,Copy,Eraser,
-  Highlighter,IndentDecrease,IndentIncrease,Italic,List,ListOrdered,
-  Paintbrush,Scissors,Search,Strikethrough,Subscript,Superscript,
-  Underline,WholeWord
+  ArrowRightToLine,ChevronDown,Clipboard,Copy,Eraser,
+  Highlighter,IndentDecrease,IndentIncrease,List,ListOrdered,
+  Paintbrush,Scissors,Search,
+  WholeWord
 } from "lucide-react";
 
 type Props={
@@ -37,6 +37,8 @@ export function WordHomeRibbon({
  replaceText,findText,selectAll,toggleMarks,applyStyle
 }:Props){
  const size=Math.max(1,Math.min(7,Number(fontSize)||3));
+ const [highlightColor,setHighlightColor]=useState("#ffff00");
+ const [textColor,setTextColor]=useState("#c91c2a");
  return <div className="wsl-home-ribbon" aria-label="Ribbon Home">
    <Group name="Clipboard" className="wsl-home-clipboard">
      <div className="wsl-home-paste">
@@ -52,33 +54,45 @@ export function WordHomeRibbon({
 
    <Group name="Font" className="wsl-home-font">
      <div className="wsl-font-top">
-       <label className="wsl-compact-select wsl-compact-font">
-         <span className="sr-only">Tên phông chữ</span>
+       <label className="wsl-font-select wsl-font-family">
+         <span className="sr-only">Phông chữ</span>
          <select aria-label="Font" value={font} onChange={event=>editFont(event.target.value)}>
            {FONTS.map(name=><option value={name} key={name}>{name==="Aptos"?"Aptos (Body)":name}</option>)}
          </select>
+         <ChevronDown size={12} aria-hidden="true" className="wsl-font-select-chevron"/>
        </label>
-       <label className="wsl-compact-select wsl-compact-size">
+       <label className="wsl-font-select wsl-font-size">
          <span className="sr-only">Cỡ chữ</span>
          <select aria-label="Font Size" value={fontSize} onChange={event=>editSize(event.target.value)}>
            {fontSizes.map(([value,text])=><option key={value} value={value}>{text}</option>)}
          </select>
+         <ChevronDown size={11} aria-hidden="true" className="wsl-font-select-chevron"/>
        </label>
-       <Btn label="Increase Font Size" icon={<span className="wsl-font-letter">A<sup>↑</sup></span>} run={()=>editSize(String(Math.min(7,size+1)))}/>
-       <Btn label="Decrease Font Size" icon={<span className="wsl-font-letter">A<sup>↓</sup></span>} run={()=>editSize(String(Math.max(1,size-1)))}/>
-       <Btn label="Change Case" icon={<CaseSensitive size={18}/>} run={changeCase}/>
-       <Btn label="Clear All Formatting" icon={<Eraser size={16}/>} run={()=>run("removeFormat")}/>
+       <Btn className="wsl-font-icon-button" label="Increase Font Size" icon={<span className="wsl-font-grow" aria-hidden="true">A<sup>↑</sup></span>} run={()=>editSize(String(Math.min(7,size+1)))}/>
+       <Btn className="wsl-font-icon-button" label="Decrease Font Size" icon={<span className="wsl-font-shrink" aria-hidden="true">A<sup>↓</sup></span>} run={()=>editSize(String(Math.max(1,size-1)))}/>
+       <Btn className="wsl-font-icon-button" label="Change Case" icon={<span className="wsl-font-change-case" aria-hidden="true">Aa<ChevronDown size={9}/></span>} run={changeCase}/>
+       <Btn className="wsl-font-icon-button" label="Clear All Formatting" icon={<span className="wsl-font-clear" aria-hidden="true">A<Eraser size={13}/></span>} run={()=>run("removeFormat")}/>
      </div>
      <div className="wsl-font-bottom">
-       <Btn label="Bold" icon={<b>B</b>} run={()=>run("bold")}/>
-       <Btn label="Italic" icon={<Italic size={15}/>} run={()=>run("italic")}/>
-       <Btn label="Underline" icon={<><Underline size={16}/><ChevronDown size={9}/></>} run={()=>run("underline")} className="wsl-underline-dropdown"/>
-       <Btn label="Strikethrough" icon={<Strikethrough size={16}/>} run={()=>run("strikeThrough")}/>
-       <Btn label="Subscript" icon={<Subscript size={16}/>} run={()=>run("subscript")}/>
-       <Btn label="Superscript" icon={<Superscript size={16}/>} run={()=>run("superscript")}/>
+       <Btn className="wsl-font-icon-button" label="Bold" icon={<span className="wsl-font-bold" aria-hidden="true">B</span>} run={()=>run("bold")}/>
+       <Btn className="wsl-font-icon-button" label="Italic" icon={<span className="wsl-font-italic" aria-hidden="true">I</span>} run={()=>run("italic")}/>
+       <Btn className="wsl-font-icon-button wsl-font-underline-button" label="Underline" icon={<span className="wsl-font-underline" aria-hidden="true">U<ChevronDown size={9}/></span>} run={()=>run("underline")}/>
+       <Btn className="wsl-font-icon-button" label="Strikethrough" icon={<span className="wsl-font-strike" aria-hidden="true">ab</span>} run={()=>run("strikeThrough")}/>
+       <Btn className="wsl-font-icon-button" label="Subscript" icon={<span className="wsl-font-sub" aria-hidden="true">x<sub>2</sub></span>} run={()=>run("subscript")}/>
+       <Btn className="wsl-font-icon-button" label="Superscript" icon={<span className="wsl-font-super" aria-hidden="true">x<sup>2</sup></span>} run={()=>run("superscript")}/>
        <span className="wsl-font-effect-disabled" aria-hidden="true"><span className="wsl-word-color-effect">A</span></span>
-       <label className="wsl-color-compact"><Highlighter size={17} color="#c39b02"/><input aria-label="Text Highlight Color" type="color" defaultValue="#ffff00" onChange={event=>run("hiliteColor",event.target.value)}/></label>
-       <label className="wsl-color-compact"><span className="wsl-letter-black">A</span><input aria-label="Font Color" type="color" defaultValue="#04122d" onChange={event=>run("foreColor",event.target.value)}/></label>
+       <label className="wsl-font-color-control" aria-label="Text Highlight Color">
+         <Highlighter size={17} strokeWidth={1.8} aria-hidden="true"/>
+         <span className="wsl-font-color-swatch" style={{backgroundColor:highlightColor}} aria-hidden="true"/>
+         <ChevronDown size={9} className="wsl-font-color-chevron" aria-hidden="true"/>
+         <input type="color" value={highlightColor} aria-label="Text Highlight Color" onChange={event=>{setHighlightColor(event.target.value);run("hiliteColor",event.target.value);}}/>
+       </label>
+       <label className="wsl-font-color-control" aria-label="Font Color">
+         <span className="wsl-font-color-letter" aria-hidden="true">A</span>
+         <span className="wsl-font-color-swatch" style={{backgroundColor:textColor}} aria-hidden="true"/>
+         <ChevronDown size={9} className="wsl-font-color-chevron" aria-hidden="true"/>
+         <input type="color" value={textColor} aria-label="Font Color" onChange={event=>{setTextColor(event.target.value);run("foreColor",event.target.value);}}/>
+       </label>
      </div>
    </Group>
 

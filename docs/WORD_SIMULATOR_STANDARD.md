@@ -65,3 +65,13 @@ Ngày: 15/10/2026. Đường dẫn: `/cong-cu/mo-phong-word`.
 - Con trỏ di qua nút vô hiệu hóa là **mũi tên bình thường** (`cursor: default`), tuyệt đối không dùng `cursor: not-allowed` hoặc biểu tượng cấm màu đỏ.
 - Không tạo hiệu ứng `hover` (màu nền, viền, bóng, đổi trạng thái) và không hiển thị tooltip hướng dẫn của nút khi bị vô hiệu hóa.
 - Nút đang khả dụng vẫn giữ hiệu ứng hover/focus bình thường. Áp dụng nhất quán cho Home Ribbon và các nút lệnh Ribbon còn lại. Không thay đổi điều kiện hoạt động Cut/Copy/Format Painter hay các thao tác tài liệu.
+
+## 15/10/2026 — Chuẩn thị giác nhóm Font theo ảnh Word
+
+- Font được tách stylesheet riêng `src/features/word-simulator/word-font-ribbon.css`, import **sau** các stylesheet Word cũ để tránh xung đột quy tắc độ rộng, grid/flex hoặc media query.
+- Giữ đúng **hai hàng**: hàng 1 gồm tên phông, cỡ chữ, Grow Font, Shrink Font, Change Case, Clear Formatting; hàng 2 gồm Bold, Italic, Underline, Strikethrough, Subscript, Superscript, Text Effects (disabled), Text Highlight Color và Font Color.
+- Ô chọn phông/cỡ chữ cao 25px, viền mảnh trung tính, mũi tên đồng nhất; các icon ở dạng nét chữ B/I/U, x₂, x², chữ Aa với vị trí và khoảng cách gần ảnh Word desktop; tên nhóm Font ở chân Ribbon.
+- Nút gạch chân có mũi tên nhỏ nằm **trong cùng nút**, không tạo menu không hoạt động. Text Effects vẫn hiển thị mờ, không hover, không tooltip; không ánh xạ giả sang Bold.
+- Hai bộ chọn màu hiện gạch màu sát dưới biểu tượng; gạch màu luôn phản ánh `value` của color picker. Khi chọn màu mới, chuyển lệnh thực sự vào editor với `hiliteColor` / `foreColor`.
+- Ribbon vẫn cuộn ngang trên màn nhỏ; không thu nhỏ Font thành các thẻ tùy ý. Chức năng và thứ tự các nhóm Clipboard/Paragraph/Styles/Editing giữ nguyên.
+- Bắt buộc chạy kiểm thử hồi quy và build. Chưa được tuyên bố ảnh mới giống Word chính xác từng pixel khi chưa kiểm tra bằng trình duyệt thật.

@@ -1,5 +1,13 @@
 # Changelog
 
+## 2026-10-15 — Nhóm Font Word tinh chỉnh theo ảnh tham khảo
+
+- Thiết kế lại nhóm Font thành hai hàng thẳng hàng, cỡ chữ, viền và khoảng cách thống nhất; ô chọn phông chữ và cỡ chữ có mũi tên đúng vị trí.
+- Làm lại từng ký hiệu A tăng/giảm cỡ, Aa, Clear Formatting, B/I/U, gạch ngang, x₂/x² và các công cụ màu cho gần Word desktop.
+- Text Effects chưa hỗ trợ vẫn mờ và không có hover/tooltip; hai thanh màu cập nhật theo màu thực tế đã chọn.
+- CSS nhóm Font được quản lý riêng nhằm tránh xung đột các quy tắc Ribbon cũ; giữ nguyên các nhóm khác và thao tác hiện có.
+
+
 ## 2026-10-15 — Nút disabled trong Ribbon Word
 
 - Nút chưa thể sử dụng vẫn hiển thị trạng thái mờ nhưng dùng con trỏ mũi tên bình thường, không xuất hiện biểu tượng cấm màu đỏ.

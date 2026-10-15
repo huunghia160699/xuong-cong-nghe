@@ -324,3 +324,37 @@ test("Word disabled ribbon buttons keep normal cursor and never animate on hover
   assert.doesNotMatch(home,/className="wsl-font-effect-disabled" title=/);
   assert.match(standard,/cursor: default/);
 });
+
+
+test("Word Font group has deliberate two-row alignment, real color swatches and correct disabled state",()=>{
+  const home=readFileSync("src/features/word-simulator/word-home-ribbon.tsx","utf8");
+  const css=readFileSync("src/features/word-simulator/word-font-ribbon.css","utf8");
+  const layout=readFileSync("src/app/(word-simulator)/cong-cu/mo-phong-word/layout.tsx","utf8");
+  const standard=readFileSync("docs/WORD_SIMULATOR_STANDARD.md","utf8");
+  const start=home.indexOf('<Group name="Font"');
+  const end=home.indexOf('<Group name="Paragraph"');
+  assert.ok(start>=0&&end>start);
+  const font=home.slice(start,end);
+  assert.match(font,/className="wsl-font-top"/);
+  assert.match(font,/className="wsl-font-bottom"/);
+  assert.ok(font.indexOf('className="wsl-font-top"')<font.indexOf('className="wsl-font-bottom"'));
+  for(const label of ["Font","Font Size","Increase Font Size","Decrease Font Size","Change Case","Clear All Formatting","Bold","Italic","Underline","Strikethrough","Subscript","Superscript","Text Highlight Color","Font Color"])
+    assert.ok(font.includes(label),label);
+  for(const cmd of ['run("bold")','run("italic")','run("underline")','run("strikeThrough")','run("subscript")','run("superscript")','run("removeFormat")','run("hiliteColor",event.target.value)','run("foreColor",event.target.value)'])
+    assert.ok(font.includes(cmd),cmd);
+  assert.match(font,/className="wsl-font-effect-disabled" aria-hidden="true"/);
+  assert.doesNotMatch(font,/title="Text Effects/);
+  assert.doesNotMatch(font,/label="Text Effects".*run=/);
+  assert.match(font,/style=\{\{backgroundColor:highlightColor\}\}/);
+  assert.match(font,/style=\{\{backgroundColor:textColor\}\}/);
+  assert.match(css,/grid-template-columns: 136px 43px repeat\(4, 27px\)/);
+  assert.match(css,/grid-template-rows: 27px 27px/);
+  assert.match(css,/\.wsl-home-font \.wsl-font-select-chevron/);
+  assert.match(css,/\.wsl-home-font \.wsl-font-color-swatch/);
+  assert.match(css,/\.wsl-home-font \.wsl-font-color-control:focus-within/);
+  assert.match(css,/\.wsl-home-font \.wsl-font-effect-disabled:hover/);
+  assert.match(css,/cursor: default/);
+  assert.doesNotMatch(css,/cursor:\s*not-allowed/);
+  assert.ok(layout.indexOf('word-font-ribbon.css')>layout.indexOf('word-window-bar.css'));
+  assert.match(standard,/Chuẩn thị giác nhóm Font/);
+});
