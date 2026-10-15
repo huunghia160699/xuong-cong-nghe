@@ -25,6 +25,17 @@
 
 ## III. Lịch sử
 
+### 2026-10-15 — Chỉnh thanh Ribbon giả lập Word giống bản Windows được cung cấp
+- **Yêu cầu:** bỏ phần trên màu xanh, giữ đủ các tab Ribbon như ảnh, ưu tiên giống nhất các nhóm chức năng Home.
+- **File thay đổi:** `src/features/word-simulator/word-simulator.tsx`, `word-home-ribbon.tsx`, `word-home-ribbon.css`, `word-simulator.css`, route layout, `docs/WORD_SIMULATOR_STANDARD.md`, `tests/presentation-basics.test.mjs`, CHANGELOG và nhật ký.
+- **UI:** dải tab trắng đủ File/Home/Insert/Design/Layout/References/Mailings/Review/View/Help; Home Ribbon các nhóm Clipboard, Font, Paragraph, Styles, Editing; thứ tự và mật độ công cụ gần ảnh; không có AutoSave, Dictate, Editor, Add-ins, Comments, Share, Sign in.
+- **Quyết định:** các lệnh có phản ứng đúng nội dung, tab nâng cao chưa có chỉ rõ chưa hỗ trợ, không tạo nút giả. Bổ sung Change Case, font size +/−, chỉ số trên/dưới, format painter mức cơ bản, styles, tìm/thay thế, giãn dòng và thước đứng.
+- **Kiểm thử:** GitHub Actions validator, unit, typecheck, build và route smoke; cần kiểm tra trực quan trên trình duyệt với màn 360/768/1280 và một số trình duyệt.
+- **GitHub:** theo PR `feat/word-ribbon-home-fidelity` và commit sau squash merge.
+- **Vercel:** chỉ công bố khi READY, cùng SHA GitHub main và alias chính `xuong-cong-nghe.vercel.app`.
+- **Giới hạn:** `execCommand` deprecated; DOCX/pagination chuẩn chưa hỗ trợ.
+
+
 ### 2026-10-15 — Công cụ mô phỏng Word độc lập với slide
 - **Yêu cầu:** thiết kế công cụ giống bố cục Microsoft Word bản Windows, dùng trực tiếp trên website Xưởng Công Nghệ.
 - **Thay đổi:** `src/features/word-simulator/word-simulator.tsx`, `word-simulator.css`, route `/cong-cu/mo-phong-word`, thẻ trang Công cụ, `docs/WORD_SIMULATOR_STANDARD.md`, AGENTS, tests, CHANGELOG.

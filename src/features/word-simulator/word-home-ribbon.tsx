@@ -76,7 +76,6 @@ export function WordHomeRibbon({
        <Btn label="Strikethrough" icon={<Strikethrough size={16}/>} run={()=>run("strikeThrough")}/>
        <Btn label="Subscript" icon={<Subscript size={16}/>} run={()=>run("subscript")}/>
        <Btn label="Superscript" icon={<Superscript size={16}/>} run={()=>run("superscript")}/>
-       <Btn label="Text Effects" icon={<span className="wsl-letter-blue">A</span>} run={()=>run("bold")} title="Tô đậm chữ (hiệu ứng nâng cao chưa hỗ trợ)"/>
        <label className="wsl-color-compact"><Highlighter size={17} color="#c39b02"/><input aria-label="Text Highlight Color" type="color" defaultValue="#ffff00" onChange={event=>run("hiliteColor",event.target.value)}/></label>
        <label className="wsl-color-compact"><span className="wsl-letter-black">A</span><input aria-label="Font Color" type="color" defaultValue="#04122d" onChange={event=>run("foreColor",event.target.value)}/></label>
      </div>

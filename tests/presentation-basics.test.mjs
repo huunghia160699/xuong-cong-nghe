@@ -231,3 +231,26 @@ test("independent Word simulator has functional editor, a tools entry and honest
   assert.equal(wordBasicsLessons.reduce((n,m)=>n+m.slides.length,0),124);
   assert.equal(excelBasicsLessons.reduce((n,m)=>n+m.slides.length,0),96);
 });
+
+
+test("Word simulator shows complete classic Ribbon tabs and Home groups but no blue header",()=>{
+  const source=readFileSync("src/features/word-simulator/word-simulator.tsx","utf8");
+  const home=readFileSync("src/features/word-simulator/word-home-ribbon.tsx","utf8");
+  const css=readFileSync("src/features/word-simulator/word-home-ribbon.css","utf8");
+  const route=readFileSync("src/app/(word-simulator)/cong-cu/mo-phong-word/layout.tsx","utf8");
+  assert.match(source,/TABS:Tab\[\]=\["File","Home","Insert","Design","Layout","References","Mailings","Review","View","Help"\]/);
+  assert.doesNotMatch(source,/<header className="wsl-titlebar">/);
+  assert.match(source,/<WordHomeRibbon/);
+  for(const group of ["Clipboard","Font","Paragraph","Styles","Editing"])
+    assert.ok(home.includes('name="'+group+'"'),group);
+  for(const item of ["Bold","Italic","Underline","Subscript","Superscript","Bullets","Numbering","Justify","Font Color","Format Painter","Find","Replace","Select All"])
+    assert.ok(home.includes(item),item);
+  assert.doesNotMatch(home,/"Text Effects" icon=.*run=\{\(\)=>run\("bold"\)/);
+  assert.match(css,/wsl-style-gallery/);
+  assert.match(css,/@media\(max-width:650px\)/);
+  assert.match(route,/word-home-ribbon.css/);
+  assert.match(source,/wsl-vertical-ruler/);
+  assert.match(source,/replaceText/);
+  assert.match(source,/showMarks/);
+  assert.match(source,/applyStyle/);
+});

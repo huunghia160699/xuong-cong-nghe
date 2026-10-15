@@ -80,3 +80,9 @@
 @media(max-width:900px){.wsl-home-styles{min-width:260px}.wsl-style-gallery{max-width:260px}.wsl-tabs-file-label{display:none}.wsl-tabs .wsl-tab{padding-inline:10px}.wsl-home-ribbon{min-width:1230px}}
 @media(max-width:650px){.wsl-tabs{height:35px;min-height:35px}.wsl-tabs .wsl-tab{height:34px;font-size:12px}.wsl-ribbon:has(.wsl-home-ribbon){min-height:94px;height:94px;max-height:94px}.wsl-home-ribbon{min-width:1230px}.wsl-quick-save{min-width:34px}.wsl-vertical-ruler{width:12px}.wsl-page-scroll{padding-top:9px}}
 @media print{.wsl-vertical-ruler{display:none!important}}
+
+.wsl-tabs-back{width:36px;min-width:36px;height:31px;display:grid;place-items:center;border-right:1px solid #d9d9df;color:#37536b}
+.wsl-tabs-back:hover{background:#eaf3ff;color:#005bfd}
+.wsl-tabs-back:focus-visible{outline:2px solid #005bfd;outline-offset:-2px}
+.wsl-editor.show-paragraph-marks p:after{content:" ¶";font:12px Georgia,serif;color:#7892ac;user-select:none}
+.wsl-editor.show-paragraph-marks h1:after,.wsl-editor.show-paragraph-marks h2:after{content:" ¶";font:12px Georgia,serif;color:#7892ac;user-select:none}
