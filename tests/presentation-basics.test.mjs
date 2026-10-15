@@ -660,13 +660,21 @@ test("Word Ribbon splits icon actions and 13px dropdown menus without fake contr
 });
 
 
-test("Word split buttons share one full hover highlight while preserving separate click targets",()=>{
+test("Word split hover outlines the entire control but fills only the hovered half",()=>{
  const css=readFileSync("src/features/word-simulator/word-split-ribbon.css","utf8");
  const component=readFileSync("src/features/word-simulator/word-split-button.tsx","utf8");
  assert.match(css,/\.wsl-split:hover:not\(:has\(> \.wsl-hb:disabled\)\)/);
  assert.match(css,/\.wsl-split:has\(> \.wsl-split-arrow\[aria-expanded="true"\]\)/);
- assert.match(css,/background:#eaf2fb;\s*box-shadow:inset 0 0 0 1px #b9d1eb;/);
- assert.match(css,/\.wsl-split \.wsl-hb\.wsl-split-main:hover,[\s\S]*?background:transparent;\s*border-color:transparent;/);
+ const outline=css.match(/\.wsl-split:hover:not\(:has\(> \.wsl-hb:disabled\)\),[\s\S]*?\{([^}]*)\}/);
+ assert.ok(outline);
+ assert.match(outline[1],/background:transparent;/);
+ assert.match(outline[1],/box-shadow:0 0 0 1px #b9d1eb;/);
+ const hovered=css.match(/\.wsl-split \.wsl-hb\.wsl-split-main:hover:not\(:disabled\),[\s\S]*?\{([^}]*)\}/);
+ assert.ok(hovered);
+ assert.match(hovered[0],/\.wsl-split \.wsl-hb\.wsl-split-arrow:hover:not\(:disabled\)/);
+ assert.match(hovered[1],/background:#eaf2fb;/);
+ assert.match(hovered[1],/border-color:transparent;/);
+ assert.doesNotMatch(hovered[0],/\[aria-expanded="true"\]/);
  assert.match(component,/onClick=\{run\}/);
  assert.match(component,/onClick=\{toggle\}/);
  assert.match(component,/onClick=\{\(\)=>\{setOpen\(false\);option\.run\(\);\}\}/);
