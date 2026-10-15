@@ -1,5 +1,12 @@
 # Changelog
 
+## 2026-10-15 — Sửa hàng trên Font dàn đều đúng thực tế
+
+- Khắc phục khai báo `justify-content: start` vô tình ghi đè `space-between`, khiến hàng trên Font vẫn dồn trái.
+- Hàng trên hiện được CSS dàn đều khoảng trống hai bên tương tự hàng dưới; giữ nguyên nút, đường phân cách, cỡ chữ và chức năng.
+- Thêm kiểm thử hồi quy để ngăn xung đột cùng thuộc tính CSS trong nhóm Font.
+
+
 ## 2026-10-15 — Căn hàng trên và các vạch ngăn nhóm Font
 
 - Dàn đều các công cụ hàng trên của nhóm Font từ trái sang phải tương tự hàng dưới.

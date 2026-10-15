@@ -409,3 +409,17 @@ test("Word Font spaces both rows, separates Change Case and superscript, and use
   assert.match(css,/\.wsl-home-font \.wsl-font-divider\s*\{[\s\S]*?pointer-events:\s*none/);
   assert.match(standard,/Khoảng cách hàng trên và vạch phân nhóm/);
 });
+
+
+test("Word top Font row has no CSS override defeating space-between alignment",()=>{
+  const css=readFileSync("src/features/word-simulator/word-font-ribbon.css","utf8");
+  const rules=[...css.matchAll(/\.wsl-home-font \.wsl-font-top\s*\{([^}]+)\}/g)];
+  assert.equal(rules.length,1,"only one primary top-row layout block");
+  const properties=[...rules[0][1].matchAll(/justify-content\s*:\s*([^;]+)\s*;/g)].map(m=>m[1].trim());
+  assert.deepEqual(properties,["space-between"],"later justify-content must not override space-between");
+  assert.match(rules[0][1],/width:\s*100%/);
+  assert.match(rules[0][1],/grid-template-columns:\s*136px 43px repeat\(2, 27px\) 1px 27px 1px 27px/);
+  assert.doesNotMatch(rules[0][1],/justify-content:\s*(?:start|flex-start)/);
+  const standard=readFileSync("docs/WORD_SIMULATOR_STANDARD.md","utf8");
+  assert.match(standard,/Sửa xung đột CSS khiến hàng trên Font không giãn đều/);
+});

@@ -28,7 +28,6 @@
   min-height: 27px;
   width: 100%;
   align-items: center;
-  justify-content: start;
 }
 .wsl-home-font .wsl-font-divider {
   display: block;

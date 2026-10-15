@@ -89,3 +89,10 @@ Ngày: 15/10/2026. Đường dẫn: `/cong-cu/mo-phong-word`.
 - **Hai vạch đứng nhỏ** ngay trước và sau Change Case (**Aa**), và **một vạch đứng nhỏ** ngay sau Superscript (**x²**) ở hàng dưới. Vạch mảnh 1px × 18px, màu xám nhạt, `aria-hidden`, không tạo nút giả, không hover và không cản chọn công cụ.
 - **Clear All Formatting:** dùng trực tiếp icon **Eraser** rõ ràng thay cho chữ A chồng cục tẩy; chức năng vẫn gọi `removeFormat`.
 - Giữ nhóm Font hai hàng, các nút disabled, thao tác thật của công cụ, cỡ chữ và vị trí các nhóm Ribbon khác. Tại màn nhỏ Ribbon tiếp tục cuộn ngang.
+
+## 15/10/2026 — Sửa xung đột CSS khiến hàng trên Font không giãn đều
+
+- **Nguyên nhân gốc:** cùng một khai báo `.wsl-home-font .wsl-font-top` chứa `justify-content: space-between` rồi lại chứa `justify-content: start` ở phía sau; CSS áp dụng giá trị cuối làm tất cả phần tử dồn trái.
+- **Quy tắc:** hàng trên chỉ có **một** `justify-content: space-between` để khoảng trống tự chia đều giữa ô tên phông, cỡ chữ, hai nút tăng/giảm, hai vạch phân cách, nút Aa và nút cục tẩy. Nút cuối phải sát mép phải của nội dung nhóm Font; nút đầu sát mép trái.
+- Giữ nguyên độ rộng các ô chọn, `grid-template-columns`, ba vạch phân cách, kích thước nhóm Font, hàng dưới, trạng thái nút và chức năng.
+- Test hồi quy phải xác nhận `.wsl-font-top` có đúng một khai báo `justify-content` với giá trị `space-between`. Nếu phát sinh thêm khai báo, coi là lỗi.
