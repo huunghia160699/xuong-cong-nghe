@@ -58,12 +58,12 @@ export function WordSplitButton({label,icon,run,options,className="",vertical=fa
     document.addEventListener("pointerdown",outside);
     document.addEventListener("keydown",keydown);
     window.addEventListener("resize",closeOnScroll);
-    window.addEventListener("scroll",closeOnScroll,true);
+    document.querySelector(".wsl-ribbon")?.addEventListener("scroll",closeOnScroll);
     return ()=>{
       document.removeEventListener("pointerdown",outside);
       document.removeEventListener("keydown",keydown);
       window.removeEventListener("resize",closeOnScroll);
-      window.removeEventListener("scroll",closeOnScroll,true);
+      document.querySelector(".wsl-ribbon")?.removeEventListener("scroll",closeOnScroll);
     };
   },[open]);
 
