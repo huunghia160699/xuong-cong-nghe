@@ -796,6 +796,10 @@ test("Word rulers measure cm within A4 page margins and follow scroll/zoom/orien
  assert.match(rulers,/const vMargin=narrow\?48:86/);
  assert.match(rulers,/const printableWidth=paperWidth-2\*hMargin/);
  assert.match(rulers,/const printableHeight=paperHeight-2\*vMargin/);
+ assert.match(rulers,/const value=index\*QUARTER_CM\*ratio;/);
+ assert.match(rulers,/RulerTicks length=\{printableWidth\*ratio\} axis="horizontal" ratio=\{ratio\}/);
+ assert.match(rulers,/RulerTicks length=\{printableHeight\*ratio\} axis="vertical" ratio=\{ratio\}/);
+ assert.doesNotMatch(rulers,/transform:\x60scale\(/);
  assert.match(rulers,/mark\.whole&&mark\.index>0/);
  assert.match(rulers,/MarginMarker side="left"/);
  assert.match(rulers,/MarginMarker side="right"/);
