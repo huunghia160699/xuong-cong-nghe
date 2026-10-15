@@ -1,5 +1,11 @@
 # Changelog
 
+## 2026-10-15 — Tam giác tăng/giảm Font Size sát mẫu
+
+- Hai nút tăng và giảm cỡ chữ Word dùng tam giác đặc hơi bo góc, không có thân mũi tên, đặt ngay đỉnh bên phải chữ A.
+- Mũi tên có màu đen theo ảnh tham khảo, giữ nguyên đường chân chữ A, thứ tự bố cục và chức năng.
+
+
 ## 2026-10-15 — Icon Indent còn bốn dòng
 
 - Đơn giản hóa Decrease/Increase Indent: mỗi icon chỉ có bốn đường kẻ ngang, hai dòng giữa nhường chỗ cho mũi tên xanh, dễ nhìn hơn.

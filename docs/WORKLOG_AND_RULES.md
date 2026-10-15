@@ -25,6 +25,15 @@
 
 ## III. Lịch sử
 
+### 2026-10-15 — Thay caret tăng/giảm Font Size theo ảnh tham khảo
+- **Yêu cầu:** thay arrow trong hai nút tăng/giảm cỡ chữ thành tam giác đặc đáy ngang, hơi bo góc như ảnh, đặt ngay đầu bên phải chữ A.
+- **File:** `src/features/word-simulator/word-home-ribbon.tsx`, `word-font-ribbon.css`, `docs/WORD_SIMULATOR_STANDARD.md`, `tests/presentation-basics.test.mjs`, `CHANGELOG.md`, `docs/WORKLOG_AND_RULES.md`.
+- **Quy tắc:** Increase hướng lên/Decrease hướng xuống, dùng SVG tam giác bo nhẹ không thân và màu #111; hai chữ A chung baseline. Giữ nguyên vị trí và handler đang hoạt động, không sửa chức năng khác.
+- **Kiểm thử:** GitHub CI tests/typecheck/build/smoke; chưa chạy pixel comparison trên trình duyệt.
+- **GitHub:** PR `style/word-size-caret-reference`, squash commit trong Git history.
+- **Vercel:** production deploy commit main khi CI đạt; chỉ xác nhận READY khi trùng SHA và domain chính có alias.
+
+
 ### 2026-10-15 — Giản lược hai icon Indent còn bốn đường kẻ
 - **Yêu cầu:** icon Decrease/Increase Indent bị rối, chỉ cần bốn hàng ngang.
 - **File:** `src/features/word-simulator/word-home-ribbon.tsx`, `docs/WORD_SIMULATOR_STANDARD.md`, `docs/WORKLOG_AND_RULES.md`, `CHANGELOG.md`, `tests/presentation-basics.test.mjs`.
