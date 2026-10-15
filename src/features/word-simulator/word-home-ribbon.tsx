@@ -1,6 +1,7 @@
 "use client";
 
 import {useState,type ReactNode} from "react";
+import {WordSplitButton} from "./word-split-button";
 import {
   AlignCenter,AlignJustify,AlignLeft,AlignRight,
   ArrowRightToLine,ChevronDown,Clipboard,Copy,Eraser,
@@ -49,7 +50,6 @@ function WordListGlyph({kind}:{kind:"bullets"|"numbering"|"multilevel"}){
             <text x="0" y="6.5">1</text><text x="0" y="13">2</text><text x="0" y="19.5">3</text>
           </g>}
       </svg>}
-    <ChevronDown size={RIBBON_EXPAND_ARROW_SIZE}/>
   </span>;
 }
 
@@ -106,8 +106,13 @@ export function WordHomeRibbon({
  return <div className="wsl-home-ribbon" aria-label="Ribbon Home">
    <Group name="Clipboard" className="wsl-home-clipboard">
      <div className="wsl-home-paste">
-       <Btn className="wsl-hb-paste" label="Paste — Dán" icon={<span className="wsl-clipboard-paste-art"><Clipboard size={31} strokeWidth={1.45}/></span>} run={()=>run("paste")}/>
-       <span>Paste <ChevronDown size={RIBBON_EXPAND_ARROW_SIZE}/></span>
+       <WordSplitButton className="wsl-paste-split" vertical label="Paste — Dán"
+         icon={<span className="wsl-clipboard-paste-art"><Clipboard size={31} strokeWidth={1.45}/></span>}
+         run={()=>run("paste")}
+         options={[
+           {label:"Dán văn bản",run:()=>run("paste")},
+           {label:"Dán giữ định dạng (HTML)",run:()=>run("pasteRich")}
+         ]}/>
      </div>
      <div className="wsl-home-clipboard-stack">
        <Btn className="wsl-hb-with-text" label="Cut — Cắt" disabled={!hasSelection} icon={<><Scissors size={14}/><span>Cut</span></>} run={()=>run("cut")}/>
@@ -135,14 +140,26 @@ export function WordHomeRibbon({
        <Btn className="wsl-font-icon-button" label="Increase Font Size" icon={<span className="wsl-font-size-symbol wsl-font-grow" aria-hidden="true"><span className="wsl-font-size-letter">A<svg className="wsl-font-size-direction" viewBox="0 0 9 8" focusable="false"><path d="M1.4 5.8 4.5 2.7 7.6 5.8" fill="none" stroke="currentColor" strokeWidth="2.1" strokeLinecap="square" strokeLinejoin="miter"/></svg></span></span>} run={()=>editSize(String(Math.min(7,size+1)))}/>
        <Btn className="wsl-font-icon-button" label="Decrease Font Size" icon={<span className="wsl-font-size-symbol wsl-font-shrink" aria-hidden="true"><span className="wsl-font-size-letter">A<svg className="wsl-font-size-direction" viewBox="0 0 9 8" focusable="false"><path d="M1.4 2.2 4.5 5.3 7.6 2.2" fill="none" stroke="currentColor" strokeWidth="2.1" strokeLinecap="square" strokeLinejoin="miter"/></svg></span></span>} run={()=>editSize(String(Math.max(1,size-1)))}/>
        <span className="wsl-font-divider" aria-hidden="true"/>
-       <Btn className="wsl-font-icon-button wsl-font-change-case-button" label="Change Case" icon={<span className="wsl-font-change-case" aria-hidden="true">Aa<ChevronDown size={RIBBON_EXPAND_ARROW_SIZE}/></span>} run={changeCase}/>
+       <WordSplitButton className="wsl-font-split wsl-font-change-case-button" label="Change Case"
+         icon={<span className="wsl-font-change-case" aria-hidden="true">Aa</span>} run={changeCase}
+         options={[
+           {label:"CHỮ HOA",run:()=>run("changeCaseMode","upper")},
+           {label:"chữ thường",run:()=>run("changeCaseMode","lower")},
+           {label:"Viết Hoa Từng Từ",run:()=>run("changeCaseMode","title")},
+           {label:"Viết hoa đầu câu",run:()=>run("changeCaseMode","sentence")}
+         ]}/>
        <span className="wsl-font-divider" aria-hidden="true"/>
        <Btn className="wsl-font-icon-button" label="Clear All Formatting" icon={<Eraser size={20} strokeWidth={1.75} aria-hidden="true"/>} run={()=>run("removeFormat")}/>
      </div>
      <div className="wsl-font-bottom">
        <Btn className="wsl-font-icon-button" label="Bold" icon={<span className="wsl-font-bold" aria-hidden="true">B</span>} run={()=>run("bold")}/>
        <Btn className="wsl-font-icon-button" label="Italic" icon={<span className="wsl-font-italic" aria-hidden="true">I</span>} run={()=>run("italic")}/>
-       <Btn className="wsl-font-icon-button wsl-font-underline-button" label="Underline" icon={<span className="wsl-font-underline" aria-hidden="true">U<ChevronDown size={RIBBON_EXPAND_ARROW_SIZE}/></span>} run={()=>run("underline")}/>
+       <WordSplitButton className="wsl-font-split wsl-font-underline-button" label="Underline"
+         icon={<span className="wsl-font-underline" aria-hidden="true">U</span>} run={()=>run("underline")}
+         options={[
+           {label:"Bật gạch chân",run:()=>run("underlineMode","on")},
+           {label:"Bỏ gạch chân",run:()=>run("underlineMode","off")}
+         ]}/>
        <Btn className="wsl-font-icon-button" label="Strikethrough" icon={<span className="wsl-font-strike" aria-hidden="true">ab</span>} run={()=>run("strikeThrough")}/>
        <Btn className="wsl-font-icon-button" label="Subscript" icon={<span className="wsl-font-sub" aria-hidden="true">x<sub>2</sub></span>} run={()=>run("subscript")}/>
        <Btn className="wsl-font-icon-button" label="Superscript" icon={<span className="wsl-font-super" aria-hidden="true">x<sup>2</sup></span>} run={()=>run("superscript")}/>
