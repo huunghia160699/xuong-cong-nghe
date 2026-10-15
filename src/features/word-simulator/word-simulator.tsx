@@ -3,9 +3,9 @@
 import {useCallback,useEffect,useRef,useState} from "react";
 import {
   AlignCenter,AlignJustify,AlignLeft,AlignRight,ArrowLeft,BookOpen,Check,ChevronDown,
-  Clipboard,Copy,Download,FileImage,FilePlus2,FileText,FolderOpen,ImagePlus,Italic,
-  Link2,List,ListOrdered,Maximize2,Minus,Monitor,Paintbrush,Plus,Printer,Redo2,
-  RotateCcw,Ruler,Save,Search,Strikethrough,Table2,Type,Underline,Undo2
+  Clipboard,Copy,Download,FilePlus2,FileText,FolderOpen,ImagePlus,Italic,
+  Link2,List,ListOrdered,Maximize2,Minus,Plus,Printer,Redo2,
+  Ruler,Save,Search,Strikethrough,Table2,Type,Underline,Undo2
 } from "lucide-react";
 
 type Tab="File"|"Home"|"Insert"|"Layout"|"Review"|"View";
@@ -51,10 +51,22 @@ function sanitize(html:string):string {
     }
     const style=(element as HTMLElement).style;
     const safeStyles:string[]=[];
+    const oldAlign=element.getAttribute("align")??"";
+    if(["left","right","center","justify"].includes(oldAlign))safeStyles.push("text-align:"+oldAlign);
+    if(element.tagName==="FONT"){
+      const face=element.getAttribute("face")??"";
+      const size=element.getAttribute("size")??"";
+      const colorAttr=element.getAttribute("color")??"";
+      if(/^(Arial|Aptos|Calibri|Times New Roman|Georgia|Verdana)$/i.test(face))safeAttrs.face=face;
+      if(/^[1-7]$/.test(size))safeAttrs.size=size;
+      if(/^#[0-9a-f]{3,8}$/i.test(colorAttr))safeAttrs.color=colorAttr;
+    }
     const align=style.textAlign;
     if(["left","right","center","justify"].includes(align))safeStyles.push("text-align:"+align);
     const color=style.color;
     if(/^#[0-9a-f]{3,8}$/i.test(color)||/^rgb\([\d\s,.%]+\)$/i.test(color))safeStyles.push("color:"+color);
+    const fontSize=style.fontSize;
+    if(/^(?:\d{1,2}(?:\.\d)?)(?:pt|px)$/.test(fontSize))safeStyles.push("font-size:"+fontSize);
     const font=style.fontFamily;
     if(/^(Arial|Aptos|Calibri|Times New Roman|Georgia|Verdana)(,\s*sans-serif|,\s*serif)?$/i.test(font))safeStyles.push("font-family:"+font);
     for(const attr of Array.from(element.attributes))element.removeAttribute(attr.name);
@@ -220,24 +232,19 @@ export function WordSimulator(){
   }
   function findText(){
     if(!query.trim())return;
-    const text=editor.current?.innerText??"";
-    const occurrence=text.toLocaleLowerCase("vi").indexOf(query.toLocaleLowerCase("vi"));
-    if(occurrence<0){setStatus("Không tìm thấy: "+query);return;}
-    restoreSelection();
-    const walker=document.createTreeWalker(editor.current!,NodeFilter.SHOW_TEXT);
-    let start=0;
+    if(!editor.current)return;
+    const walker=document.createTreeWalker(editor.current,NodeFilter.SHOW_TEXT);
     while(walker.nextNode()){
       const node=walker.currentNode,textValue=node.textContent??"";
-      if(start+textValue.length>occurrence){
+      const found=textValue.toLocaleLowerCase("vi").indexOf(query.toLocaleLowerCase("vi"));
+      if(found>=0){
         const range=document.createRange();
-        const a=occurrence-start;
-        range.setStart(node,a);range.setEnd(node,Math.min(textValue.length,a+query.length));
+        range.setStart(node,found);range.setEnd(node,Math.min(textValue.length,found+query.length));
         const selection=window.getSelection();selection?.removeAllRanges();selection?.addRange(range);
-        editor.current?.focus();rememberSelection();setStatus("Đã tìm thấy: "+query);return;
+        editor.current.focus();rememberSelection();setStatus("Đã tìm thấy: "+query);return;
       }
-      start+=textValue.length;
     }
-    setStatus("Đã tìm thấy nội dung, không thể xác định vị trí");
+    setStatus("Không tìm thấy: "+query);
   }
   const commands=(items:RibbonCommand[])=>items.map(item=><ToolButton key={item.id} item={item}/>);
   const fileActions=[
