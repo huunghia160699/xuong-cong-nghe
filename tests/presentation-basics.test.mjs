@@ -565,3 +565,35 @@ test("Word Indent image fidelity and Font blue arrows survive legacy CSS cascade
 });
 
 
+
+test("Word Font toolbar has centered 27px controls, 3px intrinsic caret gap, matching dividers",()=>{
+ const css=readFileSync("src/features/word-simulator/word-font-ribbon.css","utf8");
+ const para=readFileSync("src/features/word-simulator/word-paragraph-ribbon.css","utf8");
+ const home=readFileSync("src/features/word-simulator/word-home-ribbon.tsx","utf8");
+ const rule=(text,selector)=>{
+   const i=text.indexOf(selector+" {");
+   assert.ok(i>=0,selector);
+   return text.slice(text.indexOf("{",i)+1,text.indexOf("}",i));
+ };
+ const font=home.slice(home.indexOf('<Group name="Font"'),home.indexOf('<Group name="Paragraph"'));
+ assert.equal((font.match(/className="wsl-font-size-letter">A<svg/g)||[]).length,2);
+ const arrow=rule(css,".wsl-home-font .wsl-font-size-direction");
+ assert.match(arrow,/position: absolute/);
+ assert.ok(arrow.includes("left: calc(100% + 3px)"));
+ assert.ok(arrow.includes("width: 5px"));
+ assert.ok(arrow.includes("height: 4px"));
+ assert.doesNotMatch(arrow,/right:/);
+ for(const sel of [".wsl-home-font .wsl-font-top",".wsl-home-font .wsl-font-bottom",".wsl-home-font .wsl-font-select",".wsl-home-font .wsl-hb.wsl-font-icon-button",".wsl-home-font .wsl-font-effect-disabled",".wsl-home-font .wsl-font-color-control"]){
+   assert.match(rule(css,sel),/height: 27px/);
+ }
+ for(const sel of [".wsl-home-font .wsl-font-select-chevron",".wsl-home-font .wsl-font-color-chevron"]){
+   assert.match(rule(css,sel),/top: 50%/);
+   assert.match(rule(css,sel),/translateY\(-50%\)/);
+ }
+ for(const block of [rule(css,".wsl-home-font .wsl-font-divider"),rule(para,".wsl-home-paragraph .wsl-paragraph-divider")]){
+   for(const prop of ["width: 1px;","height: 18px;","background: #c9ced6;","align-self: center;"]){
+     assert.ok(block.includes(prop),prop);
+   }
+ }
+ assert.match(rule(css,".wsl-home-font .wsl-font-shrink .wsl-font-size-letter"),/font-size: 15.4px/);
+});
