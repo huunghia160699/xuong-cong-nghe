@@ -25,6 +25,15 @@
 
 ## III. Lịch sử
 
+### 2026-10-15 — Thu nhỏ và căn ngang hai mũi tên tăng/giảm Font Size
+- **Yêu cầu:** hai mũi tên xanh trên A vẫn thấy khoảng cách không đều vì cỡ chữ A khác nhau; giảm mỗi mũi tên còn khoảng nửa size và đặt absolute ngang đầu A nhỏ.
+- **File:** `src/features/word-simulator/word-font-ribbon.css`, `tests/presentation-basics.test.mjs`, `docs/WORD_SIMULATOR_STANDARD.md`, `docs/WORKLOG_AND_RULES.md`, `CHANGELOG.md`.
+- **Chỉnh sửa:** SVG giữ nguyên hướng và các lệnh; CSS render từ 9×8 về 5×4, cùng `top:6px`; Grow `right:2px`, Shrink `right:5px` bù chiều rộng chữ A nhỏ để hai khoảng trống ngang cân đối. Không thay đổi chức năng hoặc các nhóm còn lại.
+- **Kiểm thử:** regression về kích thước, tọa độ, baseline và handler; CI tests/typecheck/build/route smoke (kết quả theo PR). Không coi kiểm thử tĩnh là visual QA trên Production.
+- **GitHub:** PR `style/word-size-chevron-half-aligned`, SHA merge xem lịch sử sau hợp nhất.
+- **Vercel:** xác nhận READY, commit trùng GitHub main và alias chính trước khi thông báo.
+
+
 ### 2026-10-15 — Khắc phục icon vẫn giống cũ do CSS ghi đè và chưa khớp ảnh
 - **Phản hồi:** người dùng không thấy thay đổi trên icon Font Size và Indent dù các PR trước báo triển khai thành công.
 - **Nguyên nhân xác nhận từ mã:** `word-window-bar.css` đặt màu SVG bằng selector có specificity lớn hơn `word-font-ribbon.css`, ghi đè chevron màu xanh thành xám. Đồng thời icon Indent vẽ bốn dòng trong khi ảnh tham chiếu cuối chỉ có ba dòng.
