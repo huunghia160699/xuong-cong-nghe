@@ -165,18 +165,22 @@ export function WordHomeRibbon({
        <Btn className="wsl-font-icon-button" label="Superscript" icon={<span className="wsl-font-super" aria-hidden="true">x<sup>2</sup></span>} run={()=>run("superscript")}/>
        <span className="wsl-font-divider" aria-hidden="true"/>
        <span className="wsl-font-effect-disabled" aria-hidden="true"><span className="wsl-word-color-effect">A</span></span>
-       <label className="wsl-font-color-control" aria-label="Text Highlight Color">
-         <Highlighter size={17} strokeWidth={1.8} aria-hidden="true"/>
-         <span className="wsl-font-color-swatch" style={{backgroundColor:highlightColor}} aria-hidden="true"/>
-         <ChevronDown size={RIBBON_EXPAND_ARROW_SIZE} className="wsl-font-color-chevron" aria-hidden="true"/>
-         <input type="color" value={highlightColor} aria-label="Text Highlight Color" onChange={event=>{setHighlightColor(event.target.value);run("hiliteColor",event.target.value);}}/>
-       </label>
-       <label className="wsl-font-color-control" aria-label="Font Color">
-         <span className="wsl-font-color-letter" aria-hidden="true">A</span>
-         <span className="wsl-font-color-swatch" style={{backgroundColor:textColor}} aria-hidden="true"/>
-         <ChevronDown size={RIBBON_EXPAND_ARROW_SIZE} className="wsl-font-color-chevron" aria-hidden="true"/>
-         <input type="color" value={textColor} aria-label="Font Color" onChange={event=>{setTextColor(event.target.value);run("foreColor",event.target.value);}}/>
-       </label>
+       <WordSplitButton className="wsl-font-split wsl-font-color-split" label="Text Highlight Color"
+         icon={<span className="wsl-font-color-art"><Highlighter size={17} strokeWidth={1.8} aria-hidden="true"/><span className="wsl-font-color-swatch" style={{backgroundColor:highlightColor}}/></span>}
+         run={()=>run("hiliteColor",highlightColor)}
+         options={["#ffff00","#a7f3d0","#bfdbfe","#fecdd3"].map(color=>({
+           label:color==="#ffff00"?"Vàng":color==="#a7f3d0"?"Xanh lá":color==="#bfdbfe"?"Xanh dương":"Hồng",
+           color,run:()=>{setHighlightColor(color);run("hiliteColor",color);}
+         })).concat([{label:"Không tô sáng",run:()=>run("removeHighlight")}])}
+         footer={<label className="wsl-split-custom-color">Màu tùy chọn <input type="color" value={highlightColor} onChange={event=>{setHighlightColor(event.target.value);run("hiliteColor",event.target.value);}}/></label>}/>
+       <WordSplitButton className="wsl-font-split wsl-font-color-split" label="Font Color"
+         icon={<span className="wsl-font-color-art"><span className="wsl-font-color-letter">A</span><span className="wsl-font-color-swatch" style={{backgroundColor:textColor}}/></span>}
+         run={()=>run("foreColor",textColor)}
+         options={["#111827","#c91c2a","#2563eb","#15803d","#7c3aed"].map(color=>({
+           label:color==="#111827"?"Đen":color==="#c91c2a"?"Đỏ":color==="#2563eb"?"Xanh dương":color==="#15803d"?"Xanh lá":"Tím",
+           color,run:()=>{setTextColor(color);run("foreColor",color);}
+         }))}
+         footer={<label className="wsl-split-custom-color">Màu tùy chọn <input type="color" value={textColor} onChange={event=>{setTextColor(event.target.value);run("foreColor",event.target.value);}}/></label>}/>
      </div>
    </Group>
 
