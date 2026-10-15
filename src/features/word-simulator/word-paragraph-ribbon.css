@@ -56,8 +56,8 @@
   color: #39424d;
   cursor: pointer;
 }
-.wsl-home-paragraph .wsl-hb.wsl-paragraph-list-button {width: 36px;min-width: 36px;}
-.wsl-home-paragraph .wsl-hb.wsl-paragraph-combo-button {width: 38px;min-width: 38px;}
+.wsl-home-paragraph .wsl-hb.wsl-paragraph-list-button {width: 43px;min-width: 43px;}
+.wsl-home-paragraph .wsl-hb.wsl-paragraph-combo-button {width: 43px;min-width: 43px;}
 .wsl-home-paragraph .wsl-hb.wsl-paragraph-icon-button:hover:not(:disabled) {
   background: #eaf2fb;
   border-color: #b9d1eb;
@@ -81,7 +81,7 @@
 .wsl-home-paragraph .wsl-paragraph-list-glyph {
   display: inline-flex;
   align-items: center;
-  width: 33px;
+  width: 37px;
   height: 21px;
   gap: 0;
   pointer-events: none;
@@ -91,7 +91,7 @@
   height: 20px;
   flex: 0 0 24px;
 }
-.wsl-home-paragraph .wsl-paragraph-list-glyph>svg:last-child {width: 8px;height: 10px;flex-shrink: 0;}
+.wsl-home-paragraph .wsl-paragraph-list-glyph>svg:last-child {width: 13px;height: 13px;flex: 0 0 13px;}
 .wsl-home-paragraph .wsl-paragraph-pilcrow {
   color: #34373d;
   font: 700 20px/1 Georgia, serif;
@@ -100,18 +100,18 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 1px;
-  width: 34px;
+  gap: 0;
+  width: 37px;
   height: 23px;
   pointer-events: none;
 }
 .wsl-home-paragraph .wsl-paragraph-combo>svg:last-child {
-  width: 8px;
-  height: 9px;
-  flex: 0 0 8px;
+  width: 13px;
+  height: 13px;
+  flex: 0 0 13px;
 }
 .wsl-home-paragraph .wsl-paragraph-line-spacing>svg:first-child {width:24px;height:21px;flex:0 0 24px;}
-.wsl-home-paragraph .wsl-paragraph-line-spacing>svg:last-child {width:8px;height:9px;flex:0 0 8px;}
+.wsl-home-paragraph .wsl-paragraph-line-spacing>svg:last-child {width:13px;height:13px;flex:0 0 13px;}
 .wsl-home-paragraph .wsl-paragraph-indent-glyph {width:22px;height:21px;display:block;pointer-events:none;}
 .wsl-home-paragraph .wsl-paragraph-sort-glyph {width:22px;height:21px;display:block;pointer-events:none;}
 .wsl-home-paragraph .wsl-paragraph-multilevel-mark {overflow:visible;}
