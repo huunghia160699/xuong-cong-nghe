@@ -1,0 +1,88 @@
+/* Compact Home Ribbon based on desktop Word layout. A full row of tabs, no top title bar. */
+.wsl-home-ribbon{display:flex;align-items:stretch;flex:1;min-width:max-content;min-height:0;height:100%;padding:0 4px;color:#252525;font-family:Arial,"Segoe UI",sans-serif}
+.wsl-home-group{display:flex;flex-direction:column;justify-content:space-between;gap:3px;min-width:0;padding:4px 8px 1px;border-right:1px solid #d8d8dc}
+.wsl-home-group-content{flex:1;display:flex;align-items:center;min-height:0}
+.wsl-home-group-name{font:11px/15px Arial,sans-serif;color:#494949;text-align:center;white-space:nowrap}
+.wsl-home-clipboard .wsl-home-group-content{display:flex;align-items:flex-start;gap:2px}
+.wsl-home-clipboard{min-width:151px}
+.wsl-home-paste{display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:0;padding:2px}
+.wsl-home-paste>span{display:flex;gap:3px;align-items:center;font-size:11px;white-space:nowrap}
+.wsl-hb{display:inline-flex;justify-content:center;align-items:center;flex-shrink:0;width:25px;height:25px;padding:3px;border:1px solid transparent;border-radius:2px;background:transparent;color:#444;cursor:pointer}
+.wsl-hb:hover,.wsl-hb.is-active{border-color:#b8cde5;background:#e9f2ff}
+.wsl-hb:focus-visible{outline:2px solid #005bfd;outline-offset:1px}
+.wsl-hb:disabled{opacity:.35;cursor:not-allowed}
+.wsl-hb svg{flex-shrink:0}
+.wsl-hb-paste{width:38px;height:37px}
+.wsl-home-clipboard-stack{display:flex;flex-direction:column;align-items:flex-start;gap:0}
+.wsl-hb-with-text{width:auto;min-height:22px;height:23px;justify-content:flex-start;gap:5px;padding:3px 5px;font-size:11px;white-space:nowrap}
+.wsl-hb-with-text svg{color:#656565}
+.wsl-home-font .wsl-home-group-content,.wsl-home-paragraph .wsl-home-group-content{display:flex;flex-direction:column;align-items:stretch;justify-content:center;gap:5px}
+.wsl-home-font{min-width:283px}
+.wsl-font-top,.wsl-font-bottom,.wsl-paragraph-row{display:flex;align-items:center;gap:2px;white-space:nowrap}
+.wsl-compact-select{height:25px;border:1px solid #b8b8bf;border-radius:2px;background:white}
+.wsl-compact-select select{height:100%;padding:0 3px;border:0;background:transparent;color:#313131;font:11px Arial,sans-serif}
+.wsl-compact-select select:focus-visible{outline:2px solid #005bfd;outline-offset:1px}
+.wsl-compact-font{width:111px}
+.wsl-compact-font select{width:109px}
+.wsl-compact-size{width:43px}
+.wsl-compact-size select{width:41px}
+.wsl-font-letter{font-weight:700;font-size:17px;color:#4d4d4d}
+.wsl-font-letter sup{font-weight:500;font-size:10px;position:relative;top:-3px}
+.wsl-letter-blue{font:900 18px Arial,sans-serif;color:#0d67a6;text-shadow:1px 1px 0 #a2d6ff}
+.wsl-letter-black{font:700 18px Arial,sans-serif;text-decoration:underline;text-decoration-color:#c83030;text-decoration-thickness:3px;text-underline-offset:3px}
+.wsl-color-compact{display:flex;position:relative;align-items:center;justify-content:center;width:28px;height:26px;cursor:pointer}
+.wsl-color-compact input{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer}
+.wsl-color-compact:focus-within{outline:2px solid #005bfd}
+.wsl-home-paragraph{min-width:233px}
+.wsl-group-rule{height:17px;width:1px;background:#e2e2e2;margin:0 3px}
+.wsl-multi-list{font:12px Arial,sans-serif;display:flex;flex-direction:column;line-height:10px}
+.wsl-multi-list small{margin-left:5px;font-size:9px}
+.wsl-pilcrow{font:700 21px Georgia,serif}
+.wsl-shading-symbol,.wsl-border-symbol{font-size:18px;color:#42536c}
+.wsl-home-styles{min-width:350px;flex:1}
+.wsl-home-styles .wsl-home-group-content{min-width:0;gap:3px}
+.wsl-style-gallery{display:flex;gap:3px;min-width:0;overflow-x:auto;scrollbar-width:thin;align-items:stretch;max-width:min(36vw,560px);padding:2px}
+.wsl-style-tile{display:flex;flex-shrink:0;flex-direction:column;align-items:center;justify-content:center;width:75px;height:51px;padding:4px;border:1px solid transparent;background:white;cursor:pointer;white-space:nowrap;color:#3a3a3a}
+.wsl-style-tile span{font:13px Georgia,"Times New Roman",serif;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+.wsl-style-tile:hover,.wsl-style-tile:focus-visible{border-color:#99b9d9;background:#eff6ff}
+.wsl-style-normal{border:1px solid #a8a8a8}
+.wsl-style-no-spacing span{font-size:12px}
+.wsl-style-heading-1 span{color:#245c7a;font-size:18px}
+.wsl-style-heading-2 span{color:#245c7a;font-size:15px}
+.wsl-style-title span{font-size:25px;color:#1e1e1e}
+.wsl-style-subtitle span{font-size:14px;color:#777}
+.wsl-styles-scroll{display:grid;place-items:center;width:19px;min-width:19px;height:50px;border-left:1px solid #e2e2e2;color:#666}
+.wsl-home-editing{min-width:102px;border-right:0}
+.wsl-home-editing .wsl-home-group-content{display:flex;flex-direction:column;align-items:flex-start;justify-content:flex-start}
+.wsl-home-editing .wsl-hb{font-size:12px}
+.wsl-tab-ribbon-empty{display:flex;align-items:center;justify-content:center;min-width:100%;height:100%;font-size:13px;color:#617083}
+.wsl-tabs .wsl-tab{font:12px/1.3 Arial,"Segoe UI",sans-serif;padding:7px 13px;height:32px;color:#2c3038}
+.wsl-tabs{min-height:32px;height:32px;overflow-x:auto;overflow-y:hidden;border-bottom:1px solid #d2d4d8}
+.wsl-tab:first-child{background:transparent;color:#2c3038}
+.wsl-tab.is-active:not(:first-child){color:#2b2c2e}
+.wsl-tabs .wsl-tab.is-active:after{height:2px;background:#005bfd;left:10px;right:10px}
+.wsl-quick-save{padding:0 10px;font-size:11px}
+.wsl-tabs-file-label{display:flex;align-items:center;gap:6px;margin-left:auto;margin-right:9px;max-width:160px;color:#677080;font-size:11px;white-space:nowrap}
+.wsl-tabs-file-label span{max-width:90px;overflow:hidden;text-overflow:ellipsis}
+.wsl-ribbon:has(.wsl-home-ribbon){height:93px;min-height:93px;max-height:93px;padding:0 3px}
+.wsl-ribbon{border-bottom:1px solid #bfc4cb}
+.wsl-shell{background:#e8e7eb}
+.wsl-workspace{background:#e8e7eb}
+.wsl-page-scroll{position:relative;padding-top:13px}
+.wsl-ruler{margin-bottom:7px}
+.wsl-vertical-ruler{position:absolute;top:0;left:0;width:20px;height:100%;padding-top:42px;background:repeating-linear-gradient(to bottom,#f2f2f4 0,#f2f2f4 18px,#d6d6dc 19px,#f2f2f4 20px);border-right:1px solid #c9cbd0;color:#777;font:9px/1 Arial}
+.wsl-vertical-ruler span{display:block;min-height:72px;writing-mode:vertical-rl}
+.wsl-hb[aria-pressed=true]{background:#d9e7f7}
+.wsl-hb:active{background:#b9d6f3}
+.wsl-search{background:#f7f7f9}
+.wsl-ribbon .wsl-ribbon-group{padding-inline:11px}
+@media(max-width:1250px){.wsl-home-styles{min-width:315px}.wsl-style-gallery{max-width:320px}.wsl-page-scroll{padding-left:25px;padding-right:25px}}
+@media(max-width:900px){.wsl-home-styles{min-width:260px}.wsl-style-gallery{max-width:260px}.wsl-tabs-file-label{display:none}.wsl-tabs .wsl-tab{padding-inline:10px}.wsl-home-ribbon{min-width:1230px}}
+@media(max-width:650px){.wsl-tabs{height:35px;min-height:35px}.wsl-tabs .wsl-tab{height:34px;font-size:12px}.wsl-ribbon:has(.wsl-home-ribbon){min-height:94px;height:94px;max-height:94px}.wsl-home-ribbon{min-width:1230px}.wsl-quick-save{min-width:34px}.wsl-vertical-ruler{width:12px}.wsl-page-scroll{padding-top:9px}}
+@media print{.wsl-vertical-ruler{display:none!important}}
+
+.wsl-tabs-back{width:36px;min-width:36px;height:31px;display:grid;place-items:center;border-right:1px solid #d9d9df;color:#37536b}
+.wsl-tabs-back:hover{background:#eaf3ff;color:#005bfd}
+.wsl-tabs-back:focus-visible{outline:2px solid #005bfd;outline-offset:-2px}
+.wsl-editor.show-paragraph-marks p:after{content:" ¶";font:12px Georgia,serif;color:#7892ac;user-select:none}
+.wsl-editor.show-paragraph-marks h1:after,.wsl-editor.show-paragraph-marks h2:after{content:" ¶";font:12px Georgia,serif;color:#7892ac;user-select:none}

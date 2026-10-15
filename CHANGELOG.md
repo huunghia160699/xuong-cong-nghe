@@ -1,5 +1,13 @@
 # Changelog
 
+## 2026-10-15 — Ribbon Home tương tự Word trên Windows
+
+- Bỏ thanh xanh phía trên; tất cả tab Ribbon Word desktop hiển thị ở hàng đầu tiên.
+- Thiết kế lại Home thật gọn theo các nhóm Clipboard, Font, Paragraph, Styles, Editing; bố cục icon hai hàng và gallery Styles sát ảnh.
+- Giữ lệnh tương tác và bổ sung font size tăng/giảm, định dạng, giãn dòng, Styles, Replace/Select; thêm thước dọc.
+- Bỏ chức năng không liên quan như AutoSave, Dictate, Editor, Add-ins, Comments, Share, Sign in. Tab nâng cao chưa hỗ trợ không tạo chức năng giả.
+
+
 ## 2026-10-15 — Công cụ mô phỏng Microsoft Word
 
 - Bổ sung đường dẫn `/cong-cu/mo-phong-word` với Ribbon và trình soạn thảo A4 để thực hành Word trên web.

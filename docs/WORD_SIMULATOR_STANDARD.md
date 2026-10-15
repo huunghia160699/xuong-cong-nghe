@@ -39,3 +39,14 @@ Ngày: 15/10/2026. Đường dẫn: `/cong-cu/mo-phong-word`.
 - [ ] Không quảng cáo DOCX khi chưa có engine thật.
 - [ ] Kiểm thử typecheck/build/test và URL sau triển khai.
 - [ ] Ghi nhật ký Markdown và xác nhận Vercel READY/SHA.
+
+## 15/10/2026 — Ribbon Word Desktop theo ảnh người dùng
+
+- **Bỏ toàn bộ thanh tiêu đề nền xanh** của công cụ. Hàng đầu tiên là dải tab màu trắng, cùng nút quay lại Công cụ.
+- Hiển thị đầy đủ: File, Home, Insert, Design, Layout, References, Mailings, Review, View, Help. Những tab chưa được phát triển chỉ hiển thị trạng thái chưa hỗ trợ, không có nút giả.
+- Home gần ảnh tham khảo: Clipboard (Paste lớn bên trái, Cut/Copy/Format Painter bên phải); Font (hai hàng, chọn phông và size); Paragraph (hai hàng icon); Styles (gallery ngang); Editing (Find, Replace, Select).
+- Nhãn nhóm đặt nhỏ và căn giữa chân Ribbon; phân cách các nhóm bằng viền dọc mảnh, không dùng thẻ/card lớn cho từng nút.
+- Không có AutoSave, Dictate, Editor, Add-ins, Comments, Share, Sign in. Không biến tác vụ nâng cao thành một tác vụ khác chỉ để bấm được.
+- Lệnh Home cần tương tác thật: format, size, tăng/giảm size, Change Case, clear format, sub/superscript, list/indent, align, line-spacing, border, shading, gallery style, Find/Replace/Select.
+- Giữ vùng soạn thảo giấy A4 với thước ngang và dọc, thanh trạng thái, zoom, tự lưu cục bộ. Màn nhỏ cuộn ngang Ribbon khi cần.
+- Vẫn chưa có engine DOCX, dàn trang nhiều trang Word chuẩn, và nhiều thao tác nâng cao; không được giới thiệu là Word Microsoft chính thức.
