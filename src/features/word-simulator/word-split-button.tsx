@@ -71,7 +71,7 @@ export function WordSplitButton({label,icon,run,options,className="",vertical=fa
   return <>
     <div ref={anchor} className={"wsl-split "+className+(vertical?" wsl-split-vertical":"")+(arrowOnly?" wsl-split-arrow-only":"")}>
       {!arrowOnly&&<button type="button" className={"wsl-hb wsl-split-main"+(active?" is-active":"")}
-        title={disabled?undefined:label} aria-label={label} disabled={disabled}
+        title={disabled?undefined:label} aria-label={label} aria-pressed={active||undefined} disabled={disabled}
         onMouseDown={e=>e.preventDefault()} onClick={run}>{icon}</button>}
       <button type="button" className="wsl-hb wsl-split-arrow" disabled={disabled}
         aria-label={"Mở tùy chọn "+label} aria-haspopup="menu" aria-expanded={open}
