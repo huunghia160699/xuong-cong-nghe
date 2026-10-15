@@ -2,15 +2,18 @@
 
 import {useState,type ReactNode} from "react";
 import {WordSplitButton} from "./word-split-button";
+import {WordRibbonDialog,type RibbonDialogAction} from "./word-ribbon-dialog";
 import {
   AlignCenter,AlignJustify,AlignLeft,AlignRight,
-  ArrowRightToLine,ChevronDown,Clipboard,Copy,Eraser,
+  ArrowDownRight,ArrowRightToLine,ChevronDown,Clipboard,Copy,Eraser,
   Grid2X2,Highlighter,PaintBucket,
   Paintbrush,Scissors,Search,
   WholeWord
 } from "lucide-react";
 
+export type WordFormatKey="bold"|"italic"|"underline"|"strikeThrough"|"subscript"|"superscript";
 type Props={
+  formatActive:Record<WordFormatKey,boolean>;clipboardMode:"copy"|"cut"|null;
   font:string; fontSize:string; showMarks:boolean; hasSelection:boolean; paintArmed:boolean;
   run:(name:string,value?:string)=>void;
   editFont:(name:string)=>void;editSize:(size:string)=>void;
@@ -19,10 +22,13 @@ type Props={
   applyStyle:(name:string)=>void;
 };
 
-function Group({name,className="",children}:{name:string;className?:string;children:ReactNode}){
+function Group({name,className="",children,onDetails}:{name:string;className?:string;children:ReactNode;onDetails:()=>void}){
   return <section className={"wsl-home-group "+className} aria-label={"Nhóm "+name}>
     <div className="wsl-home-group-content">{children}</div>
     <span className="wsl-home-group-name">{name}</span>
+    <button type="button" className="wsl-group-launcher" aria-label={"Mở hộp thoại "+name}
+      title={"Tùy chọn chi tiết "+name} onMouseDown={event=>event.preventDefault()}
+      onClick={onDetails}><ArrowDownRight size={12} strokeWidth={1.65}/></button>
   </section>;
 }
 function Btn({label,icon,run,active=false,disabled=false,className="",title}:{label:string;icon:ReactNode;run:()=>void;active?:boolean;disabled?:boolean;className?:string;title?:string}){
@@ -97,7 +103,7 @@ const FONTS=["Aptos","Arial","Calibri","Times New Roman","Georgia","Verdana"];
 const RIBBON_EXPAND_ARROW_SIZE=13;
 
 export function WordHomeRibbon({
- font,fontSize,showMarks,hasSelection,paintArmed,run,editFont,editSize,changeCase,sortLines,
+ font,fontSize,showMarks,hasSelection,paintArmed,formatActive,clipboardMode,run,editFont,editSize,changeCase,sortLines,
  replaceText,findText,selectAll,toggleMarks,applyStyle
 }:Props){
  const size=Math.max(1,Math.min(7,Number(fontSize)||3));
@@ -106,7 +112,7 @@ export function WordHomeRibbon({
  const [selectedStyle,setSelectedStyle]=useState("Normal");
  const selectStyle=(style:string)=>{applyStyle(style);setSelectedStyle(style);};
  return <div className="wsl-home-ribbon" aria-label="Ribbon Home">
-   <Group name="Clipboard" className="wsl-home-clipboard">
+   <Group name="Clipboard" className="wsl-home-clipboard" onDetails={()=>setDialog("Clipboard")}>
      <div className="wsl-home-paste">
        <WordSplitButton className="wsl-paste-split" vertical label="Paste — Dán"
          icon={<span className="wsl-clipboard-paste-art"><Clipboard size={31} strokeWidth={1.45}/></span>}
@@ -123,7 +129,7 @@ export function WordHomeRibbon({
      </div>
    </Group>
 
-   <Group name="Font" className="wsl-home-font">
+   <Group name="Font" className="wsl-home-font" onDetails={()=>setDialog("Font")}>
      <div className="wsl-font-top">
        <label className="wsl-font-select wsl-font-family">
          <span className="sr-only">Phông chữ</span>
@@ -154,17 +160,17 @@ export function WordHomeRibbon({
        <Btn className="wsl-font-icon-button" label="Clear All Formatting" icon={<Eraser size={20} strokeWidth={1.75} aria-hidden="true"/>} run={()=>run("removeFormat")}/>
      </div>
      <div className="wsl-font-bottom">
-       <Btn className="wsl-font-icon-button" label="Bold" icon={<span className="wsl-font-bold" aria-hidden="true">B</span>} run={()=>run("bold")}/>
-       <Btn className="wsl-font-icon-button" label="Italic" icon={<span className="wsl-font-italic" aria-hidden="true">I</span>} run={()=>run("italic")}/>
-       <WordSplitButton className="wsl-font-split wsl-font-underline-button" label="Underline"
+       <Btn className="wsl-font-icon-button" label="Bold" active={formatActive.bold} icon={<span className="wsl-font-bold" aria-hidden="true">B</span>} run={()=>run("bold")}/>
+       <Btn className="wsl-font-icon-button" label="Italic" active={formatActive.italic} icon={<span className="wsl-font-italic" aria-hidden="true">I</span>} run={()=>run("italic")}/>
+       <WordSplitButton className="wsl-font-split wsl-font-underline-button" label="Underline" active={formatActive.underline}
          icon={<span className="wsl-font-underline" aria-hidden="true">U</span>} run={()=>run("underline")}
          options={[
            {label:"Bật gạch chân",run:()=>run("underlineMode","on")},
            {label:"Bỏ gạch chân",run:()=>run("underlineMode","off")}
          ]}/>
-       <Btn className="wsl-font-icon-button" label="Strikethrough" icon={<span className="wsl-font-strike" aria-hidden="true">ab</span>} run={()=>run("strikeThrough")}/>
-       <Btn className="wsl-font-icon-button" label="Subscript" icon={<span className="wsl-font-sub" aria-hidden="true">x<sub>2</sub></span>} run={()=>run("subscript")}/>
-       <Btn className="wsl-font-icon-button" label="Superscript" icon={<span className="wsl-font-super" aria-hidden="true">x<sup>2</sup></span>} run={()=>run("superscript")}/>
+       <Btn className="wsl-font-icon-button" label="Strikethrough" active={formatActive.strikeThrough} icon={<span className="wsl-font-strike" aria-hidden="true">ab</span>} run={()=>run("strikeThrough")}/>
+       <Btn className="wsl-font-icon-button" label="Subscript" active={formatActive.subscript} icon={<span className="wsl-font-sub" aria-hidden="true">x<sub>2</sub></span>} run={()=>run("subscript")}/>
+       <Btn className="wsl-font-icon-button" label="Superscript" active={formatActive.superscript} icon={<span className="wsl-font-super" aria-hidden="true">x<sup>2</sup></span>} run={()=>run("superscript")}/>
        <span className="wsl-font-divider" aria-hidden="true"/>
        <span className="wsl-font-effect-disabled" aria-hidden="true"><span className="wsl-word-color-effect">A</span></span>
        <WordSplitButton className="wsl-font-split wsl-font-color-split" label="Text Highlight Color"
@@ -186,7 +192,7 @@ export function WordHomeRibbon({
      </div>
    </Group>
 
-   <Group name="Paragraph" className="wsl-home-paragraph">
+   <Group name="Paragraph" className="wsl-home-paragraph" onDetails={()=>setDialog("Paragraph")}>
      <div className="wsl-paragraph-top">
        <WordSplitButton className="wsl-paragraph-split wsl-paragraph-list-button" label="Bullets"
          icon={<WordListGlyph kind="bullets"/>} run={()=>run("insertUnorderedList")}
@@ -246,7 +252,7 @@ export function WordHomeRibbon({
      </div>
    </Group>
 
-   <Group name="Styles" className="wsl-home-styles">
+   <Group name="Styles" className="wsl-home-styles" onDetails={()=>setDialog("Styles")}>
      <div className="wsl-style-picker" aria-label="Bộ sưu tập kiểu văn bản">
        <div className="wsl-style-gallery">
          {["Normal","No Spacing","Heading 1","Heading 2"].map(style=>
@@ -266,7 +272,7 @@ export function WordHomeRibbon({
      </div>
    </Group>
 
-   <Group name="Editing" className="wsl-home-editing">
+   <Group name="Editing" className="wsl-home-editing" onDetails={()=>setDialog("Editing")}>
      <Btn className="wsl-hb-with-text" label="Find — Tìm" icon={<><Search size={15}/><span>Find</span></>} run={findText}/>
      <Btn className="wsl-hb-with-text" label="Replace — Thay thế" icon={<><WholeWord size={15}/><span>Replace</span></>} run={replaceText}/>
      <Btn className="wsl-hb-with-text" label="Select All" icon={<><ArrowRightToLine size={15}/><span>Select</span></>} run={selectAll}/>
