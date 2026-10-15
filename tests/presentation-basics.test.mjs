@@ -583,6 +583,17 @@ test("Word Font toolbar has centered 27px controls, 3px intrinsic caret gap, mat
  assert.ok(arrow.includes("width: 5px"));
  assert.ok(arrow.includes("height: 4px"));
  assert.doesNotMatch(arrow,/right:/);
+ const letter=rule(css,".wsl-home-font .wsl-font-size-letter");
+ assert.match(letter,/margin-right: 8px/);
+ assert.match(letter,/align-items: flex-end/);
+ assert.doesNotMatch(letter,/transform:/);
+ assert.match(rule(css,".wsl-home-font .wsl-font-shrink .wsl-font-size-direction"),/top: 6px/);
+ for(const sel of [".wsl-home-font .wsl-font-top",".wsl-home-font .wsl-font-bottom"]){
+   const row=rule(css,sel);
+   assert.match(row,/align-items: stretch/);
+   assert.match(row,/box-sizing: border-box/);
+ }
+ assert.match(rule(css,".wsl-home-font .wsl-font-change-case"),/align-items: center/);
  for(const sel of [".wsl-home-font .wsl-font-top",".wsl-home-font .wsl-font-bottom",".wsl-home-font .wsl-font-select",".wsl-home-font .wsl-hb.wsl-font-icon-button",".wsl-home-font .wsl-font-effect-disabled",".wsl-home-font .wsl-font-color-control"]){
    assert.match(rule(css,sel),/height: 27px/);
  }
