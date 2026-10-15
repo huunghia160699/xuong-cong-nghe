@@ -142,9 +142,16 @@ export function WordHomeRibbon({
          ]}/>
      </div>
      <div className="wsl-home-clipboard-stack">
-       <Btn className="wsl-hb-with-text" label="Cut — Cắt" disabled={!hasSelection} icon={<><Scissors size={14}/><span>Cut</span></>} run={()=>run("cut")}/>
-       <Btn className="wsl-hb-with-text" label="Copy — Sao chép" disabled={!hasSelection} icon={<><Copy size={14}/><span>Copy</span></>} run={()=>run("copy")}/>
-       <Btn className="wsl-hb-with-text" label="Format Painter — Sao chép định dạng" disabled={!hasSelection} active={paintArmed} icon={<><Paintbrush size={14}/><span>Format Painter</span></>} run={()=>run("formatPainter")} title="Sao chép định dạng vùng đang chọn sang vùng khác"/>
+       {(!clipboardMode&&!paintArmed||clipboardMode==="cut")&&
+         <Btn className="wsl-hb-with-text" label="Cut — Cắt" disabled={!hasSelection&&!clipboardMode} active={clipboardMode==="cut"}
+           icon={<><Scissors size={14}/><span>Cut</span></>} run={()=>run("cut")}/>}
+       {(!clipboardMode&&!paintArmed||clipboardMode==="copy")&&
+         <Btn className="wsl-hb-with-text" label="Copy — Sao chép" disabled={!hasSelection&&!clipboardMode} active={clipboardMode==="copy"}
+           icon={<><Copy size={14}/><span>Copy</span></>} run={()=>run("copy")}/>}
+       {(!clipboardMode||paintArmed)&&<Btn className="wsl-hb-with-text" label="Format Painter — Sao chép định dạng"
+         disabled={!hasSelection&&!paintArmed} active={paintArmed}
+         icon={<><Paintbrush size={14}/><span>Format Painter</span></>}
+         run={()=>run("formatPainter")} title="Sao chép định dạng vùng đang chọn sang vùng khác"/>}
      </div>
    </Group>
 
