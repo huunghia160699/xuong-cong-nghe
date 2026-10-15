@@ -147,11 +147,11 @@
 }
 .wsl-home-font .wsl-font-size-direction {
   position: absolute;
-  top: -2px;
+  top: 0;
   right: -1px;
-  width: 12px;
-  height: 11px;
-  color: #111111;
+  width: 9px;
+  height: 8px;
+  color: #2d9ed8;
   pointer-events: none;
 }
 .wsl-home-font .wsl-font-change-case {

@@ -1,5 +1,12 @@
 # Changelog
 
+## 2026-10-15 — Biểu tượng A và Indent theo ảnh gốc mới
+
+- Cặp tăng/giảm Font Size sử dụng nét nhọn xanh lam nhỏ ngay góc trên bên phải A thay cho tam giác đen đặc trước đây.
+- Hai nút Indent giữ 4 dòng ngang, chỉnh mũi tên thành nét xanh nhỏ, không dùng khối mũi tên dày.
+- Không thay đổi thao tác, trạng thái disabled, căn chỉnh hàng hay các nhóm Ribbon khác.
+
+
 ## 2026-10-15 — Tam giác tăng/giảm Font Size sát mẫu
 
 - Hai nút tăng và giảm cỡ chữ Word dùng tam giác đặc hơi bo góc, không có thân mũi tên, đặt ngay đỉnh bên phải chữ A.

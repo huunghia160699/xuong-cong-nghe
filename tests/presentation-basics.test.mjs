@@ -517,35 +517,45 @@ test("Word Indent icons have exactly four horizontal strokes and retain both dir
  assert.match(line[1],/^M2 3\.5H22M12 8\.5H22M12 13\.5H22M2 18\.5H22$/);
  assert.doesNotMatch(block,/M2 2\.8H22M2 6\.2H22/);
  assert.match(block,/direction==="decrease"/);
- assert.match(block,/fill="#1679be"/);
+ assert.match(block,/stroke="#2499d4"/);
  const paragraph=source.slice(source.indexOf('<Group name="Paragraph"'),source.indexOf('<Group name="Styles"'));
  assert.match(paragraph,/label="Decrease Indent"[\s\S]*?run=\{\(\)=>run\("outdent"\)\}/);
  assert.match(paragraph,/label="Increase Indent"[\s\S]*?run=\{\(\)=>run\("indent"\)\}/);
 });
 
 
-test("Word Font grow and shrink use compact solid rounded triangles like supplied reference",()=>{
-  const home=readFileSync("src/features/word-simulator/word-home-ribbon.tsx","utf8");
-  const css=readFileSync("src/features/word-simulator/word-font-ribbon.css","utf8");
-  const font=home.slice(home.indexOf('<Group name="Font"'),home.indexOf('<Group name="Paragraph"'));
-  const grow=font.slice(font.indexOf('label="Increase Font Size"'),font.indexOf('label="Decrease Font Size"'));
-  const shrink=font.slice(font.indexOf('label="Decrease Font Size"'),font.indexOf('label="Change Case"'));
-  for(const glyph of [grow,shrink]){
-    assert.match(glyph,/<svg className="wsl-font-size-direction" viewBox="0 0 12 12"/);
-    assert.match(glyph,/Q[\d.]+ [\d.]+/);
-    assert.match(glyph,/fill="currentColor"/);
-    assert.doesNotMatch(glyph,/d="M6 1 11 6H8v5H4V6H1Z"/);
-    assert.doesNotMatch(glyph,/d="M4 1h4v5h3l-5 5-5-5h3Z"/);
-  }
-  assert.match(grow,/run=\{\(\)=>editSize\(String\(Math.min\(7,size\+1\)\)\)\}/);
-  assert.match(shrink,/run=\{\(\)=>editSize\(String\(Math.max\(1,size-1\)\)\)\}/);
-  const arrow=css.match(/\.wsl-home-font \.wsl-font-size-direction\s*\{([^}]+)\}/);
-  assert.ok(arrow,"arrow CSS exists");
-  assert.match(arrow[1],/top:\s*-2px/);
-  assert.match(arrow[1],/right:\s*-1px/);
-  assert.match(arrow[1],/width:\s*12px/);
-  assert.match(arrow[1],/height:\s*11px/);
-  assert.match(arrow[1],/color:\s*#111111/);
-  assert.match(css,/transform-origin:\s*left bottom/);
-  assert.match(css,/transform:\s*scale\(\.77\)/);
+test("Word font size chevrons match the two reference images and preserve editing commands",()=>{
+ const home=readFileSync("src/features/word-simulator/word-home-ribbon.tsx","utf8");
+ const css=readFileSync("src/features/word-simulator/word-font-ribbon.css","utf8");
+ const font=home.slice(home.indexOf('<Group name="Font"'),home.indexOf('<Group name="Paragraph"'));
+ const grow=font.slice(font.indexOf('label="Increase Font Size"'),font.indexOf('label="Decrease Font Size"'));
+ const shrink=font.slice(font.indexOf('label="Decrease Font Size"'),font.indexOf('label="Change Case"'));
+ for(const glyph of [grow,shrink]){
+   assert.match(glyph,/className="wsl-font-size-direction" viewBox="0 0 9 8"/);
+   assert.match(glyph,/fill="none" stroke="currentColor" strokeWidth="2\.1"/);
+   assert.doesNotMatch(glyph,/viewBox="0 0 12 12"/);
+ }
+ assert.match(grow,/d="M1\.4 5\.8 4\.5 2\.7 7\.6 5\.8"/);
+ assert.match(shrink,/d="M1\.4 2\.2 4\.5 5\.3 7\.6 2\.2"/);
+ assert.match(grow,/run=\{\(\)=>editSize\(String\(Math.min\(7,size\+1\)\)\)\}/);
+ assert.match(shrink,/run=\{\(\)=>editSize\(String\(Math.max\(1,size-1\)\)\)\}/);
+ const rule=css.match(/\.wsl-home-font \.wsl-font-size-direction\s*\{([^}]+)\}/);
+ assert.ok(rule);
+ for(const prop of ["top: 0;","right: -1px;","width: 9px;","height: 8px;","color: #2d9ed8;"])
+   assert.ok(rule[1].includes(prop),prop);
+ assert.match(css,/transform-origin:\s*left bottom/);
+ assert.match(css,/transform:\s*scale\(\.77\)/);
+});
+test("Word indent arrows stay thin blue strokes amid exactly four gray rows",()=>{
+ const source=readFileSync("src/features/word-simulator/word-home-ribbon.tsx","utf8");
+ const block=source.slice(source.indexOf("function WordIndentGlyph"),source.indexOf("function WordLineSpacingGlyph"));
+ assert.match(block,/M2 3\.5H22M12 8\.5H22M12 13\.5H22M2 18\.5H22/);
+ assert.match(block,/direction==="decrease"/);
+ assert.equal((block.match(/stroke="#2499d4"/g)||[]).length,2);
+ assert.equal((block.match(/strokeWidth="2"/g)||[]).length,2);
+ assert.equal((block.match(/fill="none"/g)||[]).length,3);
+ assert.doesNotMatch(block,/fill="#1679be"/);
+ const paragraph=source.slice(source.indexOf('<Group name="Paragraph"'),source.indexOf('<Group name="Styles"'));
+ assert.match(paragraph,/label="Decrease Indent"[\s\S]*?run=\{\(\)=>run\("outdent"\)\}/);
+ assert.match(paragraph,/label="Increase Indent"[\s\S]*?run=\{\(\)=>run\("indent"\)\}/);
 });
