@@ -55,18 +55,25 @@ function WordListGlyph({kind}:{kind:"bullets"|"numbering"|"multilevel"}){
 
 function WordIndentGlyph({direction}:{direction:"decrease"|"increase"}){
   return <svg className="wsl-paragraph-indent-glyph" viewBox="0 0 24 22" aria-hidden="true" focusable="false">
-    <g stroke="#43494e" strokeWidth="1.6" strokeLinecap="square" fill="none">
-      <path d="M2 3.5H22M13 11H22M2 18.5H22"/>
+    <g stroke="#43494e" strokeWidth="1.3" strokeLinecap="square" fill="none">
+      <path d="M2 3H22M13 8.3H22M13 13.7H22M2 19H22"/>
     </g>
-    {direction==="decrease"
-      ?<path d="M1.5 11 8 6.7v2.7h4v3.2H8v2.7Z" fill="#168fca"/>
-      :<path d="M12 11 5.5 6.7v2.7h-4v3.2h4v2.7Z" fill="#168fca"/>}
+    {/* Scale the arrow to 70% about its original center (6.75, 11). */}
+    <g transform="translate(2.025 3.3) scale(0.7)" fill="#168fca">
+      {direction==="decrease"
+        ?<path d="M1.5 11 8 6.7v2.7h4v3.2H8v2.7Z"/>
+        :<path d="M12 11 5.5 6.7v2.7h-4v3.2h4v2.7Z"/>}
+    </g>
   </svg>;
 }
 
 function WordLineSpacingGlyph(){
   return <svg className="wsl-paragraph-line-glyph" viewBox="0 0 28 22" aria-hidden="true" focusable="false">
-    <path d="M11.5 4H27M11.5 11H27M11.5 18H27" stroke="#556170" strokeWidth="1.45" strokeLinecap="square"/>
+    <g stroke="#556170" strokeWidth="1.45" strokeLinecap="square" fill="none">
+      <path d="M11.5 4H27"/>
+      <path d="M11.5 11H27"/>
+      <path d="M11.5 18H27"/>
+    </g>
     <g stroke="#157fc4" strokeWidth="1.35" fill="none" strokeLinecap="round" strokeLinejoin="round">
       <path d="M5 19.5V2.5M1.8 5.7 5 2.5l3.2 3.2M1.8 16.3 5 19.5l3.2-3.2"/>
     </g>
