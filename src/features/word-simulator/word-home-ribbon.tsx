@@ -10,7 +10,7 @@ import {
 } from "lucide-react";
 
 type Props={
-  font:string; fontSize:string; showMarks:boolean;
+  font:string; fontSize:string; showMarks:boolean; hasSelection:boolean; paintArmed:boolean;
   run:(name:string,value?:string)=>void;
   editFont:(name:string)=>void;editSize:(size:string)=>void;
   changeCase:()=>void;sortLines:()=>void;replaceText:()=>void;
@@ -24,29 +24,29 @@ function Group({name,className="",children}:{name:string;className?:string;child
     <span className="wsl-home-group-name">{name}</span>
   </section>;
 }
-function Btn({label,icon,run,active=false,className="",title}:{label:string;icon:ReactNode;run:()=>void;active?:boolean;className?:string;title?:string}){
+function Btn({label,icon,run,active=false,disabled=false,className="",title}:{label:string;icon:ReactNode;run:()=>void;active?:boolean;disabled?:boolean;className?:string;title?:string}){
   return <button type="button" className={"wsl-hb "+className+(active?" is-active":"")}
-    title={title??label} aria-label={label} aria-pressed={active||undefined}
+    title={title??label} aria-label={label} aria-pressed={active||undefined} disabled={disabled}
     onMouseDown={event=>event.preventDefault()} onClick={run}>{icon}</button>;
 }
 const fontSizes=[["1","8"],["2","10"],["3","12"],["4","14"],["5","18"],["6","24"],["7","36"]];
 const FONTS=["Aptos","Arial","Calibri","Times New Roman","Georgia","Verdana"];
 
 export function WordHomeRibbon({
- font,fontSize,showMarks,run,editFont,editSize,changeCase,sortLines,
+ font,fontSize,showMarks,hasSelection,paintArmed,run,editFont,editSize,changeCase,sortLines,
  replaceText,findText,selectAll,toggleMarks,applyStyle
 }:Props){
  const size=Math.max(1,Math.min(7,Number(fontSize)||3));
  return <div className="wsl-home-ribbon" aria-label="Ribbon Home">
    <Group name="Clipboard" className="wsl-home-clipboard">
      <div className="wsl-home-paste">
-       <Btn className="wsl-hb-paste" label="Paste — Dán" icon={<Clipboard size={30} strokeWidth={1.4}/>} run={()=>run("paste")}/>
+       <Btn className="wsl-hb-paste" label="Paste — Dán" icon={<span className="wsl-clipboard-paste-art"><Clipboard size={31} strokeWidth={1.45}/></span>} run={()=>run("paste")}/>
        <span>Paste <ChevronDown size={10}/></span>
      </div>
      <div className="wsl-home-clipboard-stack">
-       <Btn className="wsl-hb-with-text" label="Cut — Cắt" icon={<><Scissors size={14}/><span>Cut</span></>} run={()=>run("cut")}/>
-       <Btn className="wsl-hb-with-text" label="Copy — Sao chép" icon={<><Copy size={14}/><span>Copy</span></>} run={()=>run("copy")}/>
-       <Btn className="wsl-hb-with-text" label="Format Painter — Sao chép định dạng" icon={<><Paintbrush size={14}/><span>Format Painter</span></>} run={()=>run("formatPainter")} title="Sao chép định dạng vùng đang chọn sang vùng khác"/>
+       <Btn className="wsl-hb-with-text" label="Cut — Cắt" disabled={!hasSelection} icon={<><Scissors size={14}/><span>Cut</span></>} run={()=>run("cut")}/>
+       <Btn className="wsl-hb-with-text" label="Copy — Sao chép" disabled={!hasSelection} icon={<><Copy size={14}/><span>Copy</span></>} run={()=>run("copy")}/>
+       <Btn className="wsl-hb-with-text" label="Format Painter — Sao chép định dạng" disabled={!hasSelection} active={paintArmed} icon={<><Paintbrush size={14}/><span>Format Painter</span></>} run={()=>run("formatPainter")} title="Sao chép định dạng vùng đang chọn sang vùng khác"/>
      </div>
    </Group>
 
@@ -72,10 +72,11 @@ export function WordHomeRibbon({
      <div className="wsl-font-bottom">
        <Btn label="Bold" icon={<b>B</b>} run={()=>run("bold")}/>
        <Btn label="Italic" icon={<Italic size={15}/>} run={()=>run("italic")}/>
-       <Btn label="Underline" icon={<Underline size={16}/>} run={()=>run("underline")}/>
+       <Btn label="Underline" icon={<><Underline size={16}/><ChevronDown size={9}/></>} run={()=>run("underline")} className="wsl-underline-dropdown"/>
        <Btn label="Strikethrough" icon={<Strikethrough size={16}/>} run={()=>run("strikeThrough")}/>
        <Btn label="Subscript" icon={<Subscript size={16}/>} run={()=>run("subscript")}/>
        <Btn label="Superscript" icon={<Superscript size={16}/>} run={()=>run("superscript")}/>
+       <span className="wsl-font-effect-disabled" title="Text Effects chưa hỗ trợ" aria-hidden="true"><span className="wsl-word-color-effect">A</span></span>
        <label className="wsl-color-compact"><Highlighter size={17} color="#c39b02"/><input aria-label="Text Highlight Color" type="color" defaultValue="#ffff00" onChange={event=>run("hiliteColor",event.target.value)}/></label>
        <label className="wsl-color-compact"><span className="wsl-letter-black">A</span><input aria-label="Font Color" type="color" defaultValue="#04122d" onChange={event=>run("foreColor",event.target.value)}/></label>
      </div>

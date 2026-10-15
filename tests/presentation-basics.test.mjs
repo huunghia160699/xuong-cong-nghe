@@ -254,3 +254,55 @@ test("Word simulator shows complete classic Ribbon tabs and Home groups but no b
   assert.match(source,/showMarks/);
   assert.match(source,/applyStyle/);
 });
+
+
+test("Word window title and Quick Access Toolbar have working Save Undo Redo and only X exits",()=>{
+ const bar=readFileSync("src/features/word-simulator/word-window-bar.tsx","utf8");
+ const code=readFileSync("src/features/word-simulator/word-simulator.tsx","utf8");
+ const css=readFileSync("src/features/word-simulator/word-window-bar.css","utf8");
+ const layout=readFileSync("src/app/(word-simulator)/cong-cu/mo-phong-word/layout.tsx","utf8");
+ for(const icon of ["Save","Undo2","Redo2","ChevronDown","Minus","Square","X"])
+   assert.match(bar,new RegExp(icon));
+ for(const handler of ["onSave","onUndo","onRedo","onNew","onPrint","onClose"])
+   assert.ok(bar.includes(handler),handler);
+ assert.match(bar,/role="toolbar" aria-label="Quick Access Toolbar"/);
+ assert.match(bar,/href="\/cong-cu" onClick=\{onClose\}/);
+ assert.match(bar,/className="wsl-window-decor"/);
+ assert.doesNotMatch(bar,/onClick=\{.*Minimize|onClick=\{.*Maximize/);
+ assert.match(bar,/ - Word/);
+ assert.match(code,/<WordWindowBar/);
+ assert.match(code,/function saveDraft\(\)/);
+ assert.match(code,/onSave=\{saveDraft\}/);
+ assert.match(code,/onClose=\{saveDraft\}/);
+ assert.match(code,/onUndo=\{\(\)=>command\("undo"\)\}/);
+ assert.match(code,/onRedo=\{\(\)=>command\("redo"\)\}/);
+ assert.match(css,/grid-template-columns/);
+ assert.match(css,/@media\(max-width:650px\)/);
+ assert.match(layout,/word-window-bar.css/);
+});
+
+test("Clipboard and Font correctly map each visible control and respect selection",()=>{
+ const home=readFileSync("src/features/word-simulator/word-home-ribbon.tsx","utf8");
+ const editor=readFileSync("src/features/word-simulator/word-simulator.tsx","utf8");
+ const css=readFileSync("src/features/word-simulator/word-window-bar.css","utf8");
+ for(const value of ["paste","cut","copy","formatPainter","bold","italic","underline","strikeThrough","subscript","superscript","removeFormat","hiliteColor","foreColor"])
+   assert.ok(home.includes(value),value);
+ for(const value of ["Increase Font Size","Decrease Font Size","Change Case","Clear All Formatting","Format Painter","Text Highlight Color","Font Color"])
+   assert.ok(home.includes(value),value);
+ assert.match(home,/disabled=\{!hasSelection\}/);
+ assert.match(home,/active=\{paintArmed\}/);
+ assert.match(home,/Text Effects chưa hỗ trợ/);
+ assert.doesNotMatch(home,/label="Text Effects".*run=/);
+ assert.match(editor,/const success=document\.execCommand\(name\)/);
+ assert.match(editor,/if\(success\)\{if\(name==="cut"\)markChanged\(\);else setStatus\("Đã sao chép/);
+ assert.match(editor,/navigator\.clipboard\.readText\(\)/);
+ assert.match(editor,/range=savedSelection\.current\?\.cloneRange\(\)/);
+ assert.match(editor,/setHasSelection/);
+ assert.match(editor,/function saveDraft/);
+ assert.match(css,/wsl-clipboard-paste-art/);
+ assert.match(css,/wsl-underline-dropdown/);
+ const audit=readFileSync("docs/WORD_SIMULATOR_CONTROL_AUDIT.md","utf8");
+ assert.match(audit,/Clipboard/);
+ assert.match(audit,/Font/);
+ assert.match(audit,/Chưa kiểm thử E2E/);
+});
