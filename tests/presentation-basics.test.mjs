@@ -506,23 +506,21 @@ test("Word ribbon icons use Word-like arrows, nested list and correct sort/spaci
 });
 
 
-test("Word Indent icons have exactly four horizontal strokes and retain both direction actions",()=>{
+test("Word Indent icons render three dark lines and clear cyan arrows, retaining command handlers",()=>{
  const source=readFileSync("src/features/word-simulator/word-home-ribbon.tsx","utf8");
  const block=source.slice(source.indexOf("function WordIndentGlyph"),source.indexOf("function WordLineSpacingGlyph"));
  assert.match(block,/viewBox="0 0 24 22"/);
  const line=block.match(/<path d="([^"]+)"\/>/);
- assert.ok(line,"horizontal Indent line path");
- const horizontals=[...line[1].matchAll(/M[\d.]+ [\d.]+H22/g)];
- assert.equal(horizontals.length,4,"exactly four horizontal lines on each indent glyph");
- assert.match(line[1],/^M2 3\.5H22M12 8\.5H22M12 13\.5H22M2 18\.5H22$/);
- assert.doesNotMatch(block,/M2 2\.8H22M2 6\.2H22/);
- assert.match(block,/direction==="decrease"/);
- assert.match(block,/stroke="#2499d4"/);
+ assert.ok(line);
+ assert.equal([...line[1].matchAll(/M[\d.]+ [\d.]+H22/g)].length,3);
+ assert.match(line[1],/^M2 3\.5H22M13 11H22M2 18\.5H22$/);
+ assert.match(block,/stroke="#43494e"/);
+ assert.match(block,/fill="#168fca"/);
+ assert.equal((block.match(/fill="#168fca"/g)||[]).length,2);
  const paragraph=source.slice(source.indexOf('<Group name="Paragraph"'),source.indexOf('<Group name="Styles"'));
  assert.match(paragraph,/label="Decrease Indent"[\s\S]*?run=\{\(\)=>run\("outdent"\)\}/);
  assert.match(paragraph,/label="Increase Indent"[\s\S]*?run=\{\(\)=>run\("indent"\)\}/);
 });
-
 
 test("Word font size chevrons match the two reference images and preserve editing commands",()=>{
  const home=readFileSync("src/features/word-simulator/word-home-ribbon.tsx","utf8");
@@ -541,21 +539,27 @@ test("Word font size chevrons match the two reference images and preserve editin
  assert.match(shrink,/run=\{\(\)=>editSize\(String\(Math.max\(1,size-1\)\)\)\}/);
  const rule=css.match(/\.wsl-home-font \.wsl-font-size-direction\s*\{([^}]+)\}/);
  assert.ok(rule);
- for(const prop of ["top: 0;","right: -1px;","width: 9px;","height: 8px;","color: #2d9ed8;"])
+ for(const prop of ["top: 0;","right: -1px;","width: 9px;","height: 8px;","color: #2197ce;"])
    assert.ok(rule[1].includes(prop),prop);
  assert.match(css,/transform-origin:\s*left bottom/);
  assert.match(css,/transform:\s*scale\(\.77\)/);
 });
-test("Word indent arrows stay thin blue strokes amid exactly four gray rows",()=>{
- const source=readFileSync("src/features/word-simulator/word-home-ribbon.tsx","utf8");
- const block=source.slice(source.indexOf("function WordIndentGlyph"),source.indexOf("function WordLineSpacingGlyph"));
- assert.match(block,/M2 3\.5H22M12 8\.5H22M12 13\.5H22M2 18\.5H22/);
- assert.match(block,/direction==="decrease"/);
- assert.equal((block.match(/stroke="#2499d4"/g)||[]).length,2);
- assert.equal((block.match(/strokeWidth="2"/g)||[]).length,2);
- assert.equal((block.match(/fill="none"/g)||[]).length,3);
- assert.doesNotMatch(block,/fill="#1679be"/);
- const paragraph=source.slice(source.indexOf('<Group name="Paragraph"'),source.indexOf('<Group name="Styles"'));
- assert.match(paragraph,/label="Decrease Indent"[\s\S]*?run=\{\(\)=>run\("outdent"\)\}/);
- assert.match(paragraph,/label="Increase Indent"[\s\S]*?run=\{\(\)=>run\("indent"\)\}/);
+test("Word Indent image fidelity and Font blue arrows survive legacy CSS cascade",()=>{
+ const home=readFileSync("src/features/word-simulator/word-home-ribbon.tsx","utf8");
+ const fontCss=readFileSync("src/features/word-simulator/word-font-ribbon.css","utf8");
+ const legacy=readFileSync("src/features/word-simulator/word-window-bar.css","utf8");
+ const indent=home.slice(home.indexOf("function WordIndentGlyph"),home.indexOf("function WordLineSpacingGlyph"));
+ assert.match(indent,/M2 3\.5H22M13 11H22M2 18\.5H22/);
+ assert.match(indent,/stroke="#43494e"/);
+ assert.match(indent,/fill="#168fca"/);
+ assert.doesNotMatch(indent,/stroke="#2499d4"/);
+ const font=home.slice(home.indexOf('<Group name="Font"'),home.indexOf('<Group name="Paragraph"'));
+ assert.match(font,/label="Increase Font Size"[\s\S]*?wsl-font-size-direction/);
+ assert.match(font,/label="Decrease Font Size"[\s\S]*?wsl-font-size-direction/);
+ assert.match(fontCss,/\.wsl-home-font \.wsl-font-size-direction[\s\S]*?color: #2197ce/);
+ assert.match(legacy,/\.wsl-home-font \.wsl-font-top \.wsl-hb svg:not\(\.wsl-font-size-direction\)/);
+ assert.doesNotMatch(legacy,/\.wsl-home-font \.wsl-font-top \.wsl-hb svg\{/);
+ const para=home.slice(home.indexOf('<Group name="Paragraph"'),home.indexOf('<Group name="Styles"'));
+ assert.match(para,/run=\{\(\)=>run\("outdent"\)\}/);
+ assert.match(para,/run=\{\(\)=>run\("indent"\)\}/);
 });

@@ -55,12 +55,12 @@ function WordListGlyph({kind}:{kind:"bullets"|"numbering"|"multilevel"}){
 
 function WordIndentGlyph({direction}:{direction:"decrease"|"increase"}){
   return <svg className="wsl-paragraph-indent-glyph" viewBox="0 0 24 22" aria-hidden="true" focusable="false">
-    <g stroke="#505c69" strokeWidth="1.3" strokeLinecap="square" fill="none">
-      <path d="M2 3.5H22M12 8.5H22M12 13.5H22M2 18.5H22"/>
+    <g stroke="#43494e" strokeWidth="1.6" strokeLinecap="square" fill="none">
+      <path d="M2 3.5H22M13 11H22M2 18.5H22"/>
     </g>
     {direction==="decrease"
-      ?<path d="M12 11H3M3 11l3.8-3.5M3 11l3.8 3.5" stroke="#2499d4" strokeWidth="2" strokeLinecap="square" strokeLinejoin="miter" fill="none"/>
-      :<path d="M2 11h9M11 11 7.2 7.5M11 11l-3.8 3.5" stroke="#2499d4" strokeWidth="2" strokeLinecap="square" strokeLinejoin="miter" fill="none"/>}
+      ?<path d="M1.5 11 8 6.7v2.7h4v3.2H8v2.7Z" fill="#168fca"/>
+      :<path d="M12 11 5.5 6.7v2.7h-4v3.2h4v2.7Z" fill="#168fca"/>}
   </svg>;
 }
 
