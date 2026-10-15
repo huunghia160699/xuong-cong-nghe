@@ -294,7 +294,9 @@ test("Clipboard and Font correctly map each visible control and respect selectio
  assert.match(home,/className="wsl-font-effect-disabled" aria-hidden="true"/);
  assert.doesNotMatch(home,/label="Text Effects".*run=/);
  assert.match(editor,/const success=document\.execCommand\(name,false\)/);
- assert.match(editor,/if\(success\)\{if\(name==="cut"\)markChanged\(\);else setStatus\("Đã sao chép/);
+ assert.match(editor,/if\(name==="cut"\)\{/);
+ assert.match(editor,/stagedClipboard\.current=selected;/);
+ assert.match(editor,/setClipboardMode\(name\)/);
  assert.match(editor,/navigator\.clipboard\.readText\(\)/);
  assert.match(editor,/range=savedSelection\.current\?\.cloneRange\(\)/);
  assert.match(editor,/setHasSelection/);
@@ -633,7 +635,7 @@ test("Word Ribbon splits icon actions and 13px dropdown menus without fake contr
  assert.match(component,/onMouseDown=\{e=>e.preventDefault\(\)\}/);
  assert.match(component,/createPortal/);
  assert.match(component,/event.key==="Escape"/);
- assert.match(component,/event.key==="ArrowDown"/);
+ assert.match(component,/e.key==="ArrowDown"/);
  assert.match(component,/focus\(\{preventScroll:true\}\)/);
  assert.match(component,/<ChevronDown size=\{13\}/);
  assert.match(layout,/word-split-ribbon.css/);
