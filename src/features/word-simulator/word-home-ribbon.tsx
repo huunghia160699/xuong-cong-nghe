@@ -70,8 +70,10 @@ export function WordHomeRibbon({
        </label>
        <Btn className="wsl-font-icon-button" label="Increase Font Size" icon={<span className="wsl-font-size-symbol wsl-font-grow" aria-hidden="true"><span className="wsl-font-size-letter">A</span><span className="wsl-font-size-direction">↑</span></span>} run={()=>editSize(String(Math.min(7,size+1)))}/>
        <Btn className="wsl-font-icon-button" label="Decrease Font Size" icon={<span className="wsl-font-size-symbol wsl-font-shrink" aria-hidden="true"><span className="wsl-font-size-letter">A</span><span className="wsl-font-size-direction">↓</span></span>} run={()=>editSize(String(Math.max(1,size-1)))}/>
+       <span className="wsl-font-divider" aria-hidden="true"/>
        <Btn className="wsl-font-icon-button" label="Change Case" icon={<span className="wsl-font-change-case" aria-hidden="true">Aa<ChevronDown size={9}/></span>} run={changeCase}/>
-       <Btn className="wsl-font-icon-button" label="Clear All Formatting" icon={<span className="wsl-font-clear" aria-hidden="true">A<Eraser size={13}/></span>} run={()=>run("removeFormat")}/>
+       <span className="wsl-font-divider" aria-hidden="true"/>
+       <Btn className="wsl-font-icon-button" label="Clear All Formatting" icon={<Eraser size={20} strokeWidth={1.75} aria-hidden="true"/>} run={()=>run("removeFormat")}/>
      </div>
      <div className="wsl-font-bottom">
        <Btn className="wsl-font-icon-button" label="Bold" icon={<span className="wsl-font-bold" aria-hidden="true">B</span>} run={()=>run("bold")}/>
@@ -80,6 +82,7 @@ export function WordHomeRibbon({
        <Btn className="wsl-font-icon-button" label="Strikethrough" icon={<span className="wsl-font-strike" aria-hidden="true">ab</span>} run={()=>run("strikeThrough")}/>
        <Btn className="wsl-font-icon-button" label="Subscript" icon={<span className="wsl-font-sub" aria-hidden="true">x<sub>2</sub></span>} run={()=>run("subscript")}/>
        <Btn className="wsl-font-icon-button" label="Superscript" icon={<span className="wsl-font-super" aria-hidden="true">x<sup>2</sup></span>} run={()=>run("superscript")}/>
+       <span className="wsl-font-divider" aria-hidden="true"/>
        <span className="wsl-font-effect-disabled" aria-hidden="true"><span className="wsl-word-color-effect">A</span></span>
        <label className="wsl-font-color-control" aria-label="Text Highlight Color">
          <Highlighter size={17} strokeWidth={1.8} aria-hidden="true"/>

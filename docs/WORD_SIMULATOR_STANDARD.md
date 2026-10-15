@@ -82,3 +82,10 @@ Ngày: 15/10/2026. Đường dẫn: `/cong-cu/mo-phong-word`.
 - **Grow Font / Shrink Font:** hai chữ A phải có cùng **đường chân** dù một chữ lớn và một chữ nhỏ. Render glyph A trên cùng một điểm neo đáy, thu nhỏ chữ thứ hai bằng `transform: scale(.77)` với `transform-origin: left bottom`; mũi tên tăng/giảm đặt độc lập phía trên, không làm lệch chân chữ.
 - **Hàng dưới Font** chiếm đủ chiều ngang nhóm: `justify-content: space-between`; các nút B/I/U/Strike/Sub/Super, hiệu ứng disabled và hai picker màu giãn **đều** thay vì bị dồn sang trái. Không thay đổi thứ tự nút hoặc kích thước nhóm Font.
 - Giữ nguyên lệnh trên từng nút, phản hồi keyboard focus và quy tắc disabled không hover, con trỏ bình thường.
+
+## 15/10/2026 — Khoảng cách hàng trên và vạch phân nhóm trong Font
+
+- **Hàng trên Font:** giãn đều không gian giữa các thành phần như hàng dưới, bằng CSS grid cố định bề rộng ô chọn phông và cỡ chữ, cộng `justify-content: space-between` trên toàn chiều ngang nhóm; không đẩy các nút về trái.
+- **Hai vạch đứng nhỏ** ngay trước và sau Change Case (**Aa**), và **một vạch đứng nhỏ** ngay sau Superscript (**x²**) ở hàng dưới. Vạch mảnh 1px × 18px, màu xám nhạt, `aria-hidden`, không tạo nút giả, không hover và không cản chọn công cụ.
+- **Clear All Formatting:** dùng trực tiếp icon **Eraser** rõ ràng thay cho chữ A chồng cục tẩy; chức năng vẫn gọi `removeFormat`.
+- Giữ nhóm Font hai hàng, các nút disabled, thao tác thật của công cụ, cỡ chữ và vị trí các nhóm Ribbon khác. Tại màn nhỏ Ribbon tiếp tục cuộn ngang.

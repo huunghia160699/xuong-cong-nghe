@@ -20,13 +20,25 @@
 }
 .wsl-home-font .wsl-font-top {
   display: grid;
-  grid-template-columns: 136px 43px repeat(4, 27px);
-  gap: 4px;
+  /* Keep the font/fixed-size selectors, then distribute the icons and dividers. */
+  grid-template-columns: 136px 43px repeat(2, 27px) 1px 27px 1px 27px;
+  column-gap: 0;
+  justify-content: space-between;
   height: 27px;
   min-height: 27px;
   width: 100%;
   align-items: center;
   justify-content: start;
+}
+.wsl-home-font .wsl-font-divider {
+  display: block;
+  width: 1px;
+  min-width: 1px;
+  height: 18px;
+  align-self: center;
+  background-color: #c9ced6;
+  pointer-events: none;
+  user-select: none;
 }
 .wsl-home-font .wsl-font-bottom {
   display: flex;
@@ -149,23 +161,6 @@
   letter-spacing: -.075em;
 }
 .wsl-home-font .wsl-font-change-case svg {align-self: center; margin-left: 2px;}
-.wsl-home-font .wsl-font-clear {
-  display: inline-flex;
-  position: relative;
-  align-items: flex-start;
-  justify-content: center;
-  width: 22px;
-  height: 22px;
-  font: 18px/22px "Segoe UI", Arial, sans-serif;
-  color: #434d60;
-}
-.wsl-home-font .wsl-font-clear svg {
-  position: absolute;
-  right: -1px;
-  bottom: 0;
-  color: #af46ab;
-  transform: rotate(-29deg);
-}
 .wsl-home-font .wsl-font-bold {
   font: 700 17px/1 Arial, "Segoe UI", sans-serif;
 }
