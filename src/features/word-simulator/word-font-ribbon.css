@@ -32,9 +32,9 @@
   display: flex;
   height: 27px;
   min-height: 27px;
-  gap: 3px;
+  gap: 0;
   width: 100%;
-  justify-content: flex-start;
+  justify-content: space-between;
   align-items: center;
   flex-wrap: nowrap;
 }
@@ -113,30 +113,34 @@
   border-color: transparent;
   box-shadow: none;
 }
-.wsl-home-font .wsl-font-grow,
-.wsl-home-font .wsl-font-shrink {
+.wsl-home-font .wsl-font-size-symbol {
   position: relative;
-  display: inline-block;
-  width: 20px;
+  display: block;
+  width: 23px;
   height: 23px;
-  font-family: "Segoe UI", Arial, sans-serif;
-  font-weight: 500;
-  font-size: 18px;
-  line-height: 23px;
+  flex: 0 0 23px;
   color: #3c4654;
-  text-align: left;
 }
-.wsl-home-font .wsl-font-grow sup,
-.wsl-home-font .wsl-font-shrink sup {
+/* Both letters use the same bottom anchor. Scale the smaller glyph from
+   that anchor rather than centering two differently sized line boxes. */
+.wsl-home-font .wsl-font-size-letter {
   position: absolute;
+  left: 1px;
+  bottom: 1px;
+  display: block;
+  font: 500 20px/20px "Segoe UI", Arial, sans-serif;
+  transform-origin: left bottom;
+}
+.wsl-home-font .wsl-font-shrink .wsl-font-size-letter {
+  transform: scale(.77);
+}
+.wsl-home-font .wsl-font-size-direction {
+  position: absolute;
+  top: -1px;
   right: 0;
-  top: -2px;
-  font-size: 12px;
-  line-height: 14px;
-  font-weight: 700;
+  font: 700 12px/12px "Segoe UI", Arial, sans-serif;
   color: #247bbb;
 }
-.wsl-home-font .wsl-font-shrink {font-size: 15px;}
 .wsl-home-font .wsl-font-change-case {
   display: flex;
   align-items: baseline;
@@ -163,7 +167,7 @@
   transform: rotate(-29deg);
 }
 .wsl-home-font .wsl-font-bold {
-  font: 700 17px/1 Georgia, serif;
+  font: 700 17px/1 Arial, "Segoe UI", sans-serif;
 }
 .wsl-home-font .wsl-font-italic {
   font: italic 17px/1 Georgia, serif;
@@ -173,7 +177,7 @@
   display: flex;
   align-items: center;
   gap: 2px;
-  font: 16px/1 Georgia, serif;
+  font: 16px/1 Arial, "Segoe UI", sans-serif;
   text-decoration: underline;
   text-underline-offset: 2px;
 }

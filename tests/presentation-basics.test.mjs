@@ -358,3 +358,24 @@ test("Word Font group has deliberate two-row alignment, real color swatches and 
   assert.ok(layout.indexOf('word-font-ribbon.css')>layout.indexOf('word-window-bar.css'));
   assert.match(standard,/Chuẩn thị giác nhóm Font/);
 });
+
+
+test("Word Font glyphs use sans-serif B/U, matched A baselines and full-width second row",()=>{
+  const component=readFileSync("src/features/word-simulator/word-home-ribbon.tsx","utf8");
+  const css=readFileSync("src/features/word-simulator/word-font-ribbon.css","utf8");
+  const group=component.slice(component.indexOf('<Group name="Font"'),component.indexOf('<Group name="Paragraph"'));
+  for(const className of ["wsl-font-grow","wsl-font-shrink","wsl-font-size-letter","wsl-font-size-direction","wsl-font-bold","wsl-font-underline"]){
+    assert.ok(group.includes(className),className);
+  }
+  assert.match(css,/\.wsl-home-font \.wsl-font-bold\s*\{\s*font:\s*700 17px\/1 Arial/);
+  assert.match(css,/\.wsl-home-font \.wsl-font-underline\s*\{[\s\S]*?font:\s*16px\/1 Arial/);
+  assert.match(css,/\.wsl-home-font \.wsl-font-size-letter\s*\{[\s\S]*?bottom:\s*1px;/);
+  assert.match(css,/\.wsl-home-font \.wsl-font-size-letter\s*\{[\s\S]*?transform-origin:\s*left bottom;/);
+  assert.match(css,/\.wsl-home-font \.wsl-font-shrink \.wsl-font-size-letter\s*\{[\s\S]*?transform:\s*scale\(\.77\);/);
+  const bottom=css.match(/\.wsl-home-font \.wsl-font-bottom\s*\{([^}]+)\}/);
+  assert.ok(bottom,"second row layout rule exists");
+  assert.match(bottom[1],/width:\s*100%/);
+  assert.match(bottom[1],/justify-content:\s*space-between/);
+  assert.match(bottom[1],/gap:\s*0/);
+  assert.equal((group.match(/run=\{\(\)=>run\("/g)||[]).length>=7,true);
+});

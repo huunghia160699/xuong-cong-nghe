@@ -75,3 +75,10 @@ Ngày: 15/10/2026. Đường dẫn: `/cong-cu/mo-phong-word`.
 - Hai bộ chọn màu hiện gạch màu sát dưới biểu tượng; gạch màu luôn phản ánh `value` của color picker. Khi chọn màu mới, chuyển lệnh thực sự vào editor với `hiliteColor` / `foreColor`.
 - Ribbon vẫn cuộn ngang trên màn nhỏ; không thu nhỏ Font thành các thẻ tùy ý. Chức năng và thứ tự các nhóm Clipboard/Paragraph/Styles/Editing giữ nguyên.
 - Bắt buộc chạy kiểm thử hồi quy và build. Chưa được tuyên bố ảnh mới giống Word chính xác từng pixel khi chưa kiểm tra bằng trình duyệt thật.
+
+## 15/10/2026 — Căn baseline và phân bố hàng dưới của Font
+
+- **B (Bold) và U (Underline)** phải dùng phông sans-serif (Arial/Segoe UI) giống giao diện Word desktop, không dùng Georgia hoặc font có chân.
+- **Grow Font / Shrink Font:** hai chữ A phải có cùng **đường chân** dù một chữ lớn và một chữ nhỏ. Render glyph A trên cùng một điểm neo đáy, thu nhỏ chữ thứ hai bằng `transform: scale(.77)` với `transform-origin: left bottom`; mũi tên tăng/giảm đặt độc lập phía trên, không làm lệch chân chữ.
+- **Hàng dưới Font** chiếm đủ chiều ngang nhóm: `justify-content: space-between`; các nút B/I/U/Strike/Sub/Super, hiệu ứng disabled và hai picker màu giãn **đều** thay vì bị dồn sang trái. Không thay đổi thứ tự nút hoặc kích thước nhóm Font.
+- Giữ nguyên lệnh trên từng nút, phản hồi keyboard focus và quy tắc disabled không hover, con trỏ bình thường.

@@ -68,8 +68,8 @@ export function WordHomeRibbon({
          </select>
          <ChevronDown size={11} aria-hidden="true" className="wsl-font-select-chevron"/>
        </label>
-       <Btn className="wsl-font-icon-button" label="Increase Font Size" icon={<span className="wsl-font-grow" aria-hidden="true">A<sup>↑</sup></span>} run={()=>editSize(String(Math.min(7,size+1)))}/>
-       <Btn className="wsl-font-icon-button" label="Decrease Font Size" icon={<span className="wsl-font-shrink" aria-hidden="true">A<sup>↓</sup></span>} run={()=>editSize(String(Math.max(1,size-1)))}/>
+       <Btn className="wsl-font-icon-button" label="Increase Font Size" icon={<span className="wsl-font-size-symbol wsl-font-grow" aria-hidden="true"><span className="wsl-font-size-letter">A</span><span className="wsl-font-size-direction">↑</span></span>} run={()=>editSize(String(Math.min(7,size+1)))}/>
+       <Btn className="wsl-font-icon-button" label="Decrease Font Size" icon={<span className="wsl-font-size-symbol wsl-font-shrink" aria-hidden="true"><span className="wsl-font-size-letter">A</span><span className="wsl-font-size-direction">↓</span></span>} run={()=>editSize(String(Math.max(1,size-1)))}/>
        <Btn className="wsl-font-icon-button" label="Change Case" icon={<span className="wsl-font-change-case" aria-hidden="true">Aa<ChevronDown size={9}/></span>} run={changeCase}/>
        <Btn className="wsl-font-icon-button" label="Clear All Formatting" icon={<span className="wsl-font-clear" aria-hidden="true">A<Eraser size={13}/></span>} run={()=>run("removeFormat")}/>
      </div>

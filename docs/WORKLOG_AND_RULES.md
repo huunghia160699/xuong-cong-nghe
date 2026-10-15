@@ -25,6 +25,16 @@
 
 ## III. Lịch sử
 
+### 2026-10-15 — Chỉnh nét chữ B/U, chân chữ A và giãn đều hàng dưới Font
+- **Mục tiêu:** làm B và U không chân; sửa biểu tượng tăng/giảm phông để hai chữ A dù khác cỡ vẫn cùng đường chân; dàn đều hàng 2 Font từ trái sang phải.
+- **Thay đổi/file:** `src/features/word-simulator/word-home-ribbon.tsx`, `src/features/word-simulator/word-font-ribbon.css`, `docs/WORD_SIMULATOR_STANDARD.md`, `tests/presentation-basics.test.mjs`, `CHANGELOG.md`, `docs/WORKLOG_AND_RULES.md`.
+- **Quyết định:** B/U dùng Arial/Segoe UI sans-serif; hai chữ A có wrapper cao bằng nhau, glyph neo sát đáy; thu nhỏ bằng transform từ góc trái dưới, mũi tên tách khỏi glyph; 9 công cụ hàng dưới giãn đều với `justify-content: space-between`. Chỉ sửa giao diện nhóm Font, không đổi handler hay các nhóm khác.
+- **Kiểm thử:** GitHub Actions gồm validator, tests, typecheck, build, route smoke; không tuyên bố đã đo baseline bằng browser E2E khi chưa thực hiện.
+- **GitHub commit:** PR `style/word-font-baseline-spacing`; xem squash commit sau hợp nhất.
+- **Vercel Production:** chỉ xác nhận khi READY, SHA trùng main và domain `xuong-cong-nghe.vercel.app` đã gán.
+- **Giới hạn:** cần đối chiếu trực quan bằng ảnh chụp trình duyệt thật để kiểm tra từng pixel.
+
+
 ### 2026-10-15 — Thiết kế chuyên sâu lại nhóm Font của Word Simulator
 - **Yêu cầu:** nhóm Font trước chưa đẹp, cần chỉnh kỹ cho giống giao diện Word desktop người dùng đã cung cấp.
 - **Thay đổi và file:** `src/features/word-simulator/word-home-ribbon.tsx`, thêm `src/features/word-simulator/word-font-ribbon.css`, import tại `src/app/(word-simulator)/cong-cu/mo-phong-word/layout.tsx`, cập nhật `docs/WORD_SIMULATOR_STANDARD.md`, `tests/presentation-basics.test.mjs`, `CHANGELOG.md` và nhật ký này.
