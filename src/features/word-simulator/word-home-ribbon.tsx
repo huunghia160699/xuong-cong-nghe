@@ -26,7 +26,7 @@ function Group({name,className="",children}:{name:string;className?:string;child
 }
 function Btn({label,icon,run,active=false,disabled=false,className="",title}:{label:string;icon:ReactNode;run:()=>void;active?:boolean;disabled?:boolean;className?:string;title?:string}){
   return <button type="button" className={"wsl-hb "+className+(active?" is-active":"")}
-    title={title??label} aria-label={label} aria-pressed={active||undefined} disabled={disabled}
+    title={disabled?undefined:(title??label)} aria-label={label} aria-pressed={active||undefined} disabled={disabled}
     onMouseDown={event=>event.preventDefault()} onClick={run}>{icon}</button>;
 }
 const fontSizes=[["1","8"],["2","10"],["3","12"],["4","14"],["5","18"],["6","24"],["7","36"]];
@@ -76,7 +76,7 @@ export function WordHomeRibbon({
        <Btn label="Strikethrough" icon={<Strikethrough size={16}/>} run={()=>run("strikeThrough")}/>
        <Btn label="Subscript" icon={<Subscript size={16}/>} run={()=>run("subscript")}/>
        <Btn label="Superscript" icon={<Superscript size={16}/>} run={()=>run("superscript")}/>
-       <span className="wsl-font-effect-disabled" title="Text Effects chưa hỗ trợ" aria-hidden="true"><span className="wsl-word-color-effect">A</span></span>
+       <span className="wsl-font-effect-disabled" aria-hidden="true"><span className="wsl-word-color-effect">A</span></span>
        <label className="wsl-color-compact"><Highlighter size={17} color="#c39b02"/><input aria-label="Text Highlight Color" type="color" defaultValue="#ffff00" onChange={event=>run("hiliteColor",event.target.value)}/></label>
        <label className="wsl-color-compact"><span className="wsl-letter-black">A</span><input aria-label="Font Color" type="color" defaultValue="#04122d" onChange={event=>run("foreColor",event.target.value)}/></label>
      </div>

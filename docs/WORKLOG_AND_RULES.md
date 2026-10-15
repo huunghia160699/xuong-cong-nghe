@@ -25,6 +25,16 @@
 
 ## III. Lịch sử
 
+### 2026-10-15 — Chuẩn hóa trạng thái disabled của nút công cụ Word
+- **Yêu cầu:** nút vô hiệu hóa không hiện con trỏ cấm (đỏ), không có hiệu ứng hover, giữ mũi tên chuột bình thường.
+- **Thay đổi và file:** `src/features/word-simulator/word-home-ribbon.css`, `word-window-bar.css`, `word-simulator.css`, `word-home-ribbon.tsx`, `docs/WORD_SIMULATOR_STANDARD.md`, `tests/presentation-basics.test.mjs`, `CHANGELOG.md` và nhật ký này.
+- **Quyết định:** giữ native `disabled` để nút không chạy lệnh, `cursor: default` thay cho `not-allowed`; chỉ áp dụng hover cho nút khả dụng; ẩn thuộc tính title của nút disabled và bỏ tooltip của biểu tượng Text Effects không hoạt động.
+- **Kiểm thử:** GitHub Actions validator, unit tests, TypeScript, production build và route smoke; kết quả kiểm thử thực tế xem PR/CI.
+- **GitHub commit:** xem squash commit PR `fix/word-disabled-cursor-hover`.
+- **Vercel Production:** chỉ xác nhận sau khi READY, SHA bằng GitHub main, alias `xuong-cong-nghe.vercel.app` đã gán.
+- **Giới hạn:** chưa kiểm tra hover bằng trình duyệt thật trên nhiều hệ điều hành.
+
+
 ### 2026-10-15 — Thanh Quick Access và bố cục Clipboard/Font theo ảnh Word
 - **Mục tiêu:** thêm thanh cửa sổ xám nhạt có Quick Access Toolbar trái, Document1 - Word giữa, 3 nút cửa sổ phải (chỉ X thoát); thiết kế lại Clipboard và Font sát ảnh cắt Word người dùng cung cấp.
 - **Phạm vi file:** `src/features/word-simulator/word-window-bar.tsx`, `word-window-bar.css`, `word-simulator.tsx`, `word-home-ribbon.tsx`, `word-home-ribbon.css`, route layout, `docs/WORD_SIMULATOR_STANDARD.md`, `docs/WORD_SIMULATOR_CONTROL_AUDIT.md`, tests, CHANGELOG và WORKLOG.

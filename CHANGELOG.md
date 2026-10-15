@@ -1,5 +1,12 @@
 # Changelog
 
+## 2026-10-15 — Nút disabled trong Ribbon Word
+
+- Nút chưa thể sử dụng vẫn hiển thị trạng thái mờ nhưng dùng con trỏ mũi tên bình thường, không xuất hiện biểu tượng cấm màu đỏ.
+- Không có hiệu ứng hover hay tooltip trên nút disabled; nút đang khả dụng hoạt động và hiển thị hover như trước.
+- Không thay đổi điều kiện bật/tắt hoặc hành vi các chức năng Word.
+
+
 ## 2026-10-15 — Quick Access Toolbar và Clipboard/Font sát ảnh Word
 
 - Thêm thanh cửa sổ sáng: Quick Access Save/Undo/Redo/menu bên trái, tên tài liệu giữa, 3 biểu tượng cửa sổ phải với nút X thoát về Công cụ.

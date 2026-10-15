@@ -306,3 +306,21 @@ test("Clipboard and Font correctly map each visible control and respect selectio
  assert.match(audit,/Font/);
  assert.match(audit,/Chưa kiểm thử E2E/);
 });
+
+test("Word disabled ribbon buttons keep normal cursor and never animate on hover",()=>{
+  const homeCss=readFileSync("src/features/word-simulator/word-home-ribbon.css","utf8");
+  const windowCss=readFileSync("src/features/word-simulator/word-window-bar.css","utf8");
+  const simulatorCss=readFileSync("src/features/word-simulator/word-simulator.css","utf8");
+  const home=readFileSync("src/features/word-simulator/word-home-ribbon.tsx","utf8");
+  const standard=readFileSync("docs/WORD_SIMULATOR_STANDARD.md","utf8");
+  assert.match(homeCss,/\.wsl-hb:hover:not\(:disabled\)/);
+  assert.match(homeCss,/\.wsl-hb:disabled\{opacity:\.35;cursor:default/);
+  assert.match(windowCss,/\.wsl-home-clipboard \.wsl-hb\[disabled\]\{opacity:\.32;cursor:default\}/);
+  assert.match(windowCss,/\.wsl-home-font \.wsl-hb\[disabled\]:hover/);
+  assert.match(simulatorCss,/\.wsl-tool:disabled\{opacity:\.4;cursor:default\}/);
+  assert.doesNotMatch(homeCss+windowCss+simulatorCss,/cursor:not-allowed/);
+  assert.match(home,/title=\{disabled\?undefined:/);
+  assert.match(home,/disabled=\{!hasSelection\}/);
+  assert.doesNotMatch(home,/className="wsl-font-effect-disabled" title=/);
+  assert.match(standard,/cursor: default/);
+});
