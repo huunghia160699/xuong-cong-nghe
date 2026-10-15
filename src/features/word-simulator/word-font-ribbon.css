@@ -27,7 +27,8 @@
   height: 27px;
   min-height: 27px;
   width: 100%;
-  align-items: center;
+  box-sizing: border-box;
+  align-items: stretch;
 }
 .wsl-home-font .wsl-font-divider {
   display: block;
@@ -36,6 +37,8 @@
   height: 18px;
   flex: 0 0 1px;
   box-sizing: border-box;
+  margin: 0;
+  padding: 0;
   align-self: center;
   background: #c9ced6;
   pointer-events: none;
@@ -48,7 +51,8 @@
   gap: 0;
   width: 100%;
   justify-content: space-between;
-  align-items: center;
+  align-items: stretch;
+  box-sizing: border-box;
   flex-wrap: nowrap;
 }
 .wsl-home-font .wsl-font-select {
@@ -59,6 +63,7 @@
   min-height: 27px;
   min-width: 0;
   width: 100%;
+  align-self: center;
   box-sizing: border-box;
   border: 1px solid #b9bec8;
   border-radius: 2px;
@@ -75,6 +80,8 @@
 .wsl-home-font .wsl-font-select select {
   appearance: none;
   -webkit-appearance: none;
+  display: block;
+  box-sizing: border-box;
   width: 100%;
   height: 100%;
   min-width: 0;
@@ -107,6 +114,9 @@
   height: 27px;
   min-height: 27px;
   box-sizing: border-box;
+  align-self: center;
+  line-height: 1;
+  vertical-align: middle;
   padding: 2px;
   border: 1px solid transparent;
   border-radius: 2px;
@@ -130,8 +140,8 @@
   border-color: transparent;
   box-shadow: none;
 }
-/* The caret is anchored to the A glyph itself, not to an estimated right edge.
-   Thus both 20px and 15.4px letters keep a true 3px visual glyph-to-caret gap. */
+/* Each A reserves 8px (3px gap + 5px arrow) in normal flex width. The
+   glyph-and-arrow pair is centered as ONE unit for either font size. */
 .wsl-home-font .wsl-font-size-symbol {
   display: flex;
   position: relative;
@@ -143,30 +153,33 @@
   color: #3c4654;
 }
 .wsl-home-font .wsl-font-size-letter {
-  display: inline-block;
+  display: inline-flex;
   position: relative;
+  align-items: flex-end;
   width: max-content;
   height: 21px;
-  font: 500 20px/21px "Segoe UI", Arial, sans-serif;
+  margin-right: 8px;
+  font: 500 20px/1 "Segoe UI", Arial, sans-serif;
   white-space: nowrap;
-  /* Offset for the 3px gap and 5px chevron so the whole pair is centered. */
-  transform: translateX(-4px);
 }
 .wsl-home-font .wsl-font-shrink .wsl-font-size-letter {
   font-size: 15.4px;
 }
 .wsl-home-font .wsl-font-size-direction {
   position: absolute;
-  top: 5px;
+  top: 2px;
   left: calc(100% + 3px);
   width: 5px;
   height: 4px;
   color: #2197ce;
   pointer-events: none;
 }
+.wsl-home-font .wsl-font-shrink .wsl-font-size-direction {top: 6px;}
 .wsl-home-font .wsl-font-change-case {
   display: flex;
-  align-items: baseline;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
   gap: 1px;
   font: 13px/1 "Segoe UI", Arial, sans-serif;
   letter-spacing: -.075em;
@@ -195,10 +208,13 @@
 }
 .wsl-home-font .wsl-font-sub,
 .wsl-home-font .wsl-font-super {
+  display: flex;
   position: relative;
+  align-items: center;
+  justify-content: center;
   width: 18px;
   height: 20px;
-  line-height: 20px;
+  line-height: 1;
   font-family: "Segoe UI", Arial, sans-serif;
   font-size: 16px;
 }
@@ -211,7 +227,7 @@
   line-height: 10px;
   color: #176cb7;
 }
-.wsl-home-font .wsl-font-sub sub {bottom: -2px;}
+.wsl-home-font .wsl-font-sub sub {bottom: 0;}
 .wsl-home-font .wsl-font-super sup {top: 0;}
 .wsl-home-font .wsl-font-effect-disabled {
   display: grid;
@@ -219,6 +235,8 @@
   width: 27px;
   min-width: 27px;
   height: 27px;
+  box-sizing: border-box;
+  align-self: center;
   opacity: .36;
   cursor: default;
   user-select: none;
@@ -235,6 +253,8 @@
   width: 35px;
   min-width: 35px;
   height: 27px;
+  box-sizing: border-box;
+  align-self: center;
   border: 1px solid transparent;
   border-radius: 2px;
   cursor: pointer;
