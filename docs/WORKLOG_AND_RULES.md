@@ -25,6 +25,15 @@
 
 ## III. Lịch sử
 
+### 2026-10-15 — Chuẩn hóa căn giữa và chiều cao nhóm Font, khoảng A-mũi tên 3px
+- **Yêu cầu:** chevron trên A sát hơn để cách khoảng 3px; hai ô chọn Font/Size cùng chiều cao với nút tăng/giảm, hai hàng đều căn giữa các nút, vạch đứng mảnh cùng kích thước.
+- **File:** `src/features/word-simulator/word-home-ribbon.tsx`, `word-font-ribbon.css`, `word-paragraph-ribbon.css`, `tests/presentation-basics.test.mjs`, `docs/WORD_SIMULATOR_STANDARD.md`, `docs/WORKLOG_AND_RULES.md`, `CHANGELOG.md`.
+- **Quyết định:** đưa SVG mũi tên vào cùng span chữ A để đặt cách mép A chính xác 3px bằng CSS `left:calc(100% + 3px)`; dùng chung chiều cao line box và căn giữa cả cặp, A nhỏ font 15.4px thay vì transform scale; tất cả khung Font = 27px, dropdown được căn giữa theo chiều dọc, picker swatch/chữ căn đều. Vạch phân cách Font và Paragraph cùng 1×18px, cùng #c9ced6.
+- **Kiểm thử:** GitHub CI gồm tests, typecheck, production build, route smoke; đối chiếu screenshot/browser thực tế ở 360/768/1280 vẫn cần thực hiện nếu không có browser.
+- **GitHub:** PR `fix/word-font-uniform-27px-alignment`, SHA squash merge xác nhận sau CI.
+- **Vercel:** chỉ báo READY khi đúng SHA main và alias `xuong-cong-nghe.vercel.app`.
+
+
 ### 2026-10-15 — Đưa hai chevron Font Size sát chữ A thêm một nửa
 - **Yêu cầu:** đưa mũi tên xanh của cả hai nút tăng/giảm Font Size gần chữ A hơn khoảng một nửa khoảng trống hiện tại, không đổi kích thước.
 - **File:** `src/features/word-simulator/word-font-ribbon.css`, `tests/presentation-basics.test.mjs`, `docs/WORD_SIMULATOR_STANDARD.md`, `docs/WORKLOG_AND_RULES.md`, `CHANGELOG.md`.
