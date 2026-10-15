@@ -123,8 +123,17 @@ test("only Word first lesson cover mirrors the public homepage Hero and advances
   assert.match(player,/onAdvance=\{\(\) => move\(current \+ 1\)\}/);
 });
 
-## 11. Tăng typography slide Word đầu tiên (15/10/2026)
-
-- Tiêu đề chính chỉ gồm “Làm quen với Microsoft Word” (trong hai dòng với Microsoft Word màu cyan), không thêm “qua thực hành.”.
-- Không hiển thị dòng phụ “Nhập liệu · Chỉnh sửa · Lưu văn bản”; CTA “Bắt đầu bài học” vẫn chuyển slide tiếp theo.
-- Toàn bộ chữ trên Hero (mô tả, CTA, mục tiêu và mockup) cần đọc dễ khi trình chiếu; dùng cỡ chữ responsive theo `clamp()` hoặc breakpoint. Decorative outline dùng “WORD”, không dùng số “01” lớn.
+test("Word first hero uses large type, concise title and WORD outline",()=>{
+  const hero=readFileSync("src/features/presentations/components/word-home-hero.tsx","utf8");
+  assert.match(hero,/Làm quen với<br\/>\s*<span className="text-cyan">Microsoft Word<\/span>/);
+  assert.doesNotMatch(hero,/qua thực hành\.|Nhập liệu · Chỉnh sửa · Lưu văn bản/);
+  assert.match(hero,/min-h-14/);
+  assert.match(hero,/sm:text-3xl/);
+  assert.match(hero,/text-\[clamp\(2\.4rem,8vw,3\.5rem\)\]/);
+  assert.match(hero,/>WORD<\/span>/);
+  assert.doesNotMatch(hero,/aria-hidden="true">01<\/span>/);
+  assert.match(hero,/onClick=\{onStart\}/);
+  assert.equal(wordBasicsLessons[0].slides[0].blocks[0].type,"wordHomeHero");
+  assert.equal(wordBasicsLessons.reduce((n,m)=>n+m.slides.length,0),124);
+  assert.equal(excelBasicsLessons.reduce((n,m)=>n+m.slides.length,0),96);
+});
