@@ -122,3 +122,10 @@ Ngày: 15/10/2026. Đường dẫn: `/cong-cu/mo-phong-word`.
 - Hai nút **Decrease Indent** và **Increase Indent** sử dụng **chính xác 4 đường ngang** (hai đường đầy đủ trên/dưới, hai đường ngắn ở giữa để chừa chỗ mũi tên), không 5–6 dòng dày đặc.
 - Mũi tên xanh nằm ngang ở giữa với kích thước vừa vặn, đầu hướng trái cho Decrease và hướng phải cho Increase. Nét xám `strokeWidth=1.3`; không thay đổi kích thước 22×21px hoặc hành vi của các nút.
 - Kiểm tra hồi quy số đường trong SVG; chỉ thay biểu tượng, không thay đổi chức năng nhóm Paragraph.
+
+## 15/10/2026 — Tam giác đặc đầu chữ A trong Increase/Decrease Font Size
+
+- Dùng tam giác **đặc không thân mũi tên**, đáy ngang, góc bo nhẹ theo hình mẫu người dùng gửi; không dùng dạng icon `arrow up/down` thân dài.
+- Increase Font Size là tam giác **hướng lên** trên đỉnh bên phải chữ A; Decrease Font Size là tam giác **hướng xuống** cùng vị trí.
+- Mũi tên màu `#111111`, SVG `12×11`, cố định `top: -2px; right: -1px` trong `.wsl-font-size-symbol`. Hai chữ A giữ cùng chân, chữ A nhỏ tiếp tục `scale(.77)` từ gốc trái dưới.
+- Đây chỉ là cập nhật hình dạng SVG và màu/icon CSS, giữ nguyên nhãn truy cập, `run` tăng/giảm cỡ chữ và mọi phần còn lại của Word Ribbon.

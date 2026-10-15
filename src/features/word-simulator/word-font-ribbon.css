@@ -149,9 +149,9 @@
   position: absolute;
   top: -2px;
   right: -1px;
-  width: 10px;
-  height: 10px;
-  color: #247bbb;
+  width: 12px;
+  height: 11px;
+  color: #111111;
   pointer-events: none;
 }
 .wsl-home-font .wsl-font-change-case {

@@ -122,8 +122,8 @@ export function WordHomeRibbon({
          </select>
          <ChevronDown size={11} aria-hidden="true" className="wsl-font-select-chevron"/>
        </label>
-       <Btn className="wsl-font-icon-button" label="Increase Font Size" icon={<span className="wsl-font-size-symbol wsl-font-grow" aria-hidden="true"><span className="wsl-font-size-letter">A</span><svg className="wsl-font-size-direction" viewBox="0 0 12 12" focusable="false"><path d="M6 1 11 6H8v5H4V6H1Z" fill="currentColor"/></svg></span>} run={()=>editSize(String(Math.min(7,size+1)))}/>
-       <Btn className="wsl-font-icon-button" label="Decrease Font Size" icon={<span className="wsl-font-size-symbol wsl-font-shrink" aria-hidden="true"><span className="wsl-font-size-letter">A</span><svg className="wsl-font-size-direction" viewBox="0 0 12 12" focusable="false"><path d="M4 1h4v5h3l-5 5-5-5h3Z" fill="currentColor"/></svg></span>} run={()=>editSize(String(Math.max(1,size-1)))}/>
+       <Btn className="wsl-font-icon-button" label="Increase Font Size" icon={<span className="wsl-font-size-symbol wsl-font-grow" aria-hidden="true"><span className="wsl-font-size-letter">A</span><svg className="wsl-font-size-direction" viewBox="0 0 12 12" focusable="false"><path d="M6 2.2Q6.5 2.2 6.9 2.7L10.8 7.3Q11.7 8.5 10.2 8.5H1.8Q.3 8.5 1.2 7.3L5.1 2.7Q5.5 2.2 6 2.2Z" fill="currentColor"/></svg></span>} run={()=>editSize(String(Math.min(7,size+1)))}/>
+       <Btn className="wsl-font-icon-button" label="Decrease Font Size" icon={<span className="wsl-font-size-symbol wsl-font-shrink" aria-hidden="true"><span className="wsl-font-size-letter">A</span><svg className="wsl-font-size-direction" viewBox="0 0 12 12" focusable="false"><path d="M1.8 3.5H10.2Q11.7 3.5 10.8 4.7L6.9 9.3Q6 10.4 5.1 9.3L1.2 4.7Q.3 3.5 1.8 3.5Z" fill="currentColor"/></svg></span>} run={()=>editSize(String(Math.max(1,size-1)))}/>
        <span className="wsl-font-divider" aria-hidden="true"/>
        <Btn className="wsl-font-icon-button" label="Change Case" icon={<span className="wsl-font-change-case" aria-hidden="true">Aa<ChevronDown size={9}/></span>} run={changeCase}/>
        <span className="wsl-font-divider" aria-hidden="true"/>
