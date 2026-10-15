@@ -137,3 +137,11 @@ Ngày: 15/10/2026. Đường dẫn: `/cong-cu/mo-phong-word`.
 - Ảnh Indent: chỉ **bốn dòng ngang xám đậm**, hai dòng ở giữa bắt đầu sau mũi tên; mũi tên **xanh nhỏ nét mảnh** chỉ trái/phải nằm ở giữa, không phải mũi tên khối đặc; dùng SVG stroke xấp xỉ 2px, không tô.
 - Chỉ thay JSX SVG và CSS của hai cặp biểu tượng, **giữ nguyên** toàn bộ trình xử lý Increase/Decrease Font Size, Decrease/Increase Indent; không thay đổi kích thước nút, vị trí Ribbon, các chức năng khác. Quy tắc `disabled` giữ nguyên.
 - Với các lần chỉnh icon theo ảnh mới, bản tham khảo mới hơn được ưu tiên trước mô tả cũ trong tài liệu. Thực hiện test tĩnh và CI; không khẳng định đã kiểm tra thị giác pixel-by-pixel trên website khi chưa có browser QA.
+
+## 15/10/2026 — Sửa lỗi hình ảnh không đổi rõ sau lần cập nhật
+
+- **Lỗi phát hiện:** `word-window-bar.css` dùng selector `.wsl-home-font .wsl-font-top .wsl-hb svg {color:#516073}` có độ ưu tiên cao hơn `.wsl-home-font .wsl-font-size-direction`, khiến mũi tên trên A bị xám dù CSS icon khai báo xanh. Selector chung phải loại trừ `.wsl-font-size-direction` bằng `:not(.wsl-font-size-direction)`.
+- **Kiểm tra ảnh thực:** ảnh Decrease/Increase Indent mới nhất thực tế có **ba** nét văn bản chính: nét trên đầy đủ, nét giữa ngắn bên phải và nét dưới đầy đủ. Dùng ba nét và mũi tên cyan **dạng khối nhỏ** ở giữa; ảnh này được ưu tiên hơn quy tắc cũ bốn nét.
+- **Tương phản:** mũi tên trên A xanh lam `#2197ce`, SVG chevron 9×8; icon indent ba dòng màu xám đậm `#43494e`, mũi tên xanh `#168fca`; nền trắng.
+- Test CSS phải xác nhận không có selector ghi đè `.wsl-font-size-direction`; test icon kiểm tra ba nét và 2 mũi tên. Không thay đổi command handler, kích thước nút, trạng thái disabled, hoặc layout.
+- Không gọi bản cập nhật là đã so sánh trực quan Production nếu không có screenshot từ trình duyệt chạy domain thật.

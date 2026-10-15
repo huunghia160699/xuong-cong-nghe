@@ -25,6 +25,16 @@
 
 ## III. Lịch sử
 
+### 2026-10-15 — Khắc phục icon vẫn giống cũ do CSS ghi đè và chưa khớp ảnh
+- **Phản hồi:** người dùng không thấy thay đổi trên icon Font Size và Indent dù các PR trước báo triển khai thành công.
+- **Nguyên nhân xác nhận từ mã:** `word-window-bar.css` đặt màu SVG bằng selector có specificity lớn hơn `word-font-ribbon.css`, ghi đè chevron màu xanh thành xám. Đồng thời icon Indent vẽ bốn dòng trong khi ảnh tham chiếu cuối chỉ có ba dòng.
+- **Sửa trong:** `src/features/word-simulator/word-window-bar.css`, `word-font-ribbon.css`, `word-home-ribbon.tsx`, `tests/presentation-basics.test.mjs`, `docs/WORD_SIMULATOR_STANDARD.md`, `docs/WORKLOG_AND_RULES.md`, `CHANGELOG.md`.
+- **UI:** không cho selector chung ghi đè màu chevron; dùng màu xanh dễ phân biệt. Indent chuyển thành ba nét ngang xám + mũi tên cyan đặc nhỏ, vị trí bám sát ảnh.
+- **QA:** test tĩnh về CSS cascade, shapes, commands; CI/typecheck/build/smoke. Có thể render CSS offline để đối chiếu, không thay thế screenshot/kiểm thử trực tiếp Production.
+- **Release:** PR `fix/word-visible-caret-indent-fidelity`; squash merge + Vercel Production đúng SHA main, xác nhận READY và alias trước khi công bố.
+- **Còn lại:** chưa kiểm tra pixel trên browser dùng website Production thực (môi trường browser không truy cập mạng).
+
+
 ### 2026-10-15 — Làm lại icon Font Size và Indent theo hai ảnh cắt gốc
 - **Yêu cầu:** tái hiện đúng hai ảnh tham khảo mới cho nút A lớn/A nhỏ và Decrease/Increase Indent.
 - **File:** `src/features/word-simulator/word-home-ribbon.tsx`, `src/features/word-simulator/word-font-ribbon.css`, `docs/WORD_SIMULATOR_STANDARD.md`, `docs/WORKLOG_AND_RULES.md`, `CHANGELOG.md`, `tests/presentation-basics.test.mjs`.

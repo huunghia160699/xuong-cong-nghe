@@ -1,5 +1,12 @@
 # Changelog
 
+## 2026-10-15 — Sửa icon Font Size và Indent không đúng hình mẫu
+
+- Sửa selector CSS cũ ghi đè màu chevron xanh trên chữ A thành xám; màu xanh nay được áp dụng đúng.
+- Vẽ lại Decrease/Increase Indent đúng ảnh mới nhất: ba nét ngang xám và mũi tên xanh đặc, rõ ràng ở giữa.
+- Thêm kiểm thử hồi quy CSS cascade và hình dạng SVG, giữ nguyên các chức năng.
+
+
 ## 2026-10-15 — Biểu tượng A và Indent theo ảnh gốc mới
 
 - Cặp tăng/giảm Font Size sử dụng nét nhọn xanh lam nhỏ ngay góc trên bên phải A thay cho tam giác đen đặc trước đây.

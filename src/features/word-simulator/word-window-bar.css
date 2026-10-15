@@ -40,7 +40,7 @@
 .wsl-home-font .wsl-hb{height:25px;min-width:25px}
 .wsl-home-font .wsl-font-bottom{gap:4px}
 .wsl-home-font .wsl-color-compact{width:27px}
-.wsl-home-font .wsl-font-top .wsl-hb svg{color:#516073}
+.wsl-home-font .wsl-font-top .wsl-hb svg:not(.wsl-font-size-direction){color:#516073}
 .wsl-home-font .wsl-font-bottom .wsl-hb svg{color:#344258}
 .wsl-home-font .wsl-hb[disabled]{opacity:.34}
 .wsl-home-clipboard .wsl-hb[disabled]{opacity:.32;cursor:default}
