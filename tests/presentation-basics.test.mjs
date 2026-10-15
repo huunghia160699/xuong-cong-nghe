@@ -153,3 +153,33 @@ test("slide headings never render generic eyebrow labels above their titles",()=
   assert.match(rules,/slide\.eyebrow/);
   assert.match(rules,/Checklist nghiệm thu/);
 });
+
+test("only the second slide of the first Word lesson uses the custom interactive purpose design",()=>{
+  const word=wordBasicsLessons[0];
+  assert.equal(word.slides[0].blocks[0].type,"wordHomeHero");
+  assert.equal(word.slides[1].id,"word-use");
+  assert.equal(word.slides[1].title,"Word dùng để làm gì?");
+  assert.equal(word.slides[1].blocks.length,1);
+  assert.equal(word.slides[1].blocks[0].type,"wordPurpose");
+  assert.match(word.slides[1].notes,/Word không thay thế Excel/);
+  assert.equal(wordBasicsLessons.reduce((sum,lesson)=>sum+lesson.slides.length,0),124);
+  assert.equal(excelBasicsLessons.reduce((sum,lesson)=>sum+lesson.slides.length,0),96);
+  assert.equal(wordBasicsLessons.flatMap(l=>l.slides).filter(s=>s.blocks.some(b=>b.type==="wordPurpose")).length,1);
+  assert.equal(excelBasicsLessons.flatMap(l=>l.slides).filter(s=>s.blocks.some(b=>b.type==="wordPurpose")).length,0);
+});
+
+test("Word slide 02 has accessible, interactive CSS mock with large presentation typography",()=>{
+  const component=readFileSync("src/features/presentations/components/word-purpose-slide.tsx","utf8");
+  const styles=readFileSync("src/features/presentations/word-purpose.css","utf8");
+  const player=readFileSync("src/features/presentations/components/player.tsx","utf8");
+  const route=readFileSync("src/app/(presentation)/cong-cu/trinh-chieu/[lessonId]/page.tsx","utf8");
+  for(const word of ["Word dùng để","Soạn thảo","Trình bày","aria-pressed","aria-live","setMode(\"edit\")","setMode(\"format\")","data-word-purpose-slide"]){
+    assert.ok(component.includes(word),word);
+  }
+  assert.match(styles,/xcn-word-purpose-title/);
+  assert.match(styles,/@media\(max-width:767px\)/);
+  assert.match(styles,/#005bfd/i);
+  assert.match(player,/slide\.id === "word-use" && blocks\[0\]\?\.type === "wordPurpose"/);
+  assert.match(route,/word-purpose\.css/);
+  assert.doesNotMatch(component,/\bKIẾN THỨC\b|\bTHAO TÁC\b/);
+});

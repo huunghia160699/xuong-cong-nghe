@@ -3,7 +3,7 @@ import {layoutGallery} from "../src/features/presentations/data/layout-gallery.t
 import {wordBasicsLessons} from "../src/features/presentations/data/word-basics.ts";
 import {excelBasicsLessons} from "../src/features/presentations/data/excel-basics.ts";
 import {PRESENTATION_LAYOUTS} from "../src/features/presentations/types.ts";
-const allowed=new Set(["lessonCover","warmUpComparison","heroStats","card","definition","fileType","filename","item","stack","notice","shortcut","keyCombo","folderTree","code","steps","explorer","fileTransfer","quiz","formula","excelTable","document","image","compare","hotspot","wordWorkspace","wordHomeHero"]);
+const allowed=new Set(["lessonCover","warmUpComparison","heroStats","card","definition","fileType","filename","item","stack","notice","shortcut","keyCombo","folderTree","code","steps","explorer","fileTransfer","quiz","formula","excelTable","document","image","compare","hotspot","wordWorkspace","wordHomeHero","wordPurpose"]);
 let errors=0;
 for (const lesson of [fileExplorerLesson,layoutGallery,...wordBasicsLessons,...excelBasicsLessons]) {
  const ids=new Set();

@@ -16,7 +16,10 @@ export const wordBasicsLessons = enhanceWordLessons([
         ]
       }]
     },
-    B.concepts("word-use","Word dùng để làm gì?",["Soạn thảo","Tạo và chỉnh sửa nội dung chữ, bảng, hình ảnh trong tài liệu."],["Trình bày","Định dạng một tài liệu rõ ràng, đúng mục đích để in hoặc gửi."],"Liên hệ thông báo lớp, đơn xin nghỉ học, báo cáo ngắn. Word không thay thế Excel khi cần tính toán bảng dữ liệu."),
+    {
+      ...B.concepts("word-use","Word dùng để làm gì?",["Soạn thảo","Tạo và chỉnh sửa nội dung chữ, bảng, hình ảnh trong tài liệu."],["Trình bày","Định dạng một tài liệu rõ ràng, đúng mục đích để in hoặc gửi."],"Liên hệ thông báo lớp, đơn xin nghỉ học, báo cáo ngắn. Word không thay thế Excel khi cần tính toán bảng dữ liệu. Minh họa mới cho slide 02: học viên bấm Soạn thảo hoặc Trình bày ở bên trái để xem trang Word được vẽ bằng CSS thay đổi bên phải; ghi nhớ Word giúp soạn nội dung và định dạng, không dùng thay Excel để tính toán."),
+      blocks:[{type:"wordPurpose"}]
+    },
     B.cards("interface","Nhận diện cửa sổ Word",[["Ribbon","Các thẻ Home, Insert, Layout, Review và lệnh đi kèm."],["Vùng trang","Nơi gõ, sửa và trình bày nội dung."],["Thanh trạng thái","Cho biết trang, số từ, chế độ xem và Zoom."]],"Mở Word thực tế, lần lượt chỉ thanh tiêu đề, Quick Access Toolbar nếu hiện, Ribbon, vùng trang và thanh trạng thái."),
     B.steps("new-document","Tạo văn bản mới",[["Mở Word","Chọn Blank document hoặc File → New."],["Nhập nội dung","Bấm vào vùng trang, gõ một đoạn ngắn."],["Đặt tên tệp","Dùng File → Save As khi lưu lần đầu."]],"Có thể dùng Ctrl + N để tạo tài liệu trống. Với một số giao diện Microsoft 365, lệnh Save As nằm trong menu File."),
     B.steps("open-document","Mở tài liệu có sẵn",[["File → Open","Chọn Browse hoặc duyệt tệp gần đây."],["Chọn tệp .docx","Kiểm tra đúng thư mục và tên tệp."],["Bật chỉnh sửa khi tin cậy","Nếu Protected View xuất hiện, chỉ bật khi nguồn đáng tin."]],"Lưu ý tài liệu tải từ Internet có thể mở ở chế độ bảo vệ. Không khuyến khích bật macro hay bỏ bảo vệ tài liệu không rõ nguồn."),

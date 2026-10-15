@@ -10,6 +10,7 @@ import type { PresentationLesson, PresentationSlide } from "../types";
 import { PRESENTATION_LAYOUTS } from "../types";
 import { PresentationBlockView } from "./blocks";
 import { WordHomeHero } from "./word-home-hero";
+import { WordPurposeSlide } from "./word-purpose-slide";
 
 const layoutSet = new Set<string>(PRESENTATION_LAYOUTS);
 
@@ -25,6 +26,13 @@ function SlideCanvas({slide, index, count, reset, onAdvance}: {
     return <section aria-label={"Slide " + (index+1) + ": " + slide.title}
       className="xcn-slide relative h-full min-h-0 overflow-y-auto overscroll-contain bg-ink text-white">
       <WordHomeHero block={blocks[0]} onStart={onAdvance}/>
+    </section>;
+  }
+  // Slide 02 of the first Word lesson uses a unique interactive design, not a generic grid.
+  if (index === 1 && slide.id === "word-use" && blocks[0]?.type === "wordPurpose") {
+    return <section aria-label={"Slide " + (index + 1) + ": " + slide.title}
+      className="xcn-slide relative h-full min-h-0 overflow-y-auto overscroll-contain bg-paper text-ink">
+      <WordPurposeSlide key={slide.id + "-rev-" + reset}/>
     </section>;
   }
   // An opening slide uses a dedicated visual teaching cover rather than

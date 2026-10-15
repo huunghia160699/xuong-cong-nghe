@@ -25,6 +25,18 @@
 
 ## III. Lịch sử
 
+### 2026-10-15 — Thiết kế riêng slide số 2 bài Làm quen Word
+- **Yêu cầu:** không dùng bố cục mẫu ở slide 02 của bài Word đầu tiên; làm đẹp và dễ hiểu bằng thiết kế tùy biến.
+- **Thay đổi/file:** `src/features/presentations/components/word-purpose-slide.tsx`, `src/features/presentations/word-purpose.css`, `components/player.tsx`, `data/word-basics.ts`, trang trình chiếu [lessonId], validator, tests, `docs/SLIDE_STANDARD.md`, CHANGELOG và WORKLOG.
+- **Quyết định và nội dung:** giữ chủ đề **Word dùng để làm gì?**, bao gồm **Soạn thảo** (tạo/sửa nội dung) và **Trình bày** (định dạng để in hoặc chia sẻ). Dựng bố cục độc lập với tiêu đề rất lớn bên trái, hai nút tương tác và mô hình cửa sổ Word/trang giấy CSS bên phải; chuyển chế độ bằng nút, có aria-pressed và phản hồi aria-live. Không hiển thị nhãn slide loại “KIẾN THỨC”.
+- **Quy tắc:** một slide có thể có layout riêng nếu kiến thức có giá trị minh họa tương tác; không cưỡng ép 2 card văn bản; kích thước đáp ứng màn chiếu và mobile. Giao diện Word là minh họa chứ không sửa tệp.
+- **Phạm vi:** chỉ slide số 2 của chủ đề `word-lam-quen`; giữ slide khác, số lượng Word (124), Excel (96), File Explorer.
+- **Kiểm thử:** GitHub CI kiểm tra unit, validator, TypeScript, production build và smoke test, xem kết quả workflow.
+- **GitHub commit:** xem commit theo PR `feat: bespoke interactive Word lesson slide two`.
+- **Vercel Production:** chỉ xác nhận sau khi READY, cùng SHA GitHub main và domain chính.
+- **Giới hạn:** chưa xác nhận trực quan trên máy chiếu thực tế.
+
+
 ### 2026-10-15 — Bỏ nhãn loại slide ở phía trên tiêu đề và chốt chuẩn slide
 - **Yêu cầu:** xóa các dòng chung chung như KIẾN THỨC, THAO TÁC, THỰC HÀNH, CÂU HỎI ÔN TẬP… trên tiêu đề của bài giảng; ghi thành quy tắc cố định.
 - **Thay đổi/file:** `src/features/presentations/components/player.tsx`, `lesson-opening-cover.tsx`, `blocks.tsx`, `docs/SLIDE_STANDARD.md`, `docs/PRESENTATION_DESIGN_STANDARD.md`, `AGENTS.md`, `tests/presentation-basics.test.mjs`, `CHANGELOG.md`, `docs/WORKLOG_AND_RULES.md`.

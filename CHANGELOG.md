@@ -1,5 +1,12 @@
 # Changelog
 
+## 2026-10-15 — Slide 02 Word thiết kế tương tác độc lập
+
+- Thay bố cục hai thẻ lý thuyết ở slide số 2 của bài **Làm quen Word** bằng màn trình chiếu tùy biến, không sử dụng grid mẫu.
+- Hai lựa chọn **Soạn thảo** và **Trình bày** tương tác với bản mô phỏng Word bằng CSS; chữ lớn, tương phản rõ và bố cục responsive.
+- Giữ nguyên kiến thức, ghi chú giáo viên, điều hướng slide, tổng số slide Word/Excel; bổ sung chuẩn slide và kiểm thử.
+
+
 ## 2026-10-15 — Loại bỏ các nhãn thừa trên tiêu đề slide
 
 - Ẩn các dòng như **KIẾN THỨC**, **THAO TÁC**, **THỰC HÀNH**, **CÂU HỎI ÔN TẬP**, **BÀI GIẢNG** phía trên tiêu đề tất cả slide nội dung.
