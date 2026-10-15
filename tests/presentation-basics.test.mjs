@@ -483,7 +483,7 @@ test("Word ribbon icons use Word-like arrows, nested list and correct sort/spaci
   assert.match(font,/wsl-font-shrink[^]*?<svg className="wsl-font-size-direction" viewBox="0 0 9 8"/);
   assert.doesNotMatch(font,/wsl-font-size-direction">[↑↓]/);
   assert.match(fontCSS,/top: 2px/);
-  assert.ok(fontCSS.includes("left: calc(100% + 1px)"));
+  assert.ok(fontCSS.includes("left: calc(100% + 0px)"));
   for(const glyph of ["WordListGlyph","WordIndentGlyph","WordLineSpacingGlyph","WordSortGlyph"])
     assert.match(source,new RegExp("function "+glyph+"\\("));
   assert.match(source,/kind==="multilevel"/);
@@ -539,7 +539,7 @@ test("Word font size chevrons match the two reference images and preserve editin
  assert.match(shrink,/run=\{\(\)=>editSize\(String\(Math.max\(1,size-1\)\)\)\}/);
  const rule=css.match(/\.wsl-home-font \.wsl-font-size-direction\s*\{([^}]+)\}/);
  assert.ok(rule);
- for(const prop of ["top: 2px;","left: calc(100% + 1px);","width: 5px;","height: 4px;","color: #2197ce;"])
+ for(const prop of ["top: 2px;","left: calc(100% + 0px);","width: 5px;","height: 4px;","color: #2197ce;"])
    assert.ok(rule[1].includes(prop),prop);
  assert.ok(css.includes("font: 500 20px/1"));
  assert.ok(css.includes("font-size: 15.4px"));
@@ -566,7 +566,7 @@ test("Word Indent image fidelity and Font blue arrows survive legacy CSS cascade
 
 
 
-test("Word Font toolbar has centered 27px controls, 1px intrinsic caret gap, matching dividers",()=>{
+test("Word Font toolbar has centered 27px controls, 0px intrinsic caret gap, matching dividers",()=>{
  const css=readFileSync("src/features/word-simulator/word-font-ribbon.css","utf8");
  const para=readFileSync("src/features/word-simulator/word-paragraph-ribbon.css","utf8");
  const home=readFileSync("src/features/word-simulator/word-home-ribbon.tsx","utf8");
@@ -579,12 +579,12 @@ test("Word Font toolbar has centered 27px controls, 1px intrinsic caret gap, mat
  assert.equal((font.match(/className="wsl-font-size-letter">A<svg/g)||[]).length,2);
  const arrow=rule(css,".wsl-home-font .wsl-font-size-direction");
  assert.match(arrow,/position: absolute/);
- assert.ok(arrow.includes("left: calc(100% + 1px)"));
+ assert.ok(arrow.includes("left: calc(100% + 0px)"));
  assert.ok(arrow.includes("width: 5px"));
  assert.ok(arrow.includes("height: 4px"));
  assert.doesNotMatch(arrow,/right:/);
  const letter=rule(css,".wsl-home-font .wsl-font-size-letter");
- assert.match(letter,/margin-right: 6px/);
+ assert.match(letter,/margin-right: 5px/);
  assert.match(letter,/align-items: flex-end/);
  assert.doesNotMatch(letter,/transform:/);
  assert.match(rule(css,".wsl-home-font .wsl-font-shrink .wsl-font-size-direction"),/top: 6px/);
