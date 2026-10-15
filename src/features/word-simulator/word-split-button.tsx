@@ -50,6 +50,7 @@ export function WordSplitButton({label,icon,run,options,className="",vertical=fa
   }
   useEffect(()=>{
     if(!open)return;
+    menu.current?.querySelector<HTMLButtonElement>('[role="menuitem"]')?.focus({preventScroll:true});
     function outside(event:PointerEvent){
       if(event.target instanceof Node && !anchor.current?.contains(event.target) && !menu.current?.contains(event.target))setOpen(false);
     }
@@ -75,7 +76,8 @@ export function WordSplitButton({label,icon,run,options,className="",vertical=fa
       <button type="button" className="wsl-hb wsl-split-arrow" disabled={disabled}
         aria-label={"Mở tùy chọn "+label} aria-haspopup="menu" aria-expanded={open}
         title={disabled?undefined:"Tùy chọn "+label}
-        onMouseDown={e=>e.preventDefault()} onClick={toggle}>
+        onMouseDown={e=>e.preventDefault()} onClick={toggle}
+        onKeyDown={e=>{if(e.key==="ArrowDown"){e.preventDefault();if(!open)toggle();}}}>
         {vertical&&<span>Paste</span>}
         <ChevronDown size={13} aria-hidden="true"/>
       </button>
