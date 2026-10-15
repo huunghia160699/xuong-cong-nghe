@@ -658,3 +658,16 @@ test("Word Ribbon splits icon actions and 13px dropdown menus without fake contr
  assert.match(editor,/block\.style\.lineHeight=/);
  assert.match(editor,/selectedChange\(text=>text\.toLocaleUpperCase/);
 });
+
+
+test("Word split buttons share one full hover highlight while preserving separate click targets",()=>{
+ const css=readFileSync("src/features/word-simulator/word-split-ribbon.css","utf8");
+ const component=readFileSync("src/features/word-simulator/word-split-button.tsx","utf8");
+ assert.match(css,/\.wsl-split:hover:not\(:has\(> \.wsl-hb:disabled\)\)/);
+ assert.match(css,/\.wsl-split:has\(> \.wsl-split-arrow\[aria-expanded="true"\]\)/);
+ assert.match(css,/background:#eaf2fb;\s*box-shadow:inset 0 0 0 1px #b9d1eb;/);
+ assert.match(css,/\.wsl-split \.wsl-hb\.wsl-split-main:hover,[\s\S]*?background:transparent;\s*border-color:transparent;/);
+ assert.match(component,/onClick=\{run\}/);
+ assert.match(component,/onClick=\{toggle\}/);
+ assert.match(component,/onClick=\{\(\)=>\{setOpen\(false\);option\.run\(\);\}\}/);
+});
