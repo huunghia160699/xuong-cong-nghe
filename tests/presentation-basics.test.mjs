@@ -539,7 +539,7 @@ test("Word font size chevrons match the two reference images and preserve editin
  assert.match(shrink,/run=\{\(\)=>editSize\(String\(Math.max\(1,size-1\)\)\)\}/);
  const rule=css.match(/\.wsl-home-font \.wsl-font-size-direction\s*\{([^}]+)\}/);
  assert.ok(rule);
- for(const prop of ["top: 6px;","right: 2px;","width: 5px;","height: 4px;","color: #2197ce;"])
+ for(const prop of ["top: 6px;","right: 3.25px;","width: 5px;","height: 4px;","color: #2197ce;"])
    assert.ok(rule[1].includes(prop),prop);
  assert.match(css,/transform-origin:\s*left bottom/);
  assert.match(css,/transform:\s*scale\(\.77\)/);
@@ -572,9 +572,9 @@ test("Word Font Size: half-sized chevrons align to smaller A cap and have matchi
  const shrink=css.match(/\.wsl-home-font \.wsl-font-shrink \.wsl-font-size-direction\s*\{([^}]+)\}/);
  assert.ok(arrow&&shrink,"both absolute anchor and small-A alignment overrides exist");
  assert.match(arrow[1],/position:\s*absolute/);
- for(const expected of ["top: 6px;","right: 2px;","width: 5px;","height: 4px;"])
+ for(const expected of ["top: 6px;","right: 3.25px;","width: 5px;","height: 4px;"])
    assert.ok(arrow[1].includes(expected),expected);
- assert.match(shrink[1],/right:\s*5px/);
+ assert.match(shrink[1],/right:\s*6\.25px/);
  assert.doesNotMatch(arrow[1],/width:\s*9px|height:\s*8px/);
  const letter=css.match(/\.wsl-home-font \.wsl-font-size-letter\s*\{([^}]+)\}/);
  assert.ok(letter);
@@ -586,4 +586,22 @@ test("Word Font Size: half-sized chevrons align to smaller A cap and have matchi
  assert.match(group,/label="Decrease Font Size"[\s\S]*?wsl-font-shrink/);
  assert.match(group,/run=\{\(\)=>editSize\(String\(Math\.min\(7,size\+1\)\)\)\}/);
  assert.match(group,/run=\{\(\)=>editSize\(String\(Math\.max\(1,size-1\)\)\)\}/);
+});
+
+
+test("Word Font caret gap reduces by half again without changing glyph size or vertical baseline",()=>{
+ const css=readFileSync("src/features/word-simulator/word-font-ribbon.css","utf8");
+ const rule=css.match(/\.wsl-home-font \.wsl-font-size-direction\s*\{([^}]+)\}/);
+ const small=css.match(/\.wsl-home-font \.wsl-font-shrink \.wsl-font-size-direction\s*\{([^}]+)\}/);
+ assert.ok(rule&&small);
+ const read=(body,name)=>Number(body.match(new RegExp(name+":\\s*([\\d.]+)px"))?.[1]);
+ const growRight=read(rule[1],"right");
+ const shrinkRight=read(small[1],"right");
+ assert.equal(growRight,3.25);
+ assert.equal(shrinkRight,6.25);
+ assert.equal(shrinkRight-growRight,3,"retain compensation for narrower small A");
+ assert.equal(read(rule[1],"width"),5,"do not shrink the caret a second time");
+ assert.equal(read(rule[1],"height"),4,"keep caret height");
+ assert.equal(read(rule[1],"top"),6,"keep both carets on the same horizontal level");
+ assert.match(css,/\.wsl-home-font \.wsl-font-shrink \.wsl-font-size-letter\s*\{[\s\S]*?scale\(\.77\)/);
 });

@@ -1,5 +1,11 @@
 # Changelog
 
+## 2026-10-15 — Rút ngắn khoảng cách giữa chữ A và mũi tên Font Size
+
+- Dịch hai chevron xanh sát chữ A thêm 1,25px, giúp khoảng cách thị giác giảm khoảng một nửa.
+- Giữ nguyên kích thước 5×4px, hàng ngang chung, chênh lệch vị trí phù hợp chữ A lớn/nhỏ và các chức năng.
+
+
 ## 2026-10-15 — Thu nhỏ, căn đều khoảng trống giữa A và mũi tên
 
 - Thu hai mũi tên tăng/giảm Font Size còn khoảng nửa kích thước, cùng một hàng ngang trên đỉnh A nhỏ.

@@ -152,3 +152,10 @@ Ngày: 15/10/2026. Đường dẫn: `/cong-cu/mo-phong-word`.
 - Cả hai mũi tên dùng `position: absolute; top: 6px`, cùng một đường ngang tương ứng vị trí đỉnh **A nhỏ**, tránh mũi tên lệch độ cao theo cỡ A.
 - Vì chữ A nhỏ hẹp hơn chữ A lớn, chỉnh `right: 5px` riêng cho Shrink so với `right: 2px` của Grow để **khoảng trống thấy được giữa A và mũi tên** cân đối gần tương đương nhau.
 - Giữ nguyên baseline hai chữ A, `scale(.77)` trên chữ nhỏ, bố cục Ribbon và onClick. Test hồi quy kiểm tra CSS anchor và size, tránh các khai báo chung làm mất màu/mất vị trí.
+
+## 2026-10-15 — Giảm một nửa khoảng cách chữ A và chevron (lần 2)
+
+- Giữ **nguyên kích thước** mũi tên xanh `5×4px`, không thu nhỏ biểu tượng.
+- Dịch ngang cả hai chevron lại sát chữ A thêm **1,25px** để khoảng cách thị giác giảm khoảng một nửa: Grow `right: 3.25px` (từ 2px), Shrink `right: 6.25px` (từ 5px).
+- Giữ độ lệch ngang 3px giữa hai nút nhằm cân đối bề ngang chữ A lớn/nhỏ. Vị trí dọc `top: 6px` không đổi, hai mũi tên vẫn cùng hàng ngang.
+- Chỉ sửa CSS; không thay JSX, SVG, hành vi nút, hoặc các nhóm khác. Regression test phải khóa `right` mới, size, top và độ lệch giữa hai nút.
