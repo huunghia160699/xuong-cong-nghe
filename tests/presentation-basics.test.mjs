@@ -291,7 +291,7 @@ test("Clipboard and Font correctly map each visible control and respect selectio
    assert.ok(home.includes(value),value);
  assert.match(home,/disabled=\{!hasSelection\}/);
  assert.match(home,/active=\{paintArmed\}/);
- assert.match(home,/Text Effects chưa hỗ trợ/);
+ assert.match(home,/className="wsl-font-effect-disabled" aria-hidden="true"/);
  assert.doesNotMatch(home,/label="Text Effects".*run=/);
  assert.match(editor,/const success=document\.execCommand\(name\)/);
  assert.match(editor,/if\(success\)\{if\(name==="cut"\)markChanged\(\);else setStatus\("Đã sao chép/);
