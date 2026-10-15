@@ -171,7 +171,7 @@ export function WordHomeRibbon({
          options={["#ffff00","#a7f3d0","#bfdbfe","#fecdd3"].map(color=>({
            label:color==="#ffff00"?"Vàng":color==="#a7f3d0"?"Xanh lá":color==="#bfdbfe"?"Xanh dương":"Hồng",
            color,run:()=>{setHighlightColor(color);run("hiliteColor",color);}
-         })).concat([{label:"Không tô sáng",color:undefined,run:()=>run("removeHighlight")}])}
+         })).concat([{label:"Không tô sáng",color:"#ffffff",run:()=>run("removeHighlight")}])}
          footer={<label className="wsl-split-custom-color">Màu tùy chọn <input type="color" value={highlightColor} onChange={event=>{setHighlightColor(event.target.value);run("hiliteColor",event.target.value);}}/></label>}/>
        <WordSplitButton className="wsl-font-split wsl-font-color-split" label="Font Color"
          icon={<span className="wsl-font-color-art"><span className="wsl-font-color-letter">A</span><span className="wsl-font-color-swatch" style={{backgroundColor:textColor}}/></span>}
