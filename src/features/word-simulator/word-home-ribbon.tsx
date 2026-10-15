@@ -103,6 +103,8 @@ export function WordHomeRibbon({
  const size=Math.max(1,Math.min(7,Number(fontSize)||3));
  const [highlightColor,setHighlightColor]=useState("#ffff00");
  const [textColor,setTextColor]=useState("#c91c2a");
+ const [selectedStyle,setSelectedStyle]=useState("Normal");
+ const selectStyle=(style:string)=>{applyStyle(style);setSelectedStyle(style);};
  return <div className="wsl-home-ribbon" aria-label="Ribbon Home">
    <Group name="Clipboard" className="wsl-home-clipboard">
      <div className="wsl-home-paste">
@@ -245,22 +247,23 @@ export function WordHomeRibbon({
    </Group>
 
    <Group name="Styles" className="wsl-home-styles">
-     <div className="wsl-style-gallery">
-       {[
-         ["Normal","Normal"],
-         ["No Spacing","No Spacing"],
-         ["Heading 1","Heading 1"],
-         ["Heading 2","Heading 2"],
-         ["Title","Title"],
-         ["Subtitle","Subtitle"]
-       ].map(([style,label])=><button type="button" key={style} className={"wsl-style-tile wsl-style-"+style.replaceAll(" ","-").toLowerCase()}
-         onMouseDown={event=>event.preventDefault()} onClick={()=>applyStyle(style)}
-         aria-label={"Style: "+label} title={"Apply style: "+label}>
-         <span>{label}</span>
-       </button>)}
+     <div className="wsl-style-picker" aria-label="Bộ sưu tập kiểu văn bản">
+       <div className="wsl-style-gallery">
+         {["Normal","No Spacing","Heading 1","Heading 2"].map(style=>
+           <button type="button" key={style}
+             className={"wsl-style-tile wsl-style-"+style.replaceAll(" ","-").toLowerCase()}
+             onMouseDown={event=>event.preventDefault()} onClick={()=>selectStyle(style)}
+             aria-label={"Style: "+style} aria-pressed={selectedStyle===style}
+             title={"Áp dụng kiểu "+style}>
+             <span>{style}</span>
+           </button>)}
+       </div>
+       <div className="wsl-styles-scroll">
+         <WordSplitButton arrowOnly className="wsl-style-menu-button" label="Styles"
+           options={["Normal","No Spacing","Heading 1","Heading 2","Title","Subtitle"]
+             .map(value=>({label:value,run:()=>selectStyle(value)}))}/>
+       </div>
      </div>
-     <div className="wsl-styles-scroll"><WordSplitButton arrowOnly className="wsl-style-menu-button" label="Styles"
-         options={["Normal","No Spacing","Heading 1","Heading 2","Title","Subtitle"].map(value=>({label:value,run:()=>applyStyle(value)}))}/></div>
    </Group>
 
    <Group name="Editing" className="wsl-home-editing">
