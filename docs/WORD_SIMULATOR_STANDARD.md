@@ -116,3 +116,9 @@ Ngày: 15/10/2026. Đường dẫn: `/cong-cu/mo-phong-word`.
 - **Sort:** chữ `A` màu xanh phía trên, chữ `Z` tối bên dưới, mũi tên đi xuống phía **bên phải**; kích thước tương thích 26px nút Word.
 - Chỉ thay UI (SVG/CSS); giữ nguyên props, aria-label, onClick, mapping các lệnh hiện hữu. Không phát triển menu/tính năng khác trong lần chỉnh này. Disabled vẫn mờ, con trỏ thường, không hover.
 - Kiểm tra regression về vị trí/glyph SVG và các nút; build/CI cần pass. Không tuyên bố pixel-perfect khi chưa đối chiếu browser thật.
+
+## 2026-10-15 — Giảm số dòng icon Indent xuống đúng 4 hàng
+
+- Hai nút **Decrease Indent** và **Increase Indent** sử dụng **chính xác 4 đường ngang** (hai đường đầy đủ trên/dưới, hai đường ngắn ở giữa để chừa chỗ mũi tên), không 5–6 dòng dày đặc.
+- Mũi tên xanh nằm ngang ở giữa với kích thước vừa vặn, đầu hướng trái cho Decrease và hướng phải cho Increase. Nét xám `strokeWidth=1.3`; không thay đổi kích thước 22×21px hoặc hành vi của các nút.
+- Kiểm tra hồi quy số đường trong SVG; chỉ thay biểu tượng, không thay đổi chức năng nhóm Paragraph.

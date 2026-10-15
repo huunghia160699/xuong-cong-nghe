@@ -504,3 +504,21 @@ test("Word ribbon icons use Word-like arrows, nested list and correct sort/spaci
   assert.match(paragraphCSS,/\.wsl-home-paragraph \.wsl-paragraph-sort-glyph/);
   assert.match(standard,/Tinh chỉnh biểu tượng Word Home Ribbon/);
 });
+
+
+test("Word Indent icons have exactly four horizontal strokes and retain both direction actions",()=>{
+ const source=readFileSync("src/features/word-simulator/word-home-ribbon.tsx","utf8");
+ const block=source.slice(source.indexOf("function WordIndentGlyph"),source.indexOf("function WordLineSpacingGlyph"));
+ assert.match(block,/viewBox="0 0 24 22"/);
+ const line=block.match(/<path d="([^"]+)"\/>/);
+ assert.ok(line,"horizontal Indent line path");
+ const horizontals=[...line[1].matchAll(/M[\d.]+ [\d.]+H22/g)];
+ assert.equal(horizontals.length,4,"exactly four horizontal lines on each indent glyph");
+ assert.match(line[1],/^M2 3\.5H22M12 8\.5H22M12 13\.5H22M2 18\.5H22$/);
+ assert.doesNotMatch(block,/M2 2\.8H22M2 6\.2H22/);
+ assert.match(block,/direction==="decrease"/);
+ assert.match(block,/fill="#1679be"/);
+ const paragraph=source.slice(source.indexOf('<Group name="Paragraph"'),source.indexOf('<Group name="Styles"'));
+ assert.match(paragraph,/label="Decrease Indent"[\s\S]*?run=\{\(\)=>run\("outdent"\)\}/);
+ assert.match(paragraph,/label="Increase Indent"[\s\S]*?run=\{\(\)=>run\("indent"\)\}/);
+});
