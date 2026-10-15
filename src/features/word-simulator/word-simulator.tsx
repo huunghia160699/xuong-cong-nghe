@@ -1,0 +1,368 @@
+"use client";
+
+import {useCallback,useEffect,useRef,useState} from "react";
+import {
+  AlignCenter,AlignJustify,AlignLeft,AlignRight,ArrowLeft,BookOpen,Check,ChevronDown,
+  Clipboard,Copy,Download,FileImage,FilePlus2,FileText,FolderOpen,ImagePlus,Italic,
+  Link2,List,ListOrdered,Maximize2,Minus,Monitor,Paintbrush,Plus,Printer,Redo2,
+  RotateCcw,Ruler,Save,Search,Strikethrough,Table2,Type,Underline,Undo2
+} from "lucide-react";
+
+type Tab="File"|"Home"|"Insert"|"Layout"|"Review"|"View";
+type Orientation="portrait"|"landscape";
+type Margins="normal"|"narrow";
+type Stats={words:number;characters:number};
+type RibbonCommand={id:string;label:string;run:()=>void;icon:React.ReactNode;disabled?:boolean;title?:string};
+
+const STORAGE_KEY="xcn_word_simulator_draft_v1";
+const DEFAULT_CONTENT='<h1>THÔNG BÁO</h1><p>Về việc tổ chức buổi thực hành Microsoft Word.</p><p>Học viên chuẩn bị tài liệu và có mặt đúng giờ tại phòng máy.</p><p><br></p><p>Người lập thông báo</p>';
+const TABS:Tab[]=["File","Home","Insert","Layout","Review","View"];
+const MAX_IMPORT_BYTES=1024*1024;
+const ALLOWED_TAGS=new Set(["P","BR","DIV","H1","H2","H3","H4","STRONG","B","EM","I","U","S","STRIKE","SUB","SUP","SPAN","BLOCKQUOTE","UL","OL","LI","TABLE","THEAD","TBODY","TR","TH","TD","A","IMG","HR","FONT"]);
+const FORBIDDEN_TAGS=new Set(["SCRIPT","STYLE","IFRAME","OBJECT","EMBED","SVG","MATH","TEMPLATE","META","LINK","FORM","INPUT","BUTTON","VIDEO","AUDIO","HEAD"]);
+const safeName=(name:string)=>name.replace(/[<>:"/\\|?*\u0000-\u001f]/g,"").trim().slice(0,90)||"Tai_lieu";
+const textStats=(html:string):Stats=>{
+  const holder=document.createElement("div");
+  holder.innerHTML=html;
+  const text=holder.textContent??"";
+  const trimmed=text.replace(/\s+/g," ").trim();
+  return {words:trimmed?trimmed.split(" ").length:0,characters:text.length};
+};
+function sanitize(html:string):string {
+  const parsed=new DOMParser().parseFromString(html,"text/html");
+  const clean=(element:Element)=>{
+    for(const child of Array.from(element.children))clean(child);
+    if(element===parsed.body)return;
+    if(FORBIDDEN_TAGS.has(element.tagName)){element.remove();return;}
+    if(!ALLOWED_TAGS.has(element.tagName)){
+      element.replaceWith(...Array.from(element.childNodes));
+      return;
+    }
+    const safeAttrs:Record<string,string>={};
+    if(element.tagName==="A"){
+      const raw=element.getAttribute("href")??"";
+      if(/^(https?:\/\/|mailto:)/i.test(raw))safeAttrs.href=raw.slice(0,2048);
+    }
+    if(element.tagName==="IMG"){
+      const raw=element.getAttribute("src")??"";
+      if(/^data:image\/(?:png|jpeg|webp|gif);base64,[a-z0-9+/=]+$/i.test(raw)&&raw.length<4_500_000)safeAttrs.src=raw;
+      else{element.remove();return;}
+      safeAttrs.alt=(element.getAttribute("alt")??"Ảnh minh họa").slice(0,160);
+    }
+    const style=(element as HTMLElement).style;
+    const safeStyles:string[]=[];
+    const align=style.textAlign;
+    if(["left","right","center","justify"].includes(align))safeStyles.push("text-align:"+align);
+    const color=style.color;
+    if(/^#[0-9a-f]{3,8}$/i.test(color)||/^rgb\([\d\s,.%]+\)$/i.test(color))safeStyles.push("color:"+color);
+    const font=style.fontFamily;
+    if(/^(Arial|Aptos|Calibri|Times New Roman|Georgia|Verdana)(,\s*sans-serif|,\s*serif)?$/i.test(font))safeStyles.push("font-family:"+font);
+    for(const attr of Array.from(element.attributes))element.removeAttribute(attr.name);
+    for(const [key,value] of Object.entries(safeAttrs))element.setAttribute(key,value);
+    if(safeStyles.length)element.setAttribute("style",safeStyles.join(";"));
+  };
+  clean(parsed.body);
+  return parsed.body.innerHTML;
+}
+function triggerDownload(fileName:string,content:string,type:string){
+  const blob=new Blob([content],{type});
+  const uri=URL.createObjectURL(blob);
+  const anchor=document.createElement("a");
+  anchor.href=uri;anchor.download=fileName;document.body.append(anchor);anchor.click();anchor.remove();
+  window.setTimeout(()=>URL.revokeObjectURL(uri),1000);
+}
+
+function ToolButton({item}:{item:RibbonCommand}){
+  return <button type="button" className="wsl-tool" onMouseDown={event=>event.preventDefault()}
+    onClick={item.run} disabled={item.disabled} title={item.title??item.label} aria-label={item.label}>
+    {item.icon}<span>{item.label}</span>
+  </button>;
+}
+function Group({name,children}:{name:string;children:React.ReactNode}){
+  return <div className="wsl-ribbon-group"><div className="wsl-ribbon-items">{children}</div><span className="wsl-ribbon-group-name">{name}</span></div>;
+}
+
+export function WordSimulator(){
+  const editor=useRef<HTMLDivElement>(null);
+  const shell=useRef<HTMLDivElement>(null);
+  const fileInput=useRef<HTMLInputElement>(null);
+  const imageInput=useRef<HTMLInputElement>(null);
+  const savedSelection=useRef<Range|null>(null);
+  const [activeTab,setActiveTab]=useState<Tab>("Home");
+  const [filename,setFilename]=useState("Thong_bao_lop");
+  const [zoom,setZoom]=useState(100);
+  const [orientation,setOrientation]=useState<Orientation>("portrait");
+  const [margins,setMargins]=useState<Margins>("normal");
+  const [showRuler,setShowRuler]=useState(true);
+  const [spellcheck,setSpellcheck]=useState(true);
+  const [stats,setStats]=useState<Stats>({words:0,characters:0});
+  const [revision,setRevision]=useState(0);
+  const [status,setStatus]=useState("Tài liệu mới");
+  const [isReady,setIsReady]=useState(false);
+  const [font,setFont]=useState("Aptos");
+  const [fontSize,setFontSize]=useState("3");
+  const [searchOpen,setSearchOpen]=useState(false);
+  const [query,setQuery]=useState("");
+
+  const updateStats=useCallback(()=>{
+    if(editor.current)setStats(textStats(editor.current.innerHTML));
+  },[]);
+  const markChanged=useCallback(()=>{
+    updateStats();setRevision(value=>value+1);setStatus("Đang soạn thảo");
+  },[updateStats]);
+  const setDocument=useCallback((html:string)=>{
+    if(!editor.current)return;
+    editor.current.innerHTML=sanitize(html);
+    savedSelection.current=null;
+    updateStats();setRevision(value=>value+1);
+  },[updateStats]);
+
+  useEffect(()=>{
+    try{
+      const raw=window.localStorage.getItem(STORAGE_KEY);
+      if(raw){
+        const stored=JSON.parse(raw) as {html?:string;name?:string;orientation?:Orientation;margins?:Margins};
+        if(stored.html&&editor.current){
+          editor.current.innerHTML=sanitize(stored.html);
+          setFilename(safeName(stored.name??"Thong_bao_lop"));
+          if(stored.orientation==="landscape")setOrientation("landscape");
+          if(stored.margins==="narrow")setMargins("narrow");
+          setStatus("Đã khôi phục bản nháp");
+        }
+      }else if(editor.current)editor.current.innerHTML=DEFAULT_CONTENT;
+    }catch{
+      if(editor.current)editor.current.innerHTML=DEFAULT_CONTENT;
+      setStatus("Không thể khôi phục bản nháp");
+    }
+    updateStats();setIsReady(true);
+  },[updateStats]);
+  useEffect(()=>{
+    if(!isReady)return;
+    const handle=window.setTimeout(()=>{
+      if(!editor.current)return;
+      try{
+        window.localStorage.setItem(STORAGE_KEY,JSON.stringify({html:sanitize(editor.current.innerHTML),name:filename,orientation,margins}));
+        setStatus("Đã lưu bản nháp trên trình duyệt");
+      }catch{setStatus("Bản nháp vượt dung lượng lưu trình duyệt; hãy xuất tệp");}
+    },750);
+    return ()=>window.clearTimeout(handle);
+  },[revision,filename,orientation,margins,isReady]);
+
+  function rememberSelection(){
+    const selection=window.getSelection();
+    if(selection&&selection.rangeCount&&editor.current?.contains(selection.anchorNode))
+      savedSelection.current=selection.getRangeAt(0).cloneRange();
+  }
+  function restoreSelection(){
+    editor.current?.focus();
+    if(savedSelection.current){
+      const selection=window.getSelection();
+      if(selection){selection.removeAllRanges();selection.addRange(savedSelection.current);}
+    }
+  }
+  function command(cmd:string,value?:string){
+    restoreSelection();
+    document.execCommand(cmd,false,value);
+    rememberSelection();
+    markChanged();
+  }
+  function blockCommand(tag:string){command("formatBlock",tag);}
+  function editFont(next:string){setFont(next);command("fontName",next);}
+  function editSize(next:string){setFontSize(next);command("fontSize",next);}
+  function insertTable(){
+    const table='<table><tbody><tr><th>STT</th><th>Họ và tên</th><th>Ghi chú</th></tr><tr><td>1</td><td><br></td><td><br></td></tr><tr><td>2</td><td><br></td><td><br></td></tr></tbody></table><p><br></p>';
+    command("insertHTML",table);
+  }
+  function insertLink(){
+    const raw=window.prompt("Địa chỉ liên kết (https://...):","https://");
+    if(!raw)return;
+    if(!/^https?:\/\//i.test(raw)){setStatus("Liên kết phải bắt đầu bằng https:// hoặc http://");return;}
+    command("createLink",raw.slice(0,2048));
+  }
+  function newDocument(){
+    if(!window.confirm("Tạo tài liệu mới? Nội dung hiện tại vẫn có thể xuất tệp trước khi thay thế."))return;
+    setDocument("<h1>TÀI LIỆU MỚI</h1><p><br></p>");
+    setFilename("Tai_lieu_moi");
+    setOrientation("portrait");setMargins("normal");setStatus("Đã tạo tài liệu mới");setActiveTab("Home");
+  }
+  function exportHTML(){
+    const html=editor.current?sanitize(editor.current.innerHTML):"";
+    const documentHTML='<!doctype html><html lang="vi"><head><meta charset="utf-8"><title>'+safeName(filename)+'</title><style>body{max-width:760px;margin:40px auto;font:16px/1.55 Aptos,Arial,sans-serif;color:#222}table{border-collapse:collapse;width:100%}td,th{border:1px solid #777;padding:8px}img{max-width:100%}@media print{body{max-width:none;margin:20mm}}</style></head><body>'+html+'</body></html>';
+    triggerDownload(safeName(filename)+".html",documentHTML,"text/html;charset=utf-8");
+    setStatus("Đã xuất HTML — chưa phải định dạng DOCX");
+  }
+  function exportText(){
+    triggerDownload(safeName(filename)+".txt",editor.current?.innerText??"","text/plain;charset=utf-8");
+    setStatus("Đã xuất văn bản TXT");
+  }
+  async function importFile(file:File){
+    if(file.size>MAX_IMPORT_BYTES){setStatus("Tệp vượt giới hạn 1 MB để nhập nội dung");return;}
+    if(!/\.(html?|txt)$/i.test(file.name)){setStatus("Chỉ hỗ trợ mở HTML hoặc TXT; chưa hỗ trợ DOCX");return;}
+    try{
+      const text=await file.text();
+      const html=/\.txt$/i.test(file.name)?'<p>'+text.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").split(/\r?\n/).join("</p><p>")+"</p>":text;
+      setDocument(html);
+      setFilename(safeName(file.name.replace(/\.(html?|txt)$/i,"")));
+      setStatus("Đã mở "+file.name);
+      setActiveTab("Home");
+    }catch{setStatus("Không thể mở tệp đã chọn");}
+  }
+  async function insertImage(file:File){
+    if(!["image/png","image/jpeg","image/webp","image/gif"].includes(file.type)||file.size>2*1024*1024){
+      setStatus("Ảnh phải là PNG, JPEG, WebP hoặc GIF và không quá 2 MB");return;
+    }
+    const reader=new FileReader();
+    reader.onload=()=>{
+      if(typeof reader.result!=="string")return;
+      command("insertHTML",'<img src="'+reader.result+'" alt="Hình ảnh" width="320"><p><br></p>');
+    };
+    reader.readAsDataURL(file);
+  }
+  function findText(){
+    if(!query.trim())return;
+    const text=editor.current?.innerText??"";
+    const occurrence=text.toLocaleLowerCase("vi").indexOf(query.toLocaleLowerCase("vi"));
+    if(occurrence<0){setStatus("Không tìm thấy: "+query);return;}
+    restoreSelection();
+    const walker=document.createTreeWalker(editor.current!,NodeFilter.SHOW_TEXT);
+    let start=0;
+    while(walker.nextNode()){
+      const node=walker.currentNode,textValue=node.textContent??"";
+      if(start+textValue.length>occurrence){
+        const range=document.createRange();
+        const a=occurrence-start;
+        range.setStart(node,a);range.setEnd(node,Math.min(textValue.length,a+query.length));
+        const selection=window.getSelection();selection?.removeAllRanges();selection?.addRange(range);
+        editor.current?.focus();rememberSelection();setStatus("Đã tìm thấy: "+query);return;
+      }
+      start+=textValue.length;
+    }
+    setStatus("Đã tìm thấy nội dung, không thể xác định vị trí");
+  }
+  const commands=(items:RibbonCommand[])=>items.map(item=><ToolButton key={item.id} item={item}/>);
+  const fileActions=[
+    {icon:<FilePlus2 size={22}/>,label:"Tài liệu mới",action:newDocument},
+    {icon:<FolderOpen size={22}/>,label:"Mở tệp HTML/TXT",action:()=>fileInput.current?.click()},
+    {icon:<Save size={22}/>,label:"Tải xuống HTML",action:exportHTML},
+    {icon:<FileText size={22}/>,label:"Tải xuống TXT",action:exportText},
+    {icon:<Printer size={22}/>,label:"In / Lưu PDF",action:()=>window.print()},
+  ];
+  return <div className="wsl-shell" ref={shell}>
+    <input type="file" accept=".html,.htm,.txt,text/html,text/plain" ref={fileInput} hidden onChange={event=>{const file=event.target.files?.[0];if(file)void importFile(file);event.target.value="";}}/>
+    <input type="file" accept="image/png,image/jpeg,image/webp,image/gif" ref={imageInput} hidden onChange={event=>{const file=event.target.files?.[0];if(file)void insertImage(file);event.target.value="";}}/>
+    <header className="wsl-titlebar">
+      <a href="/cong-cu" className="wsl-back" aria-label="Trở về Công cụ"><ArrowLeft size={18}/></a>
+      <span className="wsl-logo" aria-hidden="true">W</span>
+      <input className="wsl-document-name" aria-label="Tên tài liệu" value={filename} maxLength={90} onChange={event=>setFilename(safeName(event.target.value))}/>
+      <span className="wsl-document-ext">.html</span>
+      <span className="wsl-titlebar-separator" aria-hidden="true"/>
+      <span className="wsl-app-name">Mô phỏng Word</span>
+      <span className="wsl-titlebar-spacer"/>
+      <span className="wsl-saved-indicator"><Check size={15}/><span>{status}</span></span>
+    </header>
+    <nav className="wsl-tabs" aria-label="Các thẻ lệnh Word">
+      {TABS.map(tab=><button key={tab} type="button" className={"wsl-tab "+(tab===activeTab?"is-active":"")} aria-current={tab===activeTab?"page":undefined} onClick={()=>setActiveTab(tab)}>{tab}</button>)}
+      <span className="wsl-tabs-spacer"/>
+      <button className="wsl-quick-save" onClick={exportHTML} type="button"><Download size={16}/><span>Tải bản HTML</span></button>
+    </nav>
+    <div className="wsl-ribbon" role="toolbar" aria-label={"Lệnh "+activeTab}>
+      {activeTab==="File"&&<Group name="Tệp">{fileActions.map(item=><ToolButton key={item.label} item={{id:item.label,label:item.label,run:item.action,icon:item.icon}}/>)}</Group>}
+      {activeTab==="Home"&&<>
+        <Group name="Clipboard">{commands([
+          {id:"copy",label:"Sao chép",run:()=>command("copy"),icon:<Copy size={21}/>},
+          {id:"cut",label:"Cắt",run:()=>command("cut"),icon:<Clipboard size={21}/>},
+          {id:"paste",label:"Dán",run:async()=>{try{const value=await navigator.clipboard.readText();command("insertText",value);}catch{setStatus("Nhấn Ctrl+V để dán nội dung");}},icon:<Clipboard size={21}/>},
+          {id:"undo",label:"Hoàn tác",run:()=>command("undo"),icon:<Undo2 size={21}/>},
+          {id:"redo",label:"Làm lại",run:()=>command("redo"),icon:<Redo2 size={21}/>}
+        ])}</Group>
+        <Group name="Font">
+          <label className="wsl-select"><span className="sr-only">Phông chữ</span><select value={font} onChange={event=>editFont(event.target.value)}>
+            {["Aptos","Arial","Calibri","Times New Roman","Georgia","Verdana"].map(item=><option key={item} value={item}>{item}</option>)}
+          </select></label>
+          <label className="wsl-select wsl-font-size"><span className="sr-only">Cỡ chữ</span><select value={fontSize} onChange={event=>editSize(event.target.value)}>
+            {[["1","8"],["2","10"],["3","12"],["4","14"],["5","18"],["6","24"],["7","36"]].map(([value,name])=><option key={value} value={value}>{name}</option>)}
+          </select></label>
+          {commands([
+            {id:"bold",label:"Đậm",run:()=>command("bold"),icon:<b className="wsl-letter-icon">B</b>},
+            {id:"italic",label:"Nghiêng",run:()=>command("italic"),icon:<Italic size={21}/>},
+            {id:"underline",label:"Gạch chân",run:()=>command("underline"),icon:<Underline size={21}/>},
+            {id:"strike",label:"Gạch ngang",run:()=>command("strikeThrough"),icon:<Strikethrough size={21}/>}
+          ])}
+          <label className="wsl-color"><span>Màu chữ</span><input type="color" defaultValue="#04122d" onChange={event=>command("foreColor",event.target.value)}/></label>
+        </Group>
+        <Group name="Paragraph">{commands([
+          {id:"left",label:"Căn trái",run:()=>command("justifyLeft"),icon:<AlignLeft size={21}/>},
+          {id:"center",label:"Căn giữa",run:()=>command("justifyCenter"),icon:<AlignCenter size={21}/>},
+          {id:"right",label:"Căn phải",run:()=>command("justifyRight"),icon:<AlignRight size={21}/>},
+          {id:"justify",label:"Căn đều",run:()=>command("justifyFull"),icon:<AlignJustify size={21}/>},
+          {id:"bullet",label:"Dấu đầu dòng",run:()=>command("insertUnorderedList"),icon:<List size={21}/>},
+          {id:"number",label:"Đánh số",run:()=>command("insertOrderedList"),icon:<ListOrdered size={21}/>},
+        ])}</Group>
+        <Group name="Styles">{commands([
+          {id:"normal",label:"Normal",run:()=>blockCommand("p"),icon:<Type size={21}/>},
+          {id:"heading1",label:"Heading 1",run:()=>blockCommand("h1"),icon:<span className="wsl-letter-icon">H1</span>},
+          {id:"heading2",label:"Heading 2",run:()=>blockCommand("h2"),icon:<span className="wsl-letter-icon">H2</span>}
+        ])}</Group>
+      </>}
+      {activeTab==="Insert"&&<>
+        <Group name="Trang">{commands([
+          {id:"hr",label:"Đường kẻ",run:()=>command("insertHorizontalRule"),icon:<Minus size={23}/>},
+          {id:"break",label:"Ngắt trang",run:()=>command("insertHTML",'<div class="wsl-page-break" contenteditable="false">Ngắt trang</div><p><br></p>'),icon:<FilePlus2 size={21}/>}
+        ])}</Group>
+        <Group name="Bảng và hình">{commands([
+          {id:"table",label:"Bảng 3×3",run:insertTable,icon:<Table2 size={23}/>},
+          {id:"picture",label:"Hình ảnh",run:()=>imageInput.current?.click(),icon:<ImagePlus size={23}/>},
+          {id:"link",label:"Liên kết",run:insertLink,icon:<Link2 size={21}/>}
+        ])}</Group>
+      </>}
+      {activeTab==="Layout"&&<>
+        <Group name="Thiết lập trang">
+          <label className="wsl-ribbon-field"><span>Hướng trang</span><select value={orientation} onChange={event=>setOrientation(event.target.value as Orientation)}><option value="portrait">Dọc</option><option value="landscape">Ngang</option></select></label>
+          <label className="wsl-ribbon-field"><span>Lề trang</span><select value={margins} onChange={event=>setMargins(event.target.value as Margins)}><option value="normal">Thông thường</option><option value="narrow">Hẹp</option></select></label>
+          <span className="wsl-page-size-label">A4 · 210 × 297 mm</span>
+        </Group>
+      </>}
+      {activeTab==="Review"&&<>
+        <Group name="Kiểm tra"><button type="button" className="wsl-toggle-button" aria-pressed={spellcheck} onClick={()=>setSpellcheck(value=>!value)}><Check size={20}/><span>Kiểm tra chính tả: {spellcheck?"Bật":"Tắt"}</span></button>
+          <span className="wsl-ribbon-note">{stats.words} từ · {stats.characters} ký tự</span>
+        </Group>
+        <Group name="Tìm kiếm"><button className="wsl-tool" type="button" onClick={()=>setSearchOpen(value=>!value)}><Search size={23}/><span>Tìm văn bản</span></button></Group>
+      </>}
+      {activeTab==="View"&&<>
+        <Group name="Hiển thị"><button type="button" className="wsl-toggle-button" aria-pressed={showRuler} onClick={()=>setShowRuler(value=>!value)}><Ruler size={22}/><span>Thước: {showRuler?"Hiện":"Ẩn"}</span></button></Group>
+        <Group name="Phóng to">
+          <button className="wsl-small-control" onClick={()=>setZoom(v=>Math.max(60,v-10))} aria-label="Thu nhỏ" type="button"><Minus size={20}/></button>
+          <output className="wsl-zoom-value">{zoom}%</output>
+          <button className="wsl-small-control" onClick={()=>setZoom(v=>Math.min(160,v+10))} aria-label="Phóng to" type="button"><Plus size={20}/></button>
+        </Group>
+        <Group name="Cửa sổ"><button className="wsl-tool" type="button" onClick={()=>{if(shell.current?.requestFullscreen)void shell.current.requestFullscreen().catch(()=>setStatus("Trình duyệt không cho phép toàn màn hình"));}}><Maximize2 size={22}/><span>Toàn màn hình</span></button></Group>
+      </>}
+    </div>
+    {searchOpen&&<form className="wsl-search" onSubmit={event=>{event.preventDefault();findText();}}>
+      <Search size={18}/><input value={query} onChange={event=>setQuery(event.target.value)} aria-label="Tìm trong tài liệu" placeholder="Tìm trong tài liệu"/>
+      <button type="submit">Tìm</button><button type="button" onClick={()=>setSearchOpen(false)} aria-label="Đóng tìm kiếm">×</button>
+    </form>}
+    <main className="wsl-workspace">
+      <div className="wsl-page-scroll" aria-label="Vùng trang tài liệu">
+        <div className="wsl-scale" style={{transform:"scale("+zoom/100+")",transformOrigin:"top center",marginBottom:(zoom-100)*5+"px"}}>
+          {showRuler&&<div className="wsl-ruler" aria-hidden="true">{Array.from({length:16},(_,i)=><span key={i}>{i+1}</span>)}</div>}
+          <div className={"wsl-paper "+(orientation==="landscape"?"is-landscape ":"")+(margins==="narrow"?"is-narrow":"")}>
+            <div ref={editor} className="wsl-editor" aria-label="Nội dung tài liệu Word" role="textbox" aria-multiline="true" contentEditable suppressContentEditableWarning spellCheck={spellcheck}
+              onInput={markChanged} onKeyUp={rememberSelection} onMouseUp={rememberSelection}
+              onFocus={rememberSelection} onPaste={event=>{event.preventDefault();command("insertText",event.clipboardData.getData("text/plain"));}}
+              onDrop={event=>event.preventDefault()}/>
+          </div>
+        </div>
+      </div>
+    </main>
+    <footer className="wsl-statusbar">
+      <span>Trang 1</span><span>{stats.words} từ</span><span>{stats.characters} ký tự</span>
+      <span className="wsl-statusbar-spacer"/>
+      <span><BookOpen size={15}/> Bố trí in</span><span>Tiếng Việt</span>
+      <button aria-label="Giảm mức phóng" type="button" onClick={()=>setZoom(v=>Math.max(60,v-10))}><Minus size={15}/></button>
+      <input type="range" aria-label="Mức phóng trang" min={60} max={160} step={10} value={zoom} onChange={event=>setZoom(Number(event.target.value))}/>
+      <span>{zoom}%</span>
+      <button aria-label="Tăng mức phóng" type="button" onClick={()=>setZoom(v=>Math.min(160,v+10))}><Plus size={15}/></button>
+    </footer>
+  </div>;
+}
