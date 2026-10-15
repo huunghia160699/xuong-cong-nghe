@@ -111,7 +111,26 @@ export function WordHomeRibbon({
  const [textColor,setTextColor]=useState("#c91c2a");
  const [selectedStyle,setSelectedStyle]=useState("Normal");
  const selectStyle=(style:string)=>{applyStyle(style);setSelectedStyle(style);};
- return <div className="wsl-home-ribbon" aria-label="Ribbon Home">
+ const [dialog,setDialog]=useState<"Clipboard"|"Font"|"Paragraph"|"Styles"|"Editing"|null>(null);
+ const dialogActions:RibbonDialogAction[]=dialog==="Clipboard"?[
+   {label:"Dán",run:()=>run("paste")},{label:"Sao chép",run:()=>run("copy")},
+   {label:"Cắt",run:()=>run("cut")},{label:"Sao chép định dạng",run:()=>run("formatPainter")}
+ ]:dialog==="Font"?[
+   {label:"Đậm",run:()=>run("bold")},{label:"Nghiêng",run:()=>run("italic")},
+   {label:"Gạch chân",run:()=>run("underline")},{label:"Gạch ngang",run:()=>run("strikeThrough")},
+   {label:"Chỉ số dưới",run:()=>run("subscript")},{label:"Chỉ số trên",run:()=>run("superscript")},
+   {label:"Xóa định dạng",run:()=>run("removeFormat")},{label:"Chữ hoa / thường",run:changeCase}
+ ]:dialog==="Paragraph"?[
+   {label:"Căn trái",run:()=>run("justifyLeft")},{label:"Căn giữa",run:()=>run("justifyCenter")},
+   {label:"Căn phải",run:()=>run("justifyRight")},{label:"Căn đều",run:()=>run("justifyFull")},
+   ...["1","1.15","1.5","2"].map(value=>({label:"Giãn dòng "+value,run:()=>run("lineSpacing",value)})),
+   {label:"Tăng thụt lề",run:()=>run("indent")},{label:"Giảm thụt lề",run:()=>run("outdent")}
+ ]:dialog==="Styles"?["Normal","No Spacing","Heading 1","Heading 2","Title","Subtitle"]
+   .map(style=>({label:style,run:()=>selectStyle(style)}))
+ :dialog==="Editing"?[
+   {label:"Tìm kiếm",run:findText},{label:"Thay thế",run:replaceText},{label:"Chọn tất cả",run:selectAll}
+ ]:[];
+ return <><div className="wsl-home-ribbon" aria-label="Ribbon Home">
    <Group name="Clipboard" className="wsl-home-clipboard" onDetails={()=>setDialog("Clipboard")}>
      <div className="wsl-home-paste">
        <WordSplitButton className="wsl-paste-split" vertical label="Paste — Dán"
@@ -277,5 +296,7 @@ export function WordHomeRibbon({
      <Btn className="wsl-hb-with-text" label="Replace — Thay thế" icon={<><WholeWord size={15}/><span>Replace</span></>} run={replaceText}/>
      <Btn className="wsl-hb-with-text" label="Select All" icon={<><ArrowRightToLine size={15}/><span>Select</span></>} run={selectAll}/>
    </Group>
- </div>;
+ </div>
+   {dialog&&<WordRibbonDialog name={dialog} actions={dialogActions} onClose={()=>setDialog(null)}/>}
+ </>;
 }
