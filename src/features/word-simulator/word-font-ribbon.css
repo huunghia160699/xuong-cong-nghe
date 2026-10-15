@@ -21,7 +21,7 @@
 .wsl-home-font .wsl-font-top {
   display: grid;
   /* Keep the font/fixed-size selectors, then distribute the icons and dividers. */
-  grid-template-columns: 136px 43px repeat(2, 27px) 1px 27px 1px 27px;
+  grid-template-columns: 136px 43px repeat(2, 27px) 1px 37px 1px 27px;
   column-gap: 0;
   justify-content: space-between;
   height: 27px;
@@ -97,6 +97,8 @@
 .wsl-home-font .wsl-font-size select { padding-left: 5px; }
 .wsl-home-font .wsl-font-select-chevron {
   position: absolute;
+  width: 13px;
+  height: 13px;
   right: 4px;
   top: 50%;
   transform: translateY(-50%);
@@ -175,6 +177,7 @@
   pointer-events: none;
 }
 .wsl-home-font .wsl-font-shrink .wsl-font-size-direction {top: 6px;}
+.wsl-home-font .wsl-hb.wsl-font-change-case-button {width: 37px; min-width: 37px;}
 .wsl-home-font .wsl-font-change-case {
   display: flex;
   align-items: center;
@@ -184,7 +187,7 @@
   font: 13px/1 "Segoe UI", Arial, sans-serif;
   letter-spacing: -.075em;
 }
-.wsl-home-font .wsl-font-change-case svg {align-self: center; margin-left: 2px;}
+.wsl-home-font .wsl-font-change-case svg {align-self: center; margin-left: 2px; width: 13px; height: 13px;}
 .wsl-home-font .wsl-font-bold {
   font: 700 17px/1 Arial, "Segoe UI", sans-serif;
 }
@@ -200,7 +203,7 @@
   text-decoration: underline;
   text-underline-offset: 2px;
 }
-.wsl-home-font .wsl-font-underline svg {align-self: center; margin-left: 2px;}
+.wsl-home-font .wsl-font-underline svg {align-self: center; margin-left: 2px; width: 13px; height: 13px;}
 .wsl-home-font .wsl-font-strike {
   font: 14px/1 "Segoe UI", Arial, sans-serif;
   text-decoration: line-through;
@@ -250,8 +253,8 @@
   position: relative;
   display: grid;
   place-items: center;
-  width: 35px;
-  min-width: 35px;
+  width: 37px;
+  min-width: 37px;
   height: 27px;
   box-sizing: border-box;
   align-self: center;
@@ -289,6 +292,8 @@
 }
 .wsl-home-font .wsl-font-color-chevron {
   position: absolute;
+  width: 13px;
+  height: 13px;
   right: 1px;
   top: 50%;
   transform: translateY(-50%);
