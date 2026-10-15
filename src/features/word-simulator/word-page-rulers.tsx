@@ -13,13 +13,13 @@ type Props={
   scrollTop:number;
 };
 
-function RulerTicks({length,axis}:{length:number;axis:"horizontal"|"vertical"}){
-  const marks=useMemo(()=>Array.from({length:Math.floor(length/QUARTER_CM)+1},(_,index)=>{
-    const value=index*QUARTER_CM;
+function RulerTicks({length,axis,ratio}:{length:number;axis:"horizontal"|"vertical";ratio:number}){
+  const marks=useMemo(()=>Array.from({length:Math.floor(length/(QUARTER_CM*ratio))+1},(_,index)=>{
+    const value=index*QUARTER_CM*ratio;
     const whole=index%4===0;
     const half=index%2===0;
     return {value,index,whole,half};
-  }),[length]);
+  }),[length,ratio]);
   return <svg className={"wsl-word-ruler-ticks wsl-word-ruler-ticks-"+axis}
     viewBox={axis==="horizontal"?`0 0 ${length} 26`:`0 0 23 ${length}`}
     width={axis==="horizontal"?length:23} height={axis==="horizontal"?26:length}
@@ -65,14 +65,13 @@ export function WordPageRulers({landscape,narrow,zoom,scrollLeft,scrollTop}:Prop
       <div className="wsl-word-ruler-horizontal-window">
         <div className="wsl-word-ruler-horizontal-offset" style={{transform:`translateX(-${scrollLeft}px)`}}>
           <div className="wsl-word-ruler-horizontal-space" style={{width:paperWidth*ratio}}>
-            <div className="wsl-word-ruler-horizontal-page"
-              style={{width:paperWidth,transform:`scale(${ratio})`,transformOrigin:"top left"}}>
+            <div className="wsl-word-ruler-horizontal-page" style={{width:paperWidth*ratio}}>
               <div className="wsl-word-ruler-horizontal-printable"
-                style={{left:hMargin,width:printableWidth}}>
-                <RulerTicks length={printableWidth} axis="horizontal"/>
+                style={{left:hMargin*ratio,width:printableWidth*ratio}}>
+                <RulerTicks length={printableWidth*ratio} axis="horizontal" ratio={ratio}/>
               </div>
-              <div className="wsl-word-ruler-left-marker" style={{left:hMargin-8}}><MarginMarker side="left"/></div>
-              <div className="wsl-word-ruler-right-marker" style={{left:paperWidth-hMargin-8}}><MarginMarker side="right"/></div>
+              <div className="wsl-word-ruler-left-marker" style={{left:hMargin*ratio-8}}><MarginMarker side="left"/></div>
+              <div className="wsl-word-ruler-right-marker" style={{left:(paperWidth-hMargin)*ratio-8}}><MarginMarker side="right"/></div>
             </div>
           </div>
         </div>
@@ -81,11 +80,10 @@ export function WordPageRulers({landscape,narrow,zoom,scrollLeft,scrollTop}:Prop
     <div className="wsl-word-vertical-ruler" aria-hidden="true">
       <div className="wsl-word-ruler-vertical-offset" style={{transform:`translateY(-${scrollTop}px)`}}>
         <div className="wsl-word-ruler-vertical-space" style={{height:paperHeight*ratio+13}}>
-          <div className="wsl-word-ruler-vertical-page"
-            style={{height:paperHeight,top:13,transform:`scale(${ratio})`,transformOrigin:"top left"}}>
+          <div className="wsl-word-ruler-vertical-page" style={{height:paperHeight*ratio,top:13}}>
             <div className="wsl-word-ruler-vertical-printable"
-              style={{top:vMargin,height:printableHeight}}>
-              <RulerTicks length={printableHeight} axis="vertical"/>
+              style={{top:vMargin*ratio,height:printableHeight*ratio}}>
+              <RulerTicks length={printableHeight*ratio} axis="vertical" ratio={ratio}/>
             </div>
           </div>
         </div>
