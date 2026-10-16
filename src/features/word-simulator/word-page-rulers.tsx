@@ -12,6 +12,8 @@ type Props={
   zoom:number;
   scrollLeft:number;
   scrollTop:number;
+  axis:"horizontal"|"vertical";
+  renderedPaperHeight?:number;
 };
 
 function RulerTicks({length,axis,ratio}:{length:number;axis:"horizontal"|"vertical";ratio:number}){
@@ -52,15 +54,16 @@ function MarginMarker({side}:{side:"left"|"right"}){
 }
 
 /** Ruler overlays match the same unscaled paper geometry as .wsl-paper. */
-export function WordPageRulers({landscape,narrow,zoom,scrollLeft,scrollTop}:Props){
+export function WordPageRulers({landscape,narrow,zoom,scrollLeft,scrollTop,axis,renderedPaperHeight}:Props){
   const {width:paperWidth,height:paperHeight}=a4Dimensions(landscape);
   const hMargin=narrow?48:87;
   const vMargin=narrow?48:86;
   const printableWidth=paperWidth-2*hMargin;
   const printableHeight=paperHeight-2*vMargin;
   const ratio=zoom/100;
-  return <>
-    <div className="wsl-word-horizontal-ruler" aria-hidden="true">
+  const verticalHeight=renderedPaperHeight??paperHeight*ratio;
+  const verticalPrintableHeight=Math.max(0,verticalHeight-2*vMargin*ratio);
+  return axis==="horizontal"?<div className="wsl-word-horizontal-ruler" aria-hidden="true">
       <span className="wsl-word-ruler-corner">L</span>
       <div className="wsl-word-ruler-horizontal-window">
         <div className="wsl-word-ruler-horizontal-offset" style={{transform:`translateX(-${scrollLeft}px)`}}>
@@ -76,19 +79,17 @@ export function WordPageRulers({landscape,narrow,zoom,scrollLeft,scrollTop}:Prop
           </div>
         </div>
       </div>
-    </div>
-    <div className="wsl-word-vertical-ruler" aria-hidden="true"
-      style={{top:`calc(var(--wsl-page-top-offset, 13px) - ${scrollTop}px)`,height:paperHeight*ratio}}>
+    </div>:<div className="wsl-word-vertical-ruler" aria-hidden="true"
+      style={{top:`calc(var(--wsl-page-top-offset, 13px) - ${scrollTop}px)`,height:verticalHeight}}>
       <div className="wsl-word-ruler-vertical-offset">
-        <div className="wsl-word-ruler-vertical-space" style={{height:paperHeight*ratio}}>
-          <div className="wsl-word-ruler-vertical-page" style={{height:paperHeight*ratio,top:0}}>
+        <div className="wsl-word-ruler-vertical-space" style={{height:verticalHeight}}>
+          <div className="wsl-word-ruler-vertical-page" style={{height:verticalHeight,top:0}}>
             <div className="wsl-word-ruler-vertical-printable"
-              style={{top:vMargin*ratio,height:printableHeight*ratio}}>
-              <RulerTicks length={printableHeight*ratio} axis="vertical" ratio={ratio}/>
+              style={{top:vMargin*ratio,height:verticalPrintableHeight}}>
+              <RulerTicks length={verticalPrintableHeight} axis="vertical" ratio={ratio}/>
             </div>
           </div>
         </div>
       </div>
-    </div>
-  </>;
+    </div>;
 }
