@@ -230,3 +230,11 @@ Ngày: 15/10/2026. Đường dẫn: `/cong-cu/mo-phong-word`.
 - Thanh tab có nền xám chung `#e8e7eb`, nhãn bình thường `font-weight:500`, đang chọn `font-weight:900`, pseudo-element underline dày **3px**, `bottom:4px` gần chân chữ và **không bo tròn** nét.
 - Ribbon Home sử dụng nền xám chung, khung công cụ trắng nổi vừa phải, có khoảng đệm hai phía, **bo góc 5px**, viền xám mảnh và bóng nhẹ; không áp gradient/glassmorphism.
 - Kiểm thử tự động bắt buộc cho production: `node --test tests/word-home-qa.test.mjs tests/presentation-basics.test.mjs` trước `next build`. File QA chạy **10 vòng kiểm tra đường nối mã nguồn cho từng nút Home và mục menu**, kiểm tra hình học ruler 16 tổ hợp mỗi vòng. Đây là **kiểm thử hợp đồng mã nguồn, không phải E2E nhấp chuột**, nên kiểm thử trình duyệt thực tế vẫn là một bước xác nhận riêng.
+
+
+## 2026-10-16 — Chuẩn hóa mốc đầu thước dọc, tab vuông và Ribbon Home kín ngang
+
+- Thước dọc **bắt đầu đúng tại mép trên tờ giấy**, không bắt đầu từ mép trên vùng cuộn. Dùng **một biến CSS chung** `--wsl-page-top-offset` cho `padding-top` của giấy và `top` của thước dọc: mặc định 13px, màn hình `max-width:650px` 9px. Phần đo bên trong thước có `top:0` và chiều cao đúng tỷ lệ giấy, không cộng bù 13px hay chỉnh `margin-top:-4px` thủ công. Vẫn đồng bộ `scrollTop` khi cuộn và tỷ lệ zoom khi phóng.
+- Thanh menu tab và từng tab **không bo góc trên/dưới**, áp `border-radius:0`; giữ nguyên nét active 3px, màu nền xám và độ đậm đã duyệt.
+- Khung trắng nổi của Home Ribbon **chiếm hết chiều rộng khả dụng** `width:100%;flex:1 0 auto;box-sizing:border-box`, vẫn bo góc 5px, lề ngoài trái/phải và viền/bóng mảnh. Các nhóm Clipboard, Font, Paragraph, Styles, Editing có `flex:0 0 auto` để **dồn về trái**. Khoảng trống còn lại **bên phải để trắng**, không phóng to các nhóm. Khi tổng công cụ lớn hơn viewport, thanh Ribbon cuộn ngang.
+- Các kiểm thử hồi quy cần kiểm tra cả offset 13px/9px, mốc thước 0, tab vuông, khung 100% và nhóm không giãn; kiểm tra lặp 10 vòng trong bộ `word-home-qa`.
