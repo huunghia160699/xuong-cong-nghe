@@ -149,7 +149,9 @@ test("Horizontal centimeter ruler and tab chrome: 10 rounds over A4 size and zoo
    assert.match(ruler,/observer\?\.observe\(editor\)/);
    assert.match(ruler,/const contentStart=snapTick\(paperGeometry\.editorOffset\);/);
    assert.match(ruler,/style=\{\{left:contentStart,width:Math\.max\(0,contentEnd-contentStart\)\}\}/);
-   assert.match(ruler,/contentTicks\.map\(tick=><span key=\{tick\.index\}/);
+   assert.match(ruler,/contentTicks\.map\(tick=>tick\.kind==="cm"\?/);
+   assert.match(ruler,/<span key=\{tick\.index\} className="wsl-word-ruler-cm-label"/);
+   assert.match(ruler,/\{tick\.index\/4\}<\/span>:/);
    assert.match(ruler,/\.filter\(tick=>tick\.index>0&&tick\.left<paperGeometry\.editorWidth-1\)/);
    assert.match(ruler,/style=\{\{left:snapTick\(paperGeometry\.editorOffset\+tick\.left\)-contentStart\}\}/);
    assert.match(ruler,/narrow=\{narrow\}/);
