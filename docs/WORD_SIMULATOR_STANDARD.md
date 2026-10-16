@@ -338,3 +338,12 @@ Ngày: 15/10/2026. Đường dẫn: `/cong-cu/mo-phong-word`.
 - Cả hai nằm ngoài `.wsl-word-ruler-content-strip` để không bị `overflow:hidden` cắt mất một nửa, có `z-index:3` nên nổi phía trên nền trắng (`z-index:2`) và vạch chia (`z-index:1`); căn giữa dọc theo thanh thước 26px.
 - Đây **chỉ là hình ảnh giao diện**, `pointer-events:none`, **chưa hỗ trợ kéo thả hoặc thay đổi giá trị indent**. Bảo toàn thước trắng 4px inset, mốc số cm, vạch 1px, giấy và Ribbon.
 - Mỗi lần thay đổi tiếp theo phải thực hiện **Quy trình bắt buộc sau mỗi lần chỉnh sửa mô phỏng Word** ở đầu file: cập nhật MD, GitHub, test, Vercel Production READY.
+
+
+## 2026-10-16 — Chỉnh biểu tượng Indent theo ảnh tham chiếu Word
+
+- Người dùng cung cấp ảnh mẫu **60 × 38px**, yêu cầu sửa **hình dáng** biểu tượng, không thay đổi chức năng thước. Mẫu hiển thị hình **mái nhà trên thân chữ nhật chia ngang** ở đầu trái dải trắng và hình **thẻ chữ nhật có mũi tam giác chúc xuống** ở đầu phải.
+- Thay các tam giác đặc xếp chồng của bản trước bằng **SVG đường viền mảnh xám `#818181` rộng 1px**, phần ruột trắng `#fff`. Marker trái dùng một đường bao kiểu nhà `M.5 10.5L6 6L11.5 10.5V19H.5Z` và vạch chia ngang `M.5 14H11.5`; marker phải dùng đường bao `M.5 1H11.5V5L6 9.25L.5 5Z`. Không sử dụng hình chữ nhật rời/biểu tượng tô xám đặc trước đây.
+- **Cả hai icon giữ đúng cùng chiều rộng 12px**, SVG 12 × 20px, wrapper cùng chiều cao và căn giữa dọc theo thanh thước 26px. Vị trí neo vẫn là `contentStart` và `contentEnd` nên bám lề, xoay giấy, thu phóng, cuộn và thay đổi kích thước.
+- Giữ nguyên dải trắng cao theo `top:4px;bottom:4px`, số cm, vạch chia 1px, lớp phủ, thước dọc, viền focus đã loại bỏ và Ribbon. Đây vẫn là biểu tượng trang trí, chưa thêm kéo thả điều chỉnh Indent.
+- Kiểm thử hồi quy kiểm tra số lượng nét, hình học SVG, màu/độ dày đường viền, bằng nhau bề rộng 12px và vị trí theo lề. Thực hiện đầy đủ quy trình GitHub → build/test → Vercel Production READY cho lần chỉnh này.
