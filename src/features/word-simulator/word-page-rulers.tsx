@@ -22,7 +22,7 @@ type Props={
  */
 function HorizontalRulerTicks({landscape,zoom,scrollLeft}:{landscape:boolean;zoom:number;scrollLeft:number}){
   const rulerRef=useRef<HTMLDivElement>(null);
-  const [paperLeft,setPaperLeft]=useState(0);
+  const [paperGeometry,setPaperGeometry]=useState({left:0,viewportLeft:0,pixelRatio:1});
   const {width:paperWidth}=a4Dimensions(landscape);
   const scaledWidth=paperWidth*zoom/100;
 
@@ -32,8 +32,14 @@ function HorizontalRulerTicks({landscape,zoom,scrollLeft}:{landscape:boolean;zoo
     const scroller=document.querySelector<HTMLElement>(".wsl-word-page-body .wsl-page-scroll");
     if(!ruler||!paper)return;
     const align=()=>{
-      const left=paper.getBoundingClientRect().left-ruler.getBoundingClientRect().left;
-      setPaperLeft(previous=>Math.abs(previous-left)<0.1?previous:left);
+      const viewportLeft=paper.getBoundingClientRect().left;
+      const left=viewportLeft-ruler.getBoundingClientRect().left;
+      const pixelRatio=window.devicePixelRatio||1;
+      setPaperGeometry(previous=>
+        Math.abs(previous.left-left)<0.01&&
+        Math.abs(previous.viewportLeft-viewportLeft)<0.01&&
+        previous.pixelRatio===pixelRatio
+          ?previous:{left,viewportLeft,pixelRatio});
     };
     align();
     const observer=typeof ResizeObserver!=="undefined"?new ResizeObserver(align):null;
@@ -54,13 +60,20 @@ function HorizontalRulerTicks({landscape,zoom,scrollLeft}:{landscape:boolean;zoo
     })).filter(tick=>tick.left<scaledWidth-1);
   },[scaledWidth,zoom]);
 
+  // Round viewport-space coordinates to physical pixels rather than rounding
+  // relative positions: otherwise fractional cm steps create uneven 1px strokes.
+  const snapTick=(offset:number)=>{
+    const {viewportLeft,pixelRatio}=paperGeometry;
+    return Math.round((viewportLeft+offset)*pixelRatio)/pixelRatio-viewportLeft;
+  };
+
   return <div ref={rulerRef} className="wsl-word-horizontal-ruler" aria-hidden="true">
-    <div className="wsl-word-ruler-cm-track" style={{left:paperLeft,width:scaledWidth}}>
+    <div className="wsl-word-ruler-cm-track" style={{left:paperGeometry.left,width:scaledWidth}}>
       {ticks.map(tick=><span key={tick.index}
         className={"wsl-word-ruler-cm-tick wsl-word-ruler-cm-tick-"+tick.kind}
-        style={{left:tick.left}}/>)}
+        style={{left:snapTick(tick.left)}}/>)}
       <span className="wsl-word-ruler-cm-tick wsl-word-ruler-cm-tick-cm"
-        style={{left:Math.max(0,scaledWidth-1)}}/>
+        style={{left:snapTick(Math.max(0,scaledWidth-1))}}/>
     </div>
   </div>;
 }
