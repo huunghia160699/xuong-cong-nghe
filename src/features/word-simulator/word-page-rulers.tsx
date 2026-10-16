@@ -16,39 +16,45 @@ type Props={
   renderedPaperHeight?:number;
 };
 
-/** Only cm subdivisions are drawn: no white fill, numbers or margin markers.
- * The track is positioned from the actual .wsl-paper DOM rect so centered
- * pages, overflowing pages, scrollbar width and horizontal scrolling align.
- */
-function HorizontalRulerTicks({landscape,zoom,scrollLeft}:{landscape:boolean;zoom:number;scrollLeft:number}){
+/** The white content-area strip is aligned to the actual editable region
+ * inside .wsl-paper, below cm ticks; its parent track stays page-aligned. */
+function HorizontalRulerTicks({landscape,narrow,zoom,scrollLeft}:{landscape:boolean;narrow:boolean;zoom:number;scrollLeft:number}){
   const rulerRef=useRef<HTMLDivElement>(null);
-  const [paperGeometry,setPaperGeometry]=useState({left:0,viewportLeft:0,pixelRatio:1});
+  const [paperGeometry,setPaperGeometry]=useState({left:0,viewportLeft:0,pixelRatio:1,editorOffset:0,editorWidth:0});
   const {width:paperWidth}=a4Dimensions(landscape);
   const scaledWidth=paperWidth*zoom/100;
 
   useLayoutEffect(()=>{
     const ruler=rulerRef.current;
     const paper=document.querySelector<HTMLElement>(".wsl-word-page-body .wsl-paper");
+    const editor=document.querySelector<HTMLElement>(".wsl-word-page-body .wsl-editor");
     const scroller=document.querySelector<HTMLElement>(".wsl-word-page-body .wsl-page-scroll");
-    if(!ruler||!paper)return;
+    if(!ruler||!paper||!editor)return;
     const align=()=>{
-      const viewportLeft=paper.getBoundingClientRect().left;
+      const paperRect=paper.getBoundingClientRect();
+      const editorRect=editor.getBoundingClientRect();
+      const viewportLeft=paperRect.left;
       const left=viewportLeft-ruler.getBoundingClientRect().left;
+      const editorOffset=editorRect.left-viewportLeft;
+      const editorWidth=editorRect.width;
       const pixelRatio=window.devicePixelRatio||1;
       setPaperGeometry(previous=>
         Math.abs(previous.left-left)<0.01&&
         Math.abs(previous.viewportLeft-viewportLeft)<0.01&&
+        Math.abs(previous.editorOffset-editorOffset)<0.01&&
+        Math.abs(previous.editorWidth-editorWidth)<0.01&&
         previous.pixelRatio===pixelRatio
-          ?previous:{left,viewportLeft,pixelRatio});
+          ?previous:{left,viewportLeft,pixelRatio,editorOffset,editorWidth});
     };
     align();
     const observer=typeof ResizeObserver!=="undefined"?new ResizeObserver(align):null;
     observer?.observe(ruler);
     observer?.observe(paper);
+    observer?.observe(editor);
     if(scroller)observer?.observe(scroller);
     window.addEventListener("resize",align);
     return ()=>{observer?.disconnect();window.removeEventListener("resize",align);};
-  },[landscape,zoom,scrollLeft]);
+  },[landscape,narrow,zoom,scrollLeft]);
 
   const ticks=useMemo(()=>{
     const step=PX_PER_QUARTER_CM*zoom/100;
@@ -69,6 +75,8 @@ function HorizontalRulerTicks({landscape,zoom,scrollLeft}:{landscape:boolean;zoo
 
   return <div ref={rulerRef} className="wsl-word-horizontal-ruler" aria-hidden="true">
     <div className="wsl-word-ruler-cm-track" style={{left:paperGeometry.left,width:scaledWidth}}>
+      <div className="wsl-word-ruler-content-strip"
+        style={{left:paperGeometry.editorOffset,width:paperGeometry.editorWidth}}/>
       {ticks.map(tick=><span key={tick.index}
         className={"wsl-word-ruler-cm-tick wsl-word-ruler-cm-tick-"+tick.kind}
         style={{left:snapTick(tick.left)}}/>)}
@@ -78,10 +86,10 @@ function HorizontalRulerTicks({landscape,zoom,scrollLeft}:{landscape:boolean;zoo
   </div>;
 }
 
-export function WordPageRulers({landscape,zoom,scrollLeft,scrollTop,axis,renderedPaperHeight}:Props){
+export function WordPageRulers({landscape,narrow,zoom,scrollLeft,scrollTop,axis,renderedPaperHeight}:Props){
   const {height:paperHeight}=a4Dimensions(landscape);
   const verticalHeight=renderedPaperHeight??paperHeight*zoom/100;
-  if(axis==="horizontal")return <HorizontalRulerTicks landscape={landscape} zoom={zoom} scrollLeft={scrollLeft}/>;
+  if(axis==="horizontal")return <HorizontalRulerTicks landscape={landscape} narrow={narrow} zoom={zoom} scrollLeft={scrollLeft}/>;
   return <div className="wsl-word-vertical-ruler" aria-hidden="true"
     style={{top:`calc(var(--wsl-page-top-offset, 13px) - ${scrollTop}px)`,height:verticalHeight}}/>;
 }
