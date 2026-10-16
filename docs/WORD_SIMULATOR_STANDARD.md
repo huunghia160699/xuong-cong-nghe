@@ -308,3 +308,11 @@ Ngày: 15/10/2026. Đường dẫn: `/cong-cu/mo-phong-word`.
 - Chỉ áp dụng điều kiện `tick.index>0` cho vạch của **dải trắng**. Các vạch trên phần nền xám tính từ mép giấy và hai mép giấy vẫn giữ nguyên.
 - Dải trắng hiện chừa khoảng hở `top:4px;bottom:4px` so với chiều cao của thước ngang; giữ `z-index:2` để che vạch giấy ở phía dưới và vẽ lại các vạch trên dải trắng.
 - Không thêm số hoặc marker; không thay đổi kích thước giấy, thước dọc hoặc các nút Home.
+
+
+## 2026-10-16 — Hiển thị số tại từng cm trên dải trắng
+
+- Trên dải thước nền trắng, thay **tất cả vạch dài ở mốc cm nguyên** bằng nhãn số tuần tự **1, 2, 3, 4, ...** (`tick.index / 4`), đến hết vùng nhập liệu. **Không hiển thị số 0**.
+- Nhãn được định vị đúng điểm chia cm tính từ mép trái vùng nhập liệu (`snapTick(editorOffset + tick.left) - contentStart`), căn giữa cả chiều dọc và chiều ngang tại mốc bằng `top:50%` và `transform:translate(-50%,-50%)`. Kiểu chữ Arial 10px.
+- Vạch 0,25cm và 0,5cm trong dải trắng giữ nguyên, vạch cm trên phần xám bên ngoài dải trắng cũng giữ nguyên. Không thay đổi khung nền trắng, khoảng hở trên/dưới 4px, thao tác zoom và lề.
+- Hồi quy đảm bảo số liên tiếp theo vị trí cm và không còn vạch dài cm nằm trong dải trắng.
