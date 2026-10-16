@@ -1281,3 +1281,36 @@ test("Vertical ruler mirrors horizontal centimeter ticks, margin-relative white 
    assert.ok(Math.abs((snapped+screenOrigin)*dpr-Math.round((snapped+screenOrigin)*dpr))<1e-8);
  }
 });
+
+
+test("Subscript and superscript use BIU-style toggles with mutual exclusion and preserved selection",()=>{
+ const source=readFileSync("src/features/word-simulator/word-simulator.tsx","utf8");
+ const home=readFileSync("src/features/word-simulator/word-home-ribbon.tsx","utf8");
+ const css=readFileSync("src/features/word-simulator/word-interactions.css","utf8");
+ const start=source.indexOf('  function toggleScriptFormat(');
+ const end=source.indexOf('  function saveDraft()',start);
+ const toggle=source.slice(start,end);
+ assert.ok(start>=0&&end>start);
+ assert.match(toggle,/restoreSelection\(\);/);
+ assert.match(toggle,/const opposite=kind==="subscript"\?"superscript":"subscript";/);
+ assert.match(toggle,/const wasActive=document\.queryCommandState\(kind\);/);
+ assert.match(toggle,/if\(!wasActive&&document\.queryCommandState\(opposite\)\)\{/);
+ assert.match(toggle,/document\.execCommand\(opposite,false\);/);
+ assert.match(toggle,/const applied=document\.execCommand\(kind,false\);/);
+ assert.match(toggle,/if\(!applied\)\{/);
+ assert.match(toggle,/rememberSelection\(\);/);
+ assert.match(toggle,/const isActive=document\.queryCommandState\(kind\);/);
+ assert.match(toggle,/const oppositeActive=isActive\?false:document\.queryCommandState\(opposite\);/);
+ assert.match(toggle,/setFormatActive\(current=>\(\{/);
+ assert.match(toggle,/\[kind\]:isActive,/);
+ assert.match(toggle,/\[opposite\]:oppositeActive/);
+ assert.match(toggle,/markChanged\(\);/);
+ assert.match(source,/if\(name==="subscript"\|\|name==="superscript"\)\{\s*toggleScriptFormat\(name\);return;/);
+ assert.match(home,/label="Subscript" active=\{formatActive\.subscript\}[^\\n]*run=\{\(\)=>run\("subscript"\)\}/);
+ assert.match(home,/label="Superscript" active=\{formatActive\.superscript\}[^\\n]*run=\{\(\)=>run\("superscript"\)\}/);
+ assert.match(home,/onMouseDown=\{event=>event\.preventDefault\(\)\} onClick=\{run\}/);
+ assert.match(css,/\.wsl-home-font \.wsl-hb\.wsl-font-icon-button\.is-active/);
+ assert.match(source,/const formatKeys:WordFormatKey\[\]=\["bold","italic","underline","strikeThrough","subscript","superscript"\]/);
+ assert.match(source,/document\.queryCommandState\(key\)/);
+ assert.match(source,/ALLOWED_TAGS=new Set\(\["P","BR"/);
+});
