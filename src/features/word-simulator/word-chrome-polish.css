@@ -27,13 +27,21 @@
   border-radius:0;
   background:#245c91;
 }
+/* The Ribbon itself has no padding and no upper/lower border; the Home
+   gallery remains an independent raised surface within its allotted height. */
+.wsl-shell .wsl-ribbon{
+  padding:0;
+  border-top:0;
+  border-bottom:0;
+}
 .wsl-shell .wsl-ribbon:has(.wsl-home-ribbon){
   height:96px;
   min-height:96px;
   max-height:96px;
-  padding:4px 8px 5px;
+  padding:0;
   background:#e8e7eb;
-  border-bottom:1px solid #d0cfd5;
+  border-top:0;
+  border-bottom:0;
 }
 .wsl-shell .wsl-ribbon:has(.wsl-home-ribbon)>.wsl-home-ribbon{
   flex:1 0 auto;
@@ -55,7 +63,7 @@
 @media(max-width:650px){
  .wsl-shell .wsl-tabs .wsl-tab{height:34px;font-size:12.5px}
  .wsl-shell .wsl-ribbon:has(.wsl-home-ribbon){
-   height:96px;min-height:96px;max-height:96px;padding:4px 6px 5px;
+   height:96px;min-height:96px;max-height:96px;padding:0;
  }
 }
 @media print{
