@@ -368,3 +368,15 @@ Ngày: 15/10/2026. Đường dẫn: `/cong-cu/mo-phong-word`.
 - Hai marker dưới: đầu tam giác từ `y=0.5` đến `y=3.5` (**3px**); phần khung chữ nhật từ `y=3.5` đến `y=9.5` (**6px**). Vạch ngang của biểu tượng `left` chuyển từ `y=7` tới `y=6.5` cho cân đối.
 - Chỉ sửa tọa độ `path d` của SVG, không chỉnh `pointer capture`, drag snapping 0,25cm, vị trí các marker, chiều cao thước 26px, dải trắng 4px hay vùng nhập liệu. Bổ sung kiểm thử kiểm tra tỷ lệ 3px/6px, ba marker rộng như nhau và chức năng kéo còn nguyên.
 - Tuân thủ quy trình sau mỗi sửa: cập nhật file Markdown này, commit GitHub, test/build và triển khai Vercel Production đến trạng thái READY.
+
+
+## 2026-10-16 — Hoàn thiện thước dọc giống thước ngang, không có Indent
+
+- Thước **dọc** tiếp tục dùng thẻ cha `.wsl-word-vertical-ruler` rộng **23px**, nền xám `#e8e7eb`, đường viền phải 1px và chiều cao bám theo chiều cao thực của `.wsl-paper`. Không chuyển sang thước nổi cố định khác và không thêm biểu tượng/khả năng kéo Indent theo trục dọc.
+- Thêm `VerticalRulerTicks` riêng có các thành phần đối xứng với thước ngang: `.wsl-word-vertical-cm-track` (vạch trên nền xám tính từ **mép trên paper**), `.wsl-word-vertical-content-strip` (dải nền trắng che vạch dưới, tính từ **lề trên vùng nội dung**), vạch cm ngắn và số nguyên cm.
+- **Đơn vị centimet:** 1cm = `96/2.54` CSS px ở zoom 100%. Chia vạch mỗi **0,25cm**, gồm vạch dài ở mốc 1cm, nửa cm và một phần tư cm. Vạch nằm **ngang**, dày đồng nhất **1px**, chiều dài các cấp tương ứng **7px / 4,5px / 2,5px**, căn giữa theo chiều ngang thanh thước. Chỉ vạch cm **nền xám** còn dài; bên trong dải trắng, thay vạch dài bằng **số 1, 2, 3, ...** (Arial 10px, xoay 90°), không hiển thị mốc số 0.
+- Dải trắng trục dọc có khoảng hở **4px bên trái và 4px bên phải**, `z-index:2` và `overflow:hidden`. Nền xám vẫn ở ngoài lề trên/dưới; giữ đúng thứ tự lớp như thước ngang. Không có biểu tượng Indent trên thước dọc.
+- Tính vùng thước trắng theo `paperRect` và `editorRect`: `editorOffset = editorRect.top - paperRect.top`; điểm đầu = `editorOffset`, điểm cuối = `paperRect.height - editorOffset`. Giấy dùng cùng padding trên/dưới nên chính xác với **lề thường/hẹp** và chiều cao giấy có thể tăng khi nhập nhiều văn bản. Không dùng chiều cao editor hiện có làm chiều dài vùng trắng vì editor có thể chưa lấp hết phần nội dung trang A4.
+- Bám cuộn dọc bằng `top:calc(var(--wsl-page-top-offset) - scrollTop)`, giữ `height:renderedPaperHeight` và tính vị trí thực giữa giấy và thước bằng `getBoundingClientRect()`. `ResizeObserver` quan sát giấy, thước, editor, đồng bộ lại khi thay đổi kích thước, zoom hoặc khổ A4 dọc/ngang; snap vạch theo pixel vật lý để giữ nét 1px rõ ràng.
+- Hồi quy kiểm tra không xuất hiện marker Indent trên trục dọc, 16 tổ hợp hình học và 10 lượt QA, đúng 0,25cm, nền trắng phủ nền xám, số nguyên cm và giữ nguyên chức năng thước ngang.
+- Sau mỗi chỉnh sửa tiếp tục **cập nhật Markdown, commit GitHub main, chạy kiểm thử/build, triển khai Vercel Production đến trạng thái READY**, và chỉ xác nhận sau khi kiểm tra trạng thái.
