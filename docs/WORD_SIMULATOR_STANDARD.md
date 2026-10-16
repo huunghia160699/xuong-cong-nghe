@@ -264,3 +264,12 @@ Ngày: 15/10/2026. Đường dẫn: `/cong-cu/mo-phong-word`.
 - Vẫn giữ đúng **hai thẻ cha rỗng**: `.wsl-word-horizontal-ruler` (chiếm hàng ngang 26px, có đường viền dưới mảnh) và `.wsl-word-vertical-ruler` (bề ngang 23px, bám theo vị trí và chiều cao trang giấy). Chúng không có phần tử con, để sẵn cho phương án thước mới.
 - Giữ nguyên phép tính A4, bố cục trang, zoom, cuộn, nút bật/tắt thước và tất cả lệnh Home; không đưa thêm thiết kế thước mới khi người dùng chưa cung cấp.
 - Hồi quy kiểm tra **không còn SVG, marker, tick hay vùng trắng bên trong thước**; các test khác của ứng dụng vẫn chạy như bình thường.
+
+
+## 2026-10-16 — Bước đầu dựng thước mới: vạch chia cm trên thước ngang
+
+- Thước **ngang** hiển thị **chỉ các vạch dọc**, từ mép trái giấy A4 đến mép phải giấy A4, không có nền trắng mới, số đo, ký hiệu lề hoặc bất kỳ biểu tượng nào khác. Thước **dọc** vẫn giữ thẻ rỗng chờ thiết kế.
+- Khoảng vạch chia: mỗi **0,25 cm**, sử dụng đúng quy đổi `96/2.54` CSS px/cm; vạch 1 cm cao 14px, nửa cm cao 9px, một phần tư cm cao 5px. Màu xám đậm `#64676c`, rộng 1px, không dùng gradient.
+- Track chứa vạch dài đúng `a4Dimensions(landscape).width * zoom/100`; có vạch đầu tiên tại 0 và vạch cuối `width-1px` để nét nằm trong đúng hai mép giấy. Với A4 ngang 29,7 cm, vạch cuối là mốc cuối trang thay vì làm tròn lên 30cm.
+- Dùng `paper.getBoundingClientRect().left - ruler.getBoundingClientRect().left` để xác định vị trí ngang của giấy. `ResizeObserver` và `scrollLeft` đồng bộ lại căn chỉnh trên màn hình co giãn, có scrollbar, lúc zoom hay lúc cuộn.
+- Giữ vùng cha `.wsl-word-horizontal-ruler`, nền xám sẵn có và đường viền dưới; không sửa `.wsl-paper`, nhóm Home và thước dọc. Kiểm thử yêu cầu đủ vạch, số đo không xuất hiện, kích thước theo A4 dọc/ngang và zoom.
