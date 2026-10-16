@@ -862,6 +862,6 @@ test("Word vertical ruler starts with the paper and Home toolbar fills the avail
  assert.match(chrome,/\.wsl-shell \.wsl-home-ribbon \.wsl-home-group\{[^}]*flex:0 0 auto;/);
  for(const [pageTop,viewport] of [[13,1920],[9,650]])for(const ratio of [.6,1,1.3,1.6]){
    const paperTop=pageTop, rulerTop=pageTop;
-   assert.equal(rulerTop,paperTop,\`viewport \${viewport} zoom \${ratio}\`);
+   assert.equal(rulerTop,paperTop,`viewport ${viewport} zoom ${ratio}`);
  }
 });
