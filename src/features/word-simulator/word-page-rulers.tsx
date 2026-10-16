@@ -79,8 +79,8 @@ export function WordPageRulers({landscape,narrow,zoom,scrollLeft,scrollTop}:Prop
     </div>
     <div className="wsl-word-vertical-ruler" aria-hidden="true">
       <div className="wsl-word-ruler-vertical-offset" style={{transform:`translateY(-${scrollTop}px)`}}>
-        <div className="wsl-word-ruler-vertical-space" style={{height:paperHeight*ratio+13}}>
-          <div className="wsl-word-ruler-vertical-page" style={{height:paperHeight*ratio,top:13}}>
+        <div className="wsl-word-ruler-vertical-space" style={{height:paperHeight*ratio}}>
+          <div className="wsl-word-ruler-vertical-page" style={{height:paperHeight*ratio,top:0}}>
             <div className="wsl-word-ruler-vertical-printable"
               style={{top:vMargin*ratio,height:printableHeight*ratio}}>
               <RulerTicks length={printableHeight*ratio} axis="vertical" ratio={ratio}/>
