@@ -803,7 +803,7 @@ test("Word rulers measure cm within A4 page margins and follow scroll/zoom/orien
  assert.match(rulers,/const printableHeight=paperHeight-2\*vMargin/);
  assert.match(rulers,/const value=index\*QUARTER_CM\*ratio;/);
  assert.match(rulers,/RulerTicks length=\{printableWidth\*ratio\} axis="horizontal" ratio=\{ratio\}/);
- assert.match(rulers,/RulerTicks length=\{printableHeight\*ratio\} axis="vertical" ratio=\{ratio\}/);
+ assert.match(rulers,/RulerTicks length=\{verticalPrintableHeight\} axis="vertical" ratio=\{ratio\}/);
  assert.doesNotMatch(rulers,/transform:\x60scale\(/);
  assert.match(rulers,/mark\.whole&&mark\.index>0/);
  assert.match(rulers,/MarginMarker side="left"/);
@@ -858,12 +858,12 @@ test("Word vertical ruler starts with the paper and Home toolbar fills the avail
  assert.match(css,/\.wsl-word-vertical-ruler\{[^}]*top:var\(--wsl-page-top-offset,13px\);/);
  assert.doesNotMatch(css,/\.wsl-word-vertical-ruler\{[^}]*bottom:0;/);
  assert.match(css,/\.wsl-word-ruler-vertical-printable\{[^}]*border-top:0;/);
- assert.match(css,/\.wsl-word-horizontal-ruler\{[^}]*border-top:0;[^}]*border-bottom:0;/);
+ assert.match(css,/\.wsl-word-horizontal-ruler\{[^}]*border-top:0;[^}]*border-bottom:1px solid #c7c7cb;/);
  assert.match(css,/@media\(max-width:650px\)\{[^}]*--wsl-page-top-offset:9px/);
  assert.match(css,/padding:var\(--wsl-page-top-offset\) 12px 60px/);
  assert.doesNotMatch(css,/\.wsl-word-ruler-vertical-page\{margin-top:-4px\}/);
- assert.match(ruler,/className="wsl-word-ruler-vertical-space" style=\{\{height:paperHeight\*ratio\}\}/);
- assert.match(ruler,/className="wsl-word-ruler-vertical-page" style=\{\{height:paperHeight\*ratio,top:0\}\}/);
+ assert.match(ruler,/className="wsl-word-ruler-vertical-space" style=\{\{height:verticalHeight\}\}/);
+ assert.match(ruler,/className="wsl-word-ruler-vertical-page" style=\{\{height:verticalHeight,top:0\}\}/);
  assert.doesNotMatch(ruler,/paperHeight\*ratio\+13/);
  assert.match(chrome,/\.wsl-shell \.wsl-tabs\{[^}]*border-radius:0;/);
  assert.match(chrome,/\.wsl-shell \.wsl-tabs \.wsl-tab\{[^}]*border-radius:0;/);
@@ -876,4 +876,33 @@ test("Word vertical ruler starts with the paper and Home toolbar fills the avail
    const paperTop=pageTop, rulerTop=pageTop;
    assert.equal(rulerTop,paperTop,`viewport ${viewport} zoom ${ratio}`);
  }
+});
+
+
+test("Word ruler bottom border and exact .wsl-paper height stay aligned after zoom, scroll and text reflow",()=>{
+ const ruler=readFileSync("src/features/word-simulator/word-page-rulers.tsx","utf8");
+ const editor=readFileSync("src/features/word-simulator/word-simulator.tsx","utf8");
+ const css=readFileSync("src/features/word-simulator/word-page-rulers.css","utf8");
+ assert.match(css,/\.wsl-word-horizontal-ruler\{[^}]*border-top:0;[^}]*border-bottom:1px solid #c7c7cb;/);
+ assert.match(css,/\.wsl-word-vertical-ruler\{[^}]*position:absolute;/);
+ assert.match(css,/\.wsl-word-layout \.wsl-word-page-body\{[^}]*position:relative;/);
+ assert.match(editor,/\{showRuler&&<WordPageRulers axis="horizontal"/);
+ assert.match(editor,/<div className="wsl-word-page-body">\s*\{showRuler&&<WordPageRulers axis="vertical"/);
+ assert.match(editor,/ref=\{paperRef\} className=\{"wsl-paper /);
+ assert.match(editor,/const observer=new ResizeObserver\(measure\)/);
+ assert.match(editor,/observer\.observe\(page\)/);
+ assert.match(editor,/const height=page\.getBoundingClientRect\(\)\.height;/);
+ assert.match(editor,/renderedPaperHeight=\{measuredHeight\}/);
+ assert.match(ruler,/renderedPaperHeight\?:number;/);
+ assert.match(ruler,/const verticalHeight=renderedPaperHeight\?\?paperHeight\*ratio;/);
+ assert.match(ruler,/const verticalPrintableHeight=Math\.max\(0,verticalHeight-2\*vMargin\*ratio\);/);
+ assert.match(ruler,/height:verticalHeight/);
+ assert.match(ruler,/return axis==="horizontal"\?/);
+ for(let landscape of [false,true])for(const zoom of [60,80,100,120,160])
+   for(const extraText of [0,120,460]){
+     const pageHeight=(landscape?210:297)*96/25.4*zoom/100+extraText;
+     const rulerHeight=pageHeight;
+     assert.equal(rulerHeight,pageHeight);
+     assert.ok(rulerHeight>0);
+   }
 });
