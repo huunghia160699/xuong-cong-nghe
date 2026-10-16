@@ -273,3 +273,12 @@ Ngày: 15/10/2026. Đường dẫn: `/cong-cu/mo-phong-word`.
 - Track chứa vạch dài đúng `a4Dimensions(landscape).width * zoom/100`; có vạch đầu tiên tại 0 và vạch cuối `width-1px` để nét nằm trong đúng hai mép giấy. Với A4 ngang 29,7 cm, vạch cuối là mốc cuối trang thay vì làm tròn lên 30cm.
 - Dùng `paper.getBoundingClientRect().left - ruler.getBoundingClientRect().left` để xác định vị trí ngang của giấy. `ResizeObserver` và `scrollLeft` đồng bộ lại căn chỉnh trên màn hình co giãn, có scrollbar, lúc zoom hay lúc cuộn.
 - Giữ vùng cha `.wsl-word-horizontal-ruler`, nền xám sẵn có và đường viền dưới; không sửa `.wsl-paper`, nhóm Home và thước dọc. Kiểm thử yêu cầu đủ vạch, số đo không xuất hiện, kích thước theo A4 dọc/ngang và zoom.
+
+
+## 2026-10-16 — Đồng bộ nét 1px và căn giữa chiều cao thước ngang
+
+- Giữ cả ba cấp vạch cách nhau theo 0,25 cm, nhưng mọi vạch chỉ **1 CSS px bề rộng** (`width`, `min-width`, `max-width` đều 1px). Không dùng border hoặc quy đổi độ dày theo cấp vạch.
+- Mọi vạch đều được **căn chính giữa dọc** theo thanh thước bằng `top:50%` và `transform:translateY(-50%)`, thay cho căn dưới `bottom:3px`.
+- **Giảm chính xác một nửa chiều cao:** vạch cm 14 → **7px**, nửa cm 9 → **4,5px**, 1/4 cm 5 → **2,5px**.
+- Với khoảng cách cm quy đổi ra pixel lẻ, tọa độ vạch phải được **snap theo lưới pixel vật lý của màn hình**: `Math.round((viewportLeft + offset) * devicePixelRatio) / devicePixelRatio - viewportLeft`, vì làm tròn riêng offset tại gốc track sẽ gây lệch vạch khi trang giấy nằm tại tọa độ lẻ. Lấy `viewportLeft` từ `.wsl-paper.getBoundingClientRect().left`, cập nhật khi zoom, cuộn và resize.
+- Không thêm nền trắng, số hay marker. Thước dọc tiếp tục để trống; giữ nguyên giấy A4 và các nhóm công cụ Home. Bổ sung kiểm thử nhiều DPR khác nhau để phát hiện các vạch đặt vào nửa pixel vật lý.
