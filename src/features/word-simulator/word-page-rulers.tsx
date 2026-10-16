@@ -195,11 +195,89 @@ function HorizontalRulerTicks({landscape,narrow,zoom,scrollLeft,indent,onIndentS
   </div>;
 }
 
+/** The vertical ruler uses exactly the horizontal ruler's cm/quarter-cm
+ * divisions and its own white, margin-relative scale; no indent controls. */
+function VerticalRulerTicks({landscape,narrow,zoom,scrollTop,verticalHeight}:{
+  landscape:boolean;narrow:boolean;zoom:number;scrollTop:number;verticalHeight:number;
+}){
+  const rulerRef=useRef<HTMLDivElement>(null);
+  const [geometry,setGeometry]=useState({top:0,viewportTop:0,paperHeight:verticalHeight,editorOffset:0,pixelRatio:1});
+
+  useLayoutEffect(()=>{
+    const ruler=rulerRef.current;
+    const paper=document.querySelector<HTMLElement>(".wsl-word-page-body .wsl-paper");
+    const editor=document.querySelector<HTMLElement>(".wsl-word-page-body .wsl-editor");
+    if(!ruler||!paper||!editor)return;
+    const align=()=>{
+      const paperRect=paper.getBoundingClientRect();
+      const editorRect=editor.getBoundingClientRect();
+      const viewportTop=paperRect.top;
+      const top=viewportTop-ruler.getBoundingClientRect().top;
+      const paperHeight=paperRect.height;
+      const editorOffset=editorRect.top-viewportTop;
+      const pixelRatio=window.devicePixelRatio||1;
+      setGeometry(old=>
+        Math.abs(old.top-top)<0.01&&Math.abs(old.viewportTop-viewportTop)<0.01&&
+        Math.abs(old.paperHeight-paperHeight)<0.01&&Math.abs(old.editorOffset-editorOffset)<0.01&&
+        old.pixelRatio===pixelRatio?old:{top,viewportTop,paperHeight,editorOffset,pixelRatio});
+    };
+    align();
+    const observer=typeof ResizeObserver!=="undefined"?new ResizeObserver(align):null;
+    observer?.observe(ruler);
+    observer?.observe(paper);
+    observer?.observe(editor);
+    window.addEventListener("resize",align);
+    return ()=>{observer?.disconnect();window.removeEventListener("resize",align);};
+  },[landscape,narrow,zoom,scrollTop,verticalHeight]);
+
+  const pageHeight=geometry.paperHeight;
+  const contentHeight=Math.max(0,pageHeight-2*geometry.editorOffset);
+  const step=PX_PER_QUARTER_CM*zoom/100;
+  const pageTicks=useMemo(()=>{
+    const count=Math.floor(pageHeight/step+1e-8);
+    return Array.from({length:count+1},(_,index)=>({
+      index,top:index*step,kind:index%4===0?"cm":index%2===0?"half":"quarter"
+    })).filter(tick=>tick.top<pageHeight-1);
+  },[pageHeight,step]);
+  const contentTicks=useMemo(()=>{
+    const count=Math.floor(contentHeight/step+1e-8);
+    return Array.from({length:count+1},(_,index)=>({
+      index,top:index*step,kind:index%4===0?"cm":index%2===0?"half":"quarter"
+    })).filter(tick=>tick.index>0&&tick.top<contentHeight-1);
+  },[contentHeight,step]);
+  const snapVerticalTick=(offset:number)=>{
+    const {viewportTop,pixelRatio}=geometry;
+    return Math.round((viewportTop+offset)*pixelRatio)/pixelRatio-viewportTop;
+  };
+  const contentStart=snapVerticalTick(geometry.editorOffset);
+  const contentEnd=snapVerticalTick(pageHeight-geometry.editorOffset);
+
+  return <div ref={rulerRef} className="wsl-word-vertical-ruler" aria-hidden="true"
+    style={{top:`calc(var(--wsl-page-top-offset, 13px) - ${scrollTop}px)`,height:verticalHeight}}>
+    <div className="wsl-word-vertical-cm-track" style={{top:geometry.top,height:pageHeight}}>
+      {pageTicks.map(tick=><span key={tick.index}
+        className={"wsl-word-vertical-cm-tick wsl-word-vertical-cm-tick-"+tick.kind}
+        style={{top:snapVerticalTick(tick.top)}}/>)}
+      <span className="wsl-word-vertical-cm-tick wsl-word-vertical-cm-tick-cm"
+        style={{top:snapVerticalTick(Math.max(0,pageHeight-1))}}/>
+      <div className="wsl-word-vertical-content-strip"
+        style={{top:contentStart,height:Math.max(0,contentEnd-contentStart)}}>
+        {contentTicks.map(tick=>tick.kind==="cm"?
+          <span key={tick.index} className="wsl-word-vertical-cm-label"
+            style={{top:snapVerticalTick(geometry.editorOffset+tick.top)-contentStart}}>{tick.index/4}</span>:
+          <span key={tick.index}
+            className={"wsl-word-vertical-cm-tick wsl-word-vertical-cm-tick-"+tick.kind}
+            style={{top:snapVerticalTick(geometry.editorOffset+tick.top)-contentStart}}/>)}
+      </div>
+    </div>
+  </div>;
+}
+
 export function WordPageRulers({landscape,narrow,zoom,scrollLeft,scrollTop,axis,renderedPaperHeight,indent,onIndentStart,onIndentChange,onIndentEnd}:Props){
   const {height:paperHeight}=a4Dimensions(landscape);
   const verticalHeight=renderedPaperHeight??paperHeight*zoom/100;
   if(axis==="horizontal")return <HorizontalRulerTicks landscape={landscape} narrow={narrow} zoom={zoom} scrollLeft={scrollLeft}
     indent={indent??{firstLine:0,left:0,right:0}} onIndentStart={onIndentStart} onIndentChange={onIndentChange} onIndentEnd={onIndentEnd}/>;
-  return <div className="wsl-word-vertical-ruler" aria-hidden="true"
-    style={{top:`calc(var(--wsl-page-top-offset, 13px) - ${scrollTop}px)`,height:verticalHeight}}/>;
+  return <VerticalRulerTicks landscape={landscape} narrow={narrow} zoom={zoom}
+    scrollTop={scrollTop} verticalHeight={verticalHeight}/>;
 }
