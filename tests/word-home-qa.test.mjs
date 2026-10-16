@@ -117,6 +117,18 @@ test("Home Ribbon: repeat state, Escape, selection and dialogs 10 rounds",()=>{
      assert.ok(home.includes(`active={formatActive.${format}}`));
      assert.ok(editor.includes(`formatActive`)&&editor.includes("document.queryCommandState(key)"));
    }
+   for(const script of ["subscript","superscript"]){
+     assert.ok(home.includes('active={formatActive.'+script+'}'));
+     assert.ok(home.includes('run("'+script+'")'));
+   }
+   assert.match(editor,/if\(name==="subscript"\|\|name==="superscript"\)\{\s*toggleScriptFormat\(name\);return;/);
+   assert.match(editor,/function toggleScriptFormat\(kind:"subscript"\|"superscript"\)/);
+   assert.match(editor,/const opposite=kind==="subscript"\?"superscript":"subscript";/);
+   assert.match(editor,/if\(!wasActive&&document\.queryCommandState\(opposite\)\)\{/);
+   assert.match(editor,/document\.execCommand\(opposite,false\);/);
+   assert.match(editor,/const applied=document\.execCommand\(kind,false\);/);
+   assert.match(editor,/setFormatActive\(current=>\(\{/);
+   assert.match(editor,/\[opposite\]:oppositeActive/);
    assert.match(editor,/event\.key!=="Escape"/);
    assert.match(editor,/setClipboardMode\(null\);stagedClipboard\.current=null;/);
    assert.match(editor,/if\(clipboardMode&&stagedClipboard\.current!==null\)/);
