@@ -841,7 +841,7 @@ test("Word gray tab strip and floating 5px Home ribbon match the requested frame
  assert.match(chrome,/bottom:4px;/);
  assert.match(chrome,/\.wsl-shell \.wsl-tabs \.wsl-tab\.is-active::after/);
  assert.match(chrome,/\.wsl-ribbon:has\(\.wsl-home-ribbon\)/);
- assert.match(chrome,/\.wsl-shell \.wsl-ribbon\{\s*margin-inline:4px;\s*padding:0;\s*border-top:0;\s*border-bottom:0;/);
+ assert.match(chrome,/\.wsl-shell \.wsl-ribbon\{\s*margin-inline:8px;\s*padding:0;\s*border-top:0;\s*border-bottom:0;/);
  assert.match(chrome,/\.wsl-shell \.wsl-ribbon:has\(\.wsl-home-ribbon\)\{[^}]*padding:0;[^}]*border-top:0;[^}]*border-bottom:0;/);
  assert.match(chrome,/border-radius:5px;/);
  assert.match(chrome,/box-shadow:0 1px 4px rgba\(35,35,45,.09\)/);
@@ -908,12 +908,12 @@ test("Word ruler bottom border and exact .wsl-paper height stay aligned after zo
 });
 
 
-test("Home ribbon has zero inner side padding and parent Ribbon supplies 4px margins",()=>{
+test("Home Ribbon keeps exactly 96px at every width, 8px parent margins and no top seam",()=>{
  const home=readFileSync("src/features/word-simulator/word-home-ribbon.css","utf8");
  const chrome=readFileSync("src/features/word-simulator/word-chrome-polish.css","utf8");
  assert.match(home,/\.wsl-home-ribbon\{[^}]*height:100%;padding:0;/);
  assert.doesNotMatch(home,/\.wsl-home-ribbon\{[^}]*padding:0 4px;/);
- assert.match(chrome,/\.wsl-shell \.wsl-ribbon\{\s*margin-inline:4px;\s*padding:0;\s*border-top:0;\s*border-bottom:0;/);
+ assert.match(chrome,/\.wsl-shell \.wsl-ribbon\{\s*margin-inline:8px;\s*padding:0;\s*border-top:0;\s*border-bottom:0;/);
  const child=chrome.match(/\.wsl-shell \.wsl-ribbon:has\(\.wsl-home-ribbon\)>\.wsl-home-ribbon\{([^}]*)\}/);
  assert.ok(child);
  assert.match(child[1],/width:100%;/);
@@ -921,7 +921,18 @@ test("Home ribbon has zero inner side padding and parent Ribbon supplies 4px mar
  assert.match(child[1],/padding:0;/);
  assert.doesNotMatch(child[1],/padding:0 4px;/);
  assert.match(child[1],/align-self:stretch;/);
- assert.match(child[1],/height:100%;/);
+ for(const property of ["height:96px;","min-height:96px;","max-height:96px;"])
+   assert.ok(child[1].includes(property),property);
+ assert.match(child[1],/border-top:0;/);
+ assert.match(chrome,/\.wsl-shell \.wsl-tabs\{[^}]*border-bottom:0;/);
+ const parent=chrome.match(/\.wsl-shell \.wsl-ribbon:has\(\.wsl-home-ribbon\)\{([^}]*)\}/);
+ assert.ok(parent);
+ for(const property of ["flex:0 0 96px;","height:96px;","min-height:96px;","max-height:96px;"])
+   assert.ok(parent[1].includes(property),property);
+ const mobile=chrome.match(/@media\(max-width:650px\)\{([\s\S]*?)\n\}/);
+ assert.ok(mobile);
+ assert.match(mobile[1],/flex:0 0 96px;height:96px;min-height:96px;max-height:96px;/);
+ assert.match(mobile[1],/height:96px;min-height:96px;max-height:96px;/);
  assert.doesNotMatch(child[1],/height:85px;/);
  assert.match(chrome,/\.wsl-shell \.wsl-ribbon:has\(\.wsl-home-ribbon\)\{[^}]*height:96px;/);
 });
