@@ -110,11 +110,13 @@ function Group({name,children}:{name:string;children:React.ReactNode}){
 
 export function WordSimulator(){
   const editor=useRef<HTMLDivElement>(null);
+  const paperRef=useRef<HTMLDivElement>(null);
   const shell=useRef<HTMLDivElement>(null);
   const fileInput=useRef<HTMLInputElement>(null);
   const imageInput=useRef<HTMLInputElement>(null);
   const savedSelection=useRef<Range|null>(null);
   const [rulerScroll,setRulerScroll]=useState({left:0,top:0});
+  const [measuredPaper,setMeasuredPaper]=useState<{landscape:boolean;zoom:number;height:number}|null>(null);
   const stagedClipboard=useRef<string|null>(null);
   const [activeTab,setActiveTab]=useState<Tab>("Home");
   const [filename,setFilename]=useState("Document1");
@@ -139,6 +141,27 @@ export function WordSimulator(){
     bold:false,italic:false,underline:false,strikeThrough:false,subscript:false,superscript:false
   });
   const paintFormat=useRef<{font:string;color:string;bold:boolean;italic:boolean}|null>(null);
+  const isLandscape=orientation==="landscape";
+  const measuredHeight=measuredPaper?.landscape===isLandscape&&measuredPaper.zoom===zoom
+    ?measuredPaper.height:a4Dimensions(isLandscape).height*zoom/100;
+
+  // The page may grow as text is entered; measure the rendered .wsl-paper,
+  // not just its A4 minimum height, to keep the vertical ruler exactly as tall.
+  useEffect(()=>{
+    const page=paperRef.current;
+    if(!page)return;
+    const measure=()=>{
+      const height=page.getBoundingClientRect().height;
+      if(height<=0)return;
+      setMeasuredPaper(previous=>previous?.landscape===isLandscape&&previous.zoom===zoom
+        &&Math.abs(previous.height-height)<0.1?previous:{landscape:isLandscape,zoom,height});
+    };
+    measure();
+    if(typeof ResizeObserver==="undefined")return;
+    const observer=new ResizeObserver(measure);
+    observer.observe(page);
+    return ()=>observer.disconnect();
+  },[isLandscape,zoom]);
 
   const updateStats=useCallback(()=>{
     if(editor.current)setStats(textStats(editor.current.innerHTML));
@@ -569,9 +592,12 @@ export function WordSimulator(){
       "--wsl-paper-side-margin":(margins==="narrow"?48:87)+"px",
       "--wsl-paper-top-margin":(margins==="narrow"?48:86)+"px"
     } as React.CSSProperties}>
-      {showRuler&&<WordPageRulers landscape={orientation==="landscape"} narrow={margins==="narrow"}
+      {showRuler&&<WordPageRulers axis="horizontal" landscape={isLandscape} narrow={margins==="narrow"}
         zoom={zoom} scrollLeft={rulerScroll.left} scrollTop={rulerScroll.top}/>}
       <div className="wsl-word-page-body">
+        {showRuler&&<WordPageRulers axis="vertical" landscape={isLandscape} narrow={margins==="narrow"}
+          zoom={zoom} scrollLeft={rulerScroll.left} scrollTop={rulerScroll.top}
+          renderedPaperHeight={measuredHeight}/>}
         <div className="wsl-page-scroll" aria-label="Vùng trang tài liệu"
           onScroll={event=>{const node=event.currentTarget;setRulerScroll(current=>
             current.left===node.scrollLeft&&current.top===node.scrollTop?current:{left:node.scrollLeft,top:node.scrollTop});}}>
@@ -579,7 +605,7 @@ export function WordSimulator(){
             width:a4Dimensions(orientation==="landscape").width*zoom/100,
             minHeight:a4Dimensions(orientation==="landscape").height*zoom/100
           }}>
-            <div className={"wsl-paper "+(orientation==="landscape"?"is-landscape ":"")+(margins==="narrow"?"is-narrow":"")}
+            <div ref={paperRef} className={"wsl-paper "+(orientation==="landscape"?"is-landscape ":"")+(margins==="narrow"?"is-narrow":"")}
               style={{transform:"scale("+zoom/100+")",transformOrigin:"top left"}}>
             <div ref={editor} className={"wsl-editor "+(showMarks?"show-paragraph-marks":"")} aria-label="Nội dung tài liệu Word" role="textbox" aria-multiline="true" contentEditable suppressContentEditableWarning spellCheck={spellcheck}
               onInput={()=>{rememberSelection();markChanged();}} onKeyUp={rememberSelection} onMouseUp={handleEditorMouseUp}
