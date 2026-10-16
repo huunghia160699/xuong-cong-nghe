@@ -883,7 +883,7 @@ test("Word ruler retains page-relative position and existing Ribbon/viewport lay
    assert.ok(strip[1].includes(rule),rule);
  assert.match(chrome,/\.wsl-shell \.wsl-home-ribbon \.wsl-home-group\{[^}]*flex:0 0 auto;/);
 });
-test("Horizontal ruler draws only ticks, vertical placeholder preserves measured .wsl-paper height",()=>{
+test("Horizontal ruler preserves measured .wsl-paper and vertical ruler mirrors centimeter subdivisions",()=>{
  const ruler=readFileSync("src/features/word-simulator/word-page-rulers.tsx","utf8");
  const editor=readFileSync("src/features/word-simulator/word-simulator.tsx","utf8");
  const css=readFileSync("src/features/word-simulator/word-page-rulers.css","utf8");
@@ -1205,4 +1205,79 @@ test("Ruler marker triangles become 3px high and leave 6px tall rectangular fram
  assert.match(ruler,/onPointerMove=\{onPointerMove\} onPointerUp=\{onPointerUp\}/);
  for(const kind of ["firstLine","left","right"])
    assert.match(ruler,new RegExp('"'+kind+'"'));
+});
+
+
+test("Vertical ruler mirrors horizontal centimeter ticks, margin-relative white area, and numbered labels without indent markers",()=>{
+ const ruler=readFileSync("src/features/word-simulator/word-page-rulers.tsx","utf8");
+ const css=readFileSync("src/features/word-simulator/word-page-rulers.css","utf8");
+ const vertical=ruler.slice(ruler.indexOf("function VerticalRulerTicks"),ruler.indexOf("export function WordPageRulers"));
+ const horizontal=ruler.slice(ruler.indexOf("function HorizontalRulerTicks"),ruler.indexOf("function VerticalRulerTicks"));
+ assert.match(vertical,/const rulerRef=useRef<HTMLDivElement>\(null\)/);
+ assert.match(vertical,/const paper=document\.querySelector<HTMLElement>\("\.wsl-word-page-body \.wsl-paper"\)/);
+ assert.match(vertical,/const editor=document\.querySelector<HTMLElement>\("\.wsl-word-page-body \.wsl-editor"\)/);
+ assert.match(vertical,/const paperRect=paper\.getBoundingClientRect\(\);/);
+ assert.match(vertical,/const editorRect=editor\.getBoundingClientRect\(\);/);
+ assert.match(vertical,/const viewportTop=paperRect\.top;/);
+ assert.match(vertical,/const top=viewportTop-ruler\.getBoundingClientRect\(\)\.top;/);
+ assert.match(vertical,/const paperHeight=paperRect\.height;/);
+ assert.match(vertical,/const editorOffset=editorRect\.top-viewportTop;/);
+ assert.match(vertical,/observer\?\.observe\(paper\)/);
+ assert.match(vertical,/observer\?\.observe\(editor\)/);
+ assert.match(vertical,/observer\?\.observe\(ruler\)/);
+ assert.match(vertical,/\[landscape,narrow,zoom,scrollTop,verticalHeight\]/);
+ assert.match(vertical,/const contentHeight=Math\.max\(0,pageHeight-2\*geometry\.editorOffset\);/);
+ assert.match(vertical,/const step=PX_PER_QUARTER_CM\*zoom\/100;/);
+ assert.match(vertical,/kind:index%4===0\?"cm":index%2===0\?"half":"quarter"/);
+ assert.match(vertical,/\.filter\(tick=>tick\.top<pageHeight-1\)/);
+ assert.match(vertical,/\.filter\(tick=>tick\.index>0&&tick\.top<contentHeight-1\)/);
+ assert.match(vertical,/Math\.round\(\(viewportTop\+offset\)\*pixelRatio\)\/pixelRatio-viewportTop/);
+ assert.match(vertical,/const contentStart=snapVerticalTick\(geometry\.editorOffset\);/);
+ assert.match(vertical,/const contentEnd=snapVerticalTick\(pageHeight-geometry\.editorOffset\);/);
+ assert.match(vertical,/className="wsl-word-vertical-ruler" aria-hidden="true"/);
+ assert.match(vertical,/style=\{\{top:.*scrollTop.*height:verticalHeight\}\}/);
+ assert.match(vertical,/className="wsl-word-vertical-cm-track"/);
+ assert.match(vertical,/className="wsl-word-vertical-content-strip"/);
+ assert.match(vertical,/style=\{\{top:contentStart,height:Math\.max\(0,contentEnd-contentStart\)\}\}/);
+ assert.match(vertical,/pageTicks\.map\(tick=><span key=\{tick\.index\}/);
+ assert.match(vertical,/contentTicks\.map\(tick=>tick\.kind==="cm"\?/);
+ assert.match(vertical,/className="wsl-word-vertical-cm-label"/);
+ assert.match(vertical,/\{tick\.index\/4\}<\/span>:/);
+ assert.match(vertical,/className=\{"wsl-word-vertical-cm-tick wsl-word-vertical-cm-tick-"\+tick\.kind\}/);
+ assert.doesNotMatch(vertical,/RulerIndentMarker|wsl-word-ruler-indent|pointerDown|onPointer|<button/);
+ assert.match(horizontal,/RulerIndentMarker/);
+ assert.match(ruler,/return <VerticalRulerTicks landscape=\{landscape\} narrow=\{narrow\} zoom=\{zoom\}/);
+ const white=css.match(/\.wsl-word-vertical-content-strip\{([^}]+)\}/)?.[1];
+ const mark=css.match(/\.wsl-word-vertical-cm-tick\{([^}]+)\}/)?.[1];
+ const label=css.match(/\.wsl-word-vertical-cm-label\{([^}]+)\}/)?.[1];
+ assert.ok(white&&mark&&label);
+ for(const property of ["left:4px;","right:4px;","z-index:2;","overflow:hidden;","background:#fff;"])
+   assert.ok(white.includes(property),property);
+ for(const property of ["left:50%;","transform:translateX(-50%);","height:1px;","min-height:1px;","max-height:1px;","background:#64676c;"])
+   assert.ok(mark.includes(property),property);
+ for(const [kind,width] of [["cm",7],["half",4.5],["quarter",2.5]])
+   assert.match(css,new RegExp("\\.wsl-word-vertical-cm-tick-"+kind+"\\{width:"+width+"px\\}"));
+ for(const property of ["left:50%;","transform:translate(-50%,-50%) rotate(90deg);","font:10px/1"])
+   assert.ok(label.includes(property),property);
+ assert.match(css,/\.wsl-word-vertical-ruler\{[^}]*width:23px;/);
+ for(const landscape of [false,true])for(const narrow of [false,true])for(const zoom of [60,100,130,160]){
+   const paperHeight=(landscape?210:297)*96/25.4*zoom/100;
+   const offset=(narrow?48+1:86+1)*zoom/100;
+   const whiteHeight=paperHeight-2*offset;
+   const quarter=96/2.54/4*zoom/100;
+   const marks=Array.from({length:Math.floor(whiteHeight/quarter+1e-8)+1},(_,index)=>({
+     index,top:index*quarter
+   })).filter(t=>t.index>0&&t.top<whiteHeight-1);
+   assert.ok(offset>0&&whiteHeight>0);
+   assert.equal(marks[0].index,1);
+   assert.ok(Math.abs(marks[0].top-quarter)<1e-8);
+   assert.ok(Math.abs(marks[3].top-96/2.54*zoom/100)<1e-8);
+   assert.deepEqual(marks.filter(t=>t.index%4===0).slice(0,4).map(t=>t.index/4),[1,2,3,4]);
+   assert.ok(marks.at(-1).top<whiteHeight);
+ }
+ for(const screenOrigin of [0,0.17,137.39])for(const dpr of [1,1.25,2,3]){
+   const offset=96/2.54*1.25;
+   const snapped=Math.round((screenOrigin+offset)*dpr)/dpr-screenOrigin;
+   assert.ok(Math.abs((snapped+screenOrigin)*dpr-Math.round((snapped+screenOrigin)*dpr))<1e-8);
+ }
 });
