@@ -300,3 +300,11 @@ Ngày: 15/10/2026. Đường dẫn: `/cong-cu/mo-phong-word`.
 - Dải trắng có bộ vạch riêng `contentTicks`, **khởi đầu 0 cm chính tại lề nhập liệu trái**; các vạch tiếp theo cách nhau 0,25cm, với vạch 1cm, 0,5cm, 0,25cm lần lượt cao 7px, 4,5px, 2,5px, rộng 1px. Không hiển thị số đo.
 - Lấy lề/trắc địa từ `.wsl-editor.getBoundingClientRect()` và `.wsl-paper.getBoundingClientRect()`; chốt `contentStart=snapTick(editorOffset)`, `contentEnd=snapTick(editorOffset+editorWidth)` để khung và mốc 0 bắt đầu cùng vị trí trên lưới pixel vật lý, ngay cả khi zoom hoặc thay đổi lề thường/hẹp. Vạch nội bộ tại `snapTick(editorOffset+tick.left)-contentStart`.
 - Giữ khung dải trắng chừa 2px phía trên/dưới, căn giữa; thước dọc chưa dựng. Test bảo đảm lớp trắng xuất hiện **sau** vạch thước giấy, có vạch riêng và gốc 0 di chuyển theo lề.
+
+
+## 2026-10-16 — Ẩn vạch số 0 của dải trắng và tăng khoảng hở
+
+- Bộ vạch của dải trắng `contentTicks` vẫn lấy gốc đo là mép trái vùng nhập liệu, nhưng **không vẽ vạch tại `index=0`**. Vạch 0,25cm đầu tiên trở thành vạch đầu hiển thị; mốc 1cm và các mốc tiếp theo không được dịch.
+- Chỉ áp dụng điều kiện `tick.index>0` cho vạch của **dải trắng**. Các vạch trên phần nền xám tính từ mép giấy và hai mép giấy vẫn giữ nguyên.
+- Dải trắng hiện chừa khoảng hở `top:4px;bottom:4px` so với chiều cao của thước ngang; giữ `z-index:2` để che vạch giấy ở phía dưới và vẽ lại các vạch trên dải trắng.
+- Không thêm số hoặc marker; không thay đổi kích thước giấy, thước dọc hoặc các nút Home.
