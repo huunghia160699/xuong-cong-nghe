@@ -58,65 +58,6 @@
   z-index:2;
   pointer-events:none;
 }
-.wsl-word-ruler-corner{
-  position:absolute;
-  z-index:5;
-  left:0;
-  top:0;
-  width:23px;
-  height:26px;
-  padding:3px 0 0 5px;
-  box-sizing:border-box;
-  border-right:1px solid #d0cfd4;
-  border-bottom:1px solid #d0cfd4;
-  background:#e8e7eb;
-  font:700 12px/16px Arial,sans-serif;
-  color:#68696d;
-}
-.wsl-word-ruler-horizontal-window{
-  width:100%;
-  height:26px;
-  padding-inline:36px;
-  box-sizing:border-box;
-  overflow:hidden;
-}
-.wsl-word-ruler-horizontal-offset{
-  width:100%;
-  height:26px;
-  position:relative;
-}
-.wsl-word-ruler-horizontal-space{
-  position:relative;
-  margin-inline:auto;
-  height:26px;
-}
-.wsl-word-ruler-horizontal-page{
-  position:absolute;
-  top:0;
-  left:0;
-  height:26px;
-  box-sizing:border-box;
-  border-top:0;
-  background:#e8e7eb;
-}
-.wsl-word-ruler-horizontal-printable{
-  position:absolute;
-  top:0;
-  height:26px;
-  box-sizing:border-box;
-  border-left:1px solid #c7c7cb;
-  border-right:1px solid #c7c7cb;
-  background:#fff;
-}
-.wsl-word-ruler-ticks-horizontal{display:block;overflow:visible}
-.wsl-word-ruler-left-marker,.wsl-word-ruler-right-marker{
-  position:absolute;
-  top:0;
-  width:16px;
-  height:26px;
-  z-index:2;
-}
-.wsl-word-ruler-marker{display:block}
 .wsl-word-vertical-ruler{
   position:absolute;
   z-index:3;
@@ -128,27 +69,14 @@
   border-right:1px solid #d0cfd4;
   background:#e8e7eb;
 }
-.wsl-word-ruler-vertical-offset{position:relative;width:23px;height:100%}
-.wsl-word-ruler-vertical-space{position:relative;width:23px}
-.wsl-word-ruler-vertical-page{position:absolute;left:0;width:23px}
-.wsl-word-ruler-vertical-printable{
-  position:absolute;
-  left:0;
-  width:23px;
-  box-sizing:border-box;
-  border-top:0;
-  border-bottom:1px solid #c7c7cb;
-  background:#fff;
-}
-.wsl-word-ruler-ticks-vertical{display:block;overflow:visible}
+/* Keep both ruler parents as neutral, empty placeholders.
+   No white measurement region, tick marks, labels or margin markers. */
 @media(max-width:1250px){
  .wsl-word-layout .wsl-page-scroll{padding-inline:25px}
- .wsl-word-ruler-horizontal-window{padding-inline:25px}
 }
 @media(max-width:650px){
  .wsl-workspace.wsl-word-layout{--wsl-page-top-offset:9px}
  .wsl-word-layout .wsl-page-scroll{padding:var(--wsl-page-top-offset) 12px 60px}
- .wsl-word-ruler-horizontal-window{padding-inline:12px}
 }
 @media print{
  .wsl-word-horizontal-ruler,.wsl-word-vertical-ruler{display:none!important}
