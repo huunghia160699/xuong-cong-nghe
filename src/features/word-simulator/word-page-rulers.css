@@ -69,8 +69,8 @@
 }
 .wsl-word-ruler-content-strip{
   position:absolute;
-  top:2px;
-  bottom:2px;
+  top:4px;
+  bottom:4px;
   z-index:2;
   overflow:hidden;
   box-sizing:border-box;
