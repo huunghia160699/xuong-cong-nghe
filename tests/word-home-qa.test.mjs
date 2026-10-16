@@ -226,3 +226,55 @@ test("Horizontal centimeter ruler and tab chrome: 10 rounds over A4 size and zoo
  }
  console.log("WORD_CM_TICKS_QA_PASS 10 rounds × 16 page geometry permutations");
 });
+
+
+test("Vertical Word ruler: repeat mirrored cm subdivisions, numbered white margin scale and scroll/zoom behavior 10 rounds",()=>{
+ for(let round=0;round<10;round++){
+  const vertical=ruler.slice(ruler.indexOf("function VerticalRulerTicks"),ruler.indexOf("export function WordPageRulers"));
+  assert.match(vertical,/function VerticalRulerTicks/);
+  assert.match(vertical,/const paperRect=paper\.getBoundingClientRect\(\);/);
+  assert.match(vertical,/const editorRect=editor\.getBoundingClientRect\(\);/);
+  assert.match(vertical,/const paperHeight=paperRect\.height;/);
+  assert.match(vertical,/const editorOffset=editorRect\.top-viewportTop;/);
+  assert.match(vertical,/const contentHeight=Math\.max\(0,pageHeight-2\*geometry\.editorOffset\);/);
+  assert.match(vertical,/const step=PX_PER_QUARTER_CM\*zoom\/100;/);
+  assert.match(vertical,/kind:index%4===0\?"cm":index%2===0\?"half":"quarter"/);
+  assert.match(vertical,/\.filter\(tick=>tick\.index>0&&tick\.top<contentHeight-1\)/);
+  assert.match(vertical,/className="wsl-word-vertical-content-strip"/);
+  assert.match(vertical,/className="wsl-word-vertical-cm-label"/);
+  assert.match(vertical,/\{tick\.index\/4\}<\/span>:/);
+  assert.match(vertical,/Math\.round\(\(viewportTop\+offset\)\*pixelRatio\)\/pixelRatio-viewportTop/);
+  assert.match(vertical,/scrollTop}px\)/);
+  assert.match(vertical,/height:verticalHeight/);
+  assert.match(vertical,/observer\?\.observe\(ruler\)/);
+  assert.match(vertical,/observer\?\.observe\(paper\)/);
+  assert.match(vertical,/observer\?\.observe\(editor\)/);
+  assert.doesNotMatch(vertical,/RulerIndentMarker|onPointerMove|onPointerDown|<button/);
+  assert.match(ruler,/return <VerticalRulerTicks landscape=\{landscape\} narrow=\{narrow\} zoom=\{zoom\}/);
+  assert.match(rulerCSS,/\.wsl-word-vertical-content-strip\{[^}]*left:4px;[^}]*right:4px;[^}]*z-index:2;[^}]*overflow:hidden;[^}]*background:#fff;/);
+  assert.match(rulerCSS,/\.wsl-word-vertical-cm-tick\{[^}]*height:1px;[^}]*min-height:1px;[^}]*max-height:1px;/);
+  assert.match(rulerCSS,/\.wsl-word-vertical-cm-tick-cm\{width:7px\}/);
+  assert.match(rulerCSS,/\.wsl-word-vertical-cm-tick-half\{width:4.5px\}/);
+  assert.match(rulerCSS,/\.wsl-word-vertical-cm-tick-quarter\{width:2.5px\}/);
+  assert.match(rulerCSS,/\.wsl-word-vertical-cm-label\{[^}]*transform:translate\(-50%,-50%\) rotate\(90deg\);/);
+  for(const landscape of [false,true])for(const narrow of [false,true])for(const zoom of [60,100,130,160]){
+    const paper=(landscape?210:297)*96/25.4*zoom/100;
+    const inset=((narrow?48:86)+1)*zoom/100;
+    const writable=paper-2*inset;
+    const step=96/2.54/4*zoom/100;
+    assert.ok(writable>0);
+    const pageTicks=Array.from({length:Math.floor(paper/step+1e-8)+1},(_,index)=>({
+      index,top:index*step
+    })).filter(tick=>tick.top<paper-1);
+    assert.equal(pageTicks[0].top,0);
+    const contentTicks=Array.from({length:Math.floor(writable/step+1e-8)+1},(_,index)=>({
+      index,top:index*step
+    })).filter(tick=>tick.index>0&&tick.top<writable-1);
+    assert.equal(contentTicks[0].index,1);
+    assert.equal(contentTicks[3].index,4);
+    assert.ok(contentTicks.at(-1).top<writable);
+    assert.ok(pageTicks.at(-1).top<paper);
+  }
+ }
+ console.log("WORD_VERTICAL_CM_QA_PASS 10 rounds × 16 page geometry permutations");
+});
