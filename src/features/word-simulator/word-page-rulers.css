@@ -151,7 +151,55 @@
   border-right:1px solid #d0cfd4;
   background:#e8e7eb;
 }
-/* The vertical ruler remains empty; the horizontal markers can be dragged to format indentation. */
+/* The vertical axis mirrors the horizontal axis: 1/4 cm and 1/2 cm ticks,
+   whole-cm labels on a white print region and gray ticks in page margins.
+   No indent markers or dragging controls are rendered vertically. */
+.wsl-word-vertical-cm-track{
+  position:absolute;
+  left:0;
+  width:100%;
+  background:transparent;
+  box-sizing:border-box;
+}
+.wsl-word-vertical-content-strip{
+  position:absolute;
+  left:4px;
+  right:4px;
+  z-index:2;
+  overflow:hidden;
+  box-sizing:border-box;
+  background:#fff;
+  pointer-events:none;
+}
+.wsl-word-vertical-cm-tick{
+  position:absolute;
+  left:50%;
+  transform:translateX(-50%);
+  z-index:1;
+  display:block;
+  height:1px;
+  min-height:1px;
+  max-height:1px;
+  box-sizing:border-box;
+  border:0;
+  background:#64676c;
+  pointer-events:none;
+}
+.wsl-word-vertical-cm-tick-cm{width:7px}
+.wsl-word-vertical-cm-tick-half{width:4.5px}
+.wsl-word-vertical-cm-tick-quarter{width:2.5px}
+.wsl-word-vertical-cm-label{
+  position:absolute;
+  left:50%;
+  transform:translate(-50%,-50%) rotate(90deg);
+  z-index:1;
+  color:#555960;
+  font:10px/1 Arial,"Segoe UI",sans-serif;
+  white-space:nowrap;
+  user-select:none;
+  pointer-events:none;
+}
+
 @media(max-width:1250px){
  .wsl-word-layout .wsl-page-scroll{padding-inline:25px}
 }
