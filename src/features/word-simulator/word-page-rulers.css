@@ -58,6 +58,27 @@
   z-index:2;
   pointer-events:none;
 }
+/* Only ruler subdivision strokes: the neutral parent background stays unchanged.
+   The tick layer is exactly as wide as the currently scaled A4 paper. */
+.wsl-word-ruler-cm-track{
+  position:absolute;
+  top:0;
+  height:100%;
+  box-sizing:border-box;
+  background:transparent;
+}
+.wsl-word-ruler-cm-tick{
+  position:absolute;
+  bottom:3px;
+  display:block;
+  width:1px;
+  box-sizing:border-box;
+  background:#64676c;
+  pointer-events:none;
+}
+.wsl-word-ruler-cm-tick-cm{height:14px}
+.wsl-word-ruler-cm-tick-half{height:9px}
+.wsl-word-ruler-cm-tick-quarter{height:5px}
 .wsl-word-vertical-ruler{
   position:absolute;
   z-index:3;
@@ -69,8 +90,7 @@
   border-right:1px solid #d0cfd4;
   background:#e8e7eb;
 }
-/* Keep both ruler parents as neutral, empty placeholders.
-   No white measurement region, tick marks, labels or margin markers. */
+/* The vertical ruler stays empty. Horizontal subdivisions have no white fill, labels or markers. */
 @media(max-width:1250px){
  .wsl-word-layout .wsl-page-scroll{padding-inline:25px}
 }
