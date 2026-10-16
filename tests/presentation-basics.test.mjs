@@ -795,7 +795,11 @@ test("Word horizontal ruler has paper-edge aligned cm ticks only, leaving vertic
  assert.match(ruler,/const PX_PER_QUARTER_CM=PX_PER_CM\/4/);
  assert.match(ruler,/function HorizontalRulerTicks/);
  assert.match(ruler,/useLayoutEffect\(\(\)=>/);
- assert.match(ruler,/paper\.getBoundingClientRect\(\)\.left-ruler\.getBoundingClientRect\(\)\.left/);
+ assert.match(ruler,/const viewportLeft=paper\.getBoundingClientRect\(\)\.left;/);
+ assert.match(ruler,/const left=viewportLeft-ruler\.getBoundingClientRect\(\)\.left;/);
+ assert.match(ruler,/const pixelRatio=window\.devicePixelRatio\|\|1;/);
+ assert.match(ruler,/Math\.round\(\(viewportLeft\+offset\)\*pixelRatio\)\/pixelRatio-viewportLeft/);
+ assert.match(ruler,/style=\{\{left:snapTick\(tick\.left\)\}\}/);
  assert.match(ruler,/const observer=typeof ResizeObserver/);
  assert.match(ruler,/observer\?\.observe\(ruler\)/);
  assert.match(ruler,/observer\?\.observe\(paper\)/);
@@ -805,15 +809,18 @@ test("Word horizontal ruler has paper-edge aligned cm ticks only, leaving vertic
  assert.match(ruler,/const scaledWidth=paperWidth\*zoom\/100/);
  assert.match(ruler,/kind:index%4===0\?"cm":index%2===0\?"half":"quarter"/);
  assert.match(ruler,/\.filter\(tick=>tick\.left<scaledWidth-1\)/);
- assert.match(ruler,/style=\{\{left:Math\.max\(0,scaledWidth-1\)\}\}/);
+ assert.match(ruler,/style=\{\{left:snapTick\(Math\.max\(0,scaledWidth-1\)\)\}\}/);
  assert.match(ruler,/className="wsl-word-ruler-cm-track"/);
  assert.match(ruler,/className="wsl-word-vertical-ruler" aria-hidden="true"/);
  assert.doesNotMatch(ruler,/<svg|<RulerTicks|<MarginMarker|<text|<label/);
  assert.doesNotMatch(ruler,/>Normal</);
  assert.match(css,/\.wsl-word-ruler-cm-track\{[^}]*background:transparent;/);
- assert.match(css,/\.wsl-word-ruler-cm-tick-cm\{height:14px\}/);
- assert.match(css,/\.wsl-word-ruler-cm-tick-half\{height:9px\}/);
- assert.match(css,/\.wsl-word-ruler-cm-tick-quarter\{height:5px\}/);
+ assert.match(css,/\.wsl-word-ruler-cm-tick\{[^}]*top:50%;[^}]*transform:translateY\(-50%\);/);
+ assert.match(css,/\.wsl-word-ruler-cm-tick\{[^}]*width:1px;[^}]*min-width:1px;[^}]*max-width:1px;/);
+ assert.doesNotMatch(css,/\.wsl-word-ruler-cm-tick\{[^}]*bottom:3px;/);
+ assert.match(css,/\.wsl-word-ruler-cm-tick-cm\{height:7px\}/);
+ assert.match(css,/\.wsl-word-ruler-cm-tick-half\{height:4.5px\}/);
+ assert.match(css,/\.wsl-word-ruler-cm-tick-quarter\{height:2.5px\}/);
  assert.doesNotMatch(css,/\.wsl-word-ruler-horizontal-printable/);
  assert.match(editor,/showRuler&&<WordPageRulers axis="horizontal"/);
  assert.match(editor,/showRuler&&<WordPageRulers axis="vertical"/);
@@ -916,4 +923,31 @@ test("Home Ribbon keeps exactly 96px at every width, 8px parent margins and no t
  assert.match(mobile[1],/height:96px;min-height:96px;max-height:96px;/);
  assert.doesNotMatch(child[1],/height:85px;/);
  assert.match(chrome,/\.wsl-shell \.wsl-ribbon:has\(\.wsl-home-ribbon\)\{[^}]*height:96px;/);
+});
+
+
+test("Word centimeter tick pixel snapping is consistent across fractional origins, zoom and DPR",()=>{
+ const ruler=readFileSync("src/features/word-simulator/word-page-rulers.tsx","utf8");
+ const css=readFileSync("src/features/word-simulator/word-page-rulers.css","utf8");
+ assert.match(ruler,/const snapTick=\(offset:number\)=>\{/);
+ assert.match(ruler,/Math\.round\(\(viewportLeft\+offset\)\*pixelRatio\)\/pixelRatio-viewportLeft/);
+ for(const ratio of [1,1.25,1.5,2,3])
+  for(const origin of [0,0.15,0.33,23.76,154.27])
+   for(const zoom of [60,100,130,160])
+    for(let index=0;index<120;index++){
+     const offset=index*(96/2.54)/4*zoom/100;
+     const relative=Math.round((origin+offset)*ratio)/ratio-origin;
+     const screenPosition=(origin+relative)*ratio;
+     assert.ok(Math.abs(screenPosition-Math.round(screenPosition))<1e-7,
+       "tick should align to a device-pixel boundary");
+     assert.ok(Math.abs(relative-offset)<=0.5/ratio+1e-8);
+    }
+ const track=css.match(/\.wsl-word-ruler-cm-tick\{([^}]+)\}/);
+ assert.ok(track);
+ for(const property of ["width:1px;","min-width:1px;","max-width:1px;","top:50%;","transform:translateY(-50%);"])
+   assert.ok(track[1].includes(property),property);
+ for(const [cls,height] of [["cm",7],["half",4.5],["quarter",2.5]]){
+  assert.match(css,new RegExp("wsl-word-ruler-cm-tick-"+cls+"\\{height:"+height+"px\\}"));
+  assert.ok(height>0&&height<=7);
+ }
 });
