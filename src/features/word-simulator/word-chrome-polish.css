@@ -46,11 +46,11 @@
 }
 .wsl-shell .wsl-ribbon:has(.wsl-home-ribbon)>.wsl-home-ribbon{
   flex:1 0 auto;
-  align-self:center;
+  align-self:stretch;
   width:100%;
   min-width:max-content;
   box-sizing:border-box;
-  height:85px;
+  height:100%;
   padding:0;
   border:1px solid #d0cfd3;
   border-radius:5px;
