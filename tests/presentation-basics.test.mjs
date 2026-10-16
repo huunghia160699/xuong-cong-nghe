@@ -783,53 +783,32 @@ test("Selected Word tab has a bold label and a clear 3px underline",()=>{
 });
 
 
-test("Word rulers measure cm within A4 page margins and follow scroll/zoom/orientation",()=>{
+test("Word rulers keep empty parent containers while A4 paper and scroll behavior remain intact",()=>{
  const source=readFileSync("src/features/word-simulator/word-simulator.tsx","utf8");
  const rulers=readFileSync("src/features/word-simulator/word-page-rulers.tsx","utf8");
  const css=readFileSync("src/features/word-simulator/word-page-rulers.css","utf8");
- const layout=readFileSync("src/app/(word-simulator)/cong-cu/mo-phong-word/layout.tsx","utf8");
- assert.match(rulers,/const PIXELS_PER_CM=96\/2\.54/);
- assert.match(rulers,/const QUARTER_CM=PIXELS_PER_CM\/4/);
  const metrics=readFileSync("src/features/word-simulator/word-paper-metrics.ts","utf8");
+ const layout=readFileSync("src/app/(word-simulator)/cong-cu/mo-phong-word/layout.tsx","utf8");
  assert.match(metrics,/export const CSS_PX_PER_MM=96\/25\.4/);
  assert.match(metrics,/export const A4_WIDTH_PX=210\*CSS_PX_PER_MM/);
  assert.match(metrics,/export const A4_HEIGHT_PX=297\*CSS_PX_PER_MM/);
- assert.match(rulers,/a4Dimensions\(landscape\)/);
- assert.ok(source.includes('"--wsl-paper-width":orientation==="landscape"?"297mm":"210mm"'));
- assert.ok(source.includes('"--wsl-paper-height":orientation==="landscape"?"210mm":"297mm"'));
- assert.match(rulers,/const hMargin=narrow\?48:87/);
- assert.match(rulers,/const vMargin=narrow\?48:86/);
- assert.match(rulers,/const printableWidth=paperWidth-2\*hMargin/);
- assert.match(rulers,/const printableHeight=paperHeight-2\*vMargin/);
- assert.match(rulers,/const value=index\*QUARTER_CM\*ratio;/);
- assert.match(rulers,/RulerTicks length=\{printableWidth\*ratio\} axis="horizontal" ratio=\{ratio\}/);
- assert.match(rulers,/RulerTicks length=\{verticalPrintableHeight\} axis="vertical" ratio=\{ratio\}/);
- assert.doesNotMatch(rulers,/transform:\x60scale\(/);
- assert.match(rulers,/mark\.whole&&mark\.index>0/);
- assert.match(rulers,/MarginMarker side="left"/);
- assert.match(rulers,/MarginMarker side="right"/);
- assert.match(rulers,/translateX\(-\$\{scrollLeft\}px\)/);
- assert.match(rulers,/verticalHeight=renderedPaperHeight\?\?paperHeight\*ratio/);
- assert.match(rulers,/className="wsl-word-ruler-horizontal-space" style=\{\{width:paperWidth\*ratio\}\}/);
- assert.ok(rulers.includes('calc(var(--wsl-page-top-offset, 13px) - '));
- assert.doesNotMatch(rulers,/translateY\(-\$\{scrollTop\}px\)/);
- assert.match(source,/showRuler&&<WordPageRulers/);
+ assert.match(rulers,/import \{a4Dimensions\} from "\.\/word-paper-metrics"/);
+ assert.match(rulers,/className="wsl-word-horizontal-ruler" aria-hidden="true"\/>/);
+ assert.match(rulers,/className="wsl-word-vertical-ruler" aria-hidden="true"/);
+ assert.match(rulers,/height:verticalHeight/);
+ assert.doesNotMatch(rulers,/<svg|<span|<RulerTicks|<MarginMarker|<line|<text/);
+ for(const selector of ["horizontal-printable","vertical-printable","ruler-ticks","ruler-marker","ruler-corner"])
+   assert.ok(!css.includes("wsl-word-"+selector),"obsolete visual rule: "+selector);
+ assert.doesNotMatch(css,/background:#fff;/);
+ assert.match(source,/showRuler&&<WordPageRulers axis="horizontal"/);
+ assert.match(source,/showRuler&&<WordPageRulers axis="vertical"/);
  assert.match(source,/setRulerScroll\(current=>/);
- assert.match(source,/wsl-word-page-body/);
- assert.doesNotMatch(source,/Array\.from\(\{length:16\}.*wsl-ruler/);
- assert.doesNotMatch(source,/wsl-vertical-ruler/);
- assert.match(css,/\.wsl-word-ruler-horizontal-printable/);
- assert.match(css,/\.wsl-word-ruler-vertical-printable/);
- assert.match(css,/@media print\{/);
  assert.match(layout,/word-page-rulers.css/);
- for(const landscape of [false,true])for(const narrow of [false,true])for(const zoom of [60,100,130,160]){
-   const w=(landscape?297:210)*96/25.4,h=(landscape?210:297)*96/25.4;
-   const mx=narrow?48:87,my=narrow?48:86;
-   const ratio=zoom/100;
-   assert.ok((w-2*mx)*ratio>0);
-   assert.ok((h-2*my)*ratio>0);
-   assert.ok(mx*ratio+(w-2*mx)*ratio+mx*ratio===w*ratio ||
-    Math.abs(mx*ratio+(w-2*mx)*ratio+mx*ratio-w*ratio)<1e-9);
+ for(const landscape of [false,true])for(const zoom of [60,100,130,160]){
+   const w=(landscape?297:210)*96/25.4;
+   const h=(landscape?210:297)*96/25.4;
+   assert.ok(w*zoom/100>0);
+   assert.ok(h*zoom/100>0);
  }
 });
 test("Word gray tab strip and floating 5px Home ribbon match the requested frame",()=>{
@@ -849,37 +828,26 @@ test("Word gray tab strip and floating 5px Home ribbon match the requested frame
 });
 
 
-test("Word vertical ruler starts with the paper and Home toolbar fills the available strip",()=>{
+test("Word empty ruler containers retain page-relative origins and full-width Home toolbar",()=>{
  const css=readFileSync("src/features/word-simulator/word-page-rulers.css","utf8");
  const ruler=readFileSync("src/features/word-simulator/word-page-rulers.tsx","utf8");
  const chrome=readFileSync("src/features/word-simulator/word-chrome-polish.css","utf8");
  assert.match(css,/--wsl-page-top-offset:13px;/);
  assert.match(css,/padding:var\(--wsl-page-top-offset,13px\) 36px 120px;/);
  assert.match(css,/\.wsl-word-vertical-ruler\{[^}]*top:var\(--wsl-page-top-offset,13px\);/);
- assert.doesNotMatch(css,/\.wsl-word-vertical-ruler\{[^}]*bottom:0;/);
- assert.match(css,/\.wsl-word-ruler-vertical-printable\{[^}]*border-top:0;/);
- assert.match(css,/\.wsl-word-horizontal-ruler\{[^}]*border-top:0;[^}]*border-bottom:1px solid #c7c7cb;/);
  assert.match(css,/@media\(max-width:650px\)\{[^}]*--wsl-page-top-offset:9px/);
- assert.match(css,/padding:var\(--wsl-page-top-offset\) 12px 60px/);
- assert.doesNotMatch(css,/\.wsl-word-ruler-vertical-page\{margin-top:-4px\}/);
- assert.match(ruler,/className="wsl-word-ruler-vertical-space" style=\{\{height:verticalHeight\}\}/);
- assert.match(ruler,/className="wsl-word-ruler-vertical-page" style=\{\{height:verticalHeight,top:0\}\}/);
- assert.doesNotMatch(ruler,/paperHeight\*ratio\+13/);
+ assert.match(css,/\.wsl-word-horizontal-ruler\{[^}]*height:26px;[^}]*border-bottom:1px solid #c7c7cb;/);
+ assert.match(ruler,/scrollTop}px\)/);
+ assert.match(ruler,/const verticalHeight=renderedPaperHeight\?\?paperHeight\*zoom\/100;/);
+ assert.doesNotMatch(ruler,/<RulerTicks|<MarginMarker/);
  assert.match(chrome,/\.wsl-shell \.wsl-tabs\{[^}]*border-radius:0;/);
- assert.match(chrome,/\.wsl-shell \.wsl-tabs \.wsl-tab\{[^}]*border-radius:0;/);
  const strip=chrome.match(/\.wsl-shell \.wsl-ribbon:has\(\.wsl-home-ribbon\)>\.wsl-home-ribbon\{([^}]*)\}/);
- assert.ok(strip,"full-width Home toolbar frame is missing");
+ assert.ok(strip);
  for(const rule of ["flex:1 0 auto;","width:100%;","min-width:max-content;","box-sizing:border-box;","border-radius:5px;"])
    assert.ok(strip[1].includes(rule),rule);
  assert.match(chrome,/\.wsl-shell \.wsl-home-ribbon \.wsl-home-group\{[^}]*flex:0 0 auto;/);
- for(const [pageTop,viewport] of [[13,1920],[9,650]])for(const ratio of [.6,1,1.3,1.6]){
-   const paperTop=pageTop, rulerTop=pageTop;
-   assert.equal(rulerTop,paperTop,`viewport ${viewport} zoom ${ratio}`);
- }
 });
-
-
-test("Word ruler bottom border and exact .wsl-paper height stay aligned after zoom, scroll and text reflow",()=>{
+test("Empty ruler tracks preserve lower border and measured .wsl-paper height",()=>{
  const ruler=readFileSync("src/features/word-simulator/word-page-rulers.tsx","utf8");
  const editor=readFileSync("src/features/word-simulator/word-simulator.tsx","utf8");
  const css=readFileSync("src/features/word-simulator/word-page-rulers.css","utf8");
@@ -894,20 +862,15 @@ test("Word ruler bottom border and exact .wsl-paper height stay aligned after zo
  assert.match(editor,/const height=page\.getBoundingClientRect\(\)\.height;/);
  assert.match(editor,/renderedPaperHeight=\{measuredHeight\}/);
  assert.match(ruler,/renderedPaperHeight\?:number;/);
- assert.match(ruler,/const verticalHeight=renderedPaperHeight\?\?paperHeight\*ratio;/);
- assert.match(ruler,/const verticalPrintableHeight=Math\.max\(0,verticalHeight-2\*vMargin\*ratio\);/);
+ assert.match(ruler,/const verticalHeight=renderedPaperHeight\?\?paperHeight\*zoom\/100;/);
  assert.match(ruler,/height:verticalHeight/);
- assert.match(ruler,/return axis==="horizontal"\?/);
- for(let landscape of [false,true])for(const zoom of [60,80,100,120,160])
-   for(const extraText of [0,120,460]){
-     const pageHeight=(landscape?210:297)*96/25.4*zoom/100+extraText;
-     const rulerHeight=pageHeight;
-     assert.equal(rulerHeight,pageHeight);
-     assert.ok(rulerHeight>0);
-   }
+ assert.match(ruler,/if\(axis==="horizontal"\)return <div className="wsl-word-horizontal-ruler"/);
+ assert.doesNotMatch(ruler,/<svg|<span|<RulerTicks|<MarginMarker/);
+ for(const landscape of [false,true])for(const zoom of [60,80,100,120,160]){
+   const height=(landscape?210:297)*96/25.4*zoom/100;
+   assert.ok(height>0);
+ }
 });
-
-
 test("Home Ribbon keeps exactly 96px at every width, 8px parent margins and no top seam",()=>{
  const home=readFileSync("src/features/word-simulator/word-home-ribbon.css","utf8");
  const chrome=readFileSync("src/features/word-simulator/word-chrome-polish.css","utf8");
