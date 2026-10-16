@@ -799,7 +799,8 @@ test("Word rulers keep empty parent containers while A4 paper and scroll behavio
  assert.doesNotMatch(rulers,/<svg|<span|<RulerTicks|<MarginMarker|<line|<text/);
  for(const selector of ["horizontal-printable","vertical-printable","ruler-ticks","ruler-marker","ruler-corner"])
    assert.ok(!css.includes("wsl-word-"+selector),"obsolete visual rule: "+selector);
- assert.doesNotMatch(css,/background:#fff;/);
+ assert.match(css,/\.wsl-word-horizontal-ruler\{[^}]*background:#e8e7eb;/);
+ assert.match(css,/\.wsl-word-vertical-ruler\{[^}]*background:#e8e7eb;/);
  assert.match(source,/showRuler&&<WordPageRulers axis="horizontal"/);
  assert.match(source,/showRuler&&<WordPageRulers axis="vertical"/);
  assert.match(source,/setRulerScroll\(current=>/);
