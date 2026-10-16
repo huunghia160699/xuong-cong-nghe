@@ -291,3 +291,12 @@ Ngày: 15/10/2026. Đường dẫn: `/cong-cu/mo-phong-word`.
 - Dải cao gần bằng thước ngang nhưng chừa **2px ở mép trên và 2px ở mép dưới**, ở giữa theo chiều dọc (`top:2px;bottom:2px`). Chú ý thước cao 26px nên 2cm không thể thực hiện theo nghĩa đen; khoảng chừa được triển khai là 2px.
 - Thứ tự layer: `.wsl-word-ruler-content-strip` có `z-index:0`, toàn bộ các vạch cm có `z-index:1`; giữ nguyên các vạch 1px và các mức chiều cao 7/4,5/2,5px. Không thêm chữ số, màu sắc khác hoặc marker.
 - Phần thước dọc vẫn chỉ có thẻ cha rỗng. Test hồi quy xác minh các quan hệ DOM, kích thước theo vùng nhập liệu, layer và 16 tổ hợp trang/zoom.
+
+
+## 2026-10-16 — Bỏ focus viền xanh và phân biệt thước giấy/thước vùng nhập liệu
+
+- `.wsl-editor:focus` và `:focus-visible` không hiển thị viền xanh hay shadow (`outline:none;outline-offset:0;box-shadow:none`); vẫn cho phép focus, caret và nhập liệu.
+- Thước giấy màu xám giữ vạch chia tính từ mép giấy A4. **Thước nền trắng là một lớp phủ độc lập** (`.wsl-word-ruler-content-strip`, `z-index:2`, `overflow:hidden`) che toàn bộ các vạch cũ nằm trong vùng trắng; các vạch thước giấy vẫn `z-index:1`.
+- Dải trắng có bộ vạch riêng `contentTicks`, **khởi đầu 0 cm chính tại lề nhập liệu trái**; các vạch tiếp theo cách nhau 0,25cm, với vạch 1cm, 0,5cm, 0,25cm lần lượt cao 7px, 4,5px, 2,5px, rộng 1px. Không hiển thị số đo.
+- Lấy lề/trắc địa từ `.wsl-editor.getBoundingClientRect()` và `.wsl-paper.getBoundingClientRect()`; chốt `contentStart=snapTick(editorOffset)`, `contentEnd=snapTick(editorOffset+editorWidth)` để khung và mốc 0 bắt đầu cùng vị trí trên lưới pixel vật lý, ngay cả khi zoom hoặc thay đổi lề thường/hẹp. Vạch nội bộ tại `snapTick(editorOffset+tick.left)-contentStart`.
+- Giữ khung dải trắng chừa 2px phía trên/dưới, căn giữa; thước dọc chưa dựng. Test bảo đảm lớp trắng xuất hiện **sau** vạch thước giấy, có vạch riêng và gốc 0 di chuyển theo lề.
