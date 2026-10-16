@@ -131,18 +131,29 @@ test("Home Ribbon: repeat state, Escape, selection and dialogs 10 rounds",()=>{
  }
  console.log("HOME_QA_STATES_PASS 10 rounds × formatting, clipboard, selection, launchers");
 });
-test("Empty ruler containers and tab chrome: validate 10 rounds across A4 orientations/zoom",()=>{
+test("Horizontal centimeter ruler and tab chrome: 10 rounds over A4 size and zoom",()=>{
  for(let round=0;round<10;round++){
    assert.match(ruler,/import \{a4Dimensions\} from "\.\/word-paper-metrics"/);
    assert.match(paper,/export const A4_WIDTH_PX=210\*CSS_PX_PER_MM/);
    assert.match(paper,/export const A4_HEIGHT_PX=297\*CSS_PX_PER_MM/);
-   assert.match(ruler,/className="wsl-word-horizontal-ruler" aria-hidden="true"\/>/);
+   assert.match(ruler,/function HorizontalRulerTicks/);
+   assert.match(ruler,/const PX_PER_CM=96\/2\.54/);
+   assert.match(ruler,/const PX_PER_QUARTER_CM=PX_PER_CM\/4/);
+   assert.match(ruler,/const scaledWidth=paperWidth\*zoom\/100/);
+   assert.match(ruler,/kind:index%4===0\?"cm":index%2===0\?"half":"quarter"/);
+   assert.match(ruler,/const left=paper\.getBoundingClientRect\(\)\.left-ruler\.getBoundingClientRect\(\)\.left/);
+   assert.match(ruler,/observer\?\.observe\(ruler\)/);
+   assert.match(ruler,/observer\?\.observe\(paper\)/);
+   assert.match(ruler,/scrollLeft\]\)/);
+   assert.match(ruler,/style=\{\{left:Math\.max\(0,scaledWidth-1\)\}\}/);
+   assert.match(ruler,/className="wsl-word-ruler-cm-track"/);
    assert.match(ruler,/className="wsl-word-vertical-ruler" aria-hidden="true"/);
-   assert.match(ruler,/const verticalHeight=renderedPaperHeight\?\?paperHeight\*zoom\/100;/);
-   assert.doesNotMatch(ruler,/<svg|<span|<RulerTicks|<MarginMarker/);
+   assert.doesNotMatch(ruler,/<svg|<RulerTicks|<MarginMarker|<text/);
    assert.doesNotMatch(rulerCSS,/wsl-word-ruler-(horizontal|vertical)-printable/);
-   assert.doesNotMatch(rulerCSS,/wsl-word-ruler-ticks/);
-   assert.doesNotMatch(rulerCSS,/wsl-word-ruler-marker/);
+   assert.match(rulerCSS,/\.wsl-word-ruler-cm-track\{[^}]*background:transparent;/);
+   assert.match(rulerCSS,/\.wsl-word-ruler-cm-tick-cm\{height:14px\}/);
+   assert.match(rulerCSS,/\.wsl-word-ruler-cm-tick-half\{height:9px\}/);
+   assert.match(rulerCSS,/\.wsl-word-ruler-cm-tick-quarter\{height:5px\}/);
    assert.match(rulerCSS,/\.wsl-word-horizontal-ruler\{[^}]*border-top:0;[^}]*border-bottom:1px solid #c7c7cb;/);
    assert.match(rulerCSS,/\.wsl-word-vertical-ruler\{[^}]*top:var\(--wsl-page-top-offset,13px\);/);
    assert.match(rulerCSS,/@media\(max-width:650px\)\{[^}]*--wsl-page-top-offset:9px/);
@@ -161,7 +172,15 @@ test("Empty ruler containers and tab chrome: validate 10 rounds across A4 orient
      assert.ok(Math.abs((ver+height-2*ver+ver)-height)<1e-9);
      assert.ok((width-2*hor)*zoom/100>0);
      assert.ok((height-2*ver)*zoom/100>0);
+     const paperWidth=width*zoom/100;
+     const step=96/2.54/4*zoom/100;
+     const subdivisions=Array.from({length:Math.floor(paperWidth/step+1e-8)+1},(_,index)=>index*step)
+       .filter(x=>x<paperWidth-1);
+     assert.equal(subdivisions[0],0);
+     assert.ok(subdivisions.at(-1)<paperWidth);
+     assert.ok(Math.abs(subdivisions[4]-96/2.54*zoom/100)<1e-8);
+     assert.ok(paperWidth-1>subdivisions.at(-1));
    }
  }
- console.log("WORD_RULER_PLACEHOLDER_QA_PASS 10 rounds × 16 page geometry permutations");
+ console.log("WORD_CM_TICKS_QA_PASS 10 rounds × 16 page geometry permutations");
 });
