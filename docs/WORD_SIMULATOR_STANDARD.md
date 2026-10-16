@@ -282,3 +282,12 @@ Ngày: 15/10/2026. Đường dẫn: `/cong-cu/mo-phong-word`.
 - **Giảm chính xác một nửa chiều cao:** vạch cm 14 → **7px**, nửa cm 9 → **4,5px**, 1/4 cm 5 → **2,5px**.
 - Với khoảng cách cm quy đổi ra pixel lẻ, tọa độ vạch phải được **snap theo lưới pixel vật lý của màn hình**: `Math.round((viewportLeft + offset) * devicePixelRatio) / devicePixelRatio - viewportLeft`, vì làm tròn riêng offset tại gốc track sẽ gây lệch vạch khi trang giấy nằm tại tọa độ lẻ. Lấy `viewportLeft` từ `.wsl-paper.getBoundingClientRect().left`, cập nhật khi zoom, cuộn và resize.
 - Không thêm nền trắng, số hay marker. Thước dọc tiếp tục để trống; giữ nguyên giấy A4 và các nhóm công cụ Home. Bổ sung kiểm thử nhiều DPR khác nhau để phát hiện các vạch đặt vào nửa pixel vật lý.
+
+
+## 2026-10-16 — Dải trắng vùng nhập liệu nằm dưới vạch thước ngang
+
+- Chỉ thêm **một dải nền trắng** trong `.wsl-word-ruler-cm-track`, có class `.wsl-word-ruler-content-strip`. Không đổi màu nền xám của thước cha hay phần hai đầu giấy.
+- Hai mép trái/phải của dải trắng phải đúng vị trí của `.wsl-editor` bên trong `.wsl-paper`: lấy `editorRect.left - paperRect.left` và `editorRect.width` bằng `getBoundingClientRect`, không hardcode số centimet hoặc giả định padding. Bởi vậy dải tự cập nhật khi đổi lề hẹp/thường, A4 đứng/ngang, zoom, cuộn ngang và resize. Quan sát cả phần tử editor qua `ResizeObserver`.
+- Dải cao gần bằng thước ngang nhưng chừa **2px ở mép trên và 2px ở mép dưới**, ở giữa theo chiều dọc (`top:2px;bottom:2px`). Chú ý thước cao 26px nên 2cm không thể thực hiện theo nghĩa đen; khoảng chừa được triển khai là 2px.
+- Thứ tự layer: `.wsl-word-ruler-content-strip` có `z-index:0`, toàn bộ các vạch cm có `z-index:1`; giữ nguyên các vạch 1px và các mức chiều cao 7/4,5/2,5px. Không thêm chữ số, màu sắc khác hoặc marker.
+- Phần thước dọc vẫn chỉ có thẻ cha rỗng. Test hồi quy xác minh các quan hệ DOM, kích thước theo vùng nhập liệu, layer và 16 tổ hợp trang/zoom.
