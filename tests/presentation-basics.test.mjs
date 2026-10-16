@@ -783,33 +783,49 @@ test("Selected Word tab has a bold label and a clear 3px underline",()=>{
 });
 
 
-test("Word rulers keep empty parent containers while A4 paper and scroll behavior remain intact",()=>{
- const source=readFileSync("src/features/word-simulator/word-simulator.tsx","utf8");
- const rulers=readFileSync("src/features/word-simulator/word-page-rulers.tsx","utf8");
+test("Word horizontal ruler has paper-edge aligned cm ticks only, leaving vertical empty",()=>{
+ const editor=readFileSync("src/features/word-simulator/word-simulator.tsx","utf8");
+ const ruler=readFileSync("src/features/word-simulator/word-page-rulers.tsx","utf8");
  const css=readFileSync("src/features/word-simulator/word-page-rulers.css","utf8");
  const metrics=readFileSync("src/features/word-simulator/word-paper-metrics.ts","utf8");
- const layout=readFileSync("src/app/(word-simulator)/cong-cu/mo-phong-word/layout.tsx","utf8");
  assert.match(metrics,/export const CSS_PX_PER_MM=96\/25\.4/);
  assert.match(metrics,/export const A4_WIDTH_PX=210\*CSS_PX_PER_MM/);
  assert.match(metrics,/export const A4_HEIGHT_PX=297\*CSS_PX_PER_MM/);
- assert.match(rulers,/import \{a4Dimensions\} from "\.\/word-paper-metrics"/);
- assert.match(rulers,/className="wsl-word-horizontal-ruler" aria-hidden="true"\/>/);
- assert.match(rulers,/className="wsl-word-vertical-ruler" aria-hidden="true"/);
- assert.match(rulers,/height:verticalHeight/);
- assert.doesNotMatch(rulers,/<svg|<span|<RulerTicks|<MarginMarker|<line|<text/);
- for(const selector of ["horizontal-printable","vertical-printable","ruler-ticks","ruler-marker","ruler-corner"])
-   assert.ok(!css.includes("wsl-word-"+selector),"obsolete visual rule: "+selector);
- assert.match(css,/\.wsl-word-horizontal-ruler\{[^}]*background:#e8e7eb;/);
- assert.match(css,/\.wsl-word-vertical-ruler\{[^}]*background:#e8e7eb;/);
- assert.match(source,/showRuler&&<WordPageRulers axis="horizontal"/);
- assert.match(source,/showRuler&&<WordPageRulers axis="vertical"/);
- assert.match(source,/setRulerScroll\(current=>/);
- assert.match(layout,/word-page-rulers.css/);
- for(const landscape of [false,true])for(const zoom of [60,100,130,160]){
-   const w=(landscape?297:210)*96/25.4;
-   const h=(landscape?210:297)*96/25.4;
-   assert.ok(w*zoom/100>0);
-   assert.ok(h*zoom/100>0);
+ assert.match(ruler,/const PX_PER_CM=96\/2\.54/);
+ assert.match(ruler,/const PX_PER_QUARTER_CM=PX_PER_CM\/4/);
+ assert.match(ruler,/function HorizontalRulerTicks/);
+ assert.match(ruler,/useLayoutEffect\(\(\)=>/);
+ assert.match(ruler,/paper\.getBoundingClientRect\(\)\.left-ruler\.getBoundingClientRect\(\)\.left/);
+ assert.match(ruler,/const observer=typeof ResizeObserver/);
+ assert.match(ruler,/observer\?\.observe\(ruler\)/);
+ assert.match(ruler,/observer\?\.observe\(paper\)/);
+ assert.match(ruler,/if\(scroller\)observer\?\.observe\(scroller\)/);
+ assert.match(ruler,/window\.addEventListener\("resize",align\)/);
+ assert.match(ruler,/scrollLeft\]\)/);
+ assert.match(ruler,/const scaledWidth=paperWidth\*zoom\/100/);
+ assert.match(ruler,/kind:index%4===0\?"cm":index%2===0\?"half":"quarter"/);
+ assert.match(ruler,/\.filter\(tick=>tick\.left<scaledWidth-1\)/);
+ assert.match(ruler,/style=\{\{left:Math\.max\(0,scaledWidth-1\)\}\}/);
+ assert.match(ruler,/className="wsl-word-ruler-cm-track"/);
+ assert.match(ruler,/className="wsl-word-vertical-ruler" aria-hidden="true"/);
+ assert.doesNotMatch(ruler,/<svg|<RulerTicks|<MarginMarker|<text|<label/);
+ assert.doesNotMatch(ruler,/>Normal</);
+ assert.match(css,/\.wsl-word-ruler-cm-track\{[^}]*background:transparent;/);
+ assert.match(css,/\.wsl-word-ruler-cm-tick-cm\{height:14px\}/);
+ assert.match(css,/\.wsl-word-ruler-cm-tick-half\{height:9px\}/);
+ assert.match(css,/\.wsl-word-ruler-cm-tick-quarter\{height:5px\}/);
+ assert.doesNotMatch(css,/\.wsl-word-ruler-horizontal-printable/);
+ assert.match(editor,/showRuler&&<WordPageRulers axis="horizontal"/);
+ assert.match(editor,/showRuler&&<WordPageRulers axis="vertical"/);
+ for(const cm of [21,29.7])for(const zoom of [60,100,130,160]){
+   const width=cm*96/2.54*zoom/100,step=96/2.54/4*zoom/100;
+   const positions=Array.from({length:Math.floor(width/step+1e-8)+1},(_,index)=>index*step)
+      .filter(x=>x<width-1);
+   assert.equal(positions[0],0);
+   assert.ok(positions.every(x=>x>=0&&x<width));
+   assert.ok(positions.every((x,i)=>i===0||x>positions[i-1]));
+   assert.ok(Math.abs(positions[4]-96/2.54*zoom/100)<1e-8);
+   assert.ok(Math.abs((width-1)-(width-1))<1e-8);
  }
 });
 test("Word gray tab strip and floating 5px Home ribbon match the requested frame",()=>{
@@ -829,7 +845,7 @@ test("Word gray tab strip and floating 5px Home ribbon match the requested frame
 });
 
 
-test("Word empty ruler containers retain page-relative origins and full-width Home toolbar",()=>{
+test("Word ruler retains page-relative position and existing Ribbon/viewport layout",()=>{
  const css=readFileSync("src/features/word-simulator/word-page-rulers.css","utf8");
  const ruler=readFileSync("src/features/word-simulator/word-page-rulers.tsx","utf8");
  const chrome=readFileSync("src/features/word-simulator/word-chrome-polish.css","utf8");
@@ -840,7 +856,7 @@ test("Word empty ruler containers retain page-relative origins and full-width Ho
  assert.match(css,/\.wsl-word-horizontal-ruler\{[^}]*height:26px;[^}]*border-bottom:1px solid #c7c7cb;/);
  assert.match(ruler,/scrollTop}px\)/);
  assert.match(ruler,/const verticalHeight=renderedPaperHeight\?\?paperHeight\*zoom\/100;/);
- assert.doesNotMatch(ruler,/<RulerTicks|<MarginMarker/);
+ assert.match(ruler,/if\(axis==="horizontal"\)return <HorizontalRulerTicks/);
  assert.match(chrome,/\.wsl-shell \.wsl-tabs\{[^}]*border-radius:0;/);
  const strip=chrome.match(/\.wsl-shell \.wsl-ribbon:has\(\.wsl-home-ribbon\)>\.wsl-home-ribbon\{([^}]*)\}/);
  assert.ok(strip);
@@ -848,7 +864,7 @@ test("Word empty ruler containers retain page-relative origins and full-width Ho
    assert.ok(strip[1].includes(rule),rule);
  assert.match(chrome,/\.wsl-shell \.wsl-home-ribbon \.wsl-home-group\{[^}]*flex:0 0 auto;/);
 });
-test("Empty ruler tracks preserve lower border and measured .wsl-paper height",()=>{
+test("Horizontal ruler draws only ticks, vertical placeholder preserves measured .wsl-paper height",()=>{
  const ruler=readFileSync("src/features/word-simulator/word-page-rulers.tsx","utf8");
  const editor=readFileSync("src/features/word-simulator/word-simulator.tsx","utf8");
  const css=readFileSync("src/features/word-simulator/word-page-rulers.css","utf8");
@@ -865,8 +881,9 @@ test("Empty ruler tracks preserve lower border and measured .wsl-paper height",(
  assert.match(ruler,/renderedPaperHeight\?:number;/);
  assert.match(ruler,/const verticalHeight=renderedPaperHeight\?\?paperHeight\*zoom\/100;/);
  assert.match(ruler,/height:verticalHeight/);
- assert.match(ruler,/if\(axis==="horizontal"\)return <div className="wsl-word-horizontal-ruler"/);
- assert.doesNotMatch(ruler,/<svg|<span|<RulerTicks|<MarginMarker/);
+ assert.match(ruler,/if\(axis==="horizontal"\)return <HorizontalRulerTicks/);
+ assert.match(ruler,/className="wsl-word-ruler-cm-tick wsl-word-ruler-cm-tick-"/);
+ assert.doesNotMatch(ruler,/<svg|<RulerTicks|<MarginMarker|<text/);
  for(const landscape of [false,true])for(const zoom of [60,80,100,120,160]){
    const height=(landscape?210:297)*96/25.4*zoom/100;
    assert.ok(height>0);
