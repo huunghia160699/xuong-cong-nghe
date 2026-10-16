@@ -824,7 +824,7 @@ test("Word horizontal ruler has paper-edge aligned cm ticks only, leaving vertic
  assert.doesNotMatch(ruler,/<svg|<RulerTicks|<MarginMarker|<text|<label/);
  assert.doesNotMatch(ruler,/>Normal</);
  assert.match(css,/\.wsl-word-ruler-cm-track\{[^}]*background:transparent;/);
- assert.match(css,/\.wsl-word-ruler-content-strip\{[^}]*top:2px;[^}]*bottom:2px;[^}]*z-index:2;[^}]*overflow:hidden;[^}]*background:#fff;/);
+ assert.match(css,/\.wsl-word-ruler-content-strip\{[^}]*top:4px;[^}]*bottom:4px;[^}]*z-index:2;[^}]*overflow:hidden;[^}]*background:#fff;/);
  assert.match(css,/\.wsl-word-ruler-cm-tick\{[^}]*z-index:1;/);
  assert.doesNotMatch(css,/\.wsl-word-ruler-content-strip\{[^}]*border:/);
  assert.match(css,/\.wsl-word-ruler-cm-tick\{[^}]*top:50%;[^}]*transform:translateY\(-50%\);/);
@@ -986,13 +986,13 @@ test("White ruler underlay aligns exactly with the editor between A4 page margin
  const fill=css.match(/\.wsl-word-ruler-content-strip\{([^}]+)\}/);
  const tick=css.match(/\.wsl-word-ruler-cm-tick\{([^}]+)\}/);
  assert.ok(fill&&tick);
- for(const rule of ["position:absolute;","top:2px;","bottom:2px;","z-index:2;","overflow:hidden;","background:#fff;"])
+ for(const rule of ["position:absolute;","top:4px;","bottom:4px;","z-index:2;","overflow:hidden;","background:#fff;"])
   assert.ok(fill[1].includes(rule),rule);
  assert.ok(tick[1].includes("z-index:1;"));
  assert.match(ruler,/const contentTicks=useMemo\(\(\)=>\{/);
  assert.match(ruler,/const step=PX_PER_QUARTER_CM\*zoom\/100;/);
  assert.match(ruler,/const count=Math\.floor\(paperGeometry\.editorWidth\/step\+1e-8\);/);
- assert.match(ruler,/\.filter\(tick=>tick\.left<paperGeometry\.editorWidth-1\)/);
+ assert.match(ruler,/\.filter\(tick=>tick\.index>0&&tick\.left<paperGeometry\.editorWidth-1\)/);
  assert.match(ruler,/style=\{\{left:snapTick\(paperGeometry\.editorOffset\+tick\.left\)-contentStart\}\}/);
  assert.match(ruler,/const contentStart=snapTick\(paperGeometry\.editorOffset\);/);
  assert.match(ruler,/const contentEnd=snapTick\(paperGeometry\.editorOffset\+paperGeometry\.editorWidth\);/);
@@ -1032,10 +1032,36 @@ test("Word editor focus is borderless and white ruler scale restarts at margin z
    const editorWidth=paperWidth-2*(margin+zoom/100);
    const step=96/2.54/4*zoom/100;
    assert.ok(editorWidth>0);
-   const marks=Array.from({length:Math.floor(editorWidth/step+1e-8)+1},(_,i)=>i*step)
-     .filter(x=>x<editorWidth-1);
-   assert.equal(marks[0],0,"0 cm begins at left editor margin");
-   assert.ok(Math.abs(marks[4]-96/2.54*zoom/100)<1e-8);
-   assert.ok(marks.at(-1)<editorWidth);
+   const marks=Array.from({length:Math.floor(editorWidth/step+1e-8)+1},(_,i)=>({index:i,left:i*step}))
+     .filter(mark=>mark.index>0&&mark.left<editorWidth-1);
+   assert.equal(marks[0].index,1,"the zero tick must not be rendered");
+   assert.ok(Math.abs(marks[0].left-step)<1e-8,"first tick is still 0.25 cm after the margin");
+   assert.ok(Math.abs(marks[3].left-96/2.54*zoom/100)<1e-8,"the 1 cm mark keeps its origin at the margin");
+   assert.ok(marks.at(-1).left<editorWidth);
  }
+});
+
+
+test("White Word ruler omits only its zero mark and keeps a 4px vertical inset",()=>{
+ const ruler=readFileSync("src/features/word-simulator/word-page-rulers.tsx","utf8");
+ const css=readFileSync("src/features/word-simulator/word-page-rulers.css","utf8");
+ const grayTicks=ruler.slice(ruler.indexOf("const ticks=useMemo"),ruler.indexOf("const contentTicks=useMemo"));
+ const whiteTicks=ruler.slice(ruler.indexOf("const contentTicks=useMemo"),ruler.indexOf("const snapTick="));
+ assert.match(grayTicks,/\.filter\(tick=>tick\.left<scaledWidth-1\)/);
+ assert.doesNotMatch(grayTicks,/tick\.index>0/);
+ assert.match(whiteTicks,/\.filter\(tick=>tick\.index>0&&tick\.left<paperGeometry\.editorWidth-1\)/);
+ assert.match(ruler,/const contentStart=snapTick\(paperGeometry\.editorOffset\);/);
+ assert.match(css,/\.wsl-word-ruler-content-strip\{[^}]*top:4px;[^}]*bottom:4px;[^}]*z-index:2;[^}]*overflow:hidden;[^}]*background:#fff;/);
+ assert.doesNotMatch(css,/\.wsl-word-ruler-content-strip\{[^}]*top:2px;/);
+ for(const width of [210,297])for(const zoom of [60,80,100,130,160])
+  for(const margin of [48,87]){
+   const pxWidth=(width*96/25.4-2*(margin+1))*zoom/100;
+   const step=96/2.54/4*zoom/100;
+   const marks=Array.from({length:Math.floor(pxWidth/step+1e-8)+1},(_,i)=>({index:i,left:i*step}))
+    .filter(mark=>mark.index>0&&mark.left<pxWidth-1);
+   assert.equal(marks[0].index,1);
+   assert.ok(Math.abs(marks[0].left-step)<1e-8);
+   assert.ok(Math.abs(marks[3].left-4*step)<1e-8);
+   assert.ok(marks.every(mark=>mark.left>0));
+  }
 });
