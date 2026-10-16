@@ -16,8 +16,8 @@ type Props={
   renderedPaperHeight?:number;
 };
 
-/** The white content-area strip is aligned to the actual editable region
- * inside .wsl-paper, below cm ticks; its parent track stays page-aligned. */
+/** The gray ruler measures from the paper edge. The white editable-area ruler
+ * is a separate, opaque layer and measures from its own left edge (0 cm). */
 function HorizontalRulerTicks({landscape,narrow,zoom,scrollLeft}:{landscape:boolean;narrow:boolean;zoom:number;scrollLeft:number}){
   const rulerRef=useRef<HTMLDivElement>(null);
   const [paperGeometry,setPaperGeometry]=useState({left:0,viewportLeft:0,pixelRatio:1,editorOffset:0,editorWidth:0});
@@ -66,6 +66,18 @@ function HorizontalRulerTicks({landscape,narrow,zoom,scrollLeft}:{landscape:bool
     })).filter(tick=>tick.left<scaledWidth-1);
   },[scaledWidth,zoom]);
 
+  // The inset white strip gets its own cm scale, restarting at zero on the
+  // editable area's left boundary rather than continuing the page-wide scale.
+  const contentTicks=useMemo(()=>{
+    const step=PX_PER_QUARTER_CM*zoom/100;
+    const count=Math.floor(paperGeometry.editorWidth/step+1e-8);
+    return Array.from({length:count+1},(_,index)=>({
+      index,
+      left:index*step,
+      kind:index%4===0?"cm":index%2===0?"half":"quarter"
+    })).filter(tick=>tick.left<paperGeometry.editorWidth-1);
+  },[paperGeometry.editorWidth,zoom]);
+
   // Round viewport-space coordinates to physical pixels rather than rounding
   // relative positions: otherwise fractional cm steps create uneven 1px strokes.
   const snapTick=(offset:number)=>{
@@ -73,15 +85,24 @@ function HorizontalRulerTicks({landscape,narrow,zoom,scrollLeft}:{landscape:bool
     return Math.round((viewportLeft+offset)*pixelRatio)/pixelRatio-viewportLeft;
   };
 
+  // Align both white boundaries to device pixels: the first inset tick is
+  // exactly at the strip's left edge while all strokes remain sharp.
+  const contentStart=snapTick(paperGeometry.editorOffset);
+  const contentEnd=snapTick(paperGeometry.editorOffset+paperGeometry.editorWidth);
+
   return <div ref={rulerRef} className="wsl-word-horizontal-ruler" aria-hidden="true">
     <div className="wsl-word-ruler-cm-track" style={{left:paperGeometry.left,width:scaledWidth}}>
-      <div className="wsl-word-ruler-content-strip"
-        style={{left:paperGeometry.editorOffset,width:paperGeometry.editorWidth}}/>
       {ticks.map(tick=><span key={tick.index}
         className={"wsl-word-ruler-cm-tick wsl-word-ruler-cm-tick-"+tick.kind}
         style={{left:snapTick(tick.left)}}/>)}
       <span className="wsl-word-ruler-cm-tick wsl-word-ruler-cm-tick-cm"
         style={{left:snapTick(Math.max(0,scaledWidth-1))}}/>
+      <div className="wsl-word-ruler-content-strip"
+        style={{left:contentStart,width:Math.max(0,contentEnd-contentStart)}}>
+        {contentTicks.map(tick=><span key={tick.index}
+          className={"wsl-word-ruler-cm-tick wsl-word-ruler-cm-tick-"+tick.kind}
+          style={{left:snapTick(paperGeometry.editorOffset+tick.left)-contentStart}}/>)}
+      </div>
     </div>
   </div>;
 }
