@@ -117,7 +117,7 @@
   border-right:1px solid #d0cfd4;
   background:#e8e7eb;
 }
-/* The vertical ruler stays empty; the horizontal ruler has no labels or margin markers. */
+/* The vertical ruler stays empty; only the white horizontal strip has centimeter labels, without margin markers. */
 @media(max-width:1250px){
  .wsl-word-layout .wsl-page-scroll{padding-inline:25px}
 }
