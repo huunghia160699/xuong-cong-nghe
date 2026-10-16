@@ -801,7 +801,9 @@ test("Word horizontal ruler has paper-edge aligned cm ticks only, leaving vertic
  assert.match(ruler,/const editorOffset=editorRect\.left-viewportLeft;/);
  assert.match(ruler,/const editorWidth=editorRect\.width;/);
  assert.match(ruler,/observer\?\.observe\(editor\)/);
- assert.match(ruler,/style=\{\{left:paperGeometry\.editorOffset,width:paperGeometry\.editorWidth\}\}/);
+ assert.match(ruler,/const contentStart=snapTick\(paperGeometry\.editorOffset\);/);
+ assert.match(ruler,/const contentEnd=snapTick\(paperGeometry\.editorOffset\+paperGeometry\.editorWidth\);/);
+ assert.match(ruler,/style=\{\{left:contentStart,width:Math\.max\(0,contentEnd-contentStart\)\}\}/);
  assert.match(ruler,/narrow=\{narrow\}/);
  assert.match(ruler,/const left=viewportLeft-ruler\.getBoundingClientRect\(\)\.left;/);
  assert.match(ruler,/const pixelRatio=window\.devicePixelRatio\|\|1;/);
@@ -822,7 +824,7 @@ test("Word horizontal ruler has paper-edge aligned cm ticks only, leaving vertic
  assert.doesNotMatch(ruler,/<svg|<RulerTicks|<MarginMarker|<text|<label/);
  assert.doesNotMatch(ruler,/>Normal</);
  assert.match(css,/\.wsl-word-ruler-cm-track\{[^}]*background:transparent;/);
- assert.match(css,/\.wsl-word-ruler-content-strip\{[^}]*top:2px;[^}]*bottom:2px;[^}]*z-index:0;[^}]*background:#fff;/);
+ assert.match(css,/\.wsl-word-ruler-content-strip\{[^}]*top:2px;[^}]*bottom:2px;[^}]*z-index:2;[^}]*overflow:hidden;[^}]*background:#fff;/);
  assert.match(css,/\.wsl-word-ruler-cm-tick\{[^}]*z-index:1;/);
  assert.doesNotMatch(css,/\.wsl-word-ruler-content-strip\{[^}]*border:/);
  assert.match(css,/\.wsl-word-ruler-cm-tick\{[^}]*top:50%;[^}]*transform:translateY\(-50%\);/);
@@ -973,17 +975,27 @@ test("White ruler underlay aligns exactly with the editor between A4 page margin
  assert.match(ruler,/Math\.abs\(previous\.editorWidth-editorWidth\)<0\.01/);
  assert.match(ruler,/observer\?\.observe\(editor\)/);
  assert.match(ruler,/\[landscape,narrow,zoom,scrollLeft\]/);
- assert.match(ruler,/<div className="wsl-word-ruler-content-strip"\s*style=\{\{left:paperGeometry\.editorOffset,width:paperGeometry\.editorWidth\}\}\/>/);
+ assert.match(ruler,/<div className="wsl-word-ruler-content-strip"\s*style=\{\{left:contentStart,width:Math\.max\(0,contentEnd-contentStart\)\}\}>/);
  const trackPos=ruler.indexOf('<div className="wsl-word-ruler-cm-track"');
  const fillPos=ruler.indexOf('<div className="wsl-word-ruler-content-strip"');
  const ticksPos=ruler.indexOf('{ticks.map(tick=>');
- assert.ok(trackPos>=0&&fillPos>trackPos&&ticksPos>fillPos,"white strip renders before strokes");
+ const insetTicksPos=ruler.indexOf('{contentTicks.map(tick=>');
+ assert.ok(trackPos>=0&&ticksPos>trackPos&&fillPos>ticksPos,
+  "white ruler must overlay the pre-existing gray-region ticks");
+ assert.ok(insetTicksPos>fillPos,"white region has its own tick series");
  const fill=css.match(/\.wsl-word-ruler-content-strip\{([^}]+)\}/);
  const tick=css.match(/\.wsl-word-ruler-cm-tick\{([^}]+)\}/);
  assert.ok(fill&&tick);
- for(const rule of ["position:absolute;","top:2px;","bottom:2px;","z-index:0;","background:#fff;"])
+ for(const rule of ["position:absolute;","top:2px;","bottom:2px;","z-index:2;","overflow:hidden;","background:#fff;"])
   assert.ok(fill[1].includes(rule),rule);
  assert.ok(tick[1].includes("z-index:1;"));
+ assert.match(ruler,/const contentTicks=useMemo\(\(\)=>\{/);
+ assert.match(ruler,/const step=PX_PER_QUARTER_CM\*zoom\/100;/);
+ assert.match(ruler,/const count=Math\.floor\(paperGeometry\.editorWidth\/step\+1e-8\);/);
+ assert.match(ruler,/\.filter\(tick=>tick\.left<paperGeometry\.editorWidth-1\)/);
+ assert.match(ruler,/style=\{\{left:snapTick\(paperGeometry\.editorOffset\+tick\.left\)-contentStart\}\}/);
+ assert.match(ruler,/const contentStart=snapTick\(paperGeometry\.editorOffset\);/);
+ assert.match(ruler,/const contentEnd=snapTick\(paperGeometry\.editorOffset\+paperGeometry\.editorWidth\);/);
  assert.ok(!fill[1].includes("height:"));
  assert.ok(!fill[1].includes("border:"));
  for(const landscape of [false,true])for(const narrow of [false,true])for(const zoom of [60,100,130,160]){
@@ -996,5 +1008,34 @@ test("White ruler underlay aligns exactly with the editor between A4 page margin
   assert.ok(editorWidth>0);
   assert.ok(editorEnd<paperWidth*zoom/100);
   assert.ok(Math.abs(editorEnd-(paperWidth-side-1)*zoom/100)<1e-8);
+ }
+});
+
+
+test("Word editor focus is borderless and white ruler scale restarts at margin zero",()=>{
+ const editorCss=readFileSync("src/features/word-simulator/word-simulator.css","utf8");
+ const ruler=readFileSync("src/features/word-simulator/word-page-rulers.tsx","utf8");
+ const rulerCss=readFileSync("src/features/word-simulator/word-page-rulers.css","utf8");
+ assert.match(editorCss,/\.wsl-editor:focus,\.wsl-editor:focus-visible\{outline:none;outline-offset:0;box-shadow:none\}/);
+ assert.doesNotMatch(editorCss,/\.wsl-editor:focus-visible\{outline:1px solid #adc8f5/);
+ assert.match(ruler,/contentTicks\.map\(tick=><span key=\{tick\.index\}/);
+ assert.match(ruler,/style=\{\{left:snapTick\(paperGeometry\.editorOffset\+tick\.left\)-contentStart\}\}/);
+ const gray=ruler.indexOf("{ticks.map(tick=>");
+ const white=ruler.indexOf('<div className="wsl-word-ruler-content-strip"');
+ const own=ruler.indexOf("{contentTicks.map(tick=>");
+ assert.ok(gray>=0&&white>gray&&own>white);
+ const strip=rulerCss.match(/\.wsl-word-ruler-content-strip\{([^}]*)\}/)?.[1];
+ assert.ok(strip?.includes("z-index:2;")&&strip.includes("overflow:hidden;"));
+ for(const cm of [21,29.7])for(const narrow of [true,false])for(const zoom of [60,100,130,160]){
+   const paperWidth=cm*96/2.54*zoom/100;
+   const margin=(narrow?48:87)*zoom/100;
+   const editorWidth=paperWidth-2*(margin+zoom/100);
+   const step=96/2.54/4*zoom/100;
+   assert.ok(editorWidth>0);
+   const marks=Array.from({length:Math.floor(editorWidth/step+1e-8)+1},(_,i)=>i*step)
+     .filter(x=>x<editorWidth-1);
+   assert.equal(marks[0],0,"0 cm begins at left editor margin");
+   assert.ok(Math.abs(marks[4]-96/2.54*zoom/100)<1e-8);
+   assert.ok(marks.at(-1)<editorWidth);
  }
 });
