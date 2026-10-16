@@ -2,6 +2,19 @@
 
 Ngày: 15/10/2026. Đường dẫn: `/cong-cu/mo-phong-word`.
 
+## Quy trình bắt buộc sau mỗi lần chỉnh sửa mô phỏng Word
+
+**Yêu cầu lâu dài của chủ dự án (16/10/2026):** Sau **mọi lần chỉnh sửa** mô phỏng Word đã được người dùng yêu cầu thực hiện, không dừng ở việc đưa đoạn mã hoặc hướng dẫn thủ công.
+
+1. Sửa **trực tiếp** mã nguồn trong GitHub `huunghia160699/xuong-cong-nghe` (nhánh `main`); không thay đổi các trang không liên quan.
+2. Bổ sung hoặc cập nhật **kiểm thử hồi quy** phù hợp, tránh làm mất tính năng đã có.
+3. **Cập nhật chính file Markdown này sau mỗi lần sửa**, ghi lại yêu cầu, thông số UI/UX, trạng thái tính năng và các ràng buộc cần giữ.
+4. Commit các thay đổi lên GitHub; tạo deployment **Vercel Production** cho chính commit đó, xem log test/build và xác nhận deployment ở trạng thái **READY**.
+5. Phản hồi kèm **liên kết Production**, commit SHA và số bài test đạt; nói rõ nếu chưa kiểm tra trực quan trên trình duyệt.
+6. Nếu triển khai hoặc kiểm thử thất bại, phải sửa và chạy lại trước khi báo hoàn thành; không khẳng định đã triển khai khi chưa thấy READY.
+
+Áp dụng quy trình này mặc định cho các lần chỉnh sửa tiếp theo. Khi người dùng chỉ yêu cầu **mô tả/phác thảo trước để xác nhận**, không tự sửa hoặc deploy cho đến khi được duyệt.
+
 ## Mục tiêu
 - Đây là công cụ độc lập, không phải slide và **không phải phần mềm Word của Microsoft**.
 - Giao diện mô phỏng Word desktop trên Windows (thanh tiêu đề, Ribbon, trang A4, thước, zoom, status bar).
@@ -316,3 +329,12 @@ Ngày: 15/10/2026. Đường dẫn: `/cong-cu/mo-phong-word`.
 - Nhãn được định vị đúng điểm chia cm tính từ mép trái vùng nhập liệu (`snapTick(editorOffset + tick.left) - contentStart`), căn giữa cả chiều dọc và chiều ngang tại mốc bằng `top:50%` và `transform:translate(-50%,-50%)`. Kiểu chữ Arial 10px.
 - Vạch 0,25cm và 0,5cm trong dải trắng giữ nguyên, vạch cm trên phần xám bên ngoài dải trắng cũng giữ nguyên. Không thay đổi khung nền trắng, khoảng hở trên/dưới 4px, thao tác zoom và lề.
 - Hồi quy đảm bảo số liên tiếp theo vị trí cm và không còn vạch dài cm nằm trong dải trắng.
+
+## 2026-10-16 — Hai đầu thước ngang có biểu tượng Indent cùng chiều rộng
+
+- Thêm đúng theo mẫu được duyệt: **bên trái** có ba thành phần **First Line Indent** (tam giác xuôi), **Hanging Indent** (tam giác ngược chiều) và **Left Indent** (thanh chữ nhật); **bên phải** là tam giác hướng lên **Right Indent**.
+- Hai biểu tượng dùng **cùng một component `RulerIndentMarker`**, SVG **12 × 20px**, wrapper `width:min-width:max-width:12px`, cao 20px. Các phần tử hình học nội bộ nằm trong cùng khung 12px, viền xám mảnh.
+- Left Marker đặt tại `contentStart`, Right Marker tại `contentEnd`, bám đúng **hai mép dải trắng/vùng nhập liệu**, tự thay đổi theo lề thường/hẹp, khổ A4 dọc/ngang, zoom, cuộn, và resize.
+- Cả hai nằm ngoài `.wsl-word-ruler-content-strip` để không bị `overflow:hidden` cắt mất một nửa, có `z-index:3` nên nổi phía trên nền trắng (`z-index:2`) và vạch chia (`z-index:1`); căn giữa dọc theo thanh thước 26px.
+- Đây **chỉ là hình ảnh giao diện**, `pointer-events:none`, **chưa hỗ trợ kéo thả hoặc thay đổi giá trị indent**. Bảo toàn thước trắng 4px inset, mốc số cm, vạch 1px, giấy và Ribbon.
+- Mỗi lần thay đổi tiếp theo phải thực hiện **Quy trình bắt buộc sau mỗi lần chỉnh sửa mô phỏng Word** ở đầu file: cập nhật MD, GitHub, test, Vercel Production READY.
