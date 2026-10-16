@@ -103,26 +103,39 @@
   user-select:none;
   pointer-events:none;
 }
-/* Three left-side indent glyphs and one right-side indent glyph share the
-   same 12px-wide container. Outside the clipped white strip, both are visible. */
+/* Three interactive Word-indent tabs, always 12px wide. The two left
+   tabs stack in the top/bottom halves; the right tab faces upward below. */
 .wsl-word-ruler-indent{
   position:absolute;
-  top:50%;
-  transform:translate(-50%,-50%);
+  transform:translateX(-50%);
   z-index:3;
   display:block;
   width:12px;
   min-width:12px;
   max-width:12px;
-  height:20px;
+  height:10px;
+  padding:0;
+  margin:0;
+  border:0;
+  border-radius:0;
+  box-shadow:none;
+  background:transparent;
+  color:#818181;
   line-height:0;
-  pointer-events:none;
+  cursor:ew-resize;
+  touch-action:none;
+  user-select:none;
+  pointer-events:auto;
 }
+.wsl-word-ruler-indent-firstLine{top:1px}
+.wsl-word-ruler-indent-left,
+.wsl-word-ruler-indent-right{bottom:1px}
+.wsl-word-ruler-indent:focus-visible{outline:1px solid #818181;outline-offset:1px}
 .wsl-word-ruler-indent-svg{
   display:block;
   width:12px;
-  height:20px;
-  overflow:visible;
+  height:10px;
+  pointer-events:none;
 }
 .wsl-word-ruler-cm-tick-cm{height:7px}
 .wsl-word-ruler-cm-tick-half{height:4.5px}
@@ -138,7 +151,7 @@
   border-right:1px solid #d0cfd4;
   background:#e8e7eb;
 }
-/* The vertical ruler stays empty. Indent markers on the horizontal strip are visual only. */
+/* The vertical ruler remains empty; the horizontal markers can be dragged to format indentation. */
 @media(max-width:1250px){
  .wsl-word-layout .wsl-page-scroll{padding-inline:25px}
 }
