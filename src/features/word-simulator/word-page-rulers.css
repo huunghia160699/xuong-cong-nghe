@@ -91,6 +91,18 @@
   background:#64676c;
   pointer-events:none;
 }
+/* Whole-centimeter positions in the white band are labels, not long ticks. */
+.wsl-word-ruler-cm-label{
+  position:absolute;
+  top:50%;
+  transform:translate(-50%,-50%);
+  z-index:1;
+  color:#555960;
+  font:10px/1 Arial,"Segoe UI",sans-serif;
+  white-space:nowrap;
+  user-select:none;
+  pointer-events:none;
+}
 .wsl-word-ruler-cm-tick-cm{height:7px}
 .wsl-word-ruler-cm-tick-half{height:4.5px}
 .wsl-word-ruler-cm-tick-quarter{height:2.5px}
