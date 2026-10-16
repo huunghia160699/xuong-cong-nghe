@@ -24,10 +24,15 @@ function RulerIndentMarker({side,left}:{side:"left"|"right";left:number}){
     <svg className="wsl-word-ruler-indent-svg" viewBox="0 0 12 20"
       width="12" height="20" focusable="false">
       {side==="left"?<>
-        <path d="M.5 1H11.5L6 6.5Z" fill="#f8f9fa" stroke="#68727d" strokeWidth=".8" strokeLinejoin="round"/>
-        <path d="M.5 13L6 7.5L11.5 13Z" fill="#f8f9fa" stroke="#68727d" strokeWidth=".8" strokeLinejoin="round"/>
-        <rect x=".5" y="14.5" width="11" height="4.5" rx=".5" fill="#f8f9fa" stroke="#68727d" strokeWidth=".8"/>
-      </>:<path d="M.5 15L6 9.5L11.5 15Z" fill="#f8f9fa" stroke="#68727d" strokeWidth=".8" strokeLinejoin="round"/>}
+        {/* Match the reference: one house-shaped lower indent marker, divided by a fine line. */}
+        <path d="M.5 10.5L6 6L11.5 10.5V19H.5Z"
+          fill="#fff" stroke="#818181" strokeWidth="1" strokeLinejoin="miter"/>
+        <path d="M.5 14H11.5" fill="none" stroke="#818181" strokeWidth="1"/>
+      </>:<>
+        {/* Match the reference: an open-looking upper rectangular tab with a downward tip. */}
+        <path d="M.5 1H11.5V5L6 9.25L.5 5Z"
+          fill="#fff" stroke="#818181" strokeWidth="1" strokeLinejoin="miter"/>
+      </>}
     </svg>
   </span>;
 }
