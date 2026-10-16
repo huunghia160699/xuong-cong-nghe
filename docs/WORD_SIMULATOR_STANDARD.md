@@ -238,3 +238,12 @@ Ngày: 15/10/2026. Đường dẫn: `/cong-cu/mo-phong-word`.
 - Thanh menu tab và từng tab **không bo góc trên/dưới**, áp `border-radius:0`; giữ nguyên nét active 3px, màu nền xám và độ đậm đã duyệt.
 - Khung trắng nổi của Home Ribbon **chiếm hết chiều rộng khả dụng** `width:100%;flex:1 0 auto;box-sizing:border-box`, vẫn bo góc 5px, lề ngoài trái/phải và viền/bóng mảnh. Các nhóm Clipboard, Font, Paragraph, Styles, Editing có `flex:0 0 auto` để **dồn về trái**. Khoảng trống còn lại **bên phải để trắng**, không phóng to các nhóm. Khi tổng công cụ lớn hơn viewport, thanh Ribbon cuộn ngang.
 - Các kiểm thử hồi quy cần kiểm tra cả offset 13px/9px, mốc thước 0, tab vuông, khung 100% và nhóm không giãn; kiểm tra lặp 10 vòng trong bộ `word-home-qa`.
+
+
+## 2026-10-16 — Hoàn thiện thước theo hình tham chiếu mới
+
+- Thước ngang vẫn không có viền trên; **phục hồi viền dưới** mảnh `1px solid #c7c7cb`, phân cách rõ với vùng trang bên dưới.
+- Hai thước tiếp tục lấy chiều dài A4 chuẩn từ `word-paper-metrics.ts`; không tự chia lại theo toàn màn hình. Thước ngang giữ các mốc và dấu lề đầu/cuối theo tờ giấy.
+- Thước dọc phải nằm **bên trong `.wsl-word-page-body` có `position:relative`**, không đặt cùng cấp với vùng trang vì `position:absolute` sẽ sai gốc tọa độ.
+- Chiều cao của thước dọc đo từ **chính phần tử `.wsl-paper`** bằng `getBoundingClientRect().height` và `ResizeObserver`; nhờ đó bằng chiều cao hiển thị thật kể cả khi thu/phóng, đổi hướng giấy hay tài liệu dài hơn chiều cao A4 tối thiểu. Đầu thước và tờ giấy dùng cùng offset; khi cuộn dọc, `top` được giảm đúng `scrollTop`. Khi vượt khung xem, thước được cắt bởi viewport, không kéo dài vô hạn.
+- Giữ hành vi hiển thị/ẩn theo nút Ruler hiện có. Hệ kiểm thử Home lặp 10 lượt phải bắt đường viền dưới, vị trí vùng chứa và cơ chế quan sát chiều cao thực.
