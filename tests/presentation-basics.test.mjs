@@ -821,7 +821,7 @@ test("Word horizontal ruler has paper-edge aligned cm ticks only, leaving vertic
  assert.match(ruler,/style=\{\{left:snapTick\(Math\.max\(0,scaledWidth-1\)\)\}\}/);
  assert.match(ruler,/className="wsl-word-ruler-cm-track"/);
  assert.match(ruler,/className="wsl-word-vertical-ruler" aria-hidden="true"/);
- assert.doesNotMatch(ruler,/<svg|<RulerTicks|<MarginMarker|<text|<label/);
+ assert.doesNotMatch(ruler,/<RulerTicks|<MarginMarker|<text|<label/);
  assert.doesNotMatch(ruler,/>Normal</);
  assert.match(css,/\.wsl-word-ruler-cm-track\{[^}]*background:transparent;/);
  assert.match(css,/\.wsl-word-ruler-content-strip\{[^}]*top:4px;[^}]*bottom:4px;[^}]*z-index:2;[^}]*overflow:hidden;[^}]*background:#fff;/);
@@ -902,7 +902,7 @@ test("Horizontal ruler draws only ticks, vertical placeholder preserves measured
  assert.match(ruler,/height:verticalHeight/);
  assert.match(ruler,/if\(axis==="horizontal"\)return <HorizontalRulerTicks/);
  assert.match(ruler,/className=\{"wsl-word-ruler-cm-tick wsl-word-ruler-cm-tick-"\+tick\.kind\}/);
- assert.doesNotMatch(ruler,/<svg|<RulerTicks|<MarginMarker|<text/);
+ assert.doesNotMatch(ruler,/<RulerTicks|<MarginMarker|<text/);
  for(const landscape of [false,true])for(const zoom of [60,80,100,120,160]){
    const height=(landscape?210:297)*96/25.4*zoom/100;
    assert.ok(height>0);
@@ -1094,5 +1094,42 @@ test("White ruler shows centered 1, 2, 3... numbers instead of 1cm long ticks",(
    assert.deepEqual(whole.slice(0,4).map(mark=>mark.index/4),[1,2,3,4]);
    assert.ok(marks.every(mark=>mark.index>0));
    assert.ok(marks.some(mark=>mark.index%4!==0));
+ }
+});
+
+
+test("Word ruler indentation glyphs match the agreed Word style and equal 12px widths",()=>{
+ const ruler=readFileSync("src/features/word-simulator/word-page-rulers.tsx","utf8");
+ const css=readFileSync("src/features/word-simulator/word-page-rulers.css","utf8");
+ const marker=ruler.slice(ruler.indexOf("function RulerIndentMarker"),ruler.indexOf("function HorizontalRulerTicks"));
+ const track=ruler.slice(ruler.indexOf('<div className="wsl-word-ruler-cm-track"'),ruler.indexOf("\n  </div>;\n}",ruler.indexOf('<div className="wsl-word-ruler-cm-track"')));
+ assert.match(marker,/side:"left"\|"right";left:number/);
+ assert.match(marker,/className=\{"wsl-word-ruler-indent wsl-word-ruler-indent-"\+side\}/);
+ assert.match(marker,/viewBox="0 0 12 20"/);
+ assert.match(marker,/width="12" height="20"/);
+ assert.match(marker,/side==="left"\?<>/);
+ assert.equal((marker.match(/<path /g)||[]).length,3,"first-line, hanging, right indent each uses a triangle");
+ assert.match(marker,/<rect x="\.5" y="14\.5" width="11" height="4\.5"/);
+ assert.match(marker,/<\/>:<path d="M\.5 15L6 9\.5L11\.5 15Z"/);
+ assert.match(track,/<RulerIndentMarker side="left" left=\{contentStart\}\/>/);
+ assert.match(track,/<RulerIndentMarker side="right" left=\{contentEnd\}\/>/);
+ assert.equal((track.match(/<RulerIndentMarker side=/g)||[]).length,2);
+ const lastWhite=track.lastIndexOf("</div>");
+ const iconStart=track.indexOf('<RulerIndentMarker side="left"');
+ assert.ok(iconStart>lastWhite,"indent icons should be siblings outside the overflow-hidden white strip");
+ const wrap=css.match(/\.wsl-word-ruler-indent\{([^}]+)\}/)?.[1];
+ const svg=css.match(/\.wsl-word-ruler-indent-svg\{([^}]+)\}/)?.[1];
+ assert.ok(wrap&&svg);
+ for(const property of ["top:50%;","transform:translate(-50%,-50%);","z-index:3;","width:12px;","min-width:12px;","max-width:12px;","height:20px;","pointer-events:none;"])
+   assert.ok(wrap.includes(property),property);
+ for(const property of ["width:12px;","height:20px;"])
+   assert.ok(svg.includes(property),property);
+ assert.match(css,/\.wsl-word-ruler-content-strip\{[^}]*z-index:2;[^}]*overflow:hidden;/);
+ for(const landscape of [false,true])for(const narrow of [false,true])for(const zoom of [60,100,130,160]){
+   const width=(landscape?297:210)*96/25.4*zoom/100;
+   const pageMargin=(narrow?48:87)*zoom/100;
+   const left=(pageMargin+zoom/100);
+   const right=width-left;
+   assert.ok(left>6&&right<width-6&&right>left,"both 12px glyphs fit inside scaled A4 paper");
  }
 });
