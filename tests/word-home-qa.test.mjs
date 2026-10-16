@@ -141,7 +141,14 @@ test("Horizontal centimeter ruler and tab chrome: 10 rounds over A4 size and zoo
    assert.match(ruler,/const PX_PER_QUARTER_CM=PX_PER_CM\/4/);
    assert.match(ruler,/const scaledWidth=paperWidth\*zoom\/100/);
    assert.match(ruler,/kind:index%4===0\?"cm":index%2===0\?"half":"quarter"/);
-   assert.match(ruler,/const viewportLeft=paper\.getBoundingClientRect\(\)\.left;/);
+   assert.match(ruler,/const paperRect=paper\.getBoundingClientRect\(\);/);
+   assert.match(ruler,/const editorRect=editor\.getBoundingClientRect\(\);/);
+   assert.match(ruler,/const viewportLeft=paperRect\.left;/);
+   assert.match(ruler,/const editorOffset=editorRect\.left-viewportLeft;/);
+   assert.match(ruler,/const editorWidth=editorRect\.width;/);
+   assert.match(ruler,/observer\?\.observe\(editor\)/);
+   assert.match(ruler,/style=\{\{left:paperGeometry\.editorOffset,width:paperGeometry\.editorWidth\}\}/);
+   assert.match(ruler,/narrow=\{narrow\}/);
    assert.match(ruler,/const left=viewportLeft-ruler\.getBoundingClientRect\(\)\.left;/);
    assert.match(ruler,/const pixelRatio=window\.devicePixelRatio\|\|1;/);
    assert.match(ruler,/Math\.round\(\(viewportLeft\+offset\)\*pixelRatio\)\/pixelRatio-viewportLeft/);
@@ -154,6 +161,8 @@ test("Horizontal centimeter ruler and tab chrome: 10 rounds over A4 size and zoo
    assert.doesNotMatch(ruler,/<svg|<RulerTicks|<MarginMarker|<text/);
    assert.doesNotMatch(rulerCSS,/wsl-word-ruler-(horizontal|vertical)-printable/);
    assert.match(rulerCSS,/\.wsl-word-ruler-cm-track\{[^}]*background:transparent;/);
+   assert.match(rulerCSS,/\.wsl-word-ruler-content-strip\{[^}]*top:2px;[^}]*bottom:2px;[^}]*z-index:0;[^}]*background:#fff;/);
+   assert.match(rulerCSS,/\.wsl-word-ruler-cm-tick\{[^}]*z-index:1;/);
    assert.match(rulerCSS,/\.wsl-word-ruler-cm-tick\{[^}]*top:50%;[^}]*transform:translateY\(-50%\);/);
    assert.match(rulerCSS,/\.wsl-word-ruler-cm-tick\{[^}]*width:1px;[^}]*min-width:1px;[^}]*max-width:1px;/);
    assert.match(rulerCSS,/\.wsl-word-ruler-cm-tick-cm\{height:7px\}/);
