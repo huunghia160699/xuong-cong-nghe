@@ -1018,7 +1018,9 @@ test("Word editor focus is borderless and white ruler scale restarts at margin z
  const rulerCss=readFileSync("src/features/word-simulator/word-page-rulers.css","utf8");
  assert.match(editorCss,/\.wsl-editor:focus,\.wsl-editor:focus-visible\{outline:none;outline-offset:0;box-shadow:none\}/);
  assert.doesNotMatch(editorCss,/\.wsl-editor:focus-visible\{outline:1px solid #adc8f5/);
- assert.match(ruler,/contentTicks\.map\(tick=><span key=\{tick\.index\}/);
+ assert.match(ruler,/contentTicks\.map\(tick=>tick\.kind==="cm"\?/);
+ assert.match(ruler,/<span key=\{tick\.index\} className="wsl-word-ruler-cm-label"/);
+ assert.match(ruler,/\{tick\.index\/4\}<\/span>:/);
  assert.match(ruler,/style=\{\{left:snapTick\(paperGeometry\.editorOffset\+tick\.left\)-contentStart\}\}/);
  const gray=ruler.indexOf("{ticks.map(tick=>");
  const white=ruler.indexOf('<div className="wsl-word-ruler-content-strip"');
@@ -1064,4 +1066,33 @@ test("White Word ruler omits only its zero mark and keeps a 4px vertical inset",
    assert.ok(Math.abs(marks[3].left-4*step)<1e-8);
    assert.ok(marks.every(mark=>mark.left>0));
   }
+});
+
+
+test("White ruler shows centered 1, 2, 3... numbers instead of 1cm long ticks",()=>{
+ const ruler=readFileSync("src/features/word-simulator/word-page-rulers.tsx","utf8");
+ const css=readFileSync("src/features/word-simulator/word-page-rulers.css","utf8");
+ const white=ruler.slice(ruler.indexOf('{contentTicks.map(tick=>'),ruler.indexOf('\n      </div>',ruler.indexOf('{contentTicks.map(tick=>')));
+ assert.match(white,/contentTicks\.map\(tick=>tick\.kind==="cm"\?/);
+ assert.match(white,/className="wsl-word-ruler-cm-label"/);
+ assert.match(white,/\{tick\.index\/4\}<\/span>:/);
+ assert.match(white,/className=\{"wsl-word-ruler-cm-tick wsl-word-ruler-cm-tick-"\+tick\.kind\}/);
+ assert.doesNotMatch(white,/wsl-word-ruler-cm-tick-cm"/);
+ const label=css.match(/\.wsl-word-ruler-cm-label\{([^}]+)\}/)?.[1];
+ assert.ok(label);
+ for(const property of ["position:absolute;","top:50%;","transform:translate(-50%,-50%);","font:10px/1","white-space:nowrap;"])
+   assert.ok(label.includes(property),property);
+ assert.match(ruler,/\.filter\(tick=>tick\.index>0&&tick\.left<paperGeometry\.editorWidth-1\)/);
+ const gray=ruler.slice(ruler.indexOf('{ticks.map(tick=>'),ruler.indexOf('<div className="wsl-word-ruler-content-strip"'));
+ assert.match(gray,/wsl-word-ruler-cm-tick-cm/);
+ for(const cm of [21,29.7])for(const narrow of [true,false])for(const zoom of [60,100,130,160]){
+   const width=(cm*96/2.54-2*((narrow?48:87)+1))*zoom/100;
+   const step=96/2.54/4*zoom/100;
+   const marks=Array.from({length:Math.floor(width/step+1e-8)+1},(_,i)=>({index:i,left:i*step}))
+     .filter(mark=>mark.index>0&&mark.left<width-1);
+   const whole=marks.filter(mark=>mark.index%4===0);
+   assert.deepEqual(whole.slice(0,4).map(mark=>mark.index/4),[1,2,3,4]);
+   assert.ok(marks.every(mark=>mark.index>0));
+   assert.ok(marks.some(mark=>mark.index%4!==0));
+ }
 });
