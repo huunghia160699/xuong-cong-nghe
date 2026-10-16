@@ -1,5 +1,5 @@
 /* Compact Home Ribbon based on desktop Word layout. A full row of tabs, no top title bar. */
-.wsl-home-ribbon{display:flex;align-items:stretch;flex:1;min-width:max-content;min-height:0;height:100%;padding:0 4px;color:#252525;font-family:Arial,"Segoe UI",sans-serif}
+.wsl-home-ribbon{display:flex;align-items:stretch;flex:1;min-width:max-content;min-height:0;height:100%;padding:0;color:#252525;font-family:Arial,"Segoe UI",sans-serif}
 .wsl-home-group{display:flex;flex-direction:column;justify-content:space-between;gap:3px;min-width:0;padding:4px 8px 1px;border-right:1px solid #d8d8dc}
 .wsl-home-group-content{flex:1;display:flex;align-items:center;min-height:0}
 .wsl-home-group-name{font:11px/15px Arial,sans-serif;color:#494949;text-align:center;white-space:nowrap}
