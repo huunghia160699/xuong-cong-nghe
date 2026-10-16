@@ -35,6 +35,7 @@ function RulerIndentMarker({kind,left,onPointerDown,onPointerMove,onPointerUp,on
   onPointerUp:(event:RulerPointerEvent)=>void;
   onPointerCancel:(event:RulerPointerEvent)=>void;
 }){
+  // Tips are 3px high, leaving 6px for the rectangular bodies in each 10px icon.
   const label=kind==="firstLine"?"Thụt lề dòng đầu":kind==="left"?"Thụt lề trái":"Thụt lề phải";
   return <button type="button"
     className={"wsl-word-ruler-indent wsl-word-ruler-indent-"+kind}
@@ -45,14 +46,14 @@ function RulerIndentMarker({kind,left,onPointerDown,onPointerMove,onPointerUp,on
     <svg className="wsl-word-ruler-indent-svg" viewBox="0 0 12 10"
       width="12" height="10" focusable="false" aria-hidden="true">
       {kind==="firstLine"?
-        <path d="M.5 .5H11.5V4.5L6 9.5L.5 4.5Z"
+        <path d="M.5 .5H11.5V6.5L6 9.5L.5 6.5Z"
           fill="#fff" stroke="#818181" strokeWidth="1" strokeLinejoin="miter"/>:
         kind==="left"?<>
-          <path d="M.5 5.5L6 .5L11.5 5.5V9.5H.5Z"
+          <path d="M.5 3.5L6 .5L11.5 3.5V9.5H.5Z"
             fill="#fff" stroke="#818181" strokeWidth="1" strokeLinejoin="miter"/>
-          <path d="M.5 7H11.5" stroke="#818181" strokeWidth="1" fill="none"/>
+          <path d="M.5 6.5H11.5" stroke="#818181" strokeWidth="1" fill="none"/>
         </>:
-        <path d="M.5 5.5L6 .5L11.5 5.5V9.5H.5Z"
+        <path d="M.5 3.5L6 .5L11.5 3.5V9.5H.5Z"
           fill="#fff" stroke="#818181" strokeWidth="1" strokeLinejoin="miter"/>}
     </svg>
   </button>;
