@@ -99,9 +99,12 @@ function HorizontalRulerTicks({landscape,narrow,zoom,scrollLeft}:{landscape:bool
         style={{left:snapTick(Math.max(0,scaledWidth-1))}}/>
       <div className="wsl-word-ruler-content-strip"
         style={{left:contentStart,width:Math.max(0,contentEnd-contentStart)}}>
-        {contentTicks.map(tick=><span key={tick.index}
-          className={"wsl-word-ruler-cm-tick wsl-word-ruler-cm-tick-"+tick.kind}
-          style={{left:snapTick(paperGeometry.editorOffset+tick.left)-contentStart}}/>)}
+        {contentTicks.map(tick=>tick.kind==="cm"?
+          <span key={tick.index} className="wsl-word-ruler-cm-label"
+            style={{left:snapTick(paperGeometry.editorOffset+tick.left)-contentStart}}>{tick.index/4}</span>:
+          <span key={tick.index}
+            className={"wsl-word-ruler-cm-tick wsl-word-ruler-cm-tick-"+tick.kind}
+            style={{left:snapTick(paperGeometry.editorOffset+tick.left)-contentStart}}/>)}
       </div>
     </div>
   </div>;
