@@ -14,33 +14,89 @@ type Props={
   scrollTop:number;
   axis:"horizontal"|"vertical";
   renderedPaperHeight?:number;
+  indent?:RulerIndent;
+  onIndentStart?:(kind:RulerIndentPart)=>void;
+  onIndentChange?:(value:RulerIndent)=>void;
+  onIndentEnd?:()=>void;
 };
 
-/** The gray ruler measures from the paper edge. The white editable-area ruler
- * measures from its own left edge (0 cm); indentation markers sit at its edges. */
-function RulerIndentMarker({side,left}:{side:"left"|"right";left:number}){
-  return <span className={"wsl-word-ruler-indent wsl-word-ruler-indent-"+side}
-    style={{left}} aria-hidden="true">
-    <svg className="wsl-word-ruler-indent-svg" viewBox="0 0 12 20"
-      width="12" height="20" focusable="false">
-      {side==="left"?<>
-        {/* Match the reference: one house-shaped lower indent marker, divided by a fine line. */}
-        <path d="M.5 10.5L6 6L11.5 10.5V19H.5Z"
-          fill="#fff" stroke="#818181" strokeWidth="1" strokeLinejoin="miter"/>
-        <path d="M.5 14H11.5" fill="none" stroke="#818181" strokeWidth="1"/>
-      </>:<>
-        {/* Match the reference: an open-looking upper rectangular tab with a downward tip. */}
-        <path d="M.5 1H11.5V5L6 9.25L.5 5Z"
-          fill="#fff" stroke="#818181" strokeWidth="1" strokeLinejoin="miter"/>
-      </>}
+export type RulerIndent={firstLine:number;left:number;right:number};
+type RulerIndentPart=keyof RulerIndent;
+
+type RulerPointerEvent=React.PointerEvent<HTMLButtonElement>;
+
+/** Three separate 12px-wide markers. The two left markers are vertically
+ * stacked and movable individually; the right marker is a bottom-up tab. */
+function RulerIndentMarker({kind,left,onPointerDown,onPointerMove,onPointerUp,onPointerCancel}:{
+  kind:RulerIndentPart;
+  left:number;
+  onPointerDown:(event:RulerPointerEvent,kind:RulerIndentPart)=>void;
+  onPointerMove:(event:RulerPointerEvent)=>void;
+  onPointerUp:(event:RulerPointerEvent)=>void;
+  onPointerCancel:(event:RulerPointerEvent)=>void;
+}){
+  const label=kind==="firstLine"?"Thụt lề dòng đầu":kind==="left"?"Thụt lề trái":"Thụt lề phải";
+  return <button type="button"
+    className={"wsl-word-ruler-indent wsl-word-ruler-indent-"+kind}
+    style={{left}} aria-label={label} title={label}
+    onPointerDown={event=>onPointerDown(event,kind)}
+    onPointerMove={onPointerMove} onPointerUp={onPointerUp}
+    onPointerCancel={onPointerCancel}>
+    <svg className="wsl-word-ruler-indent-svg" viewBox="0 0 12 10"
+      width="12" height="10" focusable="false" aria-hidden="true">
+      {kind==="firstLine"?
+        <path d="M.5 .5H11.5V4.5L6 9.5L.5 4.5Z"
+          fill="#fff" stroke="#818181" strokeWidth="1" strokeLinejoin="miter"/>:
+        kind==="left"?<>
+          <path d="M.5 5.5L6 .5L11.5 5.5V9.5H.5Z"
+            fill="#fff" stroke="#818181" strokeWidth="1" strokeLinejoin="miter"/>
+          <path d="M.5 7H11.5" stroke="#818181" strokeWidth="1" fill="none"/>
+        </>:
+        <path d="M.5 5.5L6 .5L11.5 5.5V9.5H.5Z"
+          fill="#fff" stroke="#818181" strokeWidth="1" strokeLinejoin="miter"/>}
     </svg>
-  </span>;
+  </button>;
 }
-function HorizontalRulerTicks({landscape,narrow,zoom,scrollLeft}:{landscape:boolean;narrow:boolean;zoom:number;scrollLeft:number}){
+function HorizontalRulerTicks({landscape,narrow,zoom,scrollLeft,indent,onIndentStart,onIndentChange,onIndentEnd}:{
+  landscape:boolean;narrow:boolean;zoom:number;scrollLeft:number;
+  indent:RulerIndent;
+  onIndentStart?:(kind:RulerIndentPart)=>void;
+  onIndentChange?:(value:RulerIndent)=>void;
+  onIndentEnd?:()=>void;
+}){
   const rulerRef=useRef<HTMLDivElement>(null);
   const [paperGeometry,setPaperGeometry]=useState({left:0,viewportLeft:0,pixelRatio:1,editorOffset:0,editorWidth:0});
   const {width:paperWidth}=a4Dimensions(landscape);
   const scaledWidth=paperWidth*zoom/100;
+  const dragRef=useRef<{pointerId:number;kind:RulerIndentPart;startX:number;startValue:number}|null>(null);
+  const clamped=(value:number,min:number,max:number)=>Math.min(max,Math.max(min,value));
+  const onMarkerPointerDown=(event:RulerPointerEvent,kind:RulerIndentPart)=>{
+    if(!onIndentChange||!event.isPrimary||event.button!==0)return;
+    event.preventDefault();event.stopPropagation();
+    onIndentStart?.(kind);
+    dragRef.current={pointerId:event.pointerId,kind,startX:event.clientX,startValue:indent[kind]};
+    event.currentTarget.setPointerCapture(event.pointerId);
+  };
+  const onMarkerPointerMove=(event:RulerPointerEvent)=>{
+    const drag=dragRef.current;
+    if(!drag||event.pointerId!==drag.pointerId||!onIndentChange)return;
+    event.preventDefault();
+    const direction=drag.kind==="right"?-1:1;
+    const delta=(event.clientX-drag.startX)*100/zoom*direction;
+    const editorWidth=paperGeometry.editorWidth*100/zoom;
+    const step=PX_PER_QUARTER_CM;
+    const maximum=drag.kind==="right"?Math.max(0,editorWidth-indent.left-24):
+      Math.max(0,editorWidth-indent.right-24);
+    const value=clamped(Math.round((drag.startValue+delta)/step)*step,0,maximum);
+    if(Math.abs(value-indent[drag.kind])>0.1)onIndentChange({...indent,[drag.kind]:value});
+  };
+  const onMarkerPointerUp=(event:RulerPointerEvent)=>{
+    if(dragRef.current?.pointerId!==event.pointerId)return;
+    dragRef.current=null;
+    if(event.currentTarget.hasPointerCapture(event.pointerId))
+      event.currentTarget.releasePointerCapture(event.pointerId);
+    onIndentEnd?.();
+  };
 
   useLayoutEffect(()=>{
     const ruler=rulerRef.current;
@@ -124,17 +180,25 @@ function HorizontalRulerTicks({landscape,narrow,zoom,scrollLeft}:{landscape:bool
             className={"wsl-word-ruler-cm-tick wsl-word-ruler-cm-tick-"+tick.kind}
             style={{left:snapTick(paperGeometry.editorOffset+tick.left)-contentStart}}/>)}
       </div>
-      {/* Visual-only markers: both share a 12px width and follow editable margins. */}
-      <RulerIndentMarker side="left" left={contentStart}/>
-      <RulerIndentMarker side="right" left={contentEnd}/>
+      {/* Same 12px width, three active controls anchored to editable margins. */}
+      {(["firstLine","left","right"] as RulerIndentPart[]).map(kind=>
+        <RulerIndentMarker key={kind} kind={kind}
+          left={kind==="right"?
+            contentEnd-indent.right*zoom/100:
+            contentStart+indent[kind]*zoom/100}
+          onPointerDown={onMarkerPointerDown}
+          onPointerMove={onMarkerPointerMove}
+          onPointerUp={onMarkerPointerUp}
+          onPointerCancel={onMarkerPointerUp}/>)}
     </div>
   </div>;
 }
 
-export function WordPageRulers({landscape,narrow,zoom,scrollLeft,scrollTop,axis,renderedPaperHeight}:Props){
+export function WordPageRulers({landscape,narrow,zoom,scrollLeft,scrollTop,axis,renderedPaperHeight,indent,onIndentStart,onIndentChange,onIndentEnd}:Props){
   const {height:paperHeight}=a4Dimensions(landscape);
   const verticalHeight=renderedPaperHeight??paperHeight*zoom/100;
-  if(axis==="horizontal")return <HorizontalRulerTicks landscape={landscape} narrow={narrow} zoom={zoom} scrollLeft={scrollLeft}/>;
+  if(axis==="horizontal")return <HorizontalRulerTicks landscape={landscape} narrow={narrow} zoom={zoom} scrollLeft={scrollLeft}
+    indent={indent??{firstLine:0,left:0,right:0}} onIndentStart={onIndentStart} onIndentChange={onIndentChange} onIndentEnd={onIndentEnd}/>;
   return <div className="wsl-word-vertical-ruler" aria-hidden="true"
     style={{top:`calc(var(--wsl-page-top-offset, 13px) - ${scrollTop}px)`,height:verticalHeight}}/>;
 }
