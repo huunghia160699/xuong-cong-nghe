@@ -163,7 +163,8 @@ test("Rulers and tab chrome: verify page geometry 10 times across orientations, 
    assert.match(chrome,/\.wsl-shell \.wsl-ribbon:has\(\.wsl-home-ribbon\)>\.wsl-home-ribbon\{[^}]*width:100%;/);
    assert.match(chrome,/\.wsl-shell \.wsl-home-ribbon \.wsl-home-group\{[^}]*flex:0 0 auto;/);
    assert.match(chrome,/font-weight:900/);
-   assert.match(chrome,/\.wsl-shell \.wsl-ribbon\{\s*padding:0;\s*border-top:0;\s*border-bottom:0;/);
+   assert.match(chrome,/\.wsl-shell \.wsl-ribbon\{\s*margin-inline:4px;\s*padding:0;\s*border-top:0;\s*border-bottom:0;/);
+   assert.match(chrome,/\.wsl-shell \.wsl-ribbon:has\(\.wsl-home-ribbon\)>\.wsl-home-ribbon\{[^}]*padding:0;/);
    assert.match(chrome,/\.wsl-shell \.wsl-ribbon:has\(\.wsl-home-ribbon\)\{[^}]*padding:0;/);
    assert.match(chrome,/border-radius:5px/);
    for(const landscape of [false,true])for(const narrow of [false,true])for(const zoom of [60,100,130,160]){
