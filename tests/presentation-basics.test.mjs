@@ -1109,10 +1109,10 @@ test("Word ruler indentation markers use three individually movable 12px tabs wi
  assert.match(marker,/viewBox="0 0 12 10"/);
  assert.match(marker,/width="12" height="10"/);
  assert.match(marker,/kind==="firstLine"\?/);
- assert.match(marker,/d="M\.5 \.5H11\.5V4\.5L6 9\.5L\.5 4\.5Z"/);
+ assert.match(marker,/d="M\.5 \.5H11\.5V6\.5L6 9\.5L\.5 6\.5Z"/);
  assert.match(marker,/kind==="left"\?<>/);
- assert.match(marker,/d="M\.5 5\.5L6 \.5L11\.5 5\.5V9\.5H\.5Z"/);
- assert.match(marker,/d="M\.5 7H11\.5"/);
+ assert.match(marker,/d="M\.5 3\.5L6 \.5L11\.5 3\.5V9\.5H\.5Z"/);
+ assert.match(marker,/d="M\.5 6\.5H11\.5"/);
  assert.equal((marker.match(/<path /g)||[]).length,4);
  assert.match(marker,/aria-label=\{label\} title=\{label\}/);
  assert.match(marker,/onPointerDown=\{event=>onPointerDown\(event,kind\)\}/);
@@ -1184,4 +1184,25 @@ test("Dragging indent markers applies to current Word paragraph and preserves st
   const textIndent=firstLine-left;
   assert.ok(Math.abs(left+textIndent-firstLine)<1e-8);
  }
+});
+
+
+test("Ruler marker triangles become 3px high and leave 6px tall rectangular frames",()=>{
+ const ruler=readFileSync("src/features/word-simulator/word-page-rulers.tsx","utf8");
+ const css=readFileSync("src/features/word-simulator/word-page-rulers.css","utf8");
+ const top=ruler.match(/d="M\.5 \.5H11\.5V([\d.]+)L6 ([\d.]+)L\.5 ([\d.]+)Z"/);
+ const lower=ruler.match(/d="M\.5 ([\d.]+)L6 ([\d.]+)L11\.5 ([\d.]+)V9\.5H\.5Z"/g);
+ assert.ok(top&&lower&&lower.length===2);
+ assert.equal(Number(top[1]),6.5);
+ assert.equal(Number(top[2])-Number(top[1]),3);
+ assert.equal(Number(top[1])-.5,6);
+ assert.equal(lower.length,2);
+ assert.equal(3.5-.5,3);
+ assert.equal(9.5-3.5,6);
+ assert.match(ruler,/d="M\.5 6\.5H11\.5"/);
+ assert.doesNotMatch(ruler,/M\.5 7H11\.5|V4\.5L6 9\.5|M\.5 5\.5L6 \.5/);
+ assert.match(css,/\.wsl-word-ruler-indent\{[^}]*width:12px;[^}]*min-width:12px;[^}]*max-width:12px;[^}]*height:10px;/);
+ assert.match(ruler,/onPointerMove=\{onPointerMove\} onPointerUp=\{onPointerUp\}/);
+ for(const kind of ["firstLine","left","right"])
+   assert.match(ruler,new RegExp('"'+kind+'"'));
 });
