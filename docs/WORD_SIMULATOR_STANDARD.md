@@ -256,3 +256,11 @@ Ngày: 15/10/2026. Đường dẫn: `/cong-cu/mo-phong-word`.
 - Khoảng trống bên ngoài Ribbon là `margin-inline:8px` trên **phần tử cha**, tăng gấp đôi mức 4px; cả cha và Home không dùng padding ngang.
 - Xóa đường kẻ **giữa tab và Ribbon**: `.wsl-shell .wsl-tabs` bỏ `border-bottom`, `.wsl-ribbon` giữ `border-top:0` và khung `.wsl-home-ribbon` cũng `border-top:0`. Viền trái, phải, dưới và bo góc của khung Home được giữ lại.
 - Kiểm thử hồi quy và QA 10 vòng phải đảm bảo các quy tắc này ở cả desktop và mobile.
+
+
+## 2026-10-16 — Tạm bỏ nội dung thước để thiết kế mới
+
+- Theo yêu cầu mới, **xóa toàn bộ nội dung đồ họa hiện tại của hai thước**: vùng trắng, các vạch cm/¼cm, số đo, biểu tượng L và dấu lề trái/phải. Những yêu cầu vẽ thước ở các mục trước **tạm thời không còn áp dụng**.
+- Vẫn giữ đúng **hai thẻ cha rỗng**: `.wsl-word-horizontal-ruler` (chiếm hàng ngang 26px, có đường viền dưới mảnh) và `.wsl-word-vertical-ruler` (bề ngang 23px, bám theo vị trí và chiều cao trang giấy). Chúng không có phần tử con, để sẵn cho phương án thước mới.
+- Giữ nguyên phép tính A4, bố cục trang, zoom, cuộn, nút bật/tắt thước và tất cả lệnh Home; không đưa thêm thiết kế thước mới khi người dùng chưa cung cấp.
+- Hồi quy kiểm tra **không còn SVG, marker, tick hay vùng trắng bên trong thước**; các test khác của ứng dụng vẫn chạy như bình thường.
