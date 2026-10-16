@@ -1,4 +1,5 @@
 import test from "node:test";
+import {runInNewContext} from "node:vm";
 import assert from "node:assert/strict";
 import {readFileSync} from "node:fs";
 import {PRESENTATION_LAYOUTS} from "../src/features/presentations/types.ts";
@@ -1306,11 +1307,74 @@ test("Subscript and superscript use BIU-style toggles with mutual exclusion and 
  assert.match(toggle,/\[opposite\]:oppositeActive/);
  assert.match(toggle,/markChanged\(\);/);
  assert.match(source,/if\(name==="subscript"\|\|name==="superscript"\)\{\s*toggleScriptFormat\(name\);return;/);
- assert.match(home,/label="Subscript" active=\{formatActive\.subscript\}[^\\n]*run=\{\(\)=>run\("subscript"\)\}/);
- assert.match(home,/label="Superscript" active=\{formatActive\.superscript\}[^\\n]*run=\{\(\)=>run\("superscript"\)\}/);
+ assert.match(home,/label="Subscript" active=\{formatActive\.subscript\}[^\n]*run=\{\(\)=>run\("subscript"\)\}/);
+ assert.match(home,/label="Superscript" active=\{formatActive\.superscript\}[^\n]*run=\{\(\)=>run\("superscript"\)\}/);
  assert.match(home,/onMouseDown=\{event=>event\.preventDefault\(\)\} onClick=\{run\}/);
  assert.match(css,/\.wsl-home-font \.wsl-hb\.wsl-font-icon-button\.is-active/);
  assert.match(source,/const formatKeys:WordFormatKey\[\]=\["bold","italic","underline","strikeThrough","subscript","superscript"\]/);
  assert.match(source,/document\.queryCommandState\(key\)/);
  assert.match(source,/ALLOWED_TAGS=new Set\(\["P","BR"/);
+});
+
+
+test("x2 buttons actually toggle twice and switching sub/sup clears the opposite mode",()=>{
+ const source=readFileSync("src/features/word-simulator/word-simulator.tsx","utf8");
+ const begin=source.indexOf('  function toggleScriptFormat(');
+ const finish=source.indexOf('  function saveDraft()',begin);
+ assert.ok(begin>=0&&finish>begin);
+ const executable=source.slice(begin,finish).trim()
+  .replace('kind:"subscript"|"superscript"','kind');
+ assert.doesNotMatch(executable,/:\s*"subscript"\|"superscript"/);
+ const native={subscript:false,superscript:false};
+ const button={subscript:false,superscript:false};
+ const log=[];
+ let fail=false;
+ const harness={
+  document:{
+    queryCommandState:key=>native[key],
+    execCommand:(key,_ui)=>{
+      log.push("exec:"+key);
+      if(fail)return false;
+      native[key]=!native[key];
+      return true;
+    }
+  },
+  restoreSelection:()=>log.push("restore"),
+  rememberSelection:()=>log.push("remember"),
+  setFormatActive:fn=>{
+    Object.assign(button,fn({...button}));
+    log.push("state");
+  },
+  markChanged:()=>log.push("change"),
+  setStatus:msg=>log.push("error:"+msg)
+ };
+ const toggle=runInNewContext("("+executable+")",harness);
+ toggle("subscript");
+ assert.deepEqual({...button},{subscript:true,superscript:false});
+ assert.deepEqual(native,{subscript:true,superscript:false});
+ assert.deepEqual(log,["restore","exec:subscript","remember","state","change"]);
+ log.length=0;
+ toggle("subscript");
+ assert.deepEqual({...button},{subscript:false,superscript:false});
+ assert.deepEqual(log,["restore","exec:subscript","remember","state","change"]);
+ log.length=0;
+ toggle("superscript");
+ assert.deepEqual({...button},{subscript:false,superscript:true});
+ assert.deepEqual(native,{subscript:false,superscript:true});
+ log.length=0;
+ toggle("subscript");
+ assert.deepEqual({...button},{subscript:true,superscript:false});
+ assert.deepEqual(native,{subscript:true,superscript:false});
+ assert.deepEqual(log,["restore","exec:superscript","exec:subscript","remember","state","change"]);
+ log.length=0;
+ toggle("superscript");
+ assert.deepEqual({...button},{subscript:false,superscript:true});
+ assert.deepEqual(native,{subscript:false,superscript:true});
+ assert.deepEqual(log,["restore","exec:subscript","exec:superscript","remember","state","change"]);
+ log.length=0;
+ fail=true;
+ toggle("superscript");
+ assert.deepEqual({...button},{subscript:false,superscript:true},"failure must not pretend toggle succeeded");
+ assert.ok(log.some(item=>item.startsWith("error:")));
+ assert.ok(!log.includes("change"),"failure must not mark document edited");
 });
