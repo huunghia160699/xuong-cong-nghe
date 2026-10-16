@@ -17,7 +17,20 @@ type Props={
 };
 
 /** The gray ruler measures from the paper edge. The white editable-area ruler
- * is a separate, opaque layer and measures from its own left edge (0 cm). */
+ * measures from its own left edge (0 cm); indentation markers sit at its edges. */
+function RulerIndentMarker({side,left}:{side:"left"|"right";left:number}){
+  return <span className={"wsl-word-ruler-indent wsl-word-ruler-indent-"+side}
+    style={{left}} aria-hidden="true">
+    <svg className="wsl-word-ruler-indent-svg" viewBox="0 0 12 20"
+      width="12" height="20" focusable="false">
+      {side==="left"?<>
+        <path d="M.5 1H11.5L6 6.5Z" fill="#f8f9fa" stroke="#68727d" strokeWidth=".8" strokeLinejoin="round"/>
+        <path d="M.5 13L6 7.5L11.5 13Z" fill="#f8f9fa" stroke="#68727d" strokeWidth=".8" strokeLinejoin="round"/>
+        <rect x=".5" y="14.5" width="11" height="4.5" rx=".5" fill="#f8f9fa" stroke="#68727d" strokeWidth=".8"/>
+      </>:<path d="M.5 15L6 9.5L11.5 15Z" fill="#f8f9fa" stroke="#68727d" strokeWidth=".8" strokeLinejoin="round"/>}
+    </svg>
+  </span>;
+}
 function HorizontalRulerTicks({landscape,narrow,zoom,scrollLeft}:{landscape:boolean;narrow:boolean;zoom:number;scrollLeft:number}){
   const rulerRef=useRef<HTMLDivElement>(null);
   const [paperGeometry,setPaperGeometry]=useState({left:0,viewportLeft:0,pixelRatio:1,editorOffset:0,editorWidth:0});
@@ -106,6 +119,9 @@ function HorizontalRulerTicks({landscape,narrow,zoom,scrollLeft}:{landscape:bool
             className={"wsl-word-ruler-cm-tick wsl-word-ruler-cm-tick-"+tick.kind}
             style={{left:snapTick(paperGeometry.editorOffset+tick.left)-contentStart}}/>)}
       </div>
+      {/* Visual-only markers: both share a 12px width and follow editable margins. */}
+      <RulerIndentMarker side="left" left={contentStart}/>
+      <RulerIndentMarker side="right" left={contentEnd}/>
     </div>
   </div>;
 }
