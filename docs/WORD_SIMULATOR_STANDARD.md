@@ -358,3 +358,13 @@ Ngày: 15/10/2026. Đường dẫn: `/cong-cu/mo-phong-word`.
 - Khi chuyển đoạn bằng caret, đọc lại `marginLeft`, `marginRight`, `textIndent` để đồng bộ vị trí marker. Khi xuất nội dung hoặc lưu bản nháp, hàm sanitize giữ lại ba style thụt lề an toàn dạng số px, bảo toàn chỉnh sửa qua reload.
 - Giữ thước ngang cao 26px, dải trắng chừa 4px trên/dưới, số cm 1,2,3…, vạch chia cm ngoài vùng trắng, thước dọc rỗng và viền xanh focus editor đã xóa.
 - Luôn tuân thủ quy trình đã thống nhất ở đầu file: **cập nhật Markdown, commit GitHub, chạy test/build, deploy Vercel Production và xác nhận READY** sau mỗi lượt chỉnh sửa.
+
+
+## 2026-10-16 — Rút ngắn đầu tam giác, tăng chiều cao khung chữ nhật
+
+- Yêu cầu: các marker thụt lề có đầu mũi nhọn quá cao, cần **giảm độ cao tam giác và tăng phần thân khung chữ nhật**, không thay đổi kích thước tổng thể hoặc thao tác kéo.
+- Toàn bộ ba marker (`firstLine` hướng xuống phía trên, `left` và `right` hướng lên phía dưới) giữ nguyên **SVG rộng 12px, cao 10px**, viền xám `#818181` dày 1px và ruột trắng.
+- Marker trên: khung chữ nhật bắt đầu `y=0.5`, kéo dài tới `y=6.5` (**cao 6px**); đầu tam giác từ `y=6.5` đến `y=9.5` (**cao 3px**), thay vì độ cao 5px trước đây.
+- Hai marker dưới: đầu tam giác từ `y=0.5` đến `y=3.5` (**3px**); phần khung chữ nhật từ `y=3.5` đến `y=9.5` (**6px**). Vạch ngang của biểu tượng `left` chuyển từ `y=7` tới `y=6.5` cho cân đối.
+- Chỉ sửa tọa độ `path d` của SVG, không chỉnh `pointer capture`, drag snapping 0,25cm, vị trí các marker, chiều cao thước 26px, dải trắng 4px hay vùng nhập liệu. Bổ sung kiểm thử kiểm tra tỷ lệ 3px/6px, ba marker rộng như nhau và chức năng kéo còn nguyên.
+- Tuân thủ quy trình sau mỗi sửa: cập nhật file Markdown này, commit GitHub, test/build và triển khai Vercel Production đến trạng thái READY.
