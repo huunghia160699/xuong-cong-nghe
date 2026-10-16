@@ -168,9 +168,9 @@ test("Horizontal centimeter ruler and tab chrome: 10 rounds over A4 size and zoo
    assert.match(ruler,/export type RulerIndent=\{firstLine:number;left:number;right:number\}/);
    assert.match(ruler,/viewBox="0 0 12 10"/);
    assert.match(ruler,/width="12" height="10"/);
-   assert.match(ruler,/d="M\.5 \.5H11\.5V4\.5L6 9\.5L\.5 4\.5Z"/);
-   assert.match(ruler,/d="M\.5 5\.5L6 \.5L11\.5 5\.5V9\.5H\.5Z"/);
-   assert.match(ruler,/d="M\.5 7H11\.5"/);
+   assert.match(ruler,/d="M\.5 \.5H11\.5V6\.5L6 9\.5L\.5 6\.5Z"/);
+   assert.match(ruler,/d="M\.5 3\.5L6 \.5L11\.5 3\.5V9\.5H\.5Z"/);
+   assert.match(ruler,/d="M\.5 6\.5H11\.5"/);
    assert.match(ruler,/\(\["firstLine","left","right"\] as RulerIndentPart\[\]\)\.map\(kind=>/);
    assert.match(ruler,/<RulerIndentMarker key=\{kind\} kind=\{kind\}/);
    assert.match(ruler,/contentEnd-indent\.right\*zoom\/100/);
