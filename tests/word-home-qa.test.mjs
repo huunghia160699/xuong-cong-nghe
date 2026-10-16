@@ -147,7 +147,10 @@ test("Horizontal centimeter ruler and tab chrome: 10 rounds over A4 size and zoo
    assert.match(ruler,/const editorOffset=editorRect\.left-viewportLeft;/);
    assert.match(ruler,/const editorWidth=editorRect\.width;/);
    assert.match(ruler,/observer\?\.observe\(editor\)/);
-   assert.match(ruler,/style=\{\{left:paperGeometry\.editorOffset,width:paperGeometry\.editorWidth\}\}/);
+   assert.match(ruler,/const contentStart=snapTick\(paperGeometry\.editorOffset\);/);
+   assert.match(ruler,/style=\{\{left:contentStart,width:Math\.max\(0,contentEnd-contentStart\)\}\}/);
+   assert.match(ruler,/contentTicks\.map\(tick=><span key=\{tick\.index\}/);
+   assert.match(ruler,/style=\{\{left:snapTick\(paperGeometry\.editorOffset\+tick\.left\)-contentStart\}\}/);
    assert.match(ruler,/narrow=\{narrow\}/);
    assert.match(ruler,/const left=viewportLeft-ruler\.getBoundingClientRect\(\)\.left;/);
    assert.match(ruler,/const pixelRatio=window\.devicePixelRatio\|\|1;/);
@@ -161,8 +164,11 @@ test("Horizontal centimeter ruler and tab chrome: 10 rounds over A4 size and zoo
    assert.doesNotMatch(ruler,/<svg|<RulerTicks|<MarginMarker|<text/);
    assert.doesNotMatch(rulerCSS,/wsl-word-ruler-(horizontal|vertical)-printable/);
    assert.match(rulerCSS,/\.wsl-word-ruler-cm-track\{[^}]*background:transparent;/);
-   assert.match(rulerCSS,/\.wsl-word-ruler-content-strip\{[^}]*top:2px;[^}]*bottom:2px;[^}]*z-index:0;[^}]*background:#fff;/);
+   assert.match(rulerCSS,/\.wsl-word-ruler-content-strip\{[^}]*top:2px;[^}]*bottom:2px;[^}]*z-index:2;[^}]*overflow:hidden;[^}]*background:#fff;/);
    assert.match(rulerCSS,/\.wsl-word-ruler-cm-tick\{[^}]*z-index:1;/);
+   assert.match(ruler,/const count=Math\.floor\(paperGeometry\.editorWidth\/step\+1e-8\);/);
+   const editorCss=readFileSync("src/features/word-simulator/word-simulator.css","utf8");
+   assert.match(editorCss,/\.wsl-editor:focus,\.wsl-editor:focus-visible\{outline:none;outline-offset:0;box-shadow:none\}/);
    assert.match(rulerCSS,/\.wsl-word-ruler-cm-tick\{[^}]*top:50%;[^}]*transform:translateY\(-50%\);/);
    assert.match(rulerCSS,/\.wsl-word-ruler-cm-tick\{[^}]*width:1px;[^}]*min-width:1px;[^}]*max-width:1px;/);
    assert.match(rulerCSS,/\.wsl-word-ruler-cm-tick-cm\{height:7px\}/);
