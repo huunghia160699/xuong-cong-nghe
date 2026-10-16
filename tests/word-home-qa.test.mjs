@@ -164,7 +164,15 @@ test("Horizontal centimeter ruler and tab chrome: 10 rounds over A4 size and zoo
    assert.match(ruler,/style=\{\{left:snapTick\(Math\.max\(0,scaledWidth-1\)\)\}\}/);
    assert.match(ruler,/className="wsl-word-ruler-cm-track"/);
    assert.match(ruler,/className="wsl-word-vertical-ruler" aria-hidden="true"/);
-   assert.doesNotMatch(ruler,/<svg|<RulerTicks|<MarginMarker|<text/);
+   assert.match(ruler,/function RulerIndentMarker/);
+   assert.match(ruler,/viewBox="0 0 12 20"/);
+   assert.match(ruler,/width="12" height="20"/);
+   assert.match(ruler,/<RulerIndentMarker side="left" left=\{contentStart\}\/>/);
+   assert.match(ruler,/<RulerIndentMarker side="right" left=\{contentEnd\}\/>/);
+   assert.match(rulerCSS,/\.wsl-word-ruler-indent\{[^}]*width:12px;[^}]*min-width:12px;[^}]*max-width:12px;[^}]*height:20px;/);
+   assert.match(rulerCSS,/\.wsl-word-ruler-indent\{[^}]*z-index:3;/);
+   assert.match(rulerCSS,/\.wsl-word-ruler-indent-svg\{[^}]*width:12px;[^}]*height:20px;/);
+   assert.doesNotMatch(ruler,/<RulerTicks|<MarginMarker|<text/);
    assert.doesNotMatch(rulerCSS,/wsl-word-ruler-(horizontal|vertical)-printable/);
    assert.match(rulerCSS,/\.wsl-word-ruler-cm-track\{[^}]*background:transparent;/);
    assert.match(rulerCSS,/\.wsl-word-ruler-content-strip\{[^}]*top:4px;[^}]*bottom:4px;[^}]*z-index:2;[^}]*overflow:hidden;[^}]*background:#fff;/);
