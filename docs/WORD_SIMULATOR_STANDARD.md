@@ -347,3 +347,14 @@ Ngày: 15/10/2026. Đường dẫn: `/cong-cu/mo-phong-word`.
 - **Cả hai icon giữ đúng cùng chiều rộng 12px**, SVG 12 × 20px, wrapper cùng chiều cao và căn giữa dọc theo thanh thước 26px. Vị trí neo vẫn là `contentStart` và `contentEnd` nên bám lề, xoay giấy, thu phóng, cuộn và thay đổi kích thước.
 - Giữ nguyên dải trắng cao theo `top:4px;bottom:4px`, số cm, vạch chia 1px, lớp phủ, thước dọc, viền focus đã loại bỏ và Ribbon. Đây vẫn là biểu tượng trang trí, chưa thêm kéo thả điều chỉnh Indent.
 - Kiểm thử hồi quy kiểm tra số lượng nét, hình học SVG, màu/độ dày đường viền, bằng nhau bề rộng 12px và vị trí theo lề. Thực hiện đầy đủ quy trình GitHub → build/test → Vercel Production READY cho lần chỉnh này.
+
+
+## 2026-10-16 — Đúng hướng ba biểu tượng thụt lề và kéo điều chỉnh đoạn văn
+
+- **Hai marker trái** nằm chồng theo chiều dọc tại cùng vị trí khởi đầu `contentStart`: marker **First Line** phía trên là khung có đầu nhọn **hướng xuống**; marker **Left/Hanging** phía dưới là mái nhọn **hướng lên**, nối với khung chữ nhật có **vạch ngang**. Chúng có thể di chuyển độc lập khi kéo.
+- **Marker phải** nằm **phía dưới** thước ngang, là mái nhọn **hướng lên** nối với khung bên dưới; neo `contentEnd` và kéo ngang để tăng/giảm **right indent**. Không còn biểu tượng bên phải hình mũi nhọn hướng xuống.
+- Ba marker là button độc lập với nhãn tiếp cận rõ ràng, mỗi marker **SVG 12 × 10px**, chiều ngang wrapper chính xác 12px (min/max cũng là 12px), viền xám 1px, nền trắng, `touch-action:none`, cursor `ew-resize`, hỗ trợ kéo bằng `pointerdown/move/up/cancel` và `setPointerCapture`.
+- Chuyển dịch con trỏ màn hình thành đơn vị CSS px thực tế của trang bằng `100/zoom`, với marker phải ngược dấu. Snap tới **0,25cm** (`96/2.54/4` px), giới hạn để hai phía không vượt nhau. Marker trái trên tác động `text-indent = firstLine - left`, marker trái dưới tác động `margin-left`, marker phải tác động `margin-right` của đoạn hiện hành; không thay đổi lề giấy và vị trí gốc 0 trên dải thước trắng.
+- Khi chuyển đoạn bằng caret, đọc lại `marginLeft`, `marginRight`, `textIndent` để đồng bộ vị trí marker. Khi xuất nội dung hoặc lưu bản nháp, hàm sanitize giữ lại ba style thụt lề an toàn dạng số px, bảo toàn chỉnh sửa qua reload.
+- Giữ thước ngang cao 26px, dải trắng chừa 4px trên/dưới, số cm 1,2,3…, vạch chia cm ngoài vùng trắng, thước dọc rỗng và viền xanh focus editor đã xóa.
+- Luôn tuân thủ quy trình đã thống nhất ở đầu file: **cập nhật Markdown, commit GitHub, chạy test/build, deploy Vercel Production và xác nhận READY** sau mỗi lượt chỉnh sửa.
