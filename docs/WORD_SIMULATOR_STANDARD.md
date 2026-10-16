@@ -380,3 +380,13 @@ Ngày: 15/10/2026. Đường dẫn: `/cong-cu/mo-phong-word`.
 - Bám cuộn dọc bằng `top:calc(var(--wsl-page-top-offset) - scrollTop)`, giữ `height:renderedPaperHeight` và tính vị trí thực giữa giấy và thước bằng `getBoundingClientRect()`. `ResizeObserver` quan sát giấy, thước, editor, đồng bộ lại khi thay đổi kích thước, zoom hoặc khổ A4 dọc/ngang; snap vạch theo pixel vật lý để giữ nét 1px rõ ràng.
 - Hồi quy kiểm tra không xuất hiện marker Indent trên trục dọc, 16 tổ hợp hình học và 10 lượt QA, đúng 0,25cm, nền trắng phủ nền xám, số nguyên cm và giữ nguyên chức năng thước ngang.
 - Sau mỗi chỉnh sửa tiếp tục **cập nhật Markdown, commit GitHub main, chạy kiểm thử/build, triển khai Vercel Production đến trạng thái READY**, và chỉ xác nhận sau khi kiểm tra trạng thái.
+
+
+## 2026-10-16 — Sửa nút chỉ số dưới x₂ và chỉ số trên x² theo cơ chế BIU
+
+- Hai nút **Subscript (x₂)** và **Superscript (x²)** ở `Home → Font` là các nút định dạng bật/tắt (toggle) giống **Bold (B), Italic (I), Underline (U)**; giữ nguyên thiết kế, icon, vị trí, hiệu ứng nút `.is-active` và trạng thái `aria-pressed` thông qua `formatActive`.
+- `runHome` xử lý riêng `subscript`/`superscript` qua `toggleScriptFormat` thay vì gọi mù `command(name,value)`: khôi phục chính xác vùng chọn/caret bằng `restoreSelection()`, đọc `document.queryCommandState`, thực hiện `document.execCommand`, lưu lại lựa chọn bằng `rememberSelection()`, đồng bộ `formatActive`, rồi `markChanged()`. Kết quả có thể áp dụng trực tiếp cho chữ bôi đen hoặc kiểu gõ kế tiếp tại caret, tương tự BIU.
+- Hai kiểu **loại trừ nhau**: trước khi kích hoạt x₂ phải bỏ x² nếu đang bật; trước khi kích hoạt x² phải bỏ x₂ nếu đang bật. Nhấn lại đúng nút đang bật sẽ tắt và đưa văn bản về chế độ chỉ số bình thường. Màu nền trạng thái của nút phải phản ánh dữ liệu định dạng thật từ editor.
+- Nếu `execCommand` báo không hỗ trợ hoặc phát sinh lỗi, hiển thị trạng thái lỗi, không gọi `markChanged` và không giả vờ cập nhật thành công. Giữ nguyên các phần tử `SUP/SUB` thuộc danh sách HTML được phép để nội dung chỉ số được lưu, khôi phục và xuất tài liệu.
+- Bổ sung kiểm thử hồi quy: kiểm tra wiring từ hai nút trên Ribbon đến editor, quyền giữ selection, chuyển đổi loại trừ x₂/x², bật/tắt nhiều lần, nút sáng trạng thái và đường đi lỗi. Kiểm thử mô phỏng lệnh gốc của trình duyệt để kiểm tra trạng thái qua các lần nhấn liên tục; vẫn cần kiểm tra trực quan trên trình duyệt để xác nhận trải nghiệm thực tế.
+- Tuân thủ yêu cầu dự án: cập nhật tài liệu MD này, commit GitHub `main`, chạy tất cả test và Next.js build rồi deploy Vercel **Production READY** sau mỗi thay đổi.
