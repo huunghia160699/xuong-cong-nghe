@@ -838,3 +838,30 @@ test("Word gray tab strip and floating 5px Home ribbon match the requested frame
  assert.match(chrome,/box-shadow:0 1px 4px rgba\(35,35,45,.09\)/);
  assert.match(layout,/word-chrome-polish.css/);
 });
+
+
+test("Word vertical ruler starts with the paper and Home toolbar fills the available strip",()=>{
+ const css=readFileSync("src/features/word-simulator/word-page-rulers.css","utf8");
+ const ruler=readFileSync("src/features/word-simulator/word-page-rulers.tsx","utf8");
+ const chrome=readFileSync("src/features/word-simulator/word-chrome-polish.css","utf8");
+ assert.match(css,/--wsl-page-top-offset:13px;/);
+ assert.match(css,/padding:var\(--wsl-page-top-offset,13px\) 36px 120px;/);
+ assert.match(css,/\.wsl-word-vertical-ruler\{[^}]*top:var\(--wsl-page-top-offset,13px\);/);
+ assert.match(css,/@media\(max-width:650px\)\{[^}]*--wsl-page-top-offset:9px/);
+ assert.match(css,/padding:var\(--wsl-page-top-offset\) 12px 60px/);
+ assert.doesNotMatch(css,/\.wsl-word-ruler-vertical-page\{margin-top:-4px\}/);
+ assert.match(ruler,/className="wsl-word-ruler-vertical-space" style=\{\{height:paperHeight\*ratio\}\}/);
+ assert.match(ruler,/className="wsl-word-ruler-vertical-page" style=\{\{height:paperHeight\*ratio,top:0\}\}/);
+ assert.doesNotMatch(ruler,/paperHeight\*ratio\+13/);
+ assert.match(chrome,/\.wsl-shell \.wsl-tabs\{[^}]*border-radius:0;/);
+ assert.match(chrome,/\.wsl-shell \.wsl-tabs \.wsl-tab\{[^}]*border-radius:0;/);
+ const strip=chrome.match(/\.wsl-shell \.wsl-ribbon:has\(\.wsl-home-ribbon\)>\.wsl-home-ribbon\{([^}]*)\}/);
+ assert.ok(strip,"full-width Home toolbar frame is missing");
+ for(const rule of ["flex:1 0 auto;","width:100%;","min-width:max-content;","box-sizing:border-box;","border-radius:5px;"])
+   assert.ok(strip[1].includes(rule),rule);
+ assert.match(chrome,/\.wsl-shell \.wsl-home-ribbon \.wsl-home-group\{[^}]*flex:0 0 auto;/);
+ for(const [pageTop,viewport] of [[13,1920],[9,650]])for(const ratio of [.6,1,1.3,1.6]){
+   const paperTop=pageTop, rulerTop=pageTop;
+   assert.equal(rulerTop,paperTop,\`viewport \${viewport} zoom \${ratio}\`);
+ }
+});
