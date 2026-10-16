@@ -66,8 +66,8 @@ function HorizontalRulerTicks({landscape,narrow,zoom,scrollLeft}:{landscape:bool
     })).filter(tick=>tick.left<scaledWidth-1);
   },[scaledWidth,zoom]);
 
-  // The inset white strip gets its own cm scale, restarting at zero on the
-  // editable area's left boundary rather than continuing the page-wide scale.
+  // The white scale is measured from 0 at the editor margin, but the tick
+  // at exactly 0 is intentionally not drawn.
   const contentTicks=useMemo(()=>{
     const step=PX_PER_QUARTER_CM*zoom/100;
     const count=Math.floor(paperGeometry.editorWidth/step+1e-8);
@@ -75,7 +75,7 @@ function HorizontalRulerTicks({landscape,narrow,zoom,scrollLeft}:{landscape:bool
       index,
       left:index*step,
       kind:index%4===0?"cm":index%2===0?"half":"quarter"
-    })).filter(tick=>tick.left<paperGeometry.editorWidth-1);
+    })).filter(tick=>tick.index>0&&tick.left<paperGeometry.editorWidth-1);
   },[paperGeometry.editorWidth,zoom]);
 
   // Round viewport-space coordinates to physical pixels rather than rounding
@@ -85,8 +85,8 @@ function HorizontalRulerTicks({landscape,narrow,zoom,scrollLeft}:{landscape:bool
     return Math.round((viewportLeft+offset)*pixelRatio)/pixelRatio-viewportLeft;
   };
 
-  // Align both white boundaries to device pixels: the first inset tick is
-  // exactly at the strip's left edge while all strokes remain sharp.
+  // Align both white boundaries to device pixels; the ruler origin stays at
+  // the editor margin even though its zero tick is hidden.
   const contentStart=snapTick(paperGeometry.editorOffset);
   const contentEnd=snapTick(paperGeometry.editorOffset+paperGeometry.editorWidth);
 
