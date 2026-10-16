@@ -8,6 +8,8 @@ const split=readFileSync("src/features/word-simulator/word-split-button.tsx","ut
 const dialog=readFileSync("src/features/word-simulator/word-ribbon-dialog.tsx","utf8");
 const styles=readFileSync("src/features/word-simulator/word-styles-ribbon.css","utf8");
 const ruler=readFileSync("src/features/word-simulator/word-page-rulers.tsx","utf8");
+const paper=readFileSync("src/features/word-simulator/word-paper-metrics.ts","utf8");
+const simulator=readFileSync("src/features/word-simulator/word-simulator.tsx","utf8");
 const rulerCSS=readFileSync("src/features/word-simulator/word-page-rulers.css","utf8");
 const chrome=readFileSync("src/features/word-simulator/word-chrome-polish.css","utf8");
 const interactions=readFileSync("src/features/word-simulator/word-interactions.css","utf8");
@@ -132,16 +134,23 @@ test("Home Ribbon: repeat state, Escape, selection and dialogs 10 rounds",()=>{
 test("Rulers and tab chrome: verify page geometry 10 times across orientations, zooms and margins",()=>{
  for(let round=0;round<10;round++){
    assert.match(ruler,/const PIXELS_PER_CM=96\/2\.54/);
-   assert.match(ruler,/const paperWidth=landscape\?1123:794/);
-   assert.match(ruler,/const paperHeight=landscape\?794:1123/);
+   assert.match(ruler,/a4Dimensions\(landscape\)/);
+   assert.match(paper,/export const A4_WIDTH_PX=210\*CSS_PX_PER_MM/);
+   assert.match(paper,/export const A4_HEIGHT_PX=297\*CSS_PX_PER_MM/);
+   assert.ok(simulator.includes('"--wsl-paper-width":orientation==="landscape"?"297mm":"210mm"'));
    assert.match(ruler,/MarginMarker side="left"/);
    assert.match(ruler,/MarginMarker side="right"/);
    assert.match(ruler,/translateX\(-\$\{scrollLeft\}px\)/);
-   assert.match(ruler,/translateY\(-\$\{scrollTop\}px\)/);
+   assert.match(ruler,/height:paperHeight\*ratio/);
+   assert.match(ruler,/className="wsl-word-ruler-horizontal-space" style=\{\{width:paperWidth\*ratio\}\}/);
+   assert.doesNotMatch(ruler,/translateY\(-\$\{scrollTop\}px\)/);
    assert.match(rulerCSS,/\.wsl-word-ruler-horizontal-printable/);
    assert.match(rulerCSS,/\.wsl-word-ruler-vertical-printable/);
    assert.match(rulerCSS,/--wsl-page-top-offset:13px;/);
    assert.match(rulerCSS,/top:var\(--wsl-page-top-offset,13px\);/);
+   assert.match(rulerCSS,/\.wsl-word-ruler-vertical-printable\{[^}]*border-top:0;/);
+   assert.doesNotMatch(rulerCSS,/\.wsl-word-vertical-ruler\{[^}]*bottom:0;/);
+   assert.match(rulerCSS,/\.wsl-word-horizontal-ruler\{[^}]*border-top:0;/);
    assert.match(rulerCSS,/@media\(max-width:650px\)\{[^}]*--wsl-page-top-offset:9px/);
    assert.match(ruler,/style=\{\{height:paperHeight\*ratio,top:0\}\}/);
    assert.doesNotMatch(ruler,/paperHeight\*ratio\+13/);
@@ -149,10 +158,12 @@ test("Rulers and tab chrome: verify page geometry 10 times across orientations, 
    assert.match(chrome,/\.wsl-shell \.wsl-ribbon:has\(\.wsl-home-ribbon\)>\.wsl-home-ribbon\{[^}]*width:100%;/);
    assert.match(chrome,/\.wsl-shell \.wsl-home-ribbon \.wsl-home-group\{[^}]*flex:0 0 auto;/);
    assert.match(chrome,/font-weight:900/);
+   assert.match(chrome,/\.wsl-shell \.wsl-ribbon\{\s*padding:0;\s*border-top:0;\s*border-bottom:0;/);
+   assert.match(chrome,/\.wsl-shell \.wsl-ribbon:has\(\.wsl-home-ribbon\)\{[^}]*padding:0;/);
    assert.match(chrome,/border-radius:5px/);
    for(const landscape of [false,true])for(const narrow of [false,true])for(const zoom of [60,100,130,160]){
-     const width=landscape?1123:794;
-     const height=landscape?794:1123;
+     const width=(landscape?297:210)*96/25.4;
+     const height=(landscape?210:297)*96/25.4;
      const hor=narrow?48:87,ver=narrow?48:86;
      assert.ok(Math.abs((hor+width-2*hor+hor)-width)<1e-9);
      assert.ok(Math.abs((ver+height-2*ver+ver)-height)<1e-9);
