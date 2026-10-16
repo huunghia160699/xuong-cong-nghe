@@ -58,8 +58,8 @@
   z-index:2;
   pointer-events:none;
 }
-/* The gray parent remains unchanged; the white underlay spans only the
-   editable content width between paper margins, behind all centimeter ticks. */
+/* Gray ticks measure from the page edge; the white strip covers them and
+   carries its own centimeter ticks restarting at the editable-area margin. */
 .wsl-word-ruler-cm-track{
   position:absolute;
   top:0;
@@ -71,7 +71,8 @@
   position:absolute;
   top:2px;
   bottom:2px;
-  z-index:0;
+  z-index:2;
+  overflow:hidden;
   box-sizing:border-box;
   background:#fff;
   pointer-events:none;
