@@ -1114,9 +1114,11 @@ test("Word ruler indentation glyphs match the agreed Word style and equal 12px w
  assert.match(track,/<RulerIndentMarker side="left" left=\{contentStart\}\/>/);
  assert.match(track,/<RulerIndentMarker side="right" left=\{contentEnd\}\/>/);
  assert.equal((track.match(/<RulerIndentMarker side=/g)||[]).length,2);
- const lastWhite=track.lastIndexOf("</div>");
+ const whiteStart=track.indexOf('<div className="wsl-word-ruler-content-strip"');
+ const whiteClose=track.indexOf("\n      </div>",whiteStart);
  const iconStart=track.indexOf('<RulerIndentMarker side="left"');
- assert.ok(iconStart>lastWhite,"indent icons should be siblings outside the overflow-hidden white strip");
+ assert.ok(whiteStart>=0&&whiteClose>whiteStart&&iconStart>whiteClose,
+   "indent icons must be siblings outside the overflow-hidden white strip");
  const wrap=css.match(/\.wsl-word-ruler-indent\{([^}]+)\}/)?.[1];
  const svg=css.match(/\.wsl-word-ruler-indent-svg\{([^}]+)\}/)?.[1];
  assert.ok(wrap&&svg);
