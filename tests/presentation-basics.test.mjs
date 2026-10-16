@@ -249,7 +249,7 @@ test("Word simulator shows complete classic Ribbon tabs and Home groups but no b
   assert.match(css,/wsl-style-gallery/);
   assert.match(css,/@media\(max-width:650px\)/);
   assert.match(route,/word-home-ribbon.css/);
-  assert.match(source,/<WordPageRulers landscape=/);
+  assert.match(source,/<WordPageRulers axis="horizontal" landscape=/);
   assert.match(source,/replaceText/);
   assert.match(source,/showMarks/);
   assert.match(source,/applyStyle/);
@@ -809,7 +809,7 @@ test("Word rulers measure cm within A4 page margins and follow scroll/zoom/orien
  assert.match(rulers,/MarginMarker side="left"/);
  assert.match(rulers,/MarginMarker side="right"/);
  assert.match(rulers,/translateX\(-\$\{scrollLeft\}px\)/);
- assert.match(rulers,/height:paperHeight\*ratio/);
+ assert.match(rulers,/verticalHeight=renderedPaperHeight\?\?paperHeight\*ratio/);
  assert.match(rulers,/className="wsl-word-ruler-horizontal-space" style=\{\{width:paperWidth\*ratio\}\}/);
  assert.ok(rulers.includes('calc(var(--wsl-page-top-offset, 13px) - '));
  assert.doesNotMatch(rulers,/translateY\(-\$\{scrollTop\}px\)/);
