@@ -4,6 +4,7 @@ import {useCallback,useEffect,useRef,useState} from "react";
 import {WordHomeRibbon,type WordFormatKey} from "./word-home-ribbon";
 import {WordWindowBar} from "./word-window-bar";
 import {WordPageRulers} from "./word-page-rulers";
+import {a4Dimensions} from "./word-paper-metrics";
 import {
   AlignCenter,AlignJustify,AlignLeft,AlignRight,ArrowLeft,BookOpen,Check,ChevronDown,
   Clipboard,Copy,Download,FilePlus2,FileText,FolderOpen,ImagePlus,Italic,
@@ -563,8 +564,8 @@ export function WordSimulator(){
       <button type="submit">Tìm</button><button type="button" onClick={()=>setSearchOpen(false)} aria-label="Đóng tìm kiếm">×</button>
     </form>}
     <main className="wsl-workspace wsl-word-layout" style={{
-      "--wsl-paper-width":(orientation==="landscape"?1123:794)+"px",
-      "--wsl-paper-height":(orientation==="landscape"?794:1123)+"px",
+      "--wsl-paper-width":orientation==="landscape"?"297mm":"210mm",
+      "--wsl-paper-height":orientation==="landscape"?"210mm":"297mm",
       "--wsl-paper-side-margin":(margins==="narrow"?48:87)+"px",
       "--wsl-paper-top-margin":(margins==="narrow"?48:86)+"px"
     } as React.CSSProperties}>
@@ -575,8 +576,8 @@ export function WordSimulator(){
           onScroll={event=>{const node=event.currentTarget;setRulerScroll(current=>
             current.left===node.scrollLeft&&current.top===node.scrollTop?current:{left:node.scrollLeft,top:node.scrollTop});}}>
           <div className="wsl-scale" style={{
-            width:(orientation==="landscape"?1123:794)*zoom/100,
-            minHeight:(orientation==="landscape"?794:1123)*zoom/100
+            width:a4Dimensions(orientation==="landscape").width*zoom/100,
+            minHeight:a4Dimensions(orientation==="landscape").height*zoom/100
           }}>
             <div className={"wsl-paper "+(orientation==="landscape"?"is-landscape ":"")+(margins==="narrow"?"is-narrow":"")}
               style={{transform:"scale("+zoom/100+")",transformOrigin:"top left"}}>
