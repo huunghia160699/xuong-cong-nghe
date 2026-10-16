@@ -841,7 +841,7 @@ test("Word gray tab strip and floating 5px Home ribbon match the requested frame
  assert.match(chrome,/bottom:4px;/);
  assert.match(chrome,/\.wsl-shell \.wsl-tabs \.wsl-tab\.is-active::after/);
  assert.match(chrome,/\.wsl-ribbon:has\(\.wsl-home-ribbon\)/);
- assert.match(chrome,/\.wsl-shell \.wsl-ribbon\{\s*padding:0;\s*border-top:0;\s*border-bottom:0;/);
+ assert.match(chrome,/\.wsl-shell \.wsl-ribbon\{\s*margin-inline:4px;\s*padding:0;\s*border-top:0;\s*border-bottom:0;/);
  assert.match(chrome,/\.wsl-shell \.wsl-ribbon:has\(\.wsl-home-ribbon\)\{[^}]*padding:0;[^}]*border-top:0;[^}]*border-bottom:0;/);
  assert.match(chrome,/border-radius:5px;/);
  assert.match(chrome,/box-shadow:0 1px 4px rgba\(35,35,45,.09\)/);
