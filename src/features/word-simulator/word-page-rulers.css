@@ -103,6 +103,27 @@
   user-select:none;
   pointer-events:none;
 }
+/* Three left-side indent glyphs and one right-side indent glyph share the
+   same 12px-wide container. Outside the clipped white strip, both are visible. */
+.wsl-word-ruler-indent{
+  position:absolute;
+  top:50%;
+  transform:translate(-50%,-50%);
+  z-index:3;
+  display:block;
+  width:12px;
+  min-width:12px;
+  max-width:12px;
+  height:20px;
+  line-height:0;
+  pointer-events:none;
+}
+.wsl-word-ruler-indent-svg{
+  display:block;
+  width:12px;
+  height:20px;
+  overflow:visible;
+}
 .wsl-word-ruler-cm-tick-cm{height:7px}
 .wsl-word-ruler-cm-tick-half{height:4.5px}
 .wsl-word-ruler-cm-tick-quarter{height:2.5px}
@@ -117,7 +138,7 @@
   border-right:1px solid #d0cfd4;
   background:#e8e7eb;
 }
-/* The vertical ruler stays empty; only the white horizontal strip has centimeter labels, without margin markers. */
+/* The vertical ruler stays empty. Indent markers on the horizontal strip are visual only. */
 @media(max-width:1250px){
  .wsl-word-layout .wsl-page-scroll{padding-inline:25px}
 }
