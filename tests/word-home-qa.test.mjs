@@ -150,9 +150,14 @@ test("Rulers and tab chrome: verify page geometry 10 times across orientations, 
    assert.match(rulerCSS,/top:var\(--wsl-page-top-offset,13px\);/);
    assert.match(rulerCSS,/\.wsl-word-ruler-vertical-printable\{[^}]*border-top:0;/);
    assert.doesNotMatch(rulerCSS,/\.wsl-word-vertical-ruler\{[^}]*bottom:0;/);
-   assert.match(rulerCSS,/\.wsl-word-horizontal-ruler\{[^}]*border-top:0;/);
+   assert.match(rulerCSS,/\.wsl-word-horizontal-ruler\{[^}]*border-top:0;[^}]*border-bottom:1px solid #c7c7cb;/);
    assert.match(rulerCSS,/@media\(max-width:650px\)\{[^}]*--wsl-page-top-offset:9px/);
-   assert.match(ruler,/style=\{\{height:paperHeight\*ratio,top:0\}\}/);
+   assert.match(ruler,/style=\{\{height:verticalHeight,top:0\}\}/);
+   assert.match(ruler,/renderedPaperHeight\?:number;/);
+   assert.match(ruler,/const verticalHeight=renderedPaperHeight\?\?paperHeight\*ratio;/);
+   assert.match(simulator,/const observer=new ResizeObserver\(measure\)/);
+   assert.match(simulator,/ref=\{paperRef\}/);
+   assert.match(simulator,/<div className="wsl-word-page-body">\s*\{showRuler&&<WordPageRulers axis="vertical"/);
    assert.doesNotMatch(ruler,/paperHeight\*ratio\+13/);
    assert.match(chrome,/\.wsl-shell \.wsl-tabs \.wsl-tab\{[^}]*border-radius:0;/);
    assert.match(chrome,/\.wsl-shell \.wsl-ribbon:has\(\.wsl-home-ribbon\)>\.wsl-home-ribbon\{[^}]*width:100%;/);
