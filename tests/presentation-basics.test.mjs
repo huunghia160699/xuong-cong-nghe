@@ -882,7 +882,7 @@ test("Horizontal ruler draws only ticks, vertical placeholder preserves measured
  assert.match(ruler,/const verticalHeight=renderedPaperHeight\?\?paperHeight\*zoom\/100;/);
  assert.match(ruler,/height:verticalHeight/);
  assert.match(ruler,/if\(axis==="horizontal"\)return <HorizontalRulerTicks/);
- assert.match(ruler,/className="wsl-word-ruler-cm-tick wsl-word-ruler-cm-tick-"/);
+ assert.match(ruler,/className=\{"wsl-word-ruler-cm-tick wsl-word-ruler-cm-tick-"\+tick\.kind\}/);
  assert.doesNotMatch(ruler,/<svg|<RulerTicks|<MarginMarker|<text/);
  for(const landscape of [false,true])for(const zoom of [60,80,100,120,160]){
    const height=(landscape?210:297)*96/25.4*zoom/100;
