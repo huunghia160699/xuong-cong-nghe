@@ -69,16 +69,20 @@
 }
 .wsl-word-ruler-cm-tick{
   position:absolute;
-  bottom:3px;
+  top:50%;
+  transform:translateY(-50%);
   display:block;
   width:1px;
+  min-width:1px;
+  max-width:1px;
   box-sizing:border-box;
+  border:0;
   background:#64676c;
   pointer-events:none;
 }
-.wsl-word-ruler-cm-tick-cm{height:14px}
-.wsl-word-ruler-cm-tick-half{height:9px}
-.wsl-word-ruler-cm-tick-quarter{height:5px}
+.wsl-word-ruler-cm-tick-cm{height:7px}
+.wsl-word-ruler-cm-tick-half{height:4.5px}
+.wsl-word-ruler-cm-tick-quarter{height:2.5px}
 .wsl-word-vertical-ruler{
   position:absolute;
   z-index:3;
