@@ -1108,9 +1108,18 @@ test("Word ruler indentation glyphs match the agreed Word style and equal 12px w
  assert.match(marker,/viewBox="0 0 12 20"/);
  assert.match(marker,/width="12" height="20"/);
  assert.match(marker,/side==="left"\?<>/);
- assert.equal((marker.match(/<path /g)||[]).length,3,"first-line, hanging, right indent each uses a triangle");
- assert.match(marker,/<rect x="\.5" y="14\.5" width="11" height="4\.5"/);
- assert.match(marker,/<\/>:<path d="M\.5 15L6 9\.5L11\.5 15Z"/);
+ assert.equal((marker.match(/<path /g)||[]).length,3,
+   "reference glyphs use house outline, inner divider and inverted top tab");
+ assert.doesNotMatch(marker,/<rect /,"old stacked rectangle must be gone");
+ assert.match(marker,/d="M\.5 10\.5L6 6L11\.5 10\.5V19H\.5Z"/);
+ assert.match(marker,/d="M\.5 14H11\.5"/);
+ assert.match(marker,/d="M\.5 1H11\.5V5L6 9\.25L\.5 5Z"/);
+ assert.equal((marker.match(/fill="#fff"/g)||[]).length,2,
+   "white-fill both silhouettes, not solid gray triangles");
+ assert.equal((marker.match(/stroke="#818181"/g)||[]).length,3,
+   "one consistent fine gray outline for both icons");
+ assert.equal((marker.match(/strokeWidth="1"/g)||[]).length,3,
+   "same 1px line width for all marker geometry");
  assert.match(track,/<RulerIndentMarker side="left" left=\{contentStart\}\/>/);
  assert.match(track,/<RulerIndentMarker side="right" left=\{contentEnd\}\/>/);
  assert.equal((track.match(/<RulerIndentMarker side=/g)||[]).length,2);
