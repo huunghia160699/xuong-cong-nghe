@@ -795,7 +795,14 @@ test("Word horizontal ruler has paper-edge aligned cm ticks only, leaving vertic
  assert.match(ruler,/const PX_PER_QUARTER_CM=PX_PER_CM\/4/);
  assert.match(ruler,/function HorizontalRulerTicks/);
  assert.match(ruler,/useLayoutEffect\(\(\)=>/);
- assert.match(ruler,/const viewportLeft=paper\.getBoundingClientRect\(\)\.left;/);
+ assert.match(ruler,/const paperRect=paper\.getBoundingClientRect\(\);/);
+ assert.match(ruler,/const editorRect=editor\.getBoundingClientRect\(\);/);
+ assert.match(ruler,/const viewportLeft=paperRect\.left;/);
+ assert.match(ruler,/const editorOffset=editorRect\.left-viewportLeft;/);
+ assert.match(ruler,/const editorWidth=editorRect\.width;/);
+ assert.match(ruler,/observer\?\.observe\(editor\)/);
+ assert.match(ruler,/style=\{\{left:paperGeometry\.editorOffset,width:paperGeometry\.editorWidth\}\}/);
+ assert.match(ruler,/narrow=\{narrow\}/);
  assert.match(ruler,/const left=viewportLeft-ruler\.getBoundingClientRect\(\)\.left;/);
  assert.match(ruler,/const pixelRatio=window\.devicePixelRatio\|\|1;/);
  assert.match(ruler,/Math\.round\(\(viewportLeft\+offset\)\*pixelRatio\)\/pixelRatio-viewportLeft/);
@@ -815,6 +822,9 @@ test("Word horizontal ruler has paper-edge aligned cm ticks only, leaving vertic
  assert.doesNotMatch(ruler,/<svg|<RulerTicks|<MarginMarker|<text|<label/);
  assert.doesNotMatch(ruler,/>Normal</);
  assert.match(css,/\.wsl-word-ruler-cm-track\{[^}]*background:transparent;/);
+ assert.match(css,/\.wsl-word-ruler-content-strip\{[^}]*top:2px;[^}]*bottom:2px;[^}]*z-index:0;[^}]*background:#fff;/);
+ assert.match(css,/\.wsl-word-ruler-cm-tick\{[^}]*z-index:1;/);
+ assert.doesNotMatch(css,/\.wsl-word-ruler-content-strip\{[^}]*border:/);
  assert.match(css,/\.wsl-word-ruler-cm-tick\{[^}]*top:50%;[^}]*transform:translateY\(-50%\);/);
  assert.match(css,/\.wsl-word-ruler-cm-tick\{[^}]*width:1px;[^}]*min-width:1px;[^}]*max-width:1px;/);
  assert.doesNotMatch(css,/\.wsl-word-ruler-cm-tick\{[^}]*bottom:3px;/);
@@ -949,5 +959,42 @@ test("Word centimeter tick pixel snapping is consistent across fractional origin
  for(const [cls,height] of [["cm",7],["half",4.5],["quarter",2.5]]){
   assert.match(css,new RegExp("wsl-word-ruler-cm-tick-"+cls+"\\{height:"+height+"px\\}"));
   assert.ok(height>0&&height<=7);
+ }
+});
+
+
+test("White ruler underlay aligns exactly with the editor between A4 page margins",()=>{
+ const ruler=readFileSync("src/features/word-simulator/word-page-rulers.tsx","utf8");
+ const css=readFileSync("src/features/word-simulator/word-page-rulers.css","utf8");
+ assert.match(ruler,/const editor=document\.querySelector<HTMLElement>\("\.wsl-word-page-body \.wsl-editor"\)/);
+ assert.match(ruler,/const editorOffset=editorRect\.left-viewportLeft;/);
+ assert.match(ruler,/const editorWidth=editorRect\.width;/);
+ assert.match(ruler,/Math\.abs\(previous\.editorOffset-editorOffset\)<0\.01/);
+ assert.match(ruler,/Math\.abs\(previous\.editorWidth-editorWidth\)<0\.01/);
+ assert.match(ruler,/observer\?\.observe\(editor\)/);
+ assert.match(ruler,/\[landscape,narrow,zoom,scrollLeft\]/);
+ assert.match(ruler,/<div className="wsl-word-ruler-content-strip"\s*style=\{\{left:paperGeometry\.editorOffset,width:paperGeometry\.editorWidth\}\}\/>/);
+ const trackPos=ruler.indexOf('<div className="wsl-word-ruler-cm-track"');
+ const fillPos=ruler.indexOf('<div className="wsl-word-ruler-content-strip"');
+ const ticksPos=ruler.indexOf('{ticks.map(tick=>');
+ assert.ok(trackPos>=0&&fillPos>trackPos&&ticksPos>fillPos,"white strip renders before strokes");
+ const fill=css.match(/\.wsl-word-ruler-content-strip\{([^}]+)\}/);
+ const tick=css.match(/\.wsl-word-ruler-cm-tick\{([^}]+)\}/);
+ assert.ok(fill&&tick);
+ for(const rule of ["position:absolute;","top:2px;","bottom:2px;","z-index:0;","background:#fff;"])
+  assert.ok(fill[1].includes(rule),rule);
+ assert.ok(tick[1].includes("z-index:1;"));
+ assert.ok(!fill[1].includes("height:"));
+ assert.ok(!fill[1].includes("border:"));
+ for(const landscape of [false,true])for(const narrow of [false,true])for(const zoom of [60,100,130,160]){
+  const paperWidth=(landscape?297:210)*96/25.4;
+  const side=narrow?48:87;
+  const editorStart=(side+1)*zoom/100;
+  const editorWidth=(paperWidth-2*(side+1))*zoom/100;
+  const editorEnd=editorStart+editorWidth;
+  assert.ok(editorStart>0);
+  assert.ok(editorWidth>0);
+  assert.ok(editorEnd<paperWidth*zoom/100);
+  assert.ok(Math.abs(editorEnd-(paperWidth-side-1)*zoom/100)<1e-8);
  }
 });
