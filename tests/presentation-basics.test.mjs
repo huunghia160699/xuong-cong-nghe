@@ -906,3 +906,18 @@ test("Word ruler bottom border and exact .wsl-paper height stay aligned after zo
      assert.ok(rulerHeight>0);
    }
 });
+
+
+test("Home ribbon has zero inner side padding and parent Ribbon supplies 4px margins",()=>{
+ const home=readFileSync("src/features/word-simulator/word-home-ribbon.css","utf8");
+ const chrome=readFileSync("src/features/word-simulator/word-chrome-polish.css","utf8");
+ assert.match(home,/\.wsl-home-ribbon\{[^}]*height:100%;padding:0;/);
+ assert.doesNotMatch(home,/\.wsl-home-ribbon\{[^}]*padding:0 4px;/);
+ assert.match(chrome,/\.wsl-shell \.wsl-ribbon\{\s*margin-inline:4px;\s*padding:0;\s*border-top:0;\s*border-bottom:0;/);
+ const child=chrome.match(/\.wsl-shell \.wsl-ribbon:has\(\.wsl-home-ribbon\)>\.wsl-home-ribbon\{([^}]*)\}/);
+ assert.ok(child);
+ assert.match(child[1],/width:100%;/);
+ assert.match(child[1],/box-sizing:border-box;/);
+ assert.match(child[1],/padding:0;/);
+ assert.doesNotMatch(child[1],/padding:0 4px;/);
+});
