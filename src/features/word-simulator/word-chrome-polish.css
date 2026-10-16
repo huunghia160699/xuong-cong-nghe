@@ -30,6 +30,7 @@
 /* The Ribbon itself has no padding and no upper/lower border; the Home
    gallery remains an independent raised surface within its allotted height. */
 .wsl-shell .wsl-ribbon{
+  margin-inline:4px;
   padding:0;
   border-top:0;
   border-bottom:0;
@@ -50,7 +51,7 @@
   min-width:max-content;
   box-sizing:border-box;
   height:85px;
-  padding:0 4px;
+  padding:0;
   border:1px solid #d0cfd3;
   border-radius:5px;
   background:#fff;
