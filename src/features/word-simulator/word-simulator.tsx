@@ -270,6 +270,35 @@ export function WordSimulator(){
     syncFormatState();
     markChanged();
   }
+  // x₂ and x² are mutually exclusive formatting toggles, matching BIU:
+  // preserve the editor selection, switch the opposite script off first,
+  // then toggle the requested script on/off and refresh the active button.
+  function toggleScriptFormat(kind:"subscript"|"superscript"){
+    restoreSelection();
+    const opposite=kind==="subscript"?"superscript":"subscript";
+    try{
+      const wasActive=document.queryCommandState(kind);
+      if(!wasActive&&document.queryCommandState(opposite)){
+        document.execCommand(opposite,false);
+      }
+      const applied=document.execCommand(kind,false);
+      if(!applied){
+        setStatus("Trình duyệt chưa hỗ trợ lệnh này: "+kind);
+        return;
+      }
+      rememberSelection();
+      const isActive=document.queryCommandState(kind);
+      const oppositeActive=isActive?false:document.queryCommandState(opposite);
+      setFormatActive(current=>({
+        ...current,
+        [kind]:isActive,
+        [opposite]:oppositeActive
+      }));
+      markChanged();
+    }catch{
+      setStatus("Không thể áp dụng định dạng chỉ số "+(kind==="subscript"?"dưới":"trên"));
+    }
+  }
   function saveDraft(){
     if(!editor.current)return;
     try{
@@ -422,6 +451,9 @@ export function WordSimulator(){
     command("insertHTML","<ol><li>"+first+"<ol>"+children+"</ol></li></ol>");
   }
   function runHome(name:string,value?:string){
+    if(name==="subscript"||name==="superscript"){
+      toggleScriptFormat(name);return;
+    }
     if(name==="changeCaseMode"){
       if(value==="upper")selectedChange(text=>text.toLocaleUpperCase("vi"));
       else if(value==="lower")selectedChange(text=>text.toLocaleLowerCase("vi"));
