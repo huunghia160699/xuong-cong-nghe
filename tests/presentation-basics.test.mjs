@@ -790,8 +790,13 @@ test("Word rulers measure cm within A4 page margins and follow scroll/zoom/orien
  const layout=readFileSync("src/app/(word-simulator)/cong-cu/mo-phong-word/layout.tsx","utf8");
  assert.match(rulers,/const PIXELS_PER_CM=96\/2\.54/);
  assert.match(rulers,/const QUARTER_CM=PIXELS_PER_CM\/4/);
- assert.match(rulers,/const paperWidth=landscape\?1123:794/);
- assert.match(rulers,/const paperHeight=landscape\?794:1123/);
+ const metrics=readFileSync("src/features/word-simulator/word-paper-metrics.ts","utf8");
+ assert.match(metrics,/export const CSS_PX_PER_MM=96\/25\.4/);
+ assert.match(metrics,/export const A4_WIDTH_PX=210\*CSS_PX_PER_MM/);
+ assert.match(metrics,/export const A4_HEIGHT_PX=297\*CSS_PX_PER_MM/);
+ assert.match(rulers,/a4Dimensions\(landscape\)/);
+ assert.ok(source.includes('"--wsl-paper-width":orientation==="landscape"?"297mm":"210mm"'));
+ assert.ok(source.includes('"--wsl-paper-height":orientation==="landscape"?"210mm":"297mm"'));
  assert.match(rulers,/const hMargin=narrow\?48:87/);
  assert.match(rulers,/const vMargin=narrow\?48:86/);
  assert.match(rulers,/const printableWidth=paperWidth-2\*hMargin/);
@@ -804,7 +809,10 @@ test("Word rulers measure cm within A4 page margins and follow scroll/zoom/orien
  assert.match(rulers,/MarginMarker side="left"/);
  assert.match(rulers,/MarginMarker side="right"/);
  assert.match(rulers,/translateX\(-\$\{scrollLeft\}px\)/);
- assert.match(rulers,/translateY\(-\$\{scrollTop\}px\)/);
+ assert.match(rulers,/height:paperHeight\*ratio/);
+ assert.match(rulers,/className="wsl-word-ruler-horizontal-space" style=\{\{width:paperWidth\*ratio\}\}/);
+ assert.ok(rulers.includes('calc(var(--wsl-page-top-offset, 13px) - '));
+ assert.doesNotMatch(rulers,/translateY\(-\$\{scrollTop\}px\)/);
  assert.match(source,/showRuler&&<WordPageRulers/);
  assert.match(source,/setRulerScroll\(current=>/);
  assert.match(source,/wsl-word-page-body/);
@@ -815,7 +823,7 @@ test("Word rulers measure cm within A4 page margins and follow scroll/zoom/orien
  assert.match(css,/@media print\{/);
  assert.match(layout,/word-page-rulers.css/);
  for(const landscape of [false,true])for(const narrow of [false,true])for(const zoom of [60,100,130,160]){
-   const w=landscape?1123:794,h=landscape?794:1123;
+   const w=(landscape?297:210)*96/25.4,h=(landscape?210:297)*96/25.4;
    const mx=narrow?48:87,my=narrow?48:86;
    const ratio=zoom/100;
    assert.ok((w-2*mx)*ratio>0);
@@ -833,7 +841,8 @@ test("Word gray tab strip and floating 5px Home ribbon match the requested frame
  assert.match(chrome,/bottom:4px;/);
  assert.match(chrome,/\.wsl-shell \.wsl-tabs \.wsl-tab\.is-active::after/);
  assert.match(chrome,/\.wsl-ribbon:has\(\.wsl-home-ribbon\)/);
- assert.match(chrome,/padding:4px 8px 5px;/);
+ assert.match(chrome,/\.wsl-shell \.wsl-ribbon\{\s*padding:0;\s*border-top:0;\s*border-bottom:0;/);
+ assert.match(chrome,/\.wsl-shell \.wsl-ribbon:has\(\.wsl-home-ribbon\)\{[^}]*padding:0;[^}]*border-top:0;[^}]*border-bottom:0;/);
  assert.match(chrome,/border-radius:5px;/);
  assert.match(chrome,/box-shadow:0 1px 4px rgba\(35,35,45,.09\)/);
  assert.match(layout,/word-chrome-polish.css/);
@@ -847,6 +856,9 @@ test("Word vertical ruler starts with the paper and Home toolbar fills the avail
  assert.match(css,/--wsl-page-top-offset:13px;/);
  assert.match(css,/padding:var\(--wsl-page-top-offset,13px\) 36px 120px;/);
  assert.match(css,/\.wsl-word-vertical-ruler\{[^}]*top:var\(--wsl-page-top-offset,13px\);/);
+ assert.doesNotMatch(css,/\.wsl-word-vertical-ruler\{[^}]*bottom:0;/);
+ assert.match(css,/\.wsl-word-ruler-vertical-printable\{[^}]*border-top:0;/);
+ assert.match(css,/\.wsl-word-horizontal-ruler\{[^}]*border-top:0;[^}]*border-bottom:0;/);
  assert.match(css,/@media\(max-width:650px\)\{[^}]*--wsl-page-top-offset:9px/);
  assert.match(css,/padding:var\(--wsl-page-top-offset\) 12px 60px/);
  assert.doesNotMatch(css,/\.wsl-word-ruler-vertical-page\{margin-top:-4px\}/);
