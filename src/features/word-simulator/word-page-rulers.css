@@ -52,7 +52,7 @@
   min-height:26px;
   overflow:hidden;
   border-top:0;
-  border-bottom:0;
+  border-bottom:1px solid #c7c7cb;
   background:#e8e7eb;
   box-sizing:border-box;
   z-index:2;
