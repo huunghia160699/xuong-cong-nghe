@@ -1,7 +1,7 @@
 /* Unified Word chrome: light-grey tab strip, raised white Home tools. */
 .wsl-shell .wsl-tabs{
   background:#e8e7eb;
-  border-bottom:1px solid #d1cfd4;
+  border-bottom:0;
   border-radius:0;
 }
 .wsl-shell .wsl-tabs .wsl-tab{
@@ -30,12 +30,13 @@
 /* The Ribbon itself has no padding and no upper/lower border; the Home
    gallery remains an independent raised surface within its allotted height. */
 .wsl-shell .wsl-ribbon{
-  margin-inline:4px;
+  margin-inline:8px;
   padding:0;
   border-top:0;
   border-bottom:0;
 }
 .wsl-shell .wsl-ribbon:has(.wsl-home-ribbon){
+  flex:0 0 96px;
   height:96px;
   min-height:96px;
   max-height:96px;
@@ -50,9 +51,12 @@
   width:100%;
   min-width:max-content;
   box-sizing:border-box;
-  height:100%;
+  height:96px;
+  min-height:96px;
+  max-height:96px;
   padding:0;
   border:1px solid #d0cfd3;
+  border-top:0;
   border-radius:5px;
   background:#fff;
   box-shadow:0 1px 4px rgba(35,35,45,.09);
@@ -64,7 +68,10 @@
 @media(max-width:650px){
  .wsl-shell .wsl-tabs .wsl-tab{height:34px;font-size:12.5px}
  .wsl-shell .wsl-ribbon:has(.wsl-home-ribbon){
-   height:96px;min-height:96px;max-height:96px;padding:0;
+   flex:0 0 96px;height:96px;min-height:96px;max-height:96px;padding:0;
+ }
+ .wsl-shell .wsl-ribbon:has(.wsl-home-ribbon)>.wsl-home-ribbon{
+   height:96px;min-height:96px;max-height:96px;
  }
 }
 @media print{
