@@ -1,6 +1,7 @@
 "use client";
 
 import {useMemo} from "react";
+import {a4Dimensions} from "./word-paper-metrics";
 
 const PIXELS_PER_CM=96/2.54;
 const QUARTER_CM=PIXELS_PER_CM/4;
@@ -52,8 +53,7 @@ function MarginMarker({side}:{side:"left"|"right"}){
 
 /** Ruler overlays match the same unscaled paper geometry as .wsl-paper. */
 export function WordPageRulers({landscape,narrow,zoom,scrollLeft,scrollTop}:Props){
-  const paperWidth=landscape?1123:794;
-  const paperHeight=landscape?794:1123;
+  const {width:paperWidth,height:paperHeight}=a4Dimensions(landscape);
   const hMargin=narrow?48:87;
   const vMargin=narrow?48:86;
   const printableWidth=paperWidth-2*hMargin;
@@ -77,8 +77,9 @@ export function WordPageRulers({landscape,narrow,zoom,scrollLeft,scrollTop}:Prop
         </div>
       </div>
     </div>
-    <div className="wsl-word-vertical-ruler" aria-hidden="true">
-      <div className="wsl-word-ruler-vertical-offset" style={{transform:`translateY(-${scrollTop}px)`}}>
+    <div className="wsl-word-vertical-ruler" aria-hidden="true"
+      style={{top:`calc(var(--wsl-page-top-offset, 13px) - ${scrollTop}px)`,height:paperHeight*ratio}}>
+      <div className="wsl-word-ruler-vertical-offset">
         <div className="wsl-word-ruler-vertical-space" style={{height:paperHeight*ratio}}>
           <div className="wsl-word-ruler-vertical-page" style={{height:paperHeight*ratio,top:0}}>
             <div className="wsl-word-ruler-vertical-printable"
