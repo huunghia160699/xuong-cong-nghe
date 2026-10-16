@@ -1098,49 +1098,90 @@ test("White ruler shows centered 1, 2, 3... numbers instead of 1cm long ticks",(
 });
 
 
-test("Word ruler indentation glyphs match the agreed Word style and equal 12px widths",()=>{
+test("Word ruler indentation markers use three individually movable 12px tabs with correct directions",()=>{
  const ruler=readFileSync("src/features/word-simulator/word-page-rulers.tsx","utf8");
  const css=readFileSync("src/features/word-simulator/word-page-rulers.css","utf8");
  const marker=ruler.slice(ruler.indexOf("function RulerIndentMarker"),ruler.indexOf("function HorizontalRulerTicks"));
  const track=ruler.slice(ruler.indexOf('<div className="wsl-word-ruler-cm-track"'),ruler.indexOf("\n  </div>;\n}",ruler.indexOf('<div className="wsl-word-ruler-cm-track"')));
- assert.match(marker,/side:"left"\|"right";left:number/);
- assert.match(marker,/className=\{"wsl-word-ruler-indent wsl-word-ruler-indent-"\+side\}/);
- assert.match(marker,/viewBox="0 0 12 20"/);
- assert.match(marker,/width="12" height="20"/);
- assert.match(marker,/side==="left"\?<>/);
- assert.equal((marker.match(/<path /g)||[]).length,3,
-   "reference glyphs use house outline, inner divider and inverted top tab");
- assert.doesNotMatch(marker,/<rect /,"old stacked rectangle must be gone");
- assert.match(marker,/d="M\.5 10\.5L6 6L11\.5 10\.5V19H\.5Z"/);
- assert.match(marker,/d="M\.5 14H11\.5"/);
- assert.match(marker,/d="M\.5 1H11\.5V5L6 9\.25L\.5 5Z"/);
- assert.equal((marker.match(/fill="#fff"/g)||[]).length,2,
-   "white-fill both silhouettes, not solid gray triangles");
- assert.equal((marker.match(/stroke="#818181"/g)||[]).length,3,
-   "one consistent fine gray outline for both icons");
- assert.equal((marker.match(/strokeWidth="1"/g)||[]).length,3,
-   "same 1px line width for all marker geometry");
- assert.match(track,/<RulerIndentMarker side="left" left=\{contentStart\}\/>/);
- assert.match(track,/<RulerIndentMarker side="right" left=\{contentEnd\}\/>/);
- assert.equal((track.match(/<RulerIndentMarker side=/g)||[]).length,2);
- const whiteStart=track.indexOf('<div className="wsl-word-ruler-content-strip"');
- const whiteClose=track.indexOf("\n      </div>",whiteStart);
- const iconStart=track.indexOf('<RulerIndentMarker side="left"');
- assert.ok(whiteStart>=0&&whiteClose>whiteStart&&iconStart>whiteClose,
-   "indent icons must be siblings outside the overflow-hidden white strip");
+ assert.match(ruler,/export type RulerIndent=\{firstLine:number;left:number;right:number\}/);
+ assert.match(marker,/kind:RulerIndentPart;/);
+ assert.match(marker,/className=\{"wsl-word-ruler-indent wsl-word-ruler-indent-"\+kind\}/);
+ assert.match(marker,/viewBox="0 0 12 10"/);
+ assert.match(marker,/width="12" height="10"/);
+ assert.match(marker,/kind==="firstLine"\?/);
+ assert.match(marker,/d="M\.5 \.5H11\.5V4\.5L6 9\.5L\.5 4\.5Z"/);
+ assert.match(marker,/kind==="left"\?<>/);
+ assert.match(marker,/d="M\.5 5\.5L6 \.5L11\.5 5\.5V9\.5H\.5Z"/);
+ assert.match(marker,/d="M\.5 7H11\.5"/);
+ assert.equal((marker.match(/<path /g)||[]).length,4);
+ assert.match(marker,/aria-label=\{label\} title=\{label\}/);
+ assert.match(marker,/onPointerDown=\{event=>onPointerDown\(event,kind\)\}/);
+ assert.match(marker,/onPointerMove=\{onPointerMove\} onPointerUp=\{onPointerUp\}/);
+ assert.match(marker,/onPointerCancel=\{onPointerCancel\}/);
+ assert.match(track,/\(\["firstLine","left","right"\] as RulerIndentPart\[\]\)\.map\(kind=>/);
+ assert.match(track,/<RulerIndentMarker key=\{kind\} kind=\{kind\}/);
+ assert.match(track,/contentEnd-indent\.right\*zoom\/100/);
+ assert.match(track,/contentStart\+indent\[kind\]\*zoom\/100/);
+ assert.match(ruler,/event\.currentTarget\.setPointerCapture\(event\.pointerId\)/);
+ assert.match(ruler,/event\.currentTarget\.releasePointerCapture\(event\.pointerId\)/);
+ assert.match(ruler,/const direction=drag\.kind==="right"\?-1:1;/);
+ assert.match(ruler,/const delta=\(event\.clientX-drag\.startX\)\*100\/zoom\*direction;/);
+ assert.match(ruler,/const step=PX_PER_QUARTER_CM;/);
+ assert.match(ruler,/Math\.round\(\(drag\.startValue\+delta\)\/step\)\*step/);
+ assert.match(ruler,/onIndentChange\(\{\.\.\.indent,\[drag\.kind\]:value\}\)/);
  const wrap=css.match(/\.wsl-word-ruler-indent\{([^}]+)\}/)?.[1];
  const svg=css.match(/\.wsl-word-ruler-indent-svg\{([^}]+)\}/)?.[1];
  assert.ok(wrap&&svg);
- for(const property of ["top:50%;","transform:translate(-50%,-50%);","z-index:3;","width:12px;","min-width:12px;","max-width:12px;","height:20px;","pointer-events:none;"])
+ for(const property of ["transform:translateX(-50%);","z-index:3;","width:12px;","min-width:12px;","max-width:12px;","height:10px;","pointer-events:auto;","cursor:ew-resize;","touch-action:none;"])
    assert.ok(wrap.includes(property),property);
- for(const property of ["width:12px;","height:20px;"])
-   assert.ok(svg.includes(property),property);
- assert.match(css,/\.wsl-word-ruler-content-strip\{[^}]*z-index:2;[^}]*overflow:hidden;/);
+ assert.match(css,/\.wsl-word-ruler-indent-firstLine\{top:1px\}/);
+ assert.match(css,/\.wsl-word-ruler-indent-left,\s*\.wsl-word-ruler-indent-right\{bottom:1px\}/);
+ assert.match(svg,/width:12px;/);
+ assert.match(svg,/height:10px;/);
  for(const landscape of [false,true])for(const narrow of [false,true])for(const zoom of [60,100,130,160]){
    const width=(landscape?297:210)*96/25.4*zoom/100;
-   const pageMargin=(narrow?48:87)*zoom/100;
-   const left=(pageMargin+zoom/100);
-   const right=width-left;
-   assert.ok(left>6&&right<width-6&&right>left,"both 12px glyphs fit inside scaled A4 paper");
+   const margin=(narrow?48:87)*zoom/100;
+   const left=margin+zoom/100,right=width-left;
+   assert.ok(left>6&&right<width-6&&right>left);
+   const paperCm=(right-left)*100/zoom;
+   const step=96/2.54/4;
+   for(const direction of [-1,1]){
+     const start=step*3;
+     const delta=direction*step*1.51;
+     const next=Math.max(0,Math.min(paperCm-24,Math.round((start+delta)/step)*step));
+     assert.ok(next>=0&&next<paperCm);
+   }
+ }
+});
+
+test("Dragging indent markers applies to current Word paragraph and preserves styles in drafts",()=>{
+ const source=readFileSync("src/features/word-simulator/word-simulator.tsx","utf8");
+ const ruler=readFileSync("src/features/word-simulator/word-page-rulers.tsx","utf8");
+ assert.match(source,/import \{WordPageRulers,type RulerIndent\}/);
+ assert.match(source,/const indentTarget=useRef<HTMLElement\|null>\(null\)/);
+ assert.match(source,/const indentDragging=useRef\(false\)/);
+ assert.match(source,/const \[rulerIndent,setRulerIndent\]=useState<RulerIndent>/);
+ assert.match(source,/function indentBlock\(\):HTMLElement\|null\{/);
+ assert.match(source,/function syncRulerIndent\(\)/);
+ assert.match(source,/function beginRulerIndent\(\)/);
+ assert.match(source,/function applyRulerIndent\(next:RulerIndent\)/);
+ assert.match(source,/function endRulerIndent\(\)/);
+ assert.match(source,/block\.style\.marginLeft=next\.left\?asPixels\(next\.left\):"";/);
+ assert.match(source,/block\.style\.marginRight=next\.right\?asPixels\(next\.right\):"";/);
+ assert.match(source,/const difference=next\.firstLine-next\.left;/);
+ assert.match(source,/block\.style\.textIndent=Math\.abs\(difference\)>\.01\?asPixels\(difference\):"";/);
+ assert.match(source,/setRulerIndent\(next\)/);
+ assert.match(source,/markChanged\(\)/);
+ assert.match(source,/indent=\{rulerIndent\} onIndentStart=\{beginRulerIndent\}/);
+ assert.match(source,/onIndentChange=\{applyRulerIndent\} onIndentEnd=\{endRulerIndent\}/);
+ assert.match(source,/for\(const name of \["marginLeft","marginRight","textIndent"\] as const\)/);
+ assert.match(source,/safeStyles\.push\(name\.replace\(/);
+ assert.match(source,/const changed=\(\)=>\{syncFormatState\(\);syncRulerIndent\(\);\}/);
+ assert.match(ruler,/onIndentStart\?\.\(kind\)/);
+ assert.match(ruler,/onIndentEnd\?\.\(\)/);
+ assert.match(ruler,/onPointerCancel=\{onPointerCancel\}/);
+ for(const left of [0,9.45,37.8,75.6])for(const firstLine of [0,19,75.6]){
+  const textIndent=firstLine-left;
+  assert.ok(Math.abs(left+textIndent-firstLine)<1e-8);
  }
 });
