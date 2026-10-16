@@ -165,6 +165,10 @@ test("Horizontal centimeter ruler and tab chrome: 10 rounds over A4 size and zoo
    assert.match(ruler,/className="wsl-word-ruler-cm-track"/);
    assert.match(ruler,/className="wsl-word-vertical-ruler" aria-hidden="true"/);
    assert.match(ruler,/function RulerIndentMarker/);
+   assert.match(ruler,/d="M\.5 10\.5L6 6L11\.5 10\.5V19H\.5Z"/);
+   assert.match(ruler,/d="M\.5 14H11\.5"/);
+   assert.match(ruler,/d="M\.5 1H11\.5V5L6 9\.25L\.5 5Z"/);
+   assert.doesNotMatch(ruler,/<rect x="\.5" y="14\.5"/);
    assert.match(ruler,/viewBox="0 0 12 20"/);
    assert.match(ruler,/width="12" height="20"/);
    assert.match(ruler,/<RulerIndentMarker side="left" left=\{contentStart\}\/>/);
