@@ -141,7 +141,7 @@ test("Rulers and tab chrome: verify page geometry 10 times across orientations, 
    assert.match(ruler,/MarginMarker side="left"/);
    assert.match(ruler,/MarginMarker side="right"/);
    assert.match(ruler,/translateX\(-\$\{scrollLeft\}px\)/);
-   assert.match(ruler,/height:paperHeight\*ratio/);
+   assert.match(ruler,/verticalHeight=renderedPaperHeight\?\?paperHeight\*ratio/);
    assert.match(ruler,/className="wsl-word-ruler-horizontal-space" style=\{\{width:paperWidth\*ratio\}\}/);
    assert.doesNotMatch(ruler,/translateY\(-\$\{scrollTop\}px\)/);
    assert.match(rulerCSS,/\.wsl-word-ruler-horizontal-printable/);
