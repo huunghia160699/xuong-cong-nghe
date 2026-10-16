@@ -920,4 +920,8 @@ test("Home ribbon has zero inner side padding and parent Ribbon supplies 4px mar
  assert.match(child[1],/box-sizing:border-box;/);
  assert.match(child[1],/padding:0;/);
  assert.doesNotMatch(child[1],/padding:0 4px;/);
+ assert.match(child[1],/align-self:stretch;/);
+ assert.match(child[1],/height:100%;/);
+ assert.doesNotMatch(child[1],/height:85px;/);
+ assert.match(chrome,/\.wsl-shell \.wsl-ribbon:has\(\.wsl-home-ribbon\)\{[^}]*height:96px;/);
 });
