@@ -140,6 +140,14 @@ test("Rulers and tab chrome: verify page geometry 10 times across orientations, 
    assert.match(ruler,/translateY\(-\$\{scrollTop\}px\)/);
    assert.match(rulerCSS,/\.wsl-word-ruler-horizontal-printable/);
    assert.match(rulerCSS,/\.wsl-word-ruler-vertical-printable/);
+   assert.match(rulerCSS,/--wsl-page-top-offset:13px;/);
+   assert.match(rulerCSS,/top:var\(--wsl-page-top-offset,13px\);/);
+   assert.match(rulerCSS,/@media\(max-width:650px\)\{[^}]*--wsl-page-top-offset:9px/);
+   assert.match(ruler,/style=\{\{height:paperHeight\*ratio,top:0\}\}/);
+   assert.doesNotMatch(ruler,/paperHeight\*ratio\+13/);
+   assert.match(chrome,/\.wsl-shell \.wsl-tabs \.wsl-tab\{[^}]*border-radius:0;/);
+   assert.match(chrome,/\.wsl-shell \.wsl-ribbon:has\(\.wsl-home-ribbon\)>\.wsl-home-ribbon\{[^}]*width:100%;/);
+   assert.match(chrome,/\.wsl-shell \.wsl-home-ribbon \.wsl-home-group\{[^}]*flex:0 0 auto;/);
    assert.match(chrome,/font-weight:900/);
    assert.match(chrome,/border-radius:5px/);
    for(const landscape of [false,true])for(const narrow of [false,true])for(const zoom of [60,100,130,160]){
