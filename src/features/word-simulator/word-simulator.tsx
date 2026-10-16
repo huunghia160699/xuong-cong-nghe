@@ -3,7 +3,7 @@
 import {useCallback,useEffect,useRef,useState} from "react";
 import {WordHomeRibbon,type WordFormatKey} from "./word-home-ribbon";
 import {WordWindowBar} from "./word-window-bar";
-import {WordPageRulers} from "./word-page-rulers";
+import {WordPageRulers,type RulerIndent} from "./word-page-rulers";
 import {a4Dimensions} from "./word-paper-metrics";
 import {
   AlignCenter,AlignJustify,AlignLeft,AlignRight,ArrowLeft,BookOpen,Check,ChevronDown,
@@ -75,6 +75,12 @@ function sanitize(html:string):string {
     if(/^(?:1(?:\.(?:0|15|5))?|2(?:\.0)?)$/.test(lineHeight))safeStyles.push("line-height:"+lineHeight);
     const marginBottom=style.marginBottom;
     if(/^(?:0|\d{1,2}px)$/.test(marginBottom))safeStyles.push("margin-bottom:"+marginBottom);
+    // Preserve real paragraph indentation when exporting or saving a draft.
+    for(const name of ["marginLeft","marginRight","textIndent"] as const){
+      const value=style[name];
+      if(/^-?\d{1,3}(?:\.\d{1,2})?px$/.test(value))
+        safeStyles.push(name.replace(/[A-Z]/g,letter=>"-"+letter.toLowerCase())+":"+value);
+    }
     const borderBottom=style.borderBottom;
     if(/^1px solid (?:#[0-9a-f]{3,8}|rgb\([\d\s,.%]+\))$/i.test(borderBottom))safeStyles.push("border-bottom:"+borderBottom);
     const borderTop=style.borderTop;
@@ -115,6 +121,9 @@ export function WordSimulator(){
   const fileInput=useRef<HTMLInputElement>(null);
   const imageInput=useRef<HTMLInputElement>(null);
   const savedSelection=useRef<Range|null>(null);
+  const indentTarget=useRef<HTMLElement|null>(null);
+  const indentDragging=useRef(false);
+  const [rulerIndent,setRulerIndent]=useState<RulerIndent>({firstLine:0,left:0,right:0});
   const [rulerScroll,setRulerScroll]=useState({left:0,top:0});
   const [measuredPaper,setMeasuredPaper]=useState<{landscape:boolean;zoom:number;height:number}|null>(null);
   const stagedClipboard=useRef<string|null>(null);
@@ -219,7 +228,7 @@ export function WordSimulator(){
     setFormatActive(current=>formatKeys.every(key=>current[key]===next[key])?current:next);
   }
   useEffect(()=>{
-    const changed=()=>syncFormatState();
+    const changed=()=>{syncFormatState();syncRulerIndent();};
     document.addEventListener("selectionchange",changed);
     return ()=>document.removeEventListener("selectionchange",changed);
   });
@@ -287,7 +296,8 @@ export function WordSimulator(){
     if(!window.confirm("Tạo tài liệu mới? Nội dung hiện tại vẫn có thể xuất tệp trước khi thay thế."))return;
     setDocument(DEFAULT_CONTENT);
     setFilename("Document1");
-    setOrientation("portrait");setMargins("normal");setStatus("Đã tạo tài liệu mới");setActiveTab("Home");
+    setOrientation("portrait");setMargins("normal");setRulerIndent({firstLine:0,left:0,right:0});
+    setStatus("Đã tạo tài liệu mới");setActiveTab("Home");
   }
   function exportHTML(){
     const html=editor.current?sanitize(editor.current.innerHTML):"";
@@ -344,6 +354,44 @@ export function WordSimulator(){
     if(!node)return null;
     const element=node.nodeType===Node.ELEMENT_NODE?node as Element:node.parentElement;
     return (element?.closest("p,div,li,h1,h2,h3,h4,blockquote,td,th")??null) as HTMLElement|null;
+  }
+  function indentBlock():HTMLElement|null{
+    const root=editor.current;
+    if(!root)return null;
+    const selected=currentBlock();
+    if(selected&&selected!==root&&root.contains(selected))return selected;
+    return root.querySelector<HTMLElement>("p,div,li,h1,h2,h3,h4,blockquote");
+  }
+  function syncRulerIndent(){
+    if(indentDragging.current)return;
+    const block=indentBlock();
+    if(!block)return;
+    const left=Math.max(0,parseFloat(block.style.marginLeft)||0);
+    const right=Math.max(0,parseFloat(block.style.marginRight)||0);
+    const firstLine=Math.max(0,left+(parseFloat(block.style.textIndent)||0));
+    setRulerIndent(old=>
+      Math.abs(old.left-left)<.01&&Math.abs(old.right-right)<.01&&Math.abs(old.firstLine-firstLine)<.01?
+        old:{left,right,firstLine});
+  }
+  function beginRulerIndent(){
+    indentDragging.current=true;
+    indentTarget.current=indentBlock();
+  }
+  function applyRulerIndent(next:RulerIndent){
+    setRulerIndent(next);
+    const block=indentTarget.current??indentBlock();
+    if(!block)return;
+    const asPixels=(value:number)=>Math.round(value*100)/100+"px";
+    block.style.marginLeft=next.left?asPixels(next.left):"";
+    block.style.marginRight=next.right?asPixels(next.right):"";
+    const difference=next.firstLine-next.left;
+    block.style.textIndent=Math.abs(difference)>.01?asPixels(difference):"";
+    markChanged();
+  }
+  function endRulerIndent(){
+    indentDragging.current=false;
+    indentTarget.current=null;
+    syncRulerIndent();
   }
   function selectedChange(fn:(text:string)=>string){
     restoreSelection();
@@ -593,7 +641,9 @@ export function WordSimulator(){
       "--wsl-paper-top-margin":(margins==="narrow"?48:86)+"px"
     } as React.CSSProperties}>
       {showRuler&&<WordPageRulers axis="horizontal" landscape={isLandscape} narrow={margins==="narrow"}
-        zoom={zoom} scrollLeft={rulerScroll.left} scrollTop={rulerScroll.top}/>}
+        zoom={zoom} scrollLeft={rulerScroll.left} scrollTop={rulerScroll.top}
+        indent={rulerIndent} onIndentStart={beginRulerIndent}
+        onIndentChange={applyRulerIndent} onIndentEnd={endRulerIndent}/>}
       <div className="wsl-word-page-body">
         {showRuler&&<WordPageRulers axis="vertical" landscape={isLandscape} narrow={margins==="narrow"}
           zoom={zoom} scrollLeft={rulerScroll.left} scrollTop={rulerScroll.top}
