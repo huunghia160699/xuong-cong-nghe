@@ -21,8 +21,8 @@ const controls=[
   ["Clipboard","Cut",'run("cut")','if(name==="cut"||name==="copy"){'],
   ["Clipboard","Copy",'run("copy")','if(name==="cut"||name==="copy"){'],
   ["Clipboard","Format Painter",'run("formatPainter")','if(name==="formatPainter"){'],
-  ["Font","Font Family",'editFont(event.target.value)','function editFont(next:string)'],
-  ["Font","Font Size",'editSize(event.target.value)','function editSize(next:string)'],
+  ["Font","Font Family",'onChange={editFont}','function editFont(next:string)'],
+  ["Font","Font Size",'onChange={editSize}','function editSize(next:string)'],
   ["Font","Increase Font Size",'label="Increase Font Size"','function editSize(next:string)'],
   ["Font","Decrease Font Size",'label="Decrease Font Size"','function editSize(next:string)'],
   ["Font","Change Case",'run={changeCase}','function changeCase()'],
@@ -309,4 +309,43 @@ test("Vertical Word ruler: repeat mirrored cm subdivisions, numbered white margi
   }
  }
  console.log("WORD_VERTICAL_CM_QA_PASS 10 rounds × 16 page geometry permutations");
+});
+
+
+test("Word dropdowns use custom div listboxes, not browser-native select: repeat keyboard and selection invariants",()=>{
+ for(let round=0;round<10;round++){
+  assert.doesNotMatch(home,/<select\b|<option\b/);
+  assert.doesNotMatch(editor,/<select\b|<option\b/);
+  assert.match(home,/import \{WordCustomDropdown,WordSplitButton\}/);
+  assert.match(editor,/import \{WordCustomDropdown\} from "\.\/word-split-button"/);
+  assert.match(home,/<WordCustomDropdown className="wsl-font-select wsl-font-family"/);
+  assert.match(home,/label="Font" value=\{font\} onChange=\{editFont\}/);
+  assert.match(home,/options=\{FONTS\.map\(name=>\(\{value:name,label:name==="Aptos"\?"Aptos \(Body\)":name\}\)\)\}/);
+  assert.match(home,/<WordCustomDropdown className="wsl-font-select wsl-font-size"/);
+  assert.match(home,/label="Font Size" value=\{fontSize\} onChange=\{editSize\}/);
+  assert.match(home,/options=\{fontSizes\.map\(\(\[value,text\]\)=>\(\{value,label:text\}\)\)\}/);
+  assert.match(editor,/<WordCustomDropdown label="Hướng trang" className="wsl-layout-dropdown"/);
+  assert.match(editor,/onChange=\{value=>setOrientation\(value as Orientation\)\}/);
+  assert.match(editor,/<WordCustomDropdown label="Lề trang" className="wsl-layout-dropdown"/);
+  assert.match(editor,/onChange=\{value=>setMargins\(value as Margins\)\}/);
+  assert.match(split,/export function WordCustomDropdown/);
+  assert.match(split,/role="combobox" aria-label=\{label\} aria-haspopup="listbox"/);
+  assert.match(split,/role="listbox" aria-label=\{label\}/);
+  assert.match(split,/role="option" aria-selected=\{option\.value===value\}/);
+  assert.match(split,/onMouseDown=\{event=>event\.preventDefault\(\)\}/);
+  assert.match(split,/onClick=\{\(\)=>choose\(index\)\}/);
+  assert.match(split,/if\(open\)choose\(activeIndex\);else showMenu\(\);/);
+  assert.match(split,/event\.key==="ArrowDown"/);
+  assert.match(split,/event\.key==="ArrowUp"/);
+  assert.match(split,/event\.key==="Home"/);
+  assert.match(split,/event\.key==="End"/);
+  assert.match(split,/event\.key==="Escape"/);
+  assert.match(split,/if\(event\.key==="Tab"\)\{setOpen\(false\);return;\}/);
+  assert.match(split,/document\.addEventListener\("pointerdown",outside\)/);
+  assert.match(split,/window\.addEventListener\("resize",close\)/);
+  assert.match(split,/createPortal\(/);
+  assert.match(interactions,/\.wsl-word-dropdown-menu\{/);
+  assert.match(interactions,/\.wsl-word-dropdown-option\{/);
+  assert.match(interactions,/\.wsl-ribbon-field \.wsl-layout-dropdown\{/);
+ }
 });
