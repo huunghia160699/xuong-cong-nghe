@@ -126,9 +126,10 @@ test("Home Ribbon: repeat state, Escape, selection and dialogs 10 rounds",()=>{
    assert.match(editor,/const opposite=kind==="subscript"\?"superscript":"subscript";/);
    assert.match(editor,/const typingScriptRef=useRef<"subscript"\|"superscript"\|null>\(null\)/);
    assert.match(editor,/function rangeHasScript\(range:Range,kind:"subscript"\|"superscript"\)/);
-   assert.match(editor,/const start=range\.startContainer===node\?range\.startOffset:0;/);
-   assert.match(editor,/const end=range\.endContainer===node\?range\.endOffset:length;/);
-   assert.match(editor,/return end>start;/);
+   assert.match(editor,/textRange\.selectNodeContents\(node\);/);
+   assert.match(editor,/range\.compareBoundaryPoints\(Range\.START_TO_END,textRange\)>0/);
+   assert.match(editor,/range\.compareBoundaryPoints\(Range\.END_TO_START,textRange\)<0/);
+   assert.match(editor,/return endsAfterStart&&startsBeforeEnd;/);
    assert.match(editor,/const selection=window\.getSelection\(\);[\s\S]*?savedSelection\.current=selection\.getRangeAt\(0\)\.cloneRange\(\);/);
    assert.match(editor,/if\(root&&selection\?\.rangeCount&&selection\.anchorNode&&selection\.focusNode/);
    assert.match(editor,/function restoreSelection\(\)\{[\s\S]*?savedSelection\.current=selection\.getRangeAt\(0\)\.cloneRange\(\);/);
