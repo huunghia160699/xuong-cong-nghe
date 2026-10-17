@@ -400,3 +400,6 @@ Ngày: 15/10/2026. Đường dẫn: `/cong-cu/mo-phong-word`.
 - Giữ `onMouseDown(event.preventDefault())` của Home Ribbon để click không làm mất vùng bôi đen. Kiểm thử bảo đảm hai trạng thái loại trừ nhau, bật/tắt được bằng lần nhấn thứ hai, vùng bôi đen được duy trì, caret vào/ra phần tử chỉ số, text đã nhập không bị xóa và phần tử rỗng được dọn dẹp.
 - Cần kiểm tra thêm trên trình duyệt thật sau deploy để xác nhận hành vi nhập liệu Unicode, undo/redo và thao tác IME đối với `contentEditable`; kiểm thử Node giả lập DOM không phải E2E thực. Không khẳng định đã kiểm tra trực quan khi chưa thực hiện.
 - Quy trình bắt buộc sau chỉnh sửa: cập nhật file Markdown này, commit GitHub main, chạy kiểm thử và build, deploy Vercel Production và chỉ báo thành công khi trạng thái READY.
+
+
+- **Hiệu chỉnh build:** nhánh thoát chế độ gõ kiểm tra đồng thời `active && context` trước khi gọi `Range.setStartAfter(context)`, bảo đảm phần tử `<sub>/<sup>` tồn tại và đáp ứng kiểm tra kiểu TypeScript nghiêm ngặt. Kiểm thử chức năng vẫn giữ nguyên, phải build lại và xác nhận Production READY sau hiệu chỉnh.
