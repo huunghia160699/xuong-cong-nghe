@@ -614,9 +614,9 @@ export function WordSimulator(){
     const root=editor.current;
     const liveSelection=window.getSelection();
     const liveRange=liveSelection?.rangeCount?liveSelection.getRangeAt(0):null;
-    let boundaryScript:HTMLElement|null=null;
+    let boundaryScript=scriptAncestor(null);
     if(liveRange?.collapsed&&liveRange.startContainer.nodeType===1&&liveRange.startOffset>0){
-      const previous=liveRange.startContainer.childNodes[liveRange.startOffset-1] as HTMLElement|undefined;
+      const previous=scriptAncestor(liveRange.startContainer.childNodes[liveRange.startOffset-1]??null);
       if(previous?.tagName===(kind==="subscript"?"SUB":"SUP"))boundaryScript=previous;
     }
     const liveScript=scriptAncestor(liveSelection?.anchorNode??null)??boundaryScript;
