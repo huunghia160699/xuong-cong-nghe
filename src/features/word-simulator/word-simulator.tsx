@@ -612,6 +612,32 @@ export function WordSimulator(){
   // of the selected content; a collapsed caret enters/exits a typing mode.
   function toggleScriptFormat(kind:"subscript"|"superscript"){
     const root=editor.current;
+    const liveSelection=window.getSelection();
+    const liveRange=liveSelection?.rangeCount?liveSelection.getRangeAt(0):null;
+    let boundaryScript:HTMLElement|null=null;
+    if(liveRange?.collapsed&&liveRange.startContainer.nodeType===Node.ELEMENT_NODE&&liveRange.startOffset>0){
+      const previous=liveRange.startContainer.childNodes[liveRange.startOffset-1] as HTMLElement|undefined;
+      if(previous?.tagName===(kind==="subscript"?"SUB":"SUP"))boundaryScript=previous;
+    }
+    const liveScript=scriptAncestor(liveSelection?.anchorNode??null)??boundaryScript;
+    const liveText=liveScript?.textContent?.replaceAll(TYPING_SCRIPT_PLACEHOLDER,"")??"";
+    if(root&&liveScript&&liveText){
+      const anchor=document.createTextNode(SCRIPT_EXIT_ANCHOR);
+      liveScript.parentNode?.insertBefore(anchor,liveScript.nextSibling);
+      const outside=document.createRange();
+      outside.setStart(anchor,anchor.data.length);
+      outside.collapse(true);
+      root.focus?.({preventScroll:true});
+      liveSelection?.removeAllRanges();
+      liveSelection?.addRange(outside);
+      typingScriptRef.current=null;
+      typingScriptNodeRef.current=null;
+      typingScriptExitNodeRef.current=liveScript;
+      typingScriptExitLengthRef.current=liveText.length;
+      setFormatActive(current=>({...current,subscript:false,superscript:false}));
+      rememberSelection();
+      return;
+    }
     if(root&&formatActive[kind]){
       const activeScript=typingScriptNodeRef.current??
         root.querySelector?.(kind==="subscript"?"sub":"sup")??null;
