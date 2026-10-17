@@ -161,7 +161,7 @@ assert.match(editor,/if\(!root\?\.contains\(explicitPending\)\)\{/);
    assert.match(editor,/typingScriptRef\.current&&insertTypingScriptText\(native\.data\)/);
    assert.match(editor,/onInput=\{event=>\{repairExitedScriptText/);
 
-   assert.match(editor,/cleanTypingScriptPlaceholder\(\);rememberSelection\(\);markChanged\(\);/);
+   assert.match(editor,/cleanTypingScriptPlaceholder\(\);cleanScriptExitAnchor\(\);rememberSelection\(\);markChanged\(\);/);
    assert.match(editor,/function rangeHasScript\(range:Range,kind:"subscript"\|"superscript"\)/);
    assert.match(editor,/textRange\.selectNodeContents\(node\);/);
    assert.match(editor,/range\.compareBoundaryPoints\(Range\.START_TO_END,textRange\)>0/);
