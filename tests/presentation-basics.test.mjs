@@ -1374,6 +1374,73 @@ test("Selected Word text uses deterministic DOM extraction, correct second-click
  assert.match(selection,/markChanged\(\);/);
 });
 
+
+test("Vietnamese Telex: after turning x² off, next a cannot compose the last superscript a",()=>{
+ const source=readFileSync("src/features/word-simulator/word-simulator.tsx","utf8");
+ const first=source.indexOf("  function exitScriptIntoPlainCaret(");
+ const last=source.indexOf("  // x₂/x² have two separate behaviors",first);
+ assert.ok(first>=0&&last>first,"plain exit helper must exist");
+ const run=source.slice(first,last).trim().replace("script:HTMLElement","script");
+ const previous={tagName:"SUP",textContent:"aaaaa",nextSibling:null};
+ const attrs={};
+ const created=[];
+ const root={blurCalls:0,focusCalls:0,blur(){this.blurCalls++},
+   focus(){this.focusCalls++},
+   contains(n){return n===previous||created.includes(n)},
+   querySelectorAll(){return []}};
+ previous.after=node=>{previous.nextSibling=node;node.parentNode=root;};
+ const range={startContainer:null,startOffset:0,collapsed:false,
+   setStart(node,offset){this.startContainer=node;this.startOffset=offset},
+   collapse(value){this.collapsed=value}};
+ const selection={anchorNode:previous,rangeCount:1,
+   removeAllRanges(){this.rangeCount=0},
+   addRange(r){this.rangeCount=1;this.anchorNode=r.startContainer}};
+ const button={subscript:false,superscript:true};
+ const ctx={
+   editor:{current:root},window:{getSelection:()=>selection},
+   TYPING_SCRIPT_PLACEHOLDER:"\u200B",SCRIPT_EXIT_ANCHOR:"\u00A0",
+   typingScriptRef:{current:"superscript"},
+   typingScriptNodeRef:{current:previous},
+   typingScriptExitNodeRef:{current:previous},
+   typingScriptExitLengthRef:{current:5},
+   document:{
+     createElement(name){const node={tagName:name.toUpperCase(),style:{},attributes:{},
+       setAttribute(key,value){this.attributes[key]=value},
+       append(...children){this.children=children}};
+       created.push(node);return node},
+     createTextNode(value){return{nodeType:3,data:value}},
+     createRange(){return range}
+   },
+   setFormatActive(fn){Object.assign(button,fn({...button}))},
+   rememberSelection(){},
+ };
+ const exit=runInNewContext("("+run+")",ctx);
+ assert.equal(exit(previous),true);
+ assert.equal(root.blurCalls,1,"must end the old Telex composition by changing focus");
+ assert.equal(root.focusCalls,1);
+ const slot=previous.nextSibling;
+ assert.equal(slot.tagName,"SPAN");
+ assert.equal(slot.attributes["data-script-plain"],"true");
+ const [boundary,caret]=slot.children;
+ assert.equal(boundary.contentEditable,"false","IME separator must not become editable");
+ assert.equal(boundary.textContent,"\u00A0","the hard word boundary separates Telex runs");
+ assert.equal(caret.data,"\u200B");
+ assert.equal(selection.anchorNode,caret,"caret is no longer in <sup>");
+ assert.equal(range.startOffset,1);
+ assert.deepEqual({...button},{subscript:false,superscript:false});
+ assert.equal(ctx.typingScriptRef.current,null);
+ assert.equal(ctx.typingScriptNodeRef.current,null);
+ assert.equal(ctx.typingScriptExitNodeRef.current,null);
+ // Simulate a Telex aa composition after switching back to normal typing.
+ caret.data+="a";
+ caret.data=caret.data.replace("a","â");
+ assert.equal(previous.textContent,"aaaaa","old SUP content must remain unchanged");
+ assert.equal(caret.data,"\u200Bâ","new composition must be outside the SUP");
+ assert.match(source,/parsed\.body\.querySelectorAll\("\[data-script-ime-break\]"\)/);
+ assert.match(source,/return parsed\.body\.innerHTML\.replaceAll\("\\u200B",""\)/);
+ assert.match(source,/node\.parentElement\?\.closest\("\[data-script-ime-break\]"\)/);
+});
+
 test("Unselected caret: x₂/x² enters typing mode, second click exits; switching modes remains exclusive",()=>{
  const source=readFileSync("src/features/word-simulator/word-simulator.tsx","utf8");
  const begin=source.indexOf('  function toggleScriptFormat(');

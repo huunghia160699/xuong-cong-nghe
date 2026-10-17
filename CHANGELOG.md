@@ -1,5 +1,11 @@
 # Changelog
 
+## 2026-10-17 — Khắc phục Telex tiếp tục ghép chữ trong Sup/Sub
+- Khi tắt Superscript hoặc Subscript, kết thúc phiên IME và chuyển caret ra vùng chữ thường độc lập với thẻ chỉ số.
+- Giữ ranh giới nhập Telex cho đến khi bộ gõ hoàn thành, tránh ký tự kế tiếp sửa ký tự cuối của Sup thành chữ có dấu hoặc tự bật lại Sup.
+- Ranh giới ẩn chỉ dùng lúc nhập, không lưu vào bản nháp/xuất HTML.
+- Thêm kiểm thử hồi quy cho chuỗi `aaaaa` trong Sup → tắt Sup → nhập `a`; không thay đổi thiết kế Ribbon Home.
+
 ## 2026-10-17 — Sửa tràn và biến dạng bố cục Word 01
 - Xóa các quy tắc CSS chồng nhau từng làm thẻ bước cao quá mức và tràn khỏi màn hình.
 - Giữ chiều cao khối theo nội dung, không kéo giãn bằng `1fr` hay `height:100%` trên mỗi bước.

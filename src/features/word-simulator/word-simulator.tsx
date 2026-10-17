@@ -94,8 +94,10 @@ function sanitize(html:string):string {
     for(const [key,value] of Object.entries(safeAttrs))element.setAttribute(key,value);
     if(safeStyles.length)element.setAttribute("style",safeStyles.join(";"));
   };
+  // IME boundaries are only editor caret aids, never part of saved documents.
+  parsed.body.querySelectorAll("[data-script-ime-break]").forEach(node=>node.remove());
   clean(parsed.body);
-  return parsed.body.innerHTML;
+  return parsed.body.innerHTML.replaceAll("\u200B","");
 }
 function triggerDownload(fileName:string,content:string,type:string){
   const blob=new Blob([content],{type});
@@ -437,7 +439,10 @@ export function WordSimulator(){
     while(walker.nextNode()){
       const node=walker.currentNode as Text;
       const index=node.data.indexOf(SCRIPT_EXIT_ANCHOR);
-      if(index>=0)node.deleteData(index,SCRIPT_EXIT_ANCHOR.length);
+      // A protected word boundary must survive text input until the IME
+      // finishes composing the first normal-text word outside <sub>/<sup>.
+      if(index>=0&&!node.parentElement?.closest("[data-script-ime-break]"))
+        node.deleteData(index,SCRIPT_EXIT_ANCHOR.length);
     }
   }
   function insertTypingScriptText(value:string){
@@ -608,6 +613,45 @@ export function WordSimulator(){
     root.normalize();
     return true;
   }
+  // Finish a superscript/subscript typing run at a hard IME boundary.
+  // Windows Vietnamese Telex can otherwise treat the next "a" as another
+  // keystroke for the last "a" inside <sup>, converting it into "â".
+  function exitScriptIntoPlainCaret(script:HTMLElement){
+    const root=editor.current;
+    if(!root?.contains(script)||typeof root.blur!=="function"||
+      typeof root.focus!=="function"||typeof script.after!=="function")return false;
+    const selection=window.getSelection();
+    if(!selection)return false;
+    const plain=document.createElement("span");
+    plain.setAttribute("data-script-plain","true");
+    const boundary=document.createElement("span");
+    boundary.setAttribute("data-script-ime-break","true");
+    boundary.contentEditable="false";
+    boundary.setAttribute("aria-hidden","true");
+    boundary.style.fontSize="0";
+    boundary.style.lineHeight="0";
+    boundary.textContent=SCRIPT_EXIT_ANCHOR;
+    const caret=document.createTextNode(TYPING_SCRIPT_PLACEHOLDER);
+    plain.append(boundary,caret);
+    // The Home ribbon preserves selection on mousedown, so blur explicitly:
+    // focus change commits any active Vietnamese IME composition.
+    root.blur();
+    script.after(plain);
+    root.focus({preventScroll:true});
+    const range=document.createRange();
+    range.setStart(caret,caret.data.length);
+    range.collapse(true);
+    selection.removeAllRanges();
+    selection.addRange(range);
+    typingScriptRef.current=null;
+    typingScriptNodeRef.current=null;
+    typingScriptExitNodeRef.current=null;
+    typingScriptExitLengthRef.current=null;
+    root.querySelectorAll?.("[data-script-exit]")?.forEach(node=>node.removeAttribute("data-script-exit"));
+    setFormatActive(current=>({...current,subscript:false,superscript:false}));
+    rememberSelection();
+    return true;
+  }
   // x₂/x² have two separate behaviors: selected text toggles the formatting
   // of the selected content; a collapsed caret enters/exits a typing mode.
   function toggleScriptFormat(kind:"subscript"|"superscript"){
@@ -621,6 +665,7 @@ export function WordSimulator(){
     }
     const liveScript=scriptAncestor(liveSelection?.anchorNode??null)??boundaryScript;
     const liveText=liveScript?.textContent?.replaceAll(TYPING_SCRIPT_PLACEHOLDER,"")??"";
+    if(root&&liveScript&&liveText&&exitScriptIntoPlainCaret(liveScript))return;
     if(root&&liveScript&&liveText&&typeof document.createTextNode==="function"){
       const anchor=document.createTextNode("\u00A0");
       liveScript.parentNode?.insertBefore(anchor,liveScript.nextSibling);
@@ -642,6 +687,7 @@ export function WordSimulator(){
       const activeScript=typingScriptNodeRef.current??
         root.querySelector?.(kind==="subscript"?"sub":"sup")??null;
       const activeText=activeScript?.textContent?.replaceAll(TYPING_SCRIPT_PLACEHOLDER,"")??"";
+      if(activeText&&activeScript&&exitScriptIntoPlainCaret(activeScript))return;
       if(activeText){
         restoreSelection();
         const selection=window.getSelection();
@@ -671,6 +717,7 @@ export function WordSimulator(){
       // Exit an explicit caret-only typing mode before focus/selection changes
       // caused by the Ribbon can make the current Range look ambiguous.
       const cleanText=explicitPending.textContent?.replaceAll(TYPING_SCRIPT_PLACEHOLDER,"")??"";
+      if(cleanText&&exitScriptIntoPlainCaret(explicitPending))return;
       typingScriptRef.current=null;
       typingScriptNodeRef.current=null;
       typingScriptExitNodeRef.current=cleanText?explicitPending:null;
@@ -738,6 +785,8 @@ export function WordSimulator(){
         ?typingScriptRef.current:fromDOM;
       const scriptNode=active?(pending&&root.contains(pending)?pending:context):null;
       if(active&&scriptNode){
+        const existing=scriptNode.textContent?.replaceAll(TYPING_SCRIPT_PLACEHOLDER,"")??"";
+        if(existing&&exitScriptIntoPlainCaret(scriptNode))return;
         // A second click must work even when the browser's collapsed Range
         // has drifted to the parent of the previously empty inline element.
         const after=document.createRange();

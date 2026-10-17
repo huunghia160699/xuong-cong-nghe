@@ -25,6 +25,14 @@
 
 ## III. Lịch sử
 
+### 2026-10-17 — Sửa Telex ghép nhầm chữ khi tắt Superscript/Subscript
+- **Lỗi thực tế:** Trong Word mô phỏng, bật Sup, gõ `aaaaa`, tắt Sup rồi gõ `a` thì bộ gõ tiếng Việt Telex vẫn biến ký tự `a` cuối nằm trong Sup thành `â`, đồng thời toolbar hiển thị Sup đang bật lại.
+- **Nguyên nhân:** Ribbon giữ selection khi `mousedown`; logic thoát Sup cũ chưa kết thúc phiên IME, đặt caret ngay sau thẻ `<sup>`, dọn ký tự mốc quá sớm, khiến Telex tiếp tục xử lý ký tự cũ và DOM selection nhảy vào thẻ định dạng.
+- **Sửa:** Trong `src/features/word-simulator/word-simulator.tsx` bổ sung `exitScriptIntoPlainCaret`: chủ động blur để IME kết thúc, tạo vùng nhập span thường ở ngoài `<sub>/<sup>`, ranh giới từ NBSP không cho chỉnh sửa và được ẩn về hình thức, đặt caret vào span thường rồi focus lại. Áp dụng trên các nhánh thoát chỉ số đang có chữ; xóa chế độ pending/exit và đồng bộ toolbar. Không xóa ranh giới IME trong mỗi `input`; loại bỏ nó và ký tự vô hình khi lưu/xuất HTML.
+- **Kiểm thử:** Thêm regression test VM cho trường hợp `aaaaa` Sup → tắt → `a`/Telex `â` bên ngoài Sup, đảm bảo `<sup>` không bị sửa và toolbar không tái bật; chạy CI Unit tests, Typecheck, Build, Smoke routes.
+- **Phạm vi:** Chỉ hành vi gõ chỉ số trong công cụ Word mô phỏng, không thay Ribbon Home, dữ liệu slide, Excel, UI ngoài.
+- **Giới hạn:** Chưa xác minh tương tác thực tế qua Windows Vietnamese Telex/Unikey trong trình duyệt; cần kiểm tra bằng bàn phím/IME thực tế.
+
 ### 2026-10-17 — Sửa lỗi slide Word 01 bị kéo giãn, tràn trang và co hẹp hai cột
 - **Phản hồi thực tế:** Ảnh người dùng cho thấy slide nhập tiếng Việt có một thẻ kéo dài gần hết màn hình và thẻ thứ hai bị đẩy ra ngoài, tiêu đề bị cắt; slide 2 có hai khối quá hẹp, chữ bị xuống dòng, còn khoảng trắng lớn.
 - **Nguyên nhân trong CSS:** Tập hợp các override liên tiếp dùng `flex:1 0 auto` cho vùng nội dung, `grid-auto-rows:minmax(min-content,1fr)` và `height:100%` cho từng thẻ, khiến lưới phóng chiều cao không theo nội dung; phần khung nhiều quy tắc chồng nhau. Không phải lỗi dữ liệu bài giảng.
