@@ -689,12 +689,18 @@ export function WordSimulator(){
         // A second click must work even when the browser's collapsed Range
         // has drifted to the parent of the previously empty inline element.
         const after=document.createRange();
-        after.setStartAfter(scriptNode);
+        const cleanText=scriptNode.textContent?.replaceAll(TYPING_SCRIPT_PLACEHOLDER,"")??"";
+        if(cleanText&&scriptNode.parentNode){
+          const exitAnchor=document.createTextNode(SCRIPT_EXIT_ANCHOR);
+          scriptNode.parentNode.insertBefore(exitAnchor,scriptNode.nextSibling);
+          after.setStart(exitAnchor,exitAnchor.data.length);
+        }else{
+          after.setStartAfter(scriptNode);
+          scriptNode.remove();
+        }
         after.collapse(true);
         selection.removeAllRanges();
         selection.addRange(after);
-        const cleanText=scriptNode.textContent?.replaceAll(TYPING_SCRIPT_PLACEHOLDER,"")??"";
-        if(!cleanText)scriptNode.remove();
       }
       if(active===kind){
         const exitNode=scriptNode??pending??context;
