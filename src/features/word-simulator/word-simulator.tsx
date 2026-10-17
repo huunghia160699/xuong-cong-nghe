@@ -366,7 +366,7 @@ export function WordSimulator(){
       }
       const context=scriptAncestor(range.startContainer);
       const active=context?.tagName==="SUB"?"subscript":context?.tagName==="SUP"?"superscript":null;
-      if(active){
+      if(active&&context){
         // Move the insertion point outside the previous script span so a
         // second press really returns to normal-size typing.
         const after=document.createRange();
