@@ -156,7 +156,7 @@ test("Home Ribbon: repeat state, Escape, selection and dialogs 10 rounds",()=>{
    assert.match(editor,/setFormatActive\(current=>\(\{\.\.\.current,\[kind\]:!wasActive,\[opposite\]:false\}\)\);/);
    assert.match(editor,/const context=scriptAncestor\(range\.startContainer\);/);
    assert.match(editor,/if\(active===kind\)\{/);
-   assert.match(editor,/after\.setStartAfter\(context\);/);
+   assert.match(editor,/after\.setStartAfter\(scriptNode\);/);
    assert.match(editor,/current\.insertNode\(script\);/);
    assert.match(editor,/inside\.selectNodeContents\(script\);/);
    assert.match(editor,/typingScriptRef\.current=kind;/);
