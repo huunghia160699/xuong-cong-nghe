@@ -1444,7 +1444,8 @@ test("Selected x₂/x² DOM rewrite: actual nested node tree toggles on/off and 
  assert.ok(begin>=0&&end>begin);
  const executable=source.slice(begin,end).trim()
   .replace('range:Range,kind:"subscript"|"superscript",enabled:boolean','range,kind,enabled')
-  .replaceAll(" as Element","").replaceAll(" as HTMLElement","");
+  .replaceAll(" as Element","").replaceAll(" as HTMLElement","")
+  .replace("let branch:Node=placeholder;","let branch=placeholder;");
  class TextNode{
   constructor(value){this.value=value;this.parentNode=null;}
   get textContent(){return this.value;}
