@@ -1618,7 +1618,7 @@ test("Word script toggles prefer the LIVE highlighted selection over a stale sav
 test("Word x2 status ignores unselected text nodes that merely touch range boundaries",()=>{
  const source=readFileSync("src/features/word-simulator/word-simulator.tsx","utf8");
  const begin=source.indexOf("  function rangeHasScript(");
- const end=source.indexOf("  function syncFormatState()",begin);
+ const end=source.indexOf("  function syncFontControls()",begin);
  assert.ok(begin>=0&&end>begin);
  const executable=source.slice(begin,end).trim()
    .replace('range:Range,kind:"subscript"|"superscript"','range,kind')
@@ -1708,7 +1708,7 @@ test("Word script selection restoration selects next text node when start equals
 test("Superscript x² selected at element boundaries is detected active and toggles off, excluding adjacent text",()=>{
  const source=readFileSync("src/features/word-simulator/word-simulator.tsx","utf8");
  const begin=source.indexOf("  function rangeHasScript(");
- const end=source.indexOf("  function syncFormatState()",begin);
+ const end=source.indexOf("  function syncFontControls()",begin);
  const executable=source.slice(begin,end).trim()
    .replace('range:Range,kind:"subscript"|"superscript"','range,kind')
    .replace('const nodes:Node[]=[]','const nodes=[]');
@@ -1964,7 +1964,7 @@ test("Clear Formatting updates font-family/size controls from selected HTML and 
  const begin=source.indexOf('  function syncFontControls()');
  const end=source.indexOf('  function removeEmptyFormattingNodes()',begin);
  assert.ok(begin>=0&&end>begin);
- const executable=source.slice(begin,end).trim()
+ const executable=(source.slice(begin,end).match(/  function syncFontControls\(\)\{[\s\S]*?\n  \}/)?.[0]??"").trim()
   .replace('let element:Element|null=','let element=')
   .replace('selection.anchorNode as Element','selection.anchorNode')
   .replaceAll(' as HTMLElement','');
