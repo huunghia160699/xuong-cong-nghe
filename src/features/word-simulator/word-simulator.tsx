@@ -553,11 +553,10 @@ export function WordSimulator(){
     if(explicitPending){
       // Exit an explicit caret-only typing mode before focus/selection changes
       // caused by the Ribbon can make the current Range look ambiguous.
-      const parent=explicitPending.parentNode;
       const cleanText=explicitPending.textContent?.replaceAll(TYPING_SCRIPT_PLACEHOLDER,"")??"";
       typingScriptRef.current=null;
       typingScriptNodeRef.current=null;
-      if(!root?.contains(explicitPending)||!parent){
+      if(!root?.contains(explicitPending)){
         if(!cleanText){
           explicitPending.remove();
           markChanged();
@@ -566,19 +565,14 @@ export function WordSimulator(){
         return;
       }
       const after=document.createRange();
-      if(cleanText){
-        after.setStartAfter(explicitPending);
-      }else{
-        const index=Array.prototype.indexOf.call(parent.childNodes,explicitPending);
-        explicitPending.remove();
-        after.setStart(parent,Math.max(0,index));
-      }
+      after.setStartAfter(explicitPending);
+      if(!cleanText)explicitPending.remove();
       after.collapse(true);
-      root.focus({preventScroll:true});
+      root.focus?.({preventScroll:true});
       const selection=window.getSelection();
       selection?.removeAllRanges();
       selection?.addRange(after);
-      savedSelection.current=after.cloneRange();
+      rememberSelection();
       setFormatActive(current=>({...current,subscript:false,superscript:false}));
       if(!cleanText)markChanged();
       return;
