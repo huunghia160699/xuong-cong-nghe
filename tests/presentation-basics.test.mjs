@@ -267,7 +267,7 @@ test("Word window title and Quick Access Toolbar have working Save Undo Redo and
  for(const handler of ["onSave","onUndo","onRedo","onNew","onPrint","onClose"])
    assert.ok(bar.includes(handler),handler);
  assert.match(bar,/role="toolbar" aria-label="Quick Access Toolbar"/);
- assert.match(bar,/href="\/cong-cu" onClick=\{onClose\}/);
+ assert.match(bar,/href="\\/cong-cu" onClick=\\{(?:onClose|event=>\\{)/);
  assert.match(bar,/className="wsl-window-decor"/);
  assert.doesNotMatch(bar,/onClick=\{.*Minimize|onClick=\{.*Maximize/);
  assert.match(bar,/ - Word/);
