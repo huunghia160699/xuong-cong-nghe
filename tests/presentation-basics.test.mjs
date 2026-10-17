@@ -1338,7 +1338,7 @@ test("x₂/x² use two modes: selection toggle and collapsed-caret typing toggle
  assert.match(source,/next\.subscript=rangeHasScript\(range,"subscript"\);/);
  assert.match(source,/next\.superscript=rangeHasScript\(range,"superscript"\);/);
  assert.match(source,/const fromDOM=ancestor\?\.tagName==="SUB"\?"subscript":ancestor\?\.tagName==="SUP"\?"superscript":null;/);
- assert.match(source,/const active=typingScriptRef\.current&&pending&&editor\.current\?\.contains\(pending\)/);
+ assert.match(source,/const active=typingScriptRef\.current&&pending&&root\.contains\(pending\)/);
  assert.match(source,/ALLOWED_TAGS=new Set\(\["P","BR"/);
 });
 
@@ -1889,7 +1889,7 @@ test("Caret x₂/x² formatting state survives programmatic selectionchange and 
  const source=readFileSync("src/features/word-simulator/word-simulator.tsx","utf8");
  const part=source.slice(source.indexOf('  function syncFormatState()'),source.indexOf('  // Persist selection'));
  assert.match(part,/const pending=typingScriptNodeRef\.current;/);
- assert.match(part,/const active=typingScriptRef\.current&&pending&&editor\.current\?\.contains\(pending\)/);
+ assert.match(part,/const active=typingScriptRef\.current&&pending&&root\.contains\(pending\)/);
  assert.match(part,/\?typingScriptRef\.current:fromDOM;/);
  assert.match(source,/function syncTypingScriptCaret\(\)/);
  assert.match(source,/if\(pending&&ancestor!==pending\)\{/);
