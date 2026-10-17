@@ -720,7 +720,7 @@ export function WordSimulator(){
         selection.addRange(after);
       }
       if(active===kind){
-        const exitNode=scriptNode??pending??context;
+        const exitNode=scriptNode??pending??context??root.querySelector?.(kind==="subscript"?"sub":"sup")??null;
         const exitText=exitNode?.textContent?.replaceAll(TYPING_SCRIPT_PLACEHOLDER,"")??"";
         typingScriptExitNodeRef.current=exitText?exitNode:null;
         typingScriptExitLengthRef.current=exitText?exitText.length:null;
