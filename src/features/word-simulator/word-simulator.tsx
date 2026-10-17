@@ -604,17 +604,22 @@ export function WordSimulator(){
   function toggleScriptFormat(kind:"subscript"|"superscript"){
     const root=editor.current;
     if(root&&formatActive[kind]){
-      restoreSelection();
-      root.focus?.({preventScroll:true});
-      document.execCommand?.(kind==="subscript"?"subscript":"superscript",false);
-      typingScriptRef.current=null;
-      typingScriptNodeRef.current=null;
-      typingScriptExitNodeRef.current=null;
-      typingScriptExitLengthRef.current=null;
-      root.querySelectorAll?.("[data-script-exit]")?.forEach(node=>node.removeAttribute("data-script-exit"));
-      rememberSelection();
-      setFormatActive(current=>({...current,subscript:false,superscript:false}));
-      return;
+      const activeScript=typingScriptNodeRef.current??
+        root.querySelector?.<HTMLElement>(kind==="subscript"?"sub":"sup")??null;
+      const activeText=activeScript?.textContent?.replaceAll(TYPING_SCRIPT_PLACEHOLDER,"")??"";
+      if(activeText){
+        restoreSelection();
+        root.focus?.({preventScroll:true});
+        document.execCommand?.(kind==="subscript"?"subscript":"superscript",false);
+        typingScriptRef.current=null;
+        typingScriptNodeRef.current=null;
+        typingScriptExitNodeRef.current=null;
+        typingScriptExitLengthRef.current=null;
+        root.querySelectorAll?.("[data-script-exit]")?.forEach(node=>node.removeAttribute("data-script-exit"));
+        rememberSelection();
+        setFormatActive(current=>({...current,subscript:false,superscript:false}));
+        return;
+      }
     }
     const explicitPending=typingScriptRef.current===kind?typingScriptNodeRef.current:null;
     if(explicitPending){
