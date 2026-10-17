@@ -128,7 +128,7 @@ export function WordSimulator(){
   const typingScriptExitLengthRef=useRef<number|null>(null);
   // A zero-width placeholder keeps a collapsed caret inside an empty sub/sup.
   const TYPING_SCRIPT_PLACEHOLDER="\u200B";
-  const SCRIPT_EXIT_ANCHOR="\u2060";
+  const SCRIPT_EXIT_ANCHOR="\u00A0";
   const indentTarget=useRef<HTMLElement|null>(null);
   const indentDragging=useRef(false);
   const [rulerIndent,setRulerIndent]=useState<RulerIndent>({firstLine:0,left:0,right:0});
