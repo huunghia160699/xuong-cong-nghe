@@ -1535,8 +1535,16 @@ test("Selected x₂/x² DOM rewrite: actual nested node tree toggles on/off and 
   assert.equal(render(root),"<p>H₂O</p>","second press must remove the actual <sub>");
   edit(root,root.firstChild,"superscript",true);
   assert.equal(render(root),"<p><sup>H₂O</sup></p>");
+  edit(root,root.firstChild.firstChild,"superscript",false);
+  assert.equal(render(root),"<p>H₂O</p>","second x² click must remove the actual <sup>");
+  edit(root,root.firstChild,"superscript",true);
+  assert.equal(render(root),"<p><sup>H₂O</sup></p>");
   edit(root,root.firstChild.firstChild,"subscript",true);
   assert.equal(render(root),"<p><sub>H₂O</sub></p>","switch must not nest <sup> inside <sub>");
+  edit(root,root.firstChild.firstChild,"superscript",true);
+  assert.equal(render(root),"<p><sup>H₂O</sup></p>","switching back to x² must remove old <sub>");
+  edit(root,root.firstChild.firstChild,"superscript",false);
+  assert.equal(render(root),"<p>H₂O</p>","x² must turn off again after switching from x₂");
  }
  {
   const before=text("before"),picked=text("ONLY"),after=text("after");
