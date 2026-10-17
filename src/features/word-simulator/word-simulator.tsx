@@ -258,11 +258,12 @@ export function WordSimulator(){
       try{
         const textRange=document.createRange();
         textRange.selectNodeContents(node);
-        // Per DOM Range, END_TO_START compares our end to the text start;
-        // START_TO_END compares our start to the text end. Reverse signs
-        // would report a selected <sup>/<sub> as ordinary text.
-        const endsAfterStart=range.compareBoundaryPoints(Range.END_TO_START,textRange)>0;
-        const startsBeforeEnd=range.compareBoundaryPoints(Range.START_TO_END,textRange)<0;
+        // Range's cross-boundary constants are deliberately counter-intuitive:
+        // START_TO_END compares the selection END with the text node START;
+        // END_TO_START compares the selection START with the text node END.
+        // Reversing them makes highlighted <sup>/<sub> always appear inactive.
+        const endsAfterStart=range.compareBoundaryPoints(Range.START_TO_END,textRange)>0;
+        const startsBeforeEnd=range.compareBoundaryPoints(Range.END_TO_START,textRange)<0;
         return endsAfterStart&&startsBeforeEnd;
       }catch{return false;}
     });

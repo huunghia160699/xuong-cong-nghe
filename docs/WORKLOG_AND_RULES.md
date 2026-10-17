@@ -25,6 +25,12 @@
 
 ## III. Lịch sử
 
+### 2026-10-18 — Sửa trạng thái active khi chọn chữ đã Sup/Sub
+- **Triệu chứng:** Bôi chọn chữ đã có `<sup>`/`<sub>` nhưng hai nút Sup/Sub không sáng như Bold/Italic/Underline.
+- **Nguyên nhân xác nhận:** DOM Range dùng `START_TO_END` để so sánh end của selection với start của textRange và `END_TO_START` để so sánh start của selection với end của textRange. Phiên bản cũ đảo ngược constants nên bộ phát hiện nội dung định dạng hầu như luôn trả false.
+- **Sửa:** Đổi chính xác hai constants trong `rangeHasScript`; không thay các logic khác, tránh hồi quy. Test `presentation-basics.test.mjs` bổ sung các trường hợp vùng chọn chỉ Sup, chỉ Sub, thường, hỗn hợp; `word-home-qa.test.mjs` đồng bộ assertions.
+- **Kiểm thử/triển khai:** Chạy CI Unit tests, Typecheck, Build, Smoke; Vercel Production READY cùng SHA GitHub main mới xác nhận hoàn tất. Chưa kiểm thử trực quan bằng UniKey/Chromium trên Windows.
+
 ### 2026-10-18 — Tổng kiểm tra Sup/Sub: vùng chọn, bật/tắt, đổi chế độ
 - **Lỗi phát sinh sau lần sửa Telex:** Bôi chọn chữ (đặc biệt đang ở trong `<sup>/<sub>`) rồi bấm Sup/Sub bị mất vùng chọn; không thể tắt định dạng hoặc chuyển sang chế độ đối lập. Có thể kéo chọn qua dấu ngăn IME không được.
 - **Nguyên nhân:** `toggleScriptFormat` gọi nhánh thoát chỉ số qua `liveScript` trước khi kiểm tra `!range.collapsed`, biến một selection thực thành thao tác tại caret; bộ phát hiện `rangeHasScript` dùng `Range.compareBoundaryPoints` với dấu/biên bị đảo; và dấu phân cách `contentEditable=false` cản kéo chọn.

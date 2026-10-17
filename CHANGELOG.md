@@ -1,5 +1,10 @@
 # Changelog
 
+## 2026-10-18 — Nút Sup/Sub active đúng theo vùng chữ được chọn
+- Sửa `rangeHasScript` theo đúng semantics của `Range.compareBoundaryPoints`: dùng START_TO_END kiểm tra cuối vùng chọn nằm sau đầu text node, END_TO_START kiểm tra đầu vùng chọn nằm trước cuối text node. Trước đây đảo hai phép so sánh nên chọn chữ đã Sup/Sub không báo active.
+- Giữ cấu trúc DOM Sup/Sub và các nút Bold/Italic/Underline không thay đổi.
+- Bổ sung kiểm thử nhận diện chữ Sup, Sub, chữ thường, vùng chọn hỗn hợp và chọn một phần nội dung; cập nhật assertion kiểm thử Ribbon.
+
 ## 2026-10-18 — Khôi phục bôi chọn và Superscript/Subscript
 - Ưu tiên vùng chữ đang được bôi chọn trước logic thoát chế độ gõ chỉ số, tránh xóa selection sai.
 - Sửa cách kiểm tra vùng chọn Sup/Sub theo quy tắc `Range.compareBoundaryPoints` của trình duyệt.

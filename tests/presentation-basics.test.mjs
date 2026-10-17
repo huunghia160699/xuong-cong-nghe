@@ -1754,8 +1754,8 @@ test("Word x2 status ignores unselected text nodes that merely touch range bound
    .replace('range:Range,kind:"subscript"|"superscript"','range,kind')
    .replace('const nodes:Node[]=[]','const nodes=[]');
  assert.match(executable,/textRange\.selectNodeContents\(node\);/);
- assert.match(executable,/range\.compareBoundaryPoints\(Range\.END_TO_START,textRange\)>0/);
- assert.match(executable,/range\.compareBoundaryPoints\(Range\.START_TO_END,textRange\)<0/);
+ assert.match(executable,/range\.compareBoundaryPoints\(Range\.START_TO_END,textRange\)>0/);
+ assert.match(executable,/range\.compareBoundaryPoints\(Range\.END_TO_START,textRange\)<0/);
  assert.match(executable,/return endsAfterStart&&startsBeforeEnd;/);
  const before={textContent:"xy"},selected={textContent:"H2O"};
  const root={};
@@ -1786,7 +1786,7 @@ test("Word x2 status ignores unselected text nodes that merely touch range bound
      const end=this.endContainer===before?this.endOffset:2+this.endOffset;
      const left=textRange.textNode===before?0:2;
      const right=left+(textRange.textNode.textContent?.length??0);
-     return Math.sign((how===1?start-right:end-left));
+     return Math.sign((how===1?end-left:start-right));
    }
  };
  assert.equal(detect(range,"subscript"),true,
@@ -1797,6 +1797,64 @@ test("Word x2 status ignores unselected text nodes that merely touch range bound
  assert.equal(detect(range,"subscript"),true);
  range.endOffset=0;
  assert.equal(detect(range,"subscript"),false,"empty selected span never counts as formatted");
+});
+
+test("Word Sup/Sub toolbar active-state matches actual highlighted DOM markup",()=>{
+ const source=readFileSync("src/features/word-simulator/word-simulator.tsx","utf8");
+ const begin=source.indexOf("  function rangeHasScript(");
+ const end=source.indexOf("  function syncFontControls()",begin);
+ const executable=source.slice(begin,end).trim()
+   .replace('range:Range,kind:"subscript"|"superscript"','range,kind')
+   .replace('const nodes:Node[]=[]','const nodes=[]');
+ const stateSource=source.slice(source.indexOf("  function syncFormatState()"),source.indexOf("  // Persist selection"));
+ assert.match(stateSource,/next\.superscript=rangeHasScript\(range,"superscript"\);/);
+ assert.match(stateSource,/next\.subscript=rangeHasScript\(range,"subscript"\);/);
+ const root={};
+ const normalBefore={textContent:"a"},upper={textContent:"aaaaa",nodeType:3},lower={textContent:"2"},normalAfter={textContent:"b"};
+ const all=[normalBefore,upper,lower,normalAfter];
+ const formats=new Map([[normalBefore,null],[upper,{tagName:"SUP"}],[lower,{tagName:"SUB"}],[normalAfter,null]]);
+ let nodes=all;
+ const ctx={editor:{current:root},
+   Node:{TEXT_NODE:3},NodeFilter:{SHOW_TEXT:4},
+   Range:{START_TO_END:1,END_TO_START:3},
+   scriptAncestor:node=>formats.get(node),
+   document:{
+     createRange(){return {selectNodeContents(node){this.node=node}};},
+     createTreeWalker(){let index=0;return{
+       currentNode:null,
+       nextNode(){this.currentNode=nodes[index];index++;return index<=nodes.length;}
+     }}
+   }
+ };
+ const detect=runInNewContext("("+executable+")",ctx);
+ function range(start,end){
+   return {collapsed:false,commonAncestorContainer:{nodeType:1},
+     compareBoundaryPoints(how,textRange){
+       const i=all.indexOf(textRange.node);
+       // 1: selection END vs node START; 3: selection START vs node END
+       return Math.sign(how===1?end-i:start-(i+1));
+     }};
+ }
+ for(const [label,start,end,expectedSup,expectedSub] of [
+   ["sup exactly",1,2,true,false],
+   ["sub exactly",2,3,false,true],
+   ["plain before",0,1,false,false],
+   ["normal and sup",0,2,false,false],
+   ["sup and sub",1,3,false,false],
+   ["sup plus next plain",1,4,false,false],
+   ["normal after",3,4,false,false]
+ ]){
+   const selection=range(start,end);
+   assert.equal(detect(selection,"superscript"),expectedSup,label+" sup button");
+   assert.equal(detect(selection,"subscript"),expectedSub,label+" sub button");
+ }
+ // Also test a partial text-node selection: still active when the full
+ // selection is inside one existing SUP node, regardless of text offsets.
+ const textRange={
+   collapsed:false,commonAncestorContainer:upper,
+   compareBoundaryPoints(how,node){return how===1?1:-1;}
+ };
+ assert.equal(detect(textRange,"superscript"),true);
 });
 
 test("Word script selection restoration selects next text node when start equals previous node end",()=>{
@@ -1870,7 +1928,7 @@ test("Superscript x² selected at element boundaries is detected active and togg
    const l=all.indexOf(textRange.node),r=l+1;
    const start=this.startContainer===parent?this.startOffset:all.indexOf(this.startContainer)+this.startOffset;
    const end=this.endContainer===parent?this.endOffset:all.indexOf(this.endContainer)+this.endOffset;
-   return Math.sign(how===1?start-r:end-l);
+   return Math.sign(how===1?end-l:start-r);
   }
  };
  assert.equal(detect(selected,"superscript"),true,"selecting exactly <sup>2</sup> must read sup as on");
