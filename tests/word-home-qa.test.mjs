@@ -129,9 +129,9 @@ test("Home Ribbon: repeat state, Escape, selection and dialogs 10 rounds",()=>{
    assert.match(editor,/function restoreScriptTextSelection\(start:number,length:number\)/);
    assert.match(editor,/if\(!range\.collapsed\)\{/);
    assert.match(editor,/const wasActive=rangeHasScript\(range,kind\);/);
-   assert.match(editor,/const oppositeActive=rangeHasScript\(range,opposite\);/);
-   assert.match(editor,/if\(!wasActive&&oppositeActive\)document\.execCommand\(opposite,false\);/);
-   assert.match(editor,/const applied=document\.execCommand\(kind,false\);/);
+   assert.match(editor,/function applySelectedScript\(range:Range,kind:"subscript"\|"superscript",enabled:boolean\)/);
+   assert.match(editor,/const applied=applySelectedScript\(range,kind,!wasActive\);/);
+   assert.match(editor,/const fragment=range\.extractContents\(\);/);
    assert.match(editor,/restoreScriptTextSelection\(selectedStart,selectedLength\);/);
    assert.match(editor,/setFormatActive\(current=>\(\{\.\.\.current,\[kind\]:!wasActive,\[opposite\]:false\}\)\);/);
    assert.match(editor,/const context=scriptAncestor\(range\.startContainer\);/);
