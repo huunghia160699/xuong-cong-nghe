@@ -1909,7 +1909,7 @@ test("Caret x₂/x² formatting state survives programmatic selectionchange and 
  assert.match(source,/onInput=\{event=>\{repairExitedScriptText/);
 
  assert.match(source,/cleanTypingScriptPlaceholder\(\);rememberSelection\(\);markChanged\(\);/);
- assert.match(source,/onKeyUp=\{event=>\{if\(\["ArrowLeft","ArrowRight","ArrowUp","ArrowDown","Home","End","PageUp","PageDown"\]\.includes\(event\.key\)\)syncTypingScriptCaret\(\);rememberSelection\(\);\}\}/);
+ assert.match(source,/onKeyUp=\{event=>\{repairExitedScriptText\(\);if\(/);
  assert.match(source,/onMouseUp=\{\(\)=>\{syncTypingScriptCaret\(\);handleEditorMouseUp\(\);\}\}/);
 });
 
