@@ -1396,6 +1396,7 @@ test("Unselected caret: x₂/x² enters typing mode, second click exits; switchi
  const harness={
   window:{getSelection:()=>selection},
   editor:{current:root},
+  formatActive:button,
   typingScriptRef,
   typingScriptNodeRef,
   typingScriptExitNodeRef,
@@ -1837,6 +1838,7 @@ test("Caret script x₂/x² second click toggles off even when browser relocates
  const ctx={
   window:{getSelection:()=>selection},
   editor:{current:root},
+  formatActive:button,
   typingScriptRef,typingScriptNodeRef,typingScriptExitNodeRef,TYPING_SCRIPT_PLACEHOLDER:"\u200B",
   document:{
     createElement(tag){
