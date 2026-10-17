@@ -1,7 +1,7 @@
 "use client";
 
 import {useState,type ReactNode} from "react";
-import {WordSplitButton} from "./word-split-button";
+import {WordCustomDropdown,WordSplitButton} from "./word-split-button";
 import {WordRibbonDialog,type RibbonDialogAction} from "./word-ribbon-dialog";
 import {
   AlignCenter,AlignJustify,AlignLeft,AlignRight,
@@ -157,20 +157,12 @@ export function WordHomeRibbon({
 
    <Group name="Font" className="wsl-home-font" onDetails={()=>setDialog("Font")}>
      <div className="wsl-font-top">
-       <label className="wsl-font-select wsl-font-family">
-         <span className="sr-only">Phông chữ</span>
-         <select aria-label="Font" value={font} onChange={event=>editFont(event.target.value)}>
-           {FONTS.map(name=><option value={name} key={name}>{name==="Aptos"?"Aptos (Body)":name}</option>)}
-         </select>
-         <ChevronDown size={RIBBON_EXPAND_ARROW_SIZE} aria-hidden="true" className="wsl-font-select-chevron"/>
-       </label>
-       <label className="wsl-font-select wsl-font-size">
-         <span className="sr-only">Cỡ chữ</span>
-         <select aria-label="Font Size" value={fontSize} onChange={event=>editSize(event.target.value)}>
-           {fontSizes.map(([value,text])=><option key={value} value={value}>{text}</option>)}
-         </select>
-         <ChevronDown size={RIBBON_EXPAND_ARROW_SIZE} aria-hidden="true" className="wsl-font-select-chevron"/>
-       </label>
+       <WordCustomDropdown className="wsl-font-select wsl-font-family"
+         label="Font" value={font} onChange={editFont}
+         options={FONTS.map(name=>({value:name,label:name==="Aptos"?"Aptos (Body)":name}))}/>
+       <WordCustomDropdown className="wsl-font-select wsl-font-size"
+         label="Font Size" value={fontSize} onChange={editSize}
+         options={fontSizes.map(([value,text])=>({value,label:text}))}/>
        <Btn className="wsl-font-icon-button" label="Increase Font Size" icon={<span className="wsl-font-size-symbol wsl-font-grow" aria-hidden="true"><span className="wsl-font-size-letter">A<svg className="wsl-font-size-direction" viewBox="0 0 9 8" focusable="false"><path d="M1.4 5.8 4.5 2.7 7.6 5.8" fill="none" stroke="currentColor" strokeWidth="2.1" strokeLinecap="square" strokeLinejoin="miter"/></svg></span></span>} run={()=>editSize(String(Math.min(7,size+1)))}/>
        <Btn className="wsl-font-icon-button" label="Decrease Font Size" icon={<span className="wsl-font-size-symbol wsl-font-shrink" aria-hidden="true"><span className="wsl-font-size-letter">A<svg className="wsl-font-size-direction" viewBox="0 0 9 8" focusable="false"><path d="M1.4 2.2 4.5 5.3 7.6 2.2" fill="none" stroke="currentColor" strokeWidth="2.1" strokeLinecap="square" strokeLinejoin="miter"/></svg></span></span>} run={()=>editSize(String(Math.max(1,size-1)))}/>
        <span className="wsl-font-divider" aria-hidden="true"/>
