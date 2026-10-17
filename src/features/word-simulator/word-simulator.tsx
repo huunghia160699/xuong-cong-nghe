@@ -125,6 +125,7 @@ export function WordSimulator(){
   const typingScriptRef=useRef<"subscript"|"superscript"|null>(null);
   const typingScriptNodeRef=useRef<HTMLElement|null>(null);
   const typingScriptExitNodeRef=useRef<HTMLElement|null>(null);
+  const typingScriptExitLengthRef=useRef<number|null>(null);
   // A zero-width placeholder keeps a collapsed caret inside an empty sub/sup.
   const TYPING_SCRIPT_PLACEHOLDER="\u200B";
   const indentTarget=useRef<HTMLElement|null>(null);
@@ -398,16 +399,19 @@ export function WordSimulator(){
     markChanged();
     return true;
   }
-  function repairExitedScriptText(value:string){
+  function repairExitedScriptText(){
     const root=editor.current;
     const script=typingScriptExitNodeRef.current??root?.querySelector<HTMLElement>("[data-script-exit]")??null;
-    if(!value||!script||!root?.contains(script))return;
-    script.removeAttribute?.("data-script-exit");
+    const originalLength=typingScriptExitLengthRef.current;
+    if(!script||!root?.contains(script)||originalLength===null)return;
     const content=script.textContent??"";
-    if(!content.endsWith(value))return;
+    if(content.length<=originalLength)return;
+    const moved=content.slice(originalLength);
+    script.textContent=content.slice(0,originalLength);
     typingScriptExitNodeRef.current=null;
-    script.textContent=content.slice(0,-value.length);
-    const text=document.createTextNode(value);
+    typingScriptExitLengthRef.current=null;
+    script.removeAttribute?.("data-script-exit");
+    const text=document.createTextNode(moved);
     script.after(text);
     const range=document.createRange();
     range.setStartAfter(text);
@@ -595,6 +599,7 @@ export function WordSimulator(){
       const currentText=currentScript?.textContent?.replaceAll(TYPING_SCRIPT_PLACEHOLDER,"")??"";
       if(currentScript&&currentText){
         typingScriptExitNodeRef.current=currentScript;
+        typingScriptExitLengthRef.current=currentText.length;
         currentScript.setAttribute?.("data-script-exit","true");
       }
     }
@@ -606,6 +611,7 @@ export function WordSimulator(){
       typingScriptRef.current=null;
       typingScriptNodeRef.current=null;
       typingScriptExitNodeRef.current=cleanText?explicitPending:null;
+      typingScriptExitLengthRef.current=cleanText?cleanText.length:null;
       if(cleanText)explicitPending.setAttribute?.("data-script-exit","true");
       if(!root?.contains(explicitPending)){
         if(!cleanText){
@@ -683,6 +689,7 @@ export function WordSimulator(){
         const exitNode=scriptNode??pending??context;
         const exitText=exitNode?.textContent?.replaceAll(TYPING_SCRIPT_PLACEHOLDER,"")??"";
         typingScriptExitNodeRef.current=exitText?exitNode:null;
+        typingScriptExitLengthRef.current=exitText?exitText.length:null;
         if(exitText)exitNode?.setAttribute?.("data-script-exit","true");
         typingScriptRef.current=null;
         typingScriptNodeRef.current=null;
@@ -1177,7 +1184,7 @@ export function WordSimulator(){
                    event.preventDefault();
                  }
                }}
-              onInput={event=>{repairExitedScriptText((event.nativeEvent as InputEvent).data??"");cleanTypingScriptPlaceholder();rememberSelection();markChanged();}}
+              onInput={event=>{repairExitedScriptText();cleanTypingScriptPlaceholder();rememberSelection();markChanged();}}
                onKeyUp={event=>{if(["ArrowLeft","ArrowRight","ArrowUp","ArrowDown","Home","End","PageUp","PageDown"].includes(event.key))syncTypingScriptCaret();rememberSelection();}}
                onMouseUp={()=>{syncTypingScriptCaret();handleEditorMouseUp();}}
               onFocus={rememberSelection} onPaste={event=>{event.preventDefault();setClipboardMode(null);stagedClipboard.current=null;command("insertText",event.clipboardData.getData("text/plain"));}}
