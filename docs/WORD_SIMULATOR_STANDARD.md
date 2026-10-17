@@ -428,3 +428,13 @@ Ngày: 15/10/2026. Đường dẫn: `/cong-cu/mo-phong-word`.
 - Tuân thủ quy trình bắt buộc: sửa trực tiếp GitHub, cập nhật file MD này, test/build, Vercel Production **READY**.
 
 - **Kiểm thử hồi quy cũ:** trường hợp kiểm tra cập nhật Indent từng đòi hàm lắng nghe `selectionchange` chỉ có một dòng. Do giờ cần lưu Range trực tiếp để chống tình trạng x₂/x² áp dụng sai, đã điều chỉnh kiểm thử cũ để chấp nhận body mới có lưu Range nhưng vẫn kiểm tra `syncFormatState()` và `syncRulerIndent()` còn được gọi.
+
+
+## 2026-10-17 — Chỉnh nhận diện trạng thái Superscript khi bôi đen chữ
+
+- Phản hồi mới: người dùng đã xác nhận nút **Subscript x₂ hoạt động**, nhưng nút **Superscript x²** vẫn có vấn đề, đặc biệt khi chọn chữ rồi cần tắt bằng lần nhấn thứ hai. Không thay đổi vị trí/biểu tượng của nút, không thay đổi cơ chế gõ khi chưa chọn chữ.
+- Nguyên nhân kỹ thuật: `rangeHasScript` dùng `Range.intersectsNode` với phép kiểm tra offset chỉ khi `startContainer/endContainer` **chính là text node**. Khi vùng bôi đen bắt đầu/kết thúc tại **ranh giới phần tử** như thẻ `<p>`, `<sup>`, `<strong>` hoặc giao giữa `<sup>` và chữ thường, một số text node chạm ranh giới được tính nhầm là thuộc vùng chọn. Hàm vì thế có thể trả `false` cho trạng thái x² dù vùng đang chọn thực tế nằm hoàn toàn trong `<sup>`, làm lần nhấn thứ hai lại bật định dạng.
+- Khắc phục: với mỗi text node, tạo `textRange = document.createRange()`, `textRange.selectNodeContents(node)`; xác nhận hai khoảng **chồng nhau với độ dài lớn hơn 0** bằng `range.compareBoundaryPoints(Range.START_TO_END,textRange)>0` và `range.compareBoundaryPoints(Range.END_TO_START,textRange)<0`. Cách này dùng vị trí Range gốc của DOM, không phụ thuộc container là text hay element.
+- Giữ `scriptAncestor(node)` để phân biệt `SUP`/`SUB`, giữ nguyên `applySelectedScript` xử lý DOM, cơ chế lưu/khôi phục selection, và hoạt động x₂ đang đúng.
+- Bổ sung kiểm thử riêng cho x² với selection có đầu/cuối nằm trên **element boundary**, chữ thường kề hai bên, vùng chọn hỗn hợp, x² bật/tắt nhiều chu kỳ, và chuyển qua lại x₂ → x² → bình thường. Kiểm thử Node/DOM giả lập không thay thế xác nhận trực quan trong trình duyệt thật.
+- Mỗi lần sửa phải cập nhật file MD này, commit GitHub `main`, chạy test/build và xác nhận trạng thái Vercel Production `READY`.
