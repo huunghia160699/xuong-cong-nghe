@@ -550,15 +550,18 @@ export function WordSimulator(){
   function toggleScriptFormat(kind:"subscript"|"superscript"){
     const root=editor.current;
     const explicitPending=typingScriptRef.current===kind?typingScriptNodeRef.current:null;
-    if(explicitPending&&root?.contains(explicitPending)){
+    if(explicitPending){
       // Exit an explicit caret-only typing mode before focus/selection changes
       // caused by the Ribbon can make the current Range look ambiguous.
       const parent=explicitPending.parentNode;
-      if(!parent)return;
-      const after=document.createRange();
-      const cleanText=explicitPending.textContent?.replaceAll(TYPING_SCRIPT_PLACEHOLDER,"")??"";
       typingScriptRef.current=null;
       typingScriptNodeRef.current=null;
+      if(!root?.contains(explicitPending)||!parent){
+        setFormatActive(current=>({...current,subscript:false,superscript:false}));
+        return;
+      }
+      const after=document.createRange();
+      const cleanText=explicitPending.textContent?.replaceAll(TYPING_SCRIPT_PLACEHOLDER,"")??"";
       if(cleanText){
         after.setStartAfter(explicitPending);
       }else{
