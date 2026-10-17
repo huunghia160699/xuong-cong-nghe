@@ -609,6 +609,14 @@ export function WordSimulator(){
       const activeText=activeScript?.textContent?.replaceAll(TYPING_SCRIPT_PLACEHOLDER,"")??"";
       if(activeText){
         restoreSelection();
+        const selection=window.getSelection();
+        if(selection&&activeScript){
+          const after=document.createRange();
+          after.setStartAfter(activeScript);
+          after.collapse(true);
+          selection.removeAllRanges();
+          selection.addRange(after);
+        }
         root.focus?.({preventScroll:true});
         document.execCommand?.(kind==="subscript"?"subscript":"superscript",false);
         typingScriptRef.current=null;
