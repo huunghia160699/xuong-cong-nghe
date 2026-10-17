@@ -20,6 +20,7 @@ test("Word tool stays mounted between slides and keyboard nav is suspended while
   assert.match(player, /if \(wordOpen\) \{/);
   assert.match(player, /setWordOpen\(false\)/);
   assert.match(player, /tabIndex=\{wordOpen \? 0 : -1\}/);
+  assert.match(player, /event\.source !== wordFrameRef\.current\?\.contentWindow/);
 });
 test("Guided Word walkthrough can launch the real editor on the same slide", () => {
   assert.match(blockView, /<WordWorkspace block=\{block\} onOpenWord=\{onOpenWord\}/);
@@ -27,4 +28,11 @@ test("Guided Word walkthrough can launch the real editor on the same slide", () 
   assert.match(workspace, /onClick=\{onOpenWord\}/);
   assert.match(css, /\.xcn-word-live-lab-frame iframe/);
   assert.match(css, /prefers-reduced-motion/);
+});
+
+test("Word window close is intercepted only when embedded", () => {
+  const bar = readFileSync("src/features/word-simulator/word-window-bar.tsx", "utf8");
+  assert.match(bar, /window\.parent!==window/);
+  assert.match(bar, /xcn-word-lab-close/);
+  assert.match(bar, /event\.preventDefault\(\)/);
 });

@@ -81,6 +81,7 @@ export function PresentationPlayer({lesson, courseTitle, initialClassName = ""}:
   const [classEntryOpen, setClassEntryOpen] = useState(!preview);
   const [mobileToolsOpen, setMobileToolsOpen] = useState(false);
   const hostRef = useRef<HTMLDivElement>(null);
+  const wordFrameRef = useRef<HTMLIFrameElement>(null);
   const count = lesson.slides.length;
   const move = useCallback((next: number) => {
     setCurrent(Math.max(0, Math.min(count - 1, next)));
@@ -89,6 +90,17 @@ export function PresentationPlayer({lesson, courseTitle, initialClassName = ""}:
     setWordOpen(false);
   }, [count]);
   const slide = lesson.slides[current];
+
+  useEffect(() => {
+    if (!wordLesson) return;
+    // Close inside the iframe returns to this slide rather than opening /cong-cu in the frame.
+    const handleWordClose = (event: MessageEvent) => {
+      if (event.origin !== window.location.origin || event.source !== wordFrameRef.current?.contentWindow) return;
+      if ((event.data as {type?: string} | null)?.type === "xcn-word-lab-close") setWordOpen(false);
+    };
+    window.addEventListener("message", handleWordClose);
+    return () => window.removeEventListener("message", handleWordClose);
+  }, [wordLesson]);
 
   useEffect(() => {
     const handleFullscreen = () => setFull(document.fullscreenElement === hostRef.current);
@@ -163,7 +175,7 @@ export function PresentationPlayer({lesson, courseTitle, initialClassName = ""}:
         </button>
       </div>
       <div className="xcn-word-live-lab-frame">
-        <iframe src="/cong-cu/mo-phong-word" title="Công cụ Word mô phỏng đầy đủ, sử dụng trực tiếp trong slide"
+        <iframe ref={wordFrameRef} src="/cong-cu/mo-phong-word" title="Công cụ Word mô phỏng đầy đủ, sử dụng trực tiếp trong slide"
           loading="eager" tabIndex={wordOpen ? 0 : -1}/>
       </div>
     </section>}

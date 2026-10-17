@@ -28,7 +28,14 @@ export function WordWindowBar({
     <div className="wsl-window-controls">
       <span aria-hidden="true" className="wsl-window-decor"><Minus size={16}/></span>
       <span aria-hidden="true" className="wsl-window-decor"><Square size={13}/></span>
-      <a href="/cong-cu" onClick={onClose} className="wsl-window-close" aria-label="Close — Thoát công cụ" title="Thoát về Công cụ"><X size={17}/></a>
+      <a href="/cong-cu" onClick={event=>{
+        onClose();
+        // When Word lives in the teaching slide, the X returns to the presentation.
+        if(window.parent!==window){
+          event.preventDefault();
+          window.parent.postMessage({type:"xcn-word-lab-close"},window.location.origin);
+        }
+      }} className="wsl-window-close" aria-label="Close — Thoát công cụ" title="Thoát về Công cụ"><X size={17}/></a>
     </div>
     <span role="status" className="sr-only">{status}</span>
   </header>;

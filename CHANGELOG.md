@@ -6,6 +6,7 @@
 - Trạng thái trang Word được giữ khi quay về bài giảng và chuyển slide; truy cập bằng nút Word trên thanh trình chiếu hoặc nút thực hành trong từng hướng dẫn.
 - Làm mới khung thẻ nội dung và các panel Word 01 bằng CSS responsive, hiệu ứng nhẹ có hỗ trợ giảm chuyển động.
 - Không chỉnh sửa Home Ribbon đã hoàn thiện và không thay đổi nội dung kiến thức.
+- Nút X của cửa sổ Word khi nhúng sẽ lưu nháp và trở về slide thay vì mở trang Công cụ bên trong iframe.
 
 ## 2026-10-15 — Chuẩn hóa nhóm Font hai hàng
 
