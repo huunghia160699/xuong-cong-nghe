@@ -562,6 +562,9 @@ export function WordSimulator(){
   // Use deterministic DOM surgery for a highlighted range. Native
   // execCommand("subscript"/"superscript") emits inconsistent elements across
   // browsers, so reading <sub>/<sup> on the next click may disagree with it.
+  // Finish a superscript/subscript typing run at a hard IME boundary.
+  // Windows Vietnamese Telex can otherwise treat the next "a" as another
+  // keystroke for the last "a" inside <sup>, converting it into "â".
   function exitScriptIntoPlainCaret(script:HTMLElement){
     const root=editor.current;
     if(!root?.contains(script)||typeof root.blur!=="function"||
@@ -649,9 +652,6 @@ export function WordSimulator(){
     root.normalize();
     return true;
   }
-  // Finish a superscript/subscript typing run at a hard IME boundary.
-  // Windows Vietnamese Telex can otherwise treat the next "a" as another
-  // keystroke for the last "a" inside <sup>, converting it into "â".
   // x₂/x² have two separate behaviors: selected text toggles the formatting
   // of the selected content; a collapsed caret enters/exits a typing mode.
   function toggleScriptFormat(kind:"subscript"|"superscript"){
