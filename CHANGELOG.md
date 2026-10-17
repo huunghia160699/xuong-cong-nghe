@@ -1,5 +1,11 @@
 # Changelog
 
+## 2026-10-17 — Xóa tiến độ và nút Word thừa dưới slide Word 01
+- Bỏ dãy số và vạch tiến độ `02 — 31` trong chân mọi slide Word 01.
+- Bỏ nút `Mở Word thực hành` lặp ở chân slide và trên bìa.
+- Giữ nút `Word` ở thanh điều khiển trình chiếu để vẫn mở được công cụ trực tiếp trong bài giảng.
+- Loại bỏ CSS/thành phần không dùng; không chỉnh nội dung bài học, trình phát hay Word Home Ribbon.
+
 ## 2026-10-17 — Căn chỉnh tiêu đề, thẻ nội dung và mũi tên Word 01
 - Tiêu đề tự co cỡ chữ theo chiều rộng thực để nằm một dòng; tiêu đề quá dài vẫn cuộn ngang thay vì tràn hoặc tự xuống dòng.
 - Khắc phục ba bước xếp dọc tràn lên tiêu đề do căn giữa vùng nội dung khi vượt quá chiều cao.

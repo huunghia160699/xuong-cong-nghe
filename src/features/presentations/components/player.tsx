@@ -24,8 +24,7 @@ function SlideCanvas({slide, index, count, reset, onAdvance, onWordPractice, wor
   const extras = slide.blocks.filter(block => block.type === "notice");
   const blocks = slide.blocks.filter(block => block.type !== "notice");
   // Word 01: every command and step is rendered on entry; no duplicate mock editor.
-  if (wordLesson) return <WordLessonSlide slide={slide} index={index} count={count}
-    onAdvance={onAdvance} onOpenWord={onWordPractice}/>;
+  if (wordLesson) return <WordLessonSlide slide={slide} index={index} onAdvance={onAdvance}/>;
   // Word lesson 1 reuses the homepage hero rhythm with an accessible working start button.
   if (cover && blocks[0]?.type === "wordHomeHero") {
     return <section aria-label={"Slide " + (index+1) + ": " + slide.title}

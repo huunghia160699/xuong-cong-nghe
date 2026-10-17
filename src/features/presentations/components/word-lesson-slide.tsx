@@ -2,7 +2,7 @@
 
 import {useLayoutEffect,useRef,useState} from "react";
 import {
-  ArrowDown,ArrowRight,ArrowUpRight,Check,CheckCircle2,FileText,
+  ArrowDown,ArrowRight,Check,CheckCircle2,
   CornerDownRight,RotateCcw,X
 } from "lucide-react";
 import type {PresentationBlock,PresentationSlide} from "../types";
@@ -17,7 +17,6 @@ const purpose:Pair[] = [
   {title:"Trình bày",text:"Định dạng nội dung rõ ràng để in hoặc chia sẻ."}
 ];
 const asSteps = (items:unknown):Step[] => Array.isArray(items)?items as Step[]:[];
-const noOp = () => {};
 
 /** Keep every lesson title on one line at any width, without clipping content.
  * A very long title stays scrollable if the last readable font size still cannot fit.
@@ -55,19 +54,8 @@ function SingleLineTitle({text,cover=false}:{text:string;cover?:boolean}){
   </div>;
 }
 
-function OpenWord({onOpenWord,light=false,compact=false}:{
-  onOpenWord?:()=>void;light?:boolean;compact?:boolean
-}){
-  return <button type="button" onClick={onOpenWord??noOp} disabled={!onOpenWord}
-    className={"w01-open-word"+(light?" is-light":"")+(compact?" is-compact":"")}>
-    <FileText size={compact?17:20} aria-hidden="true"/>
-    <span>{compact?"Word":"Mở Word thực hành"}</span>
-    <ArrowUpRight size={compact?15:18} aria-hidden="true"/>
-  </button>;
-}
-
-function WordCover({slide,onOpenWord,onAdvance}:{
-  slide:PresentationSlide;onOpenWord?:()=>void;onAdvance:()=>void;
+function WordCover({slide,onAdvance}:{
+  slide:PresentationSlide;onAdvance:()=>void;
 }){
   const goals=(slide.blocks[0]?.goals??[]) as Goal[];
   return <div className="w01-cover-layout">
@@ -79,7 +67,6 @@ function WordCover({slide,onOpenWord,onAdvance}:{
         <button type="button" className="w01-start" onClick={onAdvance}>
           Vào bài học <ArrowRight size={21} aria-hidden="true"/>
         </button>
-        <OpenWord onOpenWord={onOpenWord} light/>
       </div>
     </div>
     <div className="w01-cover-goals" aria-label="Ba nội dung chính">
@@ -203,9 +190,9 @@ function WordDemo({block,index}: {block:PresentationBlock;index:number}) {
   return <ProcessSteps items={steps} commands variant={variant}/>;
 }
 
-export function WordLessonSlide({slide,index,count,onAdvance,onOpenWord}:{
-  slide:PresentationSlide;index:number;count:number;
-  onAdvance:()=>void;onOpenWord?:()=>void;
+export function WordLessonSlide({slide,index,onAdvance}:{
+  slide:PresentationSlide;index:number;
+  onAdvance:()=>void;
 }){
   const block=slide.blocks[0];
   const type=block?.type??"";
@@ -230,7 +217,7 @@ export function WordLessonSlide({slide,index,count,onAdvance,onOpenWord}:{
   return <section className={className} data-word-lesson-slide={slide.id}
     aria-label={"Slide "+(index+1)+": "+slide.title}>
     <div className="w01-grain" aria-hidden="true"/>
-    {cover?<WordCover slide={slide} onOpenWord={onOpenWord} onAdvance={onAdvance}/>:
+    {cover?<WordCover slide={slide} onAdvance={onAdvance}/>:
     <div className="w01-slide-inner">
       <header className="w01-header">
         <SingleLineTitle text={slide.title}/>
@@ -251,12 +238,6 @@ export function WordLessonSlide({slide,index,count,onAdvance,onOpenWord}:{
         {variant==="other"&&<div className="w01-unknown">{slide.title}</div>}
       </div>
       {notice&&<div className="w01-outcome"><CheckCircle2 size={19} aria-hidden="true"/>{notice.text}</div>}
-      <footer className="w01-bottom">
-        <div className="w01-progress" aria-label={"Slide "+(index+1)+" trên "+count}>
-          <span>{pad(index+1)}</span><span className="w01-progress-track"><i style={{width:((index+1)/count*100)+"%"}}/></span><span>{pad(count)}</span>
-        </div>
-        <OpenWord onOpenWord={onOpenWord}/>
-      </footer>
     </div>}
   </section>;
 }

@@ -85,3 +85,17 @@ test("Three vertical Word steps stay below heading and do not overlap with foote
   assert.match(styles,/\.w01-process-path \.w01-step-link-down,\.w01-process-stair \.w01-step-link-down/);
   assert.match(styles,/\.w01-idea\{min-height:0/);
 });
+
+test("Word 01 has no in-slide progress strip or redundant Word launch on any slide", () => {
+  const component = readFileSync("src/features/presentations/components/word-lesson-slide.tsx", "utf8");
+  const styles = readFileSync("src/features/presentations/word-lesson-slide.css", "utf8");
+  for (const unwanted of ["w01-bottom", "w01-progress", "w01-open-word", "OpenWord"]) {
+    assert.ok(!component.includes(unwanted), "in-slide Word 01 component: " + unwanted);
+    assert.ok(!styles.includes(unwanted), "unused styles: " + unwanted);
+  }
+  assert.match(component, /<WordCover slide=\{slide\} onAdvance=\{onAdvance\}\/>/);
+  assert.match(component, /w01-start/);
+  assert.match(player, /xcn-word-lab-trigger/);
+  assert.match(player, /<iframe ref=\{wordFrameRef\} src="\/cong-cu\/mo-phong-word"/);
+  assert.match(player, /if \(wordLesson\) return <WordLessonSlide slide=\{slide\} index=\{index\} onAdvance=\{onAdvance\}\/>/);
+});

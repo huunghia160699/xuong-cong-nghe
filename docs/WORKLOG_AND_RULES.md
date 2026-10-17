@@ -25,6 +25,13 @@
 
 ## III. Lịch sử
 
+### 2026-10-17 — Bỏ thanh tiến độ và nút Word lặp lại trong slide Word 01
+- **Yêu cầu:** Theo ảnh người dùng gửi, xóa hai thành phần ở chân tất cả slide: chỉ số/đường tiến độ dạng `02 — 31` và nút xanh `Mở Word thực hành`.
+- **Thay đổi:** Xóa `w01-bottom` (thanh số + nút) khỏi `src/features/presentations/components/word-lesson-slide.tsx` trên tất cả slide, bỏ nút Word trùng cả ở slide bìa; loại bỏ `OpenWord` và CSS liên quan trong `src/features/presentations/word-lesson-slide.css`. Đơn giản hóa props renderer trong `src/features/presentations/components/player.tsx`. Thêm kiểm thử trong `tests/word-slide-live-editor.test.mjs`.
+- **Phạm vi / quyết định:** Bỏ hai thành phần **bên trong slide Word 01**, không xóa điều khiển chuyển slide hoặc nút `Word` trong toolbar chung của trình chiếu. Công cụ Word iframe vẫn mở bình thường và giữ nội dung khi thay slide. Không ảnh hưởng slide Word chủ đề khác, Excel, File Explorer, Home Ribbon, nội dung hoặc ghi chú giảng viên.
+- **Kiểm thử:** GitHub CI Unit tests, Typecheck, Production build và Smoke test; xác nhận Vercel READY/alias đúng GitHub `main`. Kiểm thử giao diện trực quan bằng browser cần thực hiện riêng.
+- **Commit/triển khai:** Xem commit `main` của yêu cầu này, Vercel Production cùng SHA được xác nhận sau release.
+
 ### 2026-10-17 — Sửa tiêu đề và các bước dọc Word 01, tăng mũi tên và giảm thẻ
 - **Yêu cầu:** Tiêu đề tất cả slide Word 01 chỉ một dòng; ba bước dọc không được đè lên tiêu đề; mũi tên lớn, rõ; khối chữ nhật vừa đủ nội dung thay vì cao/rộng quá mức.
 - **Thay đổi:** `word-lesson-slide.tsx` thêm `SingleLineTitle` tự đo bề ngang và điều chỉnh cỡ bằng ResizeObserver (chữ dài quá sẽ cuộn ngang thay vì xuống dòng); mũi tên bước ngang 42px, bước dọc 40px, mũi tên đường dẫn lệnh 23px. `word-lesson-slide.css` cho nội dung flex mở theo chiều cao thực (bỏ căn giữa gây tràn ngược), dùng khoảng cách giữa các bước cho mũi tên, giảm min-height/padding của thẻ, responsive và màn hình thấp. Thêm regression tests trong `word-slide-live-editor.test.mjs`, cập nhật quy chuẩn slide, changelog và nhật ký.
