@@ -1435,3 +1435,124 @@ test("Unselected caret: x₂/x² enters typing mode, second click exits; switchi
  assert.deepEqual({...button},{subscript:false,superscript:false});
  assert.equal(created[2].removed,true,"an unused empty script span is removed on toggle off");
 });
+
+
+test("Selected x₂/x² DOM rewrite: actual nested node tree toggles on/off and switches without inheriting old script",()=>{
+ const source=readFileSync("src/features/word-simulator/word-simulator.tsx","utf8");
+ const begin=source.indexOf("  function applySelectedScript(");
+ const end=source.indexOf("  // x₂/x² have two separate behaviors",begin);
+ assert.ok(begin>=0&&end>begin);
+ const executable=source.slice(begin,end).trim()
+  .replace('range:Range,kind:"subscript"|"superscript",enabled:boolean','range,kind,enabled')
+  .replaceAll(" as Element","").replaceAll(" as HTMLElement","");
+ class TextNode{
+  constructor(value){this.value=value;this.parentNode=null;}
+  get textContent(){return this.value;}
+  get nextSibling(){const a=this.parentNode?.childNodes??[];return a[a.indexOf(this)+1]??null;}
+ }
+ class ElementNode{
+  constructor(tag){this.tagName=tag.toUpperCase();this.parentNode=null;this.childNodes=[];
+   this.style={removeProperty:()=>{}};}
+  get textContent(){return this.childNodes.map(n=>n.textContent).join("");}
+  get firstChild(){return this.childNodes[0]??null;}
+  get nextSibling(){const a=this.parentNode?.childNodes??[];return a[a.indexOf(this)+1]??null;}
+  removeChild(n){const i=this.childNodes.indexOf(n);if(i<0)throw Error("missing child");
+   this.childNodes.splice(i,1);n.parentNode=null;}
+  insertAt(node,i){
+   const items=node.tagName==="#FRAGMENT"?[...node.childNodes]:[node];
+   for(const item of items){
+    if(item.parentNode){
+     const oldParent=item.parentNode;
+     const oldIndex=oldParent.childNodes.indexOf(item);
+     oldParent.removeChild(item);
+     if(oldParent===this&&oldIndex<i)i--;
+    }
+    this.childNodes.splice(i++,0,item);item.parentNode=this;
+   }
+  }
+  appendChild(n){this.insertAt(n,this.childNodes.length);return n;}
+  hasChildNodes(){return this.childNodes.length>0;}
+  cloneNode(){return new ElementNode(this.tagName);}
+  contains(target){return this===target||this.childNodes.some(child=>child===target||
+    child instanceof ElementNode&&child.contains(target));}
+  closest(selector){let el=this;while(el){if(el.matches(selector))return el;el=el.parentNode;}return null;}
+  matches(selector){return selector==="sub,sup"&&["SUB","SUP"].includes(this.tagName);}
+  querySelectorAll(selector){
+   const out=[];
+   function walk(el){
+    for(const child of el.childNodes)if(child instanceof ElementNode){
+     if((selector.includes("sub,sup")&&child.matches("sub,sup"))||
+       (selector.includes("vertical-align")&&child.tagName==="SPAN"&&child.vertAlign))out.push(child);
+     walk(child);
+    }
+   }
+   walk(this);return out;
+  }
+  getAttribute(name){return name==="style"?this.vertAlign?"vertical-align:super":null:null;}
+  removeAttribute(name){if(name==="style")this.vertAlign=false;}
+  replaceWith(...replacements){
+   if(!this.parentNode)throw Error("orphan");
+   const parent=this.parentNode;
+   const at=parent.childNodes.indexOf(this);
+   parent.removeChild(this);
+   let index=at;
+   for(const n of replacements){
+    const items=n.tagName==="#FRAGMENT"?[...n.childNodes]:[n];
+    for(const child of items){parent.insertAt(child,index++);}
+   }
+  }
+  normalize(){}
+ }
+ const render=node=>node instanceof TextNode?node.textContent:
+  node.tagName==="#FRAGMENT"?node.childNodes.map(render).join(""):
+  "<"+node.tagName.toLowerCase()+">"+node.childNodes.map(render).join("")+"</"+node.tagName.toLowerCase()+">";
+ const harness={Element:ElementNode,editor:{current:null},
+  document:{createElement:tag=>new ElementNode(tag)}};
+ const apply=runInNewContext("("+executable+")",harness);
+ const text=value=>new TextNode(value);
+ const build=(tag,children=[])=>{const el=new ElementNode(tag);children.forEach(x=>el.appendChild(x));return el;};
+ function edit(root,target,kind,enabled){
+  harness.editor.current=root;
+  let parent=target.parentNode;
+  const i=parent.childNodes.indexOf(target);
+  const fakeRange={
+   startContainer:target,endContainer:target,
+   extractContents(){const fragment=new ElementNode("#fragment");
+    parent.removeChild(target);fragment.appendChild(target);return fragment;},
+   insertNode(node){parent.insertAt(node,i);}
+  };
+  assert.equal(apply(fakeRange,kind,enabled),true);
+ }
+ {
+  const leaf=text("H₂O");const root=build("p",[leaf]);
+  edit(root,leaf,"subscript",true);
+  assert.equal(render(root),"<p><sub>H₂O</sub></p>");
+  edit(root,root.firstChild.firstChild,"subscript",false);
+  assert.equal(render(root),"<p>H₂O</p>","second press must remove the actual <sub>");
+  edit(root,root.firstChild,"superscript",true);
+  assert.equal(render(root),"<p><sup>H₂O</sup></p>");
+  edit(root,root.firstChild.firstChild,"subscript",true);
+  assert.equal(render(root),"<p><sub>H₂O</sub></p>","switch must not nest <sup> inside <sub>");
+ }
+ {
+  const before=text("before"),picked=text("ONLY"),after=text("after");
+  const root=build("p",[build("sup",[before,picked,after])]);
+  edit(root,picked,"superscript",false);
+  assert.equal(render(root),"<p><sup>before</sup>ONLY<sup>after</sup></p>",
+   "selected portion is unwrapped; surrounding superscript stays intact");
+ }
+ {
+  const selected=text("strong"),root=build("p",[build("sub",[build("strong",[selected])])]);
+  edit(root,selected,"superscript",true);
+  assert.equal(render(root),"<p><strong><sup>strong</sup></strong></p>",
+   "nested bold is preserved but old subscript no longer influences selected text");
+ }
+ {
+  const left=text("alpha"),mid=text("select"),right=text("omega");
+  const root=build("p",[left,build("em",[mid]),right]);
+  edit(root,mid,"subscript",true);
+  assert.equal(render(root),"<p>alpha<em><sub>select</sub></em>omega</p>");
+  edit(root,root.childNodes[1].firstChild.firstChild,"subscript",false);
+  assert.equal(render(root),"<p>alpha<em>select</em>omega</p>");
+ }
+});
