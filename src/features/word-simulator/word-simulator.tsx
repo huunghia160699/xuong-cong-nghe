@@ -1011,33 +1011,46 @@ export function WordSimulator(){
       setStatus("Chọn văn bản trước khi đổi chữ hoa/thường");return;
     }
     const range=selection.getRangeAt(0);
-    const original=range.toString();
-    if(!original)return;
-    const upper=mode==="toggle"&&original===original.toLocaleUpperCase("vi");
+    if(!range.toString())return;
     const prefix=document.createRange();
     prefix.selectNodeContents(root);
     prefix.setEnd(range.startContainer,range.startOffset);
     const selectedStart=prefix.cloneContents().textContent?.length??0;
+    // Extract the selected DOM fragment so inline bold, italic, underline,
+    // superscript, subscript, colors and links remain in their original nodes.
     const fragment=range.extractContents();
     const walker=document.createTreeWalker(fragment,NodeFilter.SHOW_TEXT);
-    let atSentenceStart=true;
-    let atWordStart=true;
+    let sentenceStart=true;
+    let wordStart=true;
+    let previousBlock:Element|null=null;
     while(walker.nextNode()){
       const node=walker.currentNode as Text;
-      const value=node.data;
-      if(mode==="upper"||(mode==="toggle"&&!upper)){
-        node.data=value.toLocaleUpperCase("vi");
-      }else if(mode==="lower"||(mode==="toggle"&&upper)){
-        node.data=value.toLocaleLowerCase("vi");
-      }else if(mode==="title"||mode==="sentence"){
-        node.data=Array.from(value.toLocaleLowerCase("vi")).map(char=>{
-          const isLetter=/\p{L}/u.test(char);
-          const uppercase=isLetter&&(mode==="title"?atWordStart:atSentenceStart);
-          if(mode==="title")atWordStart=/\s/u.test(char);
-          else if(isLetter)atSentenceStart=false;
-          return uppercase?char.toLocaleUpperCase("vi"):char;
-        }).join("");
-      }
+      const block=node.parentElement?.closest?.("p,div,h1,h2,h3,li,blockquote")??null;
+      if(mode==="sentence"&&previousBlock&&block!==previousBlock)sentenceStart=true;
+      previousBlock=block;
+      node.data=Array.from(node.data).map(char=>{
+        const lower=char.toLocaleLowerCase("vi");
+        const upper=char.toLocaleUpperCase("vi");
+        if(mode==="upper")return upper;
+        if(mode==="lower")return lower;
+        // tOGGLE cASE: reverse EACH letter, not the whole selection.
+        if(mode==="toggle")return char===lower&&lower!==upper?upper:lower;
+        const letter=/\p{L}/u.test(char);
+        if(mode==="title"){
+          const converted=letter&&wordStart?upper:lower;
+          if(/[\p{L}\p{N}]/u.test(char))wordStart=false;
+          else if(!/['’]/u.test(char))wordStart=true;
+          return converted;
+        }
+        // Sentence case: lowercase the body of every sentence, capitalize
+        // its first letter after . ! ? (including Vietnamese punctuation).
+        if(/[.!?。！？]/u.test(char))sentenceStart=true;
+        else if(letter){
+          if(sentenceStart){sentenceStart=false;return upper;}
+          sentenceStart=false;
+        }else if(/\p{N}/u.test(char))sentenceStart=false;
+        return lower;
+      }).join("");
     }
     const resultLength=fragment.textContent?.length??0;
     range.insertNode(fragment);
@@ -1083,7 +1096,7 @@ export function WordSimulator(){
       toggleScriptFormat(name);return;
     }
     if(name==="changeCaseMode"){
-      if(value==="upper"||value==="lower"||value==="title"||value==="sentence"){
+      if(value==="upper"||value==="lower"||value==="title"||value==="sentence"||value==="toggle"){
         changeCasePreservingStyles(value);
       }
       return;

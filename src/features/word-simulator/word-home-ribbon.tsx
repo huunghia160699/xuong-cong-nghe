@@ -169,10 +169,11 @@ export function WordHomeRibbon({
        <WordSplitButton className="wsl-font-split wsl-font-change-case-button" label="Change Case"
          icon={<span className="wsl-font-change-case" aria-hidden="true">Aa</span>} run={changeCase}
          options={[
-           {label:"CHỮ HOA",run:()=>run("changeCaseMode","upper")},
+           {label:"Viết hoa đầu câu",run:()=>run("changeCaseMode","sentence")},
            {label:"chữ thường",run:()=>run("changeCaseMode","lower")},
+           {label:"CHỮ HOA",run:()=>run("changeCaseMode","upper")},
            {label:"Viết Hoa Từng Từ",run:()=>run("changeCaseMode","title")},
-           {label:"Viết hoa đầu câu",run:()=>run("changeCaseMode","sentence")}
+           {label:"đẢO hOA/tHƯỜNG",run:()=>run("changeCaseMode","toggle")}
          ]}/>
        <span className="wsl-font-divider" aria-hidden="true"/>
        <Btn className="wsl-font-icon-button" label="Clear All Formatting" icon={<Eraser size={20} strokeWidth={1.75} aria-hidden="true"/>} run={()=>run("removeFormat")}/>

@@ -1,5 +1,12 @@
 # Changelog
 
+## 2026-10-18 — Hoàn thiện Change Case (Aa) trong Word mô phỏng
+- Menu có đủ 5 thao tác: Viết hoa đầu câu, chữ thường, CHỮ HOA, Viết Hoa Từng Từ và đẢO hOA/tHƯỜNG.
+- Nút Aa chính đảo hoa/thường **từng ký tự**, thay vì đổi cả vùng thành một kiểu chữ.
+- Viết hoa đầu câu nhận dấu chấm, chấm hỏi, chấm than và qua các đoạn khác nhau; Viết Hoa Từng Từ xử lý tiếng Việt, dấu nối và dấu câu.
+- Vẫn giữ nguyên cấu trúc định dạng hỗn hợp của đoạn được bôi chọn (đậm, nghiêng, gạch chân, chỉ số, liên kết...) và vùng chọn sau chuyển đổi.
+- Thêm kiểm thử chức năng 5 kiểu Change Case và nội dung tiếng Việt qua các thẻ định dạng.
+
 ## 2026-10-18 — Nút Sup/Sub active đúng theo vùng chữ được chọn
 - Sửa `rangeHasScript` theo đúng semantics của `Range.compareBoundaryPoints`: dùng START_TO_END kiểm tra cuối vùng chọn nằm sau đầu text node, END_TO_START kiểm tra đầu vùng chọn nằm trước cuối text node. Trước đây đảo hai phép so sánh nên chọn chữ đã Sup/Sub không báo active.
 - Giữ cấu trúc DOM Sup/Sub và các nút Bold/Italic/Underline không thay đổi.

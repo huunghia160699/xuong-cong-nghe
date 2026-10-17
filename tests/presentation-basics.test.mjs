@@ -2107,7 +2107,8 @@ test("Change Case preserves mixed formatting nodes instead of replacing selectio
  assert.ok(begin>=0&&end>begin);
  const executable=source.slice(begin,end).trim()
    .replace('mode:"toggle"|"upper"|"lower"|"title"|"sentence"','mode')
-   .replace('walker.currentNode as Text','walker.currentNode');
+   .replace('walker.currentNode as Text','walker.currentNode')
+   .replace('let previousBlock:Element|null=null','let previousBlock=null');
  for(const [mode,expected] of [
   ["upper","<b>AB</b> CD"],
   ["lower","<b>ab</b> cd"],
@@ -2153,6 +2154,100 @@ test("Change Case preserves mixed formatting nodes instead of replacing selectio
  assert.match(executable,/document\.createTreeWalker\(fragment,NodeFilter\.SHOW_TEXT\)/);
  assert.match(executable,/range\.insertNode\(fragment\)/);
  assert.doesNotMatch(executable,/execCommand\("insertText"/);
+});
+
+test("Word Change Case supports all five Word modes with punctuation, Vietnamese and mixed formatting",()=>{
+ const source=readFileSync("src/features/word-simulator/word-simulator.tsx","utf8");
+ const home=readFileSync("src/features/word-simulator/word-home-ribbon.tsx","utf8");
+ const begin=source.indexOf("  function changeCasePreservingStyles(");
+ const end=source.indexOf("  function changeCase()",begin);
+ const executable=source.slice(begin,end).trim()
+   .replace('mode:"toggle"|"upper"|"lower"|"title"|"sentence"','mode')
+   .replace('walker.currentNode as Text','walker.currentNode')
+   .replace('let previousBlock:Element|null=null','let previousBlock=null');
+ const examples=[
+  {mode:"sentence",chunks:["xin chào. ","đÂY là câu hỏi? ","tÔI vẫn ổn! rồi sao"],
+   expected:["Xin chào. ","Đây là câu hỏi? ","Tôi vẫn ổn! Rồi sao"]},
+  {mode:"title",chunks:["học-sinh ","viỆT nam, ","chào tÔI"],
+   expected:["Học-Sinh ","Việt Nam, ","Chào Tôi"]},
+  {mode:"toggle",chunks:["AbC ","đỘC ", "ViỆT"],
+   expected:["aBc ","Độc ", "vIệt"]},
+  {mode:"upper",chunks:["đà lạt ","ViỆT nam"],expected:["ĐÀ LẠT ","VIỆT NAM"]},
+  {mode:"lower",chunks:["ĐÀ LẠT ","ViỆT NAM"],expected:["đà lạt ","việt nam"]}
+ ];
+ for(const {mode,chunks,expected} of examples){
+   const nodes=chunks.map(data=>({data,parentElement:{closest:()=>null}}));
+   const fragment={
+     get textContent(){return nodes.map(node=>node.data).join("");}
+   };
+   let i=0, inserted=null, restored=null,changed=0;
+   const root={contains:()=>true,normalize(){}},anchorNode={};
+   const range={
+     toString(){return chunks.join("");},
+     startContainer:anchorNode,startOffset:0,
+     extractContents(){return fragment;},
+     insertNode(f){inserted=f;}
+   };
+   const selection={rangeCount:1,isCollapsed:false,anchorNode,getRangeAt:()=>range};
+   const ctx={
+     editor:{current:root},window:{getSelection:()=>selection},
+     restoreSelection(){},
+     document:{
+       createRange(){return {selectNodeContents(){},setEnd(){},
+         cloneContents(){return{textContent:""}}
+       }},
+       createTreeWalker(){i=0;return{
+         nextNode(){this.currentNode=nodes[i];return i++<nodes.length},
+         currentNode:null
+       }}
+     },
+     NodeFilter:{SHOW_TEXT:4},
+     removeEmptyFormattingNodes(){},
+     restoreScriptTextSelection(start,length){restored=[start,length]},
+     rememberSelection(){},markChanged(){changed++},setStatus(){}
+   };
+   const change=runInNewContext("("+executable+")",ctx);
+   change(mode);
+   assert.ok(inserted===fragment,mode+" must preserve original styled DOM");
+   assert.deepEqual(nodes.map(node=>node.data),expected,mode+" transforms across style boundaries");
+   assert.deepEqual(restored,[0,expected.join("").length],mode+" retains highlighted text");
+   assert.equal(changed,1,mode+" triggers change tracking");
+   assert.match(home,new RegExp('run\\("changeCaseMode","'+mode+'"\\)'));
+ }
+ assert.match(source,/if\(value==="upper"\|\|value==="lower"\|\|value==="title"\|\|value==="sentence"\|\|value==="toggle"\)/);
+ assert.match(home,/label:"đẢO hOA\/tHƯỜNG"/);
+ assert.match(source,/function changeCase\(\)\{changeCasePreservingStyles\("toggle"\);\}/);
+});
+
+test("Word Change Case capitalizes sentence starts across formatting boundaries and separate paragraphs",()=>{
+ const source=readFileSync("src/features/word-simulator/word-simulator.tsx","utf8");
+ const begin=source.indexOf("  function changeCasePreservingStyles(");
+ const end=source.indexOf("  function changeCase()",begin);
+ const executable=source.slice(begin,end).trim()
+   .replace('mode:"toggle"|"upper"|"lower"|"title"|"sentence"','mode')
+   .replace('walker.currentNode as Text','walker.currentNode')
+   .replace('let previousBlock:Element|null=null','let previousBlock=null');
+ const para1={},para2={};
+ const nodes=[
+  {data:"đÂY là dòng đầu",parentElement:{closest:()=>para1}},
+  {data:" và kết thúc.",parentElement:{closest:()=>para1}},
+  {data:"dÒNG thứ hai",parentElement:{closest:()=>para2}}
+ ];
+ const fragment={get textContent(){return nodes.map(n=>n.data).join("");}};
+ const root={contains:()=>true,normalize(){}};
+ const range={toString:()=>fragment.textContent,startContainer:{},startOffset:0,
+  extractContents:()=>fragment,insertNode:()=>{}};
+ let i=0;
+ const change=runInNewContext("("+executable+")",{
+  editor:{current:root},window:{getSelection:()=>({rangeCount:1,isCollapsed:false,anchorNode:{},getRangeAt:()=>range})},
+  restoreSelection(){},document:{
+   createRange(){return{selectNodeContents(){},setEnd(){},cloneContents(){return{textContent:""}}}},
+   createTreeWalker(){i=0;return{currentNode:null,nextNode(){this.currentNode=nodes[i];return i++<nodes.length}}}
+  },NodeFilter:{SHOW_TEXT:4},removeEmptyFormattingNodes(){},
+  restoreScriptTextSelection(){},rememberSelection(){},markChanged(){},setStatus(){}
+ });
+ change("sentence");
+ assert.deepEqual(nodes.map(n=>n.data),["Đây là dòng đầu"," và kết thúc.","Dòng thứ hai"]);
 });
 
 test("Clear Formatting updates font-family/size controls from selected HTML and prunes empty inline marks",()=>{

@@ -25,6 +25,13 @@
 
 ## III. Lịch sử
 
+### 2026-10-18 — Hoàn thiện năm chức năng Change Case cho Word mô phỏng
+- **Mục tiêu:** Bổ sung chức năng thực tế cho nút Change Case (Aa) trong Ribbon Home như Word, không chỉ trình bày menu.
+- **Nút/mode:** `Viết hoa đầu câu` (có nhận dấu câu .!? và qua các thẻ chữ khác nhau), `chữ thường`, `CHỮ HOA`, `Viết Hoa Từng Từ` (nhận ranh giới từ, gạch nối, dấu câu và tiếng Việt), `đẢO hOA/tHƯỜNG` (đảo từng ký tự). Nút Aa chính thực hiện đảo từng ký tự; menu đủ năm lựa chọn.
+- **File:** `src/features/word-simulator/word-home-ribbon.tsx` bổ sung chế độ toggle và sắp menu theo Word; `src/features/word-simulator/word-simulator.tsx` bổ sung dispatcher, đổi chữ theo codepoint trong selected DOM fragment, nhận câu mới sau dấu .!? và sau chuyển paragraph; `tests/presentation-basics.test.mjs` kiểm thử năm mode, tiếng Việt, đa câu, gạch nối, hỗn hợp nhiều thẻ định dạng, giữ selection; `CHANGELOG.md` và nhật ký này.
+- **Bảo toàn:** Không tái tạo HTML làm mất `<b>`, `<i>`, `<u>`, `<sup>`, `<sub>`, link/màu. Giữ nguyên chọn chữ sau chuyển đổi và chức năng Word khác. Không có vùng chọn sẽ hiển thị yêu cầu bôi chọn trước.
+- **Kiểm thử:** GitHub CI Unit tests, Typecheck, Production build, Smoke test; Vercel Production phải READY trùng main SHA mới xác nhận phát hành. Chưa có nghiệm thu giao diện bằng điều khiển trình duyệt thực tế.
+
 ### 2026-10-18 — Sửa trạng thái active khi chọn chữ đã Sup/Sub
 - **Triệu chứng:** Bôi chọn chữ đã có `<sup>`/`<sub>` nhưng hai nút Sup/Sub không sáng như Bold/Italic/Underline.
 - **Nguyên nhân xác nhận:** DOM Range dùng `START_TO_END` để so sánh end của selection với start của textRange và `END_TO_START` để so sánh start của selection với end của textRange. Phiên bản cũ đảo ngược constants nên bộ phát hiện nội dung định dạng hầu như luôn trả false.
