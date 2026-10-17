@@ -1309,9 +1309,9 @@ test("x₂/x² use two modes: selection toggle and collapsed-caret typing toggle
  assert.match(toggle,/const selectedStart=before\.cloneContents\(\)\.textContent\?\.length\?\?0;/);
  assert.match(toggle,/const selectedLength=range\.cloneContents\(\)\.textContent\?\.length\?\?0;/);
  assert.match(toggle,/const wasActive=rangeHasScript\(range,kind\);/);
- assert.match(toggle,/const oppositeActive=rangeHasScript\(range,opposite\);/);
- assert.match(toggle,/if\(!wasActive&&oppositeActive\)document\.execCommand\(opposite,false\);/);
- assert.match(toggle,/const applied=document\.execCommand\(kind,false\);/);
+ assert.match(source,/function applySelectedScript\(range:Range,kind:"subscript"\|"superscript",enabled:boolean\)/);
+ assert.match(toggle,/const applied=applySelectedScript\(range,kind,!wasActive\);/);
+ assert.doesNotMatch(toggle,/document\.execCommand\(kind,false\)/);
  assert.match(toggle,/restoreScriptTextSelection\(selectedStart,selectedLength\);/);
  assert.match(toggle,/setFormatActive\(current=>\(\{\.\.\.current,\[kind\]:!wasActive,\[opposite\]:false\}\)\);/);
  assert.match(toggle,/const context=scriptAncestor\(range\.startContainer\);/);
@@ -1337,78 +1337,36 @@ test("x₂/x² use two modes: selection toggle and collapsed-caret typing toggle
  assert.match(source,/ALLOWED_TAGS=new Set\(\["P","BR"/);
 });
 
-test("Selected words: x₂ toggles off on second click, x² switches, selection stays highlighted",()=>{
+test("Selected Word text uses deterministic DOM extraction, correct second-click unwrapping and highlight restoration",()=>{
  const source=readFileSync("src/features/word-simulator/word-simulator.tsx","utf8");
- const start=source.indexOf('  function restoreScriptTextSelection(');
- const end=source.indexOf('  function saveDraft()',start);
- assert.ok(start>=0&&end>start);
- const executable=source.slice(start,end).trim()
-  .replace('start:number,length:number','start,length')
-  .replace('let first:Node|null=null,last:Node|null=null,firstOffset=0,lastOffset=0;', 'let first=null,last=null,firstOffset=0,lastOffset=0;')
-  .replace('kind:"subscript"|"superscript"','kind');
- const node={textContent:"H2O"};
- const native={subscript:false,superscript:false};
- const button={subscript:false,superscript:false};
- let activeRange={collapsed:false,startContainer:node,startOffset:0,cloneContents:()=>({textContent:"H2O"})};
- const log=[];let fail=false;
- const selection={
-  rangeCount:1,anchorNode:node,
-  getRangeAt:()=>activeRange,
-  removeAllRanges:()=>{activeRange=null;},
-  addRange:range=>{activeRange=range;selection.anchorNode=node;}
- };
- let rangeCalls=0;
- const createRange=()=>{
-  const isBefore=++rangeCalls%2===1;
-  return {
-   collapsed:false,startContainer:node,startOffset:0,
-   selectNodeContents(){},
-   setEnd(){},
-   setStart(){},
-   cloneContents:()=>({textContent:isBefore?"":"H2O"})
-  };
- };
- const harness={
-  window:{getSelection:()=>selection},
-  editor:{current:{contains:()=>true}},
-  typingScriptRef:{current:null},
-  document:{
-   createRange,createTreeWalker:()=>{let seen=false;return {
-     currentNode:node,nextNode(){if(seen)return false;seen=true;return true;}
-   };},
-   execCommand:(kind)=>{log.push("exec:"+kind);if(fail)return false;native[kind]=!native[kind];return true;}
-  },
-  NodeFilter:{SHOW_TEXT:4},
-  rangeHasScript:(_range,kind)=>native[kind],
-  restoreSelection:()=>log.push("restore"),
-  rememberSelection:()=>log.push("remember"),
-  setFormatActive:fn=>Object.assign(button,fn({...button})),
-  markChanged:()=>log.push("change"),
-  setStatus:msg=>log.push("error:"+msg)
- };
- const toggle=runInNewContext(executable+";toggleScriptFormat",harness);
- toggle("subscript");
- assert.deepEqual({...button},{subscript:true,superscript:false});
- assert.equal(activeRange.collapsed,false);
- assert.deepEqual(log,["restore","exec:subscript","remember","change"]);
- log.length=0;
- toggle("subscript");
- assert.deepEqual({...button},{subscript:false,superscript:false});
- assert.equal(activeRange.collapsed,false,"repeated press must keep highlighting for toggling off");
- assert.deepEqual(log,["restore","exec:subscript","remember","change"]);
- log.length=0;
- toggle("superscript");
- assert.deepEqual({...button},{subscript:false,superscript:true});
- log.length=0;
- toggle("subscript");
- assert.deepEqual({...button},{subscript:true,superscript:false});
- assert.deepEqual(log,["restore","exec:superscript","exec:subscript","remember","change"]);
- log.length=0;
- fail=true;
- toggle("subscript");
- assert.deepEqual({...button},{subscript:true,superscript:false},"failure must not claim the formatting changed");
- assert.ok(log.some(item=>item.startsWith("error:")));
- assert.ok(!log.includes("change"));
+ const helper=source.slice(source.indexOf("  function applySelectedScript("),source.indexOf("  // x₂/x² have two separate behaviors"));
+ const selection=source.slice(source.indexOf("  function toggleScriptFormat("),source.indexOf("  function saveDraft()"));
+ assert.match(helper,/const fragment=range\.extractContents\(\);/);
+ assert.match(helper,/const placeholder=document\.createElement\("span"\);/);
+ assert.match(helper,/range\.insertNode\(placeholder\);/);
+ assert.match(helper,/while\(true\)\{/);
+ assert.match(helper,/const script=placeholder\.closest\("sub,sup"\);/);
+ assert.match(helper,/if\(!script\|\|!root\.contains\(script\)\)break;/);
+ assert.match(helper,/parent\.cloneNode\(false\) as Element;/);
+ assert.match(helper,/middle\.appendChild\(branch\);/);
+ assert.match(helper,/parent\.replaceWith\(/);
+ assert.match(helper,/script\.replaceWith\(/);
+ assert.match(helper,/fragment\.querySelectorAll\("sub,sup,\[style\*='vertical-align'\]"\)/);
+ assert.match(helper,/if\(el\.matches\("sub,sup"\)\)el\.replaceWith\(\.\.\.Array\.from\(el\.childNodes\)\);/);
+ assert.match(helper,/style\.removeProperty\("vertical-align"\);/);
+ assert.match(helper,/wrapper\.appendChild\(fragment\);/);
+ assert.match(helper,/placeholder\.replaceWith\(wrapper\);/);
+ assert.match(helper,/else placeholder\.replaceWith\(fragment\);/);
+ assert.match(helper,/root\.normalize\(\);/);
+ assert.match(selection,/const wasActive=rangeHasScript\(range,kind\);/);
+ assert.match(selection,/const applied=applySelectedScript\(range,kind,!wasActive\);/);
+ assert.match(selection,/restoreScriptTextSelection\(selectedStart,selectedLength\);/);
+ assert.match(selection,/setFormatActive\(current=>\(\{\.\.\.current,\[kind\]:!wasActive,\[opposite\]:false\}\)\);/);
+ assert.doesNotMatch(selection,/document\.execCommand\(kind,false\)/,
+   "selected-content toggle must never rely on browser-specific execCommand semantics");
+ assert.match(selection,/if\(!applied\)\{/);
+ assert.match(selection,/rememberSelection\(\);/);
+ assert.match(selection,/markChanged\(\);/);
 });
 
 test("Unselected caret: x₂/x² enters typing mode, second click exits; switching modes remains exclusive",()=>{
