@@ -619,12 +619,13 @@ export function WordSimulator(){
         }
         root.focus?.({preventScroll:true});
         document.execCommand?.(kind==="subscript"?"subscript":"superscript",false);
+        const exitScript=root.querySelector?.(kind==="subscript"?"sub":"sup")??activeScript;
         typingScriptRef.current=null;
         typingScriptNodeRef.current=null;
-        typingScriptExitNodeRef.current=activeScript;
+        typingScriptExitNodeRef.current=exitScript;
         typingScriptExitLengthRef.current=activeText.length;
         root.querySelectorAll?.("[data-script-exit]")?.forEach(node=>node.removeAttribute("data-script-exit"));
-        activeScript?.setAttribute?.("data-script-exit","true");
+        exitScript?.setAttribute?.("data-script-exit","true");
         rememberSelection();
         setFormatActive(current=>({...current,subscript:false,superscript:false}));
         return;
