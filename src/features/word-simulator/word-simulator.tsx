@@ -238,8 +238,17 @@ export function WordSimulator(){
     const nodes:Node[]=[];
     if(ancestor.nodeType===Node.TEXT_NODE)nodes.push(ancestor);
     else while(walker.nextNode())nodes.push(walker.currentNode);
+    // intersectsNode alone can include text touching a range boundary with
+    // zero selected characters, incorrectly reporting mixed formatting.
     const selected=nodes.filter(node=>{
-      try{return Boolean(node.textContent?.length)&&range.intersectsNode(node);}catch{return false;}
+      const length=node.textContent?.length??0;
+      if(!length)return false;
+      try{
+        if(!range.intersectsNode(node))return false;
+        const start=range.startContainer===node?range.startOffset:0;
+        const end=range.endContainer===node?range.endOffset:length;
+        return end>start;
+      }catch{return false;}
     });
     return selected.length>0&&selected.every(node=>scriptAncestor(node)?.tagName===tag);
   }
@@ -264,8 +273,20 @@ export function WordSimulator(){
     }
     setFormatActive(current=>formatKeys.every(key=>current[key]===next[key])?current:next);
   }
+  // Persist selection on every document-level change, not only mouseup
+  // inside the editor. A drag that finishes outside the page otherwise leaves
+  // savedSelection pointing at an older/collapsed range.
   useEffect(()=>{
-    const changed=()=>{syncFormatState();syncRulerIndent();};
+    const changed=()=>{
+      const selection=window.getSelection();
+      const root=editor.current;
+      if(root&&selection?.rangeCount&&selection.anchorNode&&selection.focusNode
+        &&root.contains(selection.anchorNode)&&root.contains(selection.focusNode)){
+        savedSelection.current=selection.getRangeAt(0).cloneRange();
+        setHasSelection(!selection.isCollapsed&&Boolean(selection.toString()));
+      }
+      syncFormatState();syncRulerIndent();
+    };
     document.addEventListener("selectionchange",changed);
     return ()=>document.removeEventListener("selectionchange",changed);
   });
@@ -282,17 +303,29 @@ export function WordSimulator(){
   },[clipboardMode,paintArmed]);
   function rememberSelection(){
     const selection=window.getSelection();
-    if(selection&&selection.rangeCount&&editor.current?.contains(selection.anchorNode)){
+    if(selection&&selection.rangeCount&&editor.current?.contains(selection.anchorNode)
+      &&selection.focusNode&&editor.current.contains(selection.focusNode)){
       savedSelection.current=selection.getRangeAt(0).cloneRange();
       setHasSelection(!selection.isCollapsed && Boolean(selection.toString()));
       syncFormatState();
     }
   }
   function restoreSelection(){
-    editor.current?.focus();
-    if(savedSelection.current){
-      const selection=window.getSelection();
-      if(selection){selection.removeAllRanges();selection.addRange(savedSelection.current);}
+    const root=editor.current;
+    const selection=window.getSelection();
+    // Give the CURRENT real selection priority over the cached one. The old
+    // implementation always reapplied a stale saved range after a fresh drag.
+    if(root&&selection?.rangeCount&&selection.anchorNode&&selection.focusNode
+      &&root.contains(selection.anchorNode)&&root.contains(selection.focusNode)){
+      savedSelection.current=selection.getRangeAt(0).cloneRange();
+    }
+    root?.focus();
+    if(savedSelection.current&&selection){
+      const saved=savedSelection.current;
+      if(root?.contains(saved.startContainer)&&root.contains(saved.endContainer)){
+        selection.removeAllRanges();
+        selection.addRange(saved);
+      }
     }
   }
   function command(cmd:string,value?:string){
@@ -318,10 +351,12 @@ export function WordSimulator(){
     while(walker.nextNode()){
       const node=walker.currentNode;
       const size=node.textContent?.length??0;
-      if(!first&&start>=position&&start<=position+size){
+      // At an inter-node boundary, start belongs to the NEXT text node;
+      // end belongs to the PREVIOUS one. Never include an unselected neighbor.
+      if(!first&&start>=position&&start<position+size){
         first=node;firstOffset=start-position;
       }
-      if(first&&end>=position&&end<=position+size){
+      if(first&&end>position&&end<=position+size){
         last=node;lastOffset=end-position;break;
       }
       position+=size;
