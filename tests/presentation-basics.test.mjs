@@ -659,7 +659,7 @@ test("Word Ribbon splits icon actions and 13px dropdown menus without fake contr
  assert.match(editor,/sanitize\(await blob\.text\(\)\)/);
  assert.match(editor,/block\.style\.borderTop=/);
  assert.match(editor,/block\.style\.lineHeight=/);
- assert.match(editor,/changeCasePreservingStyles\("upper"\)/);
+ assert.match(editor,/changeCasePreservingStyles\(value\)/);
 });
 
 
@@ -1180,7 +1180,7 @@ test("Dragging indent markers applies to current Word paragraph and preserves st
  assert.match(source,/const changed=\(\)=>\{/);
  assert.match(source,/const selection=window\.getSelection\(\);/);
  assert.match(source,/savedSelection\.current=selection\.getRangeAt\(0\)\.cloneRange\(\);/);
- assert.match(source,/syncFormatState\(\);syncRulerIndent\(\);/);
+ assert.match(source,/syncFormatState\(\);syncFontControls\(\);syncRulerIndent\(\);/);
  assert.match(ruler,/onIndentStart\?\.\(kind\)/);
  assert.match(ruler,/onIndentEnd\?\.\(\)/);
  assert.match(ruler,/onPointerCancel=\{onPointerCancel\}/);
@@ -2006,7 +2006,9 @@ test("Clear Formatting updates font-family/size controls from selected HTML and 
   {childNodes:[{}],querySelector:()=>null,removed:false,remove(){this.removed=true;}},
   {childNodes:[],querySelector:()=>({}),removed:false,remove(){this.removed=true;}}
  ];
- const prune=runInNewContext("("+remove.trim()+")",{
+ const pruneSource=remove.match(/  function removeEmptyFormattingNodes\(\)\{[\s\S]*?\n  \}/)?.[0];
+ assert.ok(pruneSource);
+ const prune=runInNewContext("("+pruneSource+")",{
   editor:{current:{querySelectorAll:()=>nodes}}
  });
  prune();
@@ -2022,6 +2024,7 @@ test("Caret-only sub/sup routes typed keys into active element and removes place
  const start=source.indexOf('  function insertTypingScriptText(');
  const end=source.indexOf('  function cleanTypingScriptPlaceholder()',start);
  const executable=source.slice(start,end).trim()
+   .replace("value:string","value")
    .replace('child as Text','child')
    .replaceAll('current!.','current.');
  const root={contains(){return true;}};
