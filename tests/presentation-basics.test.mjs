@@ -1607,9 +1607,10 @@ test("Word x2 status ignores unselected text nodes that merely touch range bound
  const executable=source.slice(begin,end).trim()
    .replace('range:Range,kind:"subscript"|"superscript"','range,kind')
    .replace('const nodes:Node[]=[]','const nodes=[]');
- assert.match(executable,/const start=range\.startContainer===node\?range\.startOffset:0;/);
- assert.match(executable,/const end=range\.endContainer===node\?range\.endOffset:length;/);
- assert.match(executable,/return end>start;/);
+ assert.match(executable,/textRange\.selectNodeContents\(node\);/);
+ assert.match(executable,/range\.compareBoundaryPoints\(Range\.START_TO_END,textRange\)>0/);
+ assert.match(executable,/range\.compareBoundaryPoints\(Range\.END_TO_START,textRange\)<0/);
+ assert.match(executable,/return endsAfterStart&&startsBeforeEnd;/);
  const before={textContent:"xy"},selected={textContent:"H2O"};
  const root={};
  const ancestor={nodeType:1};
@@ -1618,11 +1619,15 @@ test("Word x2 status ignores unselected text nodes that merely touch range bound
    editor:{current:root},
    Node:{TEXT_NODE:3},
    NodeFilter:{SHOW_TEXT:4},
+   Range:{START_TO_END:1,END_TO_START:3},
    scriptAncestor:node=>script.get(node),
-   document:{createTreeWalker:()=>{let idx=0;return{
-     nextNode(){idx++;this.currentNode=[before,selected][idx-1];return idx<=2;},
-     currentNode:null
-   };}}
+   document:{
+     createRange:()=>({selectNodeContents(node){this.textNode=node;}}),
+     createTreeWalker:()=>{let idx=0;return{
+       nextNode(){idx++;this.currentNode=[before,selected][idx-1];return idx<=2;},
+       currentNode:null
+     };}
+   }
  };
  const detect=runInNewContext("("+executable+")",ctx);
  const range={
@@ -1630,7 +1635,13 @@ test("Word x2 status ignores unselected text nodes that merely touch range bound
    commonAncestorContainer:ancestor,
    startContainer:before,startOffset:2,
    endContainer:selected,endOffset:3,
-   intersectsNode(node){return node===selected||this.startContainer===before;}
+   compareBoundaryPoints(how,textRange){
+     const start=this.startContainer===before?this.startOffset:2+this.startOffset;
+     const end=this.endContainer===before?this.endOffset:2+this.endOffset;
+     const left=textRange.textNode===before?0:2;
+     const right=left+(textRange.textNode.textContent?.length??0);
+     return Math.sign((how===1?end-left:start-right));
+   }
  };
  assert.equal(detect(range,"subscript"),true,
    "preceding unselected text at end offset must not turn off x2");
@@ -1675,4 +1686,62 @@ test("Word script selection restoration selects next text node when start equals
  assert.equal(saved.endNode,inside);
  assert.equal(saved.endOffset,3);
  assert.ok(range);
+});
+
+
+test("Superscript x² selected at element boundaries is detected active and toggles off, excluding adjacent text",()=>{
+ const source=readFileSync("src/features/word-simulator/word-simulator.tsx","utf8");
+ const begin=source.indexOf("  function rangeHasScript(");
+ const end=source.indexOf("  function syncFormatState()",begin);
+ const executable=source.slice(begin,end).trim()
+   .replace('range:Range,kind:"subscript"|"superscript"','range,kind')
+   .replace('const nodes:Node[]=[]','const nodes=[]');
+ const before={textContent:"A",type:"normal"};
+ const raised={textContent:"2",type:"SUP"};
+ const after={textContent:"B",type:"normal"};
+ const all=[before,raised,after];
+ const marks=new Map([[before,null],[raised,{tagName:"SUP"}],[after,null]]);
+ const parent={nodeType:1};
+ let cursor=0;
+ const ctx={
+  editor:{current:parent},Node:{TEXT_NODE:3},NodeFilter:{SHOW_TEXT:4},
+  Range:{START_TO_END:1,END_TO_START:3},
+  scriptAncestor:node=>marks.get(node),
+  document:{
+   createRange(){return{selectNodeContents(node){this.node=node;}};},
+   createTreeWalker(){
+    cursor=0;
+    return {currentNode:null,nextNode(){this.currentNode=all[cursor];cursor++;return cursor<=all.length;}};
+   }
+  }
+ };
+ const detect=runInNewContext("("+executable+")",ctx);
+ const selected={
+  collapsed:false,commonAncestorContainer:parent,
+  startContainer:parent,startOffset:1,
+  endContainer:parent,endOffset:2,
+  compareBoundaryPoints(how,textRange){
+   const l=all.indexOf(textRange.node),r=l+1;
+   const start=this.startContainer===parent?this.startOffset:all.indexOf(this.startContainer)+this.startOffset;
+   const end=this.endContainer===parent?this.endOffset:all.indexOf(this.endContainer)+this.endOffset;
+   return Math.sign(how===1?end-l:start-r);
+  }
+ };
+ assert.equal(detect(selected,"superscript"),true,"selecting exactly <sup>2</sup> must read sup as on");
+ assert.equal(detect(selected,"subscript"),false);
+ // A partial selection of the preceding text must not be mistaken for sup.
+ selected.startOffset=0;
+ assert.equal(detect(selected,"superscript"),false);
+ selected.startOffset=1;
+ selected.endOffset=3;
+ assert.equal(detect(selected,"superscript"),false);
+ selected.endOffset=2;
+ // The same detection applies after changing the selected character from sup to sub.
+ marks.set(raised,{tagName:"SUB"});
+ assert.equal(detect(selected,"subscript"),true);
+ assert.equal(detect(selected,"superscript"),false);
+ // Explicitly assert the click path uses the detected active state to disable.
+ assert.match(source,/const wasActive=rangeHasScript\(range,kind\);/);
+ assert.match(source,/const applied=applySelectedScript\(range,kind,!wasActive\);/);
+ assert.match(source,/setFormatActive\(current=>\(\{\.\.\.current,\[kind\]:!wasActive,\[opposite\]:false\}\)\);/);
 });
