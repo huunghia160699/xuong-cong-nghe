@@ -548,7 +548,7 @@ export function WordSimulator(){
   // x₂/x² have two separate behaviors: selected text toggles the formatting
   // of the selected content; a collapsed caret enters/exits a typing mode.
   function toggleScriptFormat(kind:"subscript"|"superscript"){
-    const root=root;
+    const root=editor.current;
     const explicitPending=typingScriptRef.current===kind?typingScriptNodeRef.current:null;
     if(explicitPending){
       // Exit an explicit caret-only typing mode before focus/selection changes
