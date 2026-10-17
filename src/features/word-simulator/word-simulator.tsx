@@ -396,6 +396,23 @@ export function WordSimulator(){
     markChanged();
     return true;
   }
+  function repairExitedScriptText(value:string){
+    const script=typingScriptExitNodeRef.current;
+    const root=editor.current;
+    if(!value||!script||!root?.contains(script))return;
+    const content=script.textContent??"";
+    if(!content.endsWith(value))return;
+    typingScriptExitNodeRef.current=null;
+    script.textContent=content.slice(0,-value.length);
+    const text=document.createTextNode(value);
+    script.after(text);
+    const range=document.createRange();
+    range.setStartAfter(text);
+    range.collapse(true);
+    const selection=window.getSelection();
+    selection?.removeAllRanges();
+    selection?.addRange(range);
+  }
   function insertTypingScriptText(value:string){
     const pending=typingScriptNodeRef.current;
     const root=editor.current;
@@ -1141,7 +1158,7 @@ export function WordSimulator(){
                    event.preventDefault();
                  }
                }}
-              onInput={()=>{cleanTypingScriptPlaceholder();rememberSelection();markChanged();}}
+              onInput={event=>{repairExitedScriptText((event.nativeEvent as InputEvent).data??"");cleanTypingScriptPlaceholder();rememberSelection();markChanged();}}
                onKeyUp={event=>{if(["ArrowLeft","ArrowRight","ArrowUp","ArrowDown","Home","End","PageUp","PageDown"].includes(event.key))syncTypingScriptCaret();rememberSelection();}}
                onMouseUp={()=>{syncTypingScriptCaret();handleEditorMouseUp();}}
               onFocus={rememberSelection} onPaste={event=>{event.preventDefault();setClipboardMode(null);stagedClipboard.current=null;command("insertText",event.clipboardData.getData("text/plain"));}}
