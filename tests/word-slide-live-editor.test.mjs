@@ -99,3 +99,24 @@ test("Word 01 has no in-slide progress strip or redundant Word launch on any sli
   assert.match(player, /<iframe ref=\{wordFrameRef\} src="\/cong-cu\/mo-phong-word"/);
   assert.match(player, /if \(wordLesson\) return <WordLessonSlide slide=\{slide\} index=\{index\} onAdvance=\{onAdvance\}\/>/);
 });
+
+test("Word 01 equalizes teaching cards and prevents content from dropping to the bottom",()=>{
+  const component=readFileSync("src/features/presentations/components/word-lesson-slide.tsx","utf8");
+  const styles=readFileSync("src/features/presentations/word-lesson-slide.css","utf8");
+  assert.doesNotMatch(component,/w01-demo-mark|w01-purpose-mark/);
+  assert.doesNotMatch(styles,/w01-demo-mark|w01-purpose-mark/);
+  assert.match(styles,/\.w01-ideas-editorial,\.w01-ideas-strip,\.w01-ideas-tiles\{[^}]*grid-template-columns:repeat\(3,minmax\(0,1fr\)\)/s);
+  assert.match(styles,/\.w01-ideas-editorial \.w01-idea:first-child\{[^}]*grid-row:auto;min-height:0;justify-content:flex-start/s);
+  assert.match(styles,/\.w01-idea\{[^}]*justify-content:flex-start/s);
+  assert.match(styles,/\.w01-process\{grid-auto-rows:minmax\(min-content,1fr\);align-items:stretch\}/);
+  assert.match(styles,/\.w01-process-list \.w01-step\{align-items:start\}/);
+  assert.match(styles,/\.w01-step-text\{align-self:start\}/);
+  assert.match(styles,/@media\(max-width:900px\)/);
+});
+test("Word 01 purpose slide uses balanced width with content-sized equal panels",()=>{
+  const styles=readFileSync("src/features/presentations/word-lesson-slide.css","utf8");
+  assert.match(styles,/\.w01-purpose\{[^}]*width:100%;max-width:1480px;margin-inline:auto/s);
+  assert.match(styles,/\.w01-purpose-half\{[^}]*min-width:0;min-height:0/s);
+  assert.match(styles,/\.w01-purpose-half\{[^}]*justify-content:flex-start/s);
+  assert.match(styles,/@media\(max-width:560px\)/);
+});

@@ -87,7 +87,6 @@ function PurposeSlide(){
     {purpose.map((item,i)=><article key={item.title} className={"w01-purpose-half"+(i===0?" is-first":"")}>
       <div className="w01-purpose-number">{pad(i+1)}</div>
       <div><h3>{item.title}</h3><p>{item.text}</p></div>
-      <span aria-hidden="true" className="w01-purpose-mark">{i===0?"Aa":"≡"}</span>
     </article>)}
   </div>;
 }
@@ -221,9 +220,6 @@ export function WordLessonSlide({slide,index,onAdvance}:{
     <div className="w01-slide-inner">
       <header className="w01-header">
         <SingleLineTitle text={slide.title}/>
-        {demo&&<span className="w01-demo-mark" aria-hidden="true">
-          <span/><span/><span/>
-        </span>}
       </header>
       <div className="w01-main">
         {type==="wordPurpose"&&<PurposeSlide/>}

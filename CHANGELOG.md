@@ -1,5 +1,12 @@
 # Changelog
 
+## 2026-10-17 — Đồng bộ thẻ kiến thức và cân lại slide 2 Word 01
+- Loại bỏ chi tiết trang trí thừa ở góc tiêu đề và các ký tự minh họa quá lớn trên slide 2.
+- Các thẻ nội dung cùng loại bằng nhau về rộng/cao, không phụ thuộc chữ nhiều hay ít; toàn bộ nội dung bắt đầu từ phía trên thẻ.
+- Bỏ kiểu một thẻ chiếm hai hàng làm lệch kích thước và chữ chìm đáy.
+- Slide 2 gồm hai khối so sánh cân đối theo chiều ngang, bỏ chiều cao tối thiểu quá lớn làm thẻ rỗng.
+- Giữ nút Word ở toolbar chung; các nút/thanh tiến độ thừa bên trong slide đã được xóa.
+
 ## 2026-10-17 — Xóa tiến độ và nút Word thừa dưới slide Word 01
 - Bỏ dãy số và vạch tiến độ `02 — 31` trong chân mọi slide Word 01.
 - Bỏ nút `Mở Word thực hành` lặp ở chân slide và trên bìa.

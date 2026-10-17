@@ -25,6 +25,13 @@
 
 ## III. Lịch sử
 
+### 2026-10-17 — Đồng bộ kích thước khối, căn chữ và cân đối slide 2 Word 01
+- **Yêu cầu:** Bỏ chi tiết trang trí thừa được phản ánh trên ảnh; các khối cùng loại có cùng kích thước dù độ dài văn bản khác nhau; slide 2 hai thẻ giãn ngang cân đối nhưng không quá cao/rỗng; chữ trong card không chìm xuống đáy.
+- **Thực hiện:** `word-lesson-slide.tsx` bỏ các dấu trang trí 3 vạch cạnh tiêu đề và chữ/hình ký hiệu trang trí lớn trong hai khối slide 2; `word-lesson-slide.css` loại bỏ CSS tương ứng. Các khối kiến thức ba mục dùng ba cột bằng nhau trên màn rộng, một cột trên tablet/điện thoại; CSS Grid chia đều kích thước thẻ theo hàng, bỏ card đầu chiếm hai hàng và căn dưới. Tất cả chữ/số trong card và thẻ bước căn đầu trên; bước dọc có các hàng cao bằng nhau theo nội dung dài nhất. Hai khối slide 2 dùng khung cân đối, chiếm ngang tối đa 1480px, bỏ min-height dư thừa và các khoảng trống giữa tiêu đề/nội dung.
+- **Giới hạn:** Chỉ chỉnh giao diện Word 01; không thay dữ liệu, ghi chú, Word Home Ribbon, iframe Word và trình phát các môn khác. Giữ việc bỏ tiến độ/nút Word thừa ở chân slide của commit trước.
+- **Kiểm thử:** CI kiểm tra Unit tests, Typecheck, Production build, Smoke test; cần nghiệm thu screenshot 360, 768, 1280, 1920px bằng trình duyệt. Vercel Production chỉ công bố khi đúng SHA GitHub `main`, READY và domain chính.
+- **GitHub / Vercel:** Ghi SHA theo commit triển khai.
+
 ### 2026-10-17 — Bỏ thanh tiến độ và nút Word lặp lại trong slide Word 01
 - **Yêu cầu:** Theo ảnh người dùng gửi, xóa hai thành phần ở chân tất cả slide: chỉ số/đường tiến độ dạng `02 — 31` và nút xanh `Mở Word thực hành`.
 - **Thay đổi:** Xóa `w01-bottom` (thanh số + nút) khỏi `src/features/presentations/components/word-lesson-slide.tsx` trên tất cả slide, bỏ nút Word trùng cả ở slide bìa; loại bỏ `OpenWord` và CSS liên quan trong `src/features/presentations/word-lesson-slide.css`. Đơn giản hóa props renderer trong `src/features/presentations/components/player.tsx`. Thêm kiểm thử trong `tests/word-slide-live-editor.test.mjs`.
