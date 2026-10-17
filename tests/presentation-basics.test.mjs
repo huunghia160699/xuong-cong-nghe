@@ -659,7 +659,7 @@ test("Word Ribbon splits icon actions and 13px dropdown menus without fake contr
  assert.match(editor,/sanitize\(await blob\.text\(\)\)/);
  assert.match(editor,/block\.style\.borderTop=/);
  assert.match(editor,/block\.style\.lineHeight=/);
- assert.match(editor,/selectedChange\(text=>text\.toLocaleUpperCase/);
+ assert.match(editor,/changeCasePreservingStyles\("upper"\)/);
 });
 
 
