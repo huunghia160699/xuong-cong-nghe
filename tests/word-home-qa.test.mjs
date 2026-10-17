@@ -125,6 +125,17 @@ test("Home Ribbon: repeat state, Escape, selection and dialogs 10 rounds",()=>{
    assert.match(editor,/function toggleScriptFormat\(kind:"subscript"\|"superscript"\)/);
    assert.match(editor,/const opposite=kind==="subscript"\?"superscript":"subscript";/);
    assert.match(editor,/const typingScriptRef=useRef<"subscript"\|"superscript"\|null>\(null\)/);
+   assert.match(editor,/const typingScriptNodeRef=useRef<HTMLElement\|null>\(null\)/);
+   assert.match(editor,/const TYPING_SCRIPT_PLACEHOLDER="\\u200B";/);
+   assert.match(editor,/const pending=typingScriptNodeRef\.current;/);
+   assert.match(editor,/const active=typingScriptRef\.current&&pending&&editor\.current\?\.contains\(pending\)/);
+   assert.match(editor,/if\(active===kind\)\{/);
+   assert.match(editor,/typingScriptNodeRef\.current=null;/);
+   assert.match(editor,/script\.textContent=TYPING_SCRIPT_PLACEHOLDER;/);
+   assert.match(editor,/typingScriptNodeRef\.current=script;/);
+   assert.match(editor,/function cleanTypingScriptPlaceholder\(\)/);
+   assert.match(editor,/node\.deleteData\(index,TYPING_SCRIPT_PLACEHOLDER\.length\);/);
+   assert.match(editor,/onInput=\{\(\)=>\{cleanTypingScriptPlaceholder\(\);rememberSelection\(\);markChanged\(\);\}\}/);
    assert.match(editor,/function rangeHasScript\(range:Range,kind:"subscript"\|"superscript"\)/);
    assert.match(editor,/textRange\.selectNodeContents\(node\);/);
    assert.match(editor,/range\.compareBoundaryPoints\(Range\.START_TO_END,textRange\)>0/);
