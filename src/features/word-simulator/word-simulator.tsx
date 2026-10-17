@@ -1077,7 +1077,7 @@ export function WordSimulator(){
                  }
                }}
                onKeyDown={event=>{
-                 if(event.key.length===1&&!event.ctrlKey&&!event.metaKey&&!event.altKey&&!event.isComposing&&
+                 if(event.key.length===1&&!event.ctrlKey&&!event.metaKey&&!event.altKey&&!event.nativeEvent.isComposing&&
                     typingScriptRef.current&&insertTypingScriptText(event.key)){
                    event.preventDefault();
                  }
