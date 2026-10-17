@@ -109,3 +109,86 @@
 }
 .wsl-group-dialog-action:hover{background:#eaf2fb;border-color:#9dbbd9}
 .wsl-group-dialog-action small{color:#697687;font-size:11px}
+
+/* Accessible div-only listbox dropdowns for every native-select replacement. */
+.wsl-word-dropdown{
+  position:relative;
+  display:flex;
+  align-items:center;
+  min-width:0;
+  box-sizing:border-box;
+  cursor:pointer;
+  outline:none;
+  user-select:none;
+}
+.wsl-word-dropdown:focus-visible{
+  outline:2px solid #005bfd;
+  outline-offset:1px;
+}
+.wsl-word-dropdown-value{
+  display:block;
+  flex:1 1 auto;
+  min-width:0;
+  overflow:hidden;
+  white-space:nowrap;
+  text-overflow:ellipsis;
+}
+.wsl-word-dropdown-chevron{
+  position:absolute;
+  top:50%;
+  right:5px;
+  width:13px;
+  height:13px;
+  transform:translateY(-50%);
+  pointer-events:none;
+  color:#4b515d;
+}
+.wsl-word-dropdown-menu{
+  position:fixed;
+  z-index:12500;
+  box-sizing:border-box;
+  max-height:min(320px,60vh);
+  overflow-y:auto;
+  padding:5px;
+  border:1px solid #c8ced7;
+  border-radius:4px;
+  background:#fff;
+  box-shadow:0 7px 24px #14243d33;
+  color:#273545;
+  font:12px/1.35 "Segoe UI",Arial,sans-serif;
+}
+.wsl-word-dropdown-option{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  box-sizing:border-box;
+  min-height:31px;
+  width:100%;
+  padding:6px 9px;
+  border-radius:2px;
+  cursor:pointer;
+  outline:none;
+  user-select:none;
+}
+.wsl-word-dropdown-option.is-highlighted,
+.wsl-word-dropdown-option:hover{background:#eaf2fb;color:#173f66}
+.wsl-word-dropdown-option.is-selected{font-weight:600}
+.wsl-word-dropdown-option[aria-disabled="true"]{opacity:.4;cursor:default}
+.wsl-word-dropdown-check{font-size:12px;color:#2166a4}
+.wsl-ribbon-field .wsl-layout-dropdown{
+  display:flex;
+  align-items:center;
+  width:100%;
+  height:35px;
+  border:1px solid #b6c7dd;
+  border-radius:3px;
+  background:#fff;
+  color:#172a43;
+  font-size:13px;
+}
+.wsl-ribbon-field .wsl-layout-dropdown .wsl-word-dropdown-value{
+  padding:0 24px 0 9px;
+}
+.wsl-ribbon-field .wsl-layout-dropdown.is-open,
+.wsl-ribbon-field .wsl-layout-dropdown:hover{border-color:#7c98b8}
