@@ -1627,7 +1627,7 @@ test("Word x2 status ignores unselected text nodes that merely touch range bound
    commonAncestorContainer:ancestor,
    startContainer:before,startOffset:2,
    endContainer:selected,endOffset:3,
-   intersectsNode:()=>true
+   intersectsNode(node){return node===selected||this.startContainer===before;}
  };
  assert.equal(detect(range,"subscript"),true,
    "preceding unselected text at end offset must not turn off x2");
