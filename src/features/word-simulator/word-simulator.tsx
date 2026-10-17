@@ -588,6 +588,16 @@ export function WordSimulator(){
   // of the selected content; a collapsed caret enters/exits a typing mode.
   function toggleScriptFormat(kind:"subscript"|"superscript"){
     const root=editor.current;
+    if(root&&formatActive[kind]){
+      const selection=window.getSelection();
+      const live=scriptAncestor(selection?.anchorNode??null);
+      const currentScript=typingScriptNodeRef.current??live??root.querySelector<HTMLElement>(kind==="subscript"?"sub":"sup");
+      const currentText=currentScript?.textContent?.replaceAll(TYPING_SCRIPT_PLACEHOLDER,"")??"";
+      if(currentScript&&currentText){
+        typingScriptExitNodeRef.current=currentScript;
+        currentScript.setAttribute("data-script-exit","true");
+      }
+    }
     const explicitPending=typingScriptRef.current===kind?typingScriptNodeRef.current:null;
     if(explicitPending){
       // Exit an explicit caret-only typing mode before focus/selection changes
