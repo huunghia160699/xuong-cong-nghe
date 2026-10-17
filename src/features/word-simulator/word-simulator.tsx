@@ -548,7 +548,7 @@ export function WordSimulator(){
   // x₂/x² have two separate behaviors: selected text toggles the formatting
   // of the selected content; a collapsed caret enters/exits a typing mode.
   function toggleScriptFormat(kind:"subscript"|"superscript"){
-    const root=editor.current;
+    const root=root;
     const explicitPending=typingScriptRef.current===kind?typingScriptNodeRef.current:null;
     if(explicitPending){
       // Exit an explicit caret-only typing mode before focus/selection changes
@@ -586,7 +586,7 @@ export function WordSimulator(){
       if(!range.collapsed){
         typingScriptRef.current=null;
         const before=document.createRange();
-        before.selectNodeContents(editor.current);
+        before.selectNodeContents(root);
         before.setEnd(range.startContainer,range.startOffset);
         const selectedStart=before.cloneContents().textContent?.length??0;
         const selectedLength=range.cloneContents().textContent?.length??0;
@@ -605,9 +605,9 @@ export function WordSimulator(){
       const context=scriptAncestor(range.startContainer);
       const fromDOM=context?.tagName==="SUB"?"subscript":context?.tagName==="SUP"?"superscript":null;
       const pending=typingScriptNodeRef.current;
-      const active=typingScriptRef.current&&pending&&editor.current.contains(pending)
+      const active=typingScriptRef.current&&pending&&root.contains(pending)
         ?typingScriptRef.current:fromDOM;
-      const scriptNode=active?(pending&&editor.current.contains(pending)?pending:context):null;
+      const scriptNode=active?(pending&&root.contains(pending)?pending:context):null;
       if(active&&scriptNode){
         // A second click must work even when the browser's collapsed Range
         // has drifted to the parent of the previously empty inline element.
