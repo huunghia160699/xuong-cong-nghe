@@ -1319,7 +1319,8 @@ test("x₂/x² use two modes: selection toggle and collapsed-caret typing toggle
  assert.match(toggle,/setFormatActive\(current=>\(\{\.\.\.current,\[kind\]:!wasActive,\[opposite\]:false\}\)\);/);
  assert.match(toggle,/const context=scriptAncestor\(range\.startContainer\);/);
  assert.match(toggle,/after\.setStartAfter\(context\);/);
- assert.match(toggle,/if\(!context\.textContent\)context\.remove\(\);/);
+ assert.match(toggle,/const cleanText=scriptNode\.textContent\?\.replaceAll\(TYPING_SCRIPT_PLACEHOLDER,""\)\?\?"";/);
+ assert.match(toggle,/if\(!cleanText\)scriptNode\.remove\(\);/);
  assert.match(toggle,/if\(active===kind\)\{/);
  assert.match(toggle,/typingScriptRef\.current=null;/);
  assert.match(toggle,/current\.insertNode\(script\);/);
@@ -1381,6 +1382,7 @@ test("Unselected caret: x₂/x² enters typing mode, second click exits; switchi
  const nodes=[];const root={contains:()=>true};
  const button={subscript:false,superscript:false};
  const typingScriptRef={current:null};
+ const typingScriptNodeRef={current:null};
  let selectedRange={collapsed:true,startContainer:root,insertNode:node=>nodes.push(node)};
  const selection={
   rangeCount:1,anchorNode:root,
@@ -1393,6 +1395,8 @@ test("Unselected caret: x₂/x² enters typing mode, second click exits; switchi
   window:{getSelection:()=>selection},
   editor:{current:root},
   typingScriptRef,
+  typingScriptNodeRef,
+  TYPING_SCRIPT_PLACEHOLDER:"\u200B",
   document:{
     createElement(tag){
       const node={tagName:tag.toUpperCase(),textContent:"",removed:false,remove(){this.removed=true;}};
@@ -1421,12 +1425,15 @@ test("Unselected caret: x₂/x² enters typing mode, second click exits; switchi
  assert.equal(selection.anchorNode,created[0],"caret is placed inside <sub> for next keystroke");
  assert.deepEqual({...button},{subscript:true,superscript:false});
  assert.equal(typingScriptRef.current,"subscript");
+ assert.equal(typingScriptNodeRef.current,created[0]);
+ assert.equal(created[0].textContent,"\u200B");
  created[0].textContent="2"; // simulate user typing a subscript character
  toggle("subscript");
  assert.equal(selection.anchorNode,root,"second click exits the subscript span");
  assert.deepEqual({...button},{subscript:false,superscript:false});
  assert.equal(created[0].removed,false,"already typed characters are preserved");
  assert.equal(typingScriptRef.current,null);
+ assert.equal(typingScriptNodeRef.current,null);
  toggle("superscript");
  assert.equal(created[1].tagName,"SUP");
  assert.deepEqual({...button},{subscript:false,superscript:true});
@@ -1803,4 +1810,94 @@ test("All Word simulator dropdown surfaces are custom div panels, with no native
      assert.ok(options[down]&&options[up],name+" wraps keyboard arrow selection");
    }
  }
+});
+
+
+test("Caret script x₂/x² second click toggles off even when browser relocates collapsed selection to editor parent",()=>{
+ const source=readFileSync("src/features/word-simulator/word-simulator.tsx","utf8");
+ const start=source.indexOf('  function toggleScriptFormat(');
+ const end=source.indexOf('  function saveDraft()',start);
+ const executable=source.slice(start,end).trim().replace('kind:"subscript"|"superscript"','kind');
+ const root={tagName:"DIV",contains(node){return node===this||nodes.includes(node);}};
+ const nodes=[],created=[];
+ const typingScriptRef={current:null};
+ const typingScriptNodeRef={current:null};
+ const button={subscript:false,superscript:false};
+ let range={collapsed:true,startContainer:root,insertNode(node){nodes.push(node);}};
+ const selection={
+  rangeCount:1,anchorNode:root,
+  getRangeAt:()=>range,
+  removeAllRanges(){range=null;},
+  addRange(value){range=value;this.anchorNode=value.startContainer;}
+ };
+ const ctx={
+  window:{getSelection:()=>selection},
+  editor:{current:root},
+  typingScriptRef,typingScriptNodeRef,TYPING_SCRIPT_PLACEHOLDER:"\u200B",
+  document:{
+    createElement(tag){
+      const node={tagName:tag.toUpperCase(),textContent:"",removed:false,remove(){this.removed=true;}};
+      created.push(node);
+      return node;
+    },
+    createRange(){return{
+      collapsed:true,startContainer:root,
+      setStartAfter(){this.startContainer=root;},
+      selectNodeContents(node){this.startContainer=node;},
+      insertNode(node){nodes.push(node);},
+      collapse(collapsed){this.collapsed=collapsed;}
+    };}
+  },
+  scriptAncestor(node){return ["SUB","SUP"].includes(node?.tagName)?node:null;},
+  restoreSelection(){},rememberSelection(){},
+  setFormatActive(fn){Object.assign(button,fn({...button}));},
+  markChanged(){},setStatus(){}
+ };
+ const toggle=runInNewContext("("+executable+")",ctx);
+ for(const kind of ["subscript","superscript"]){
+   toggle(kind);
+   const node=created.at(-1);
+   assert.equal(typingScriptRef.current,kind);
+   assert.equal(typingScriptNodeRef.current,node);
+   assert.equal(node.textContent,"\u200B");
+   assert.equal(button[kind],true);
+   // Browser may move a caret from an otherwise empty inline span to parent.
+   range={collapsed:true,startContainer:root,insertNode(value){nodes.push(value);}};
+   selection.anchorNode=root;
+   toggle(kind);
+   assert.equal(typingScriptRef.current,null,"second press exits pending mode even if DOM ancestor is absent");
+   assert.equal(typingScriptNodeRef.current,null);
+   assert.equal(button.subscript,false);
+   assert.equal(button.superscript,false);
+   assert.equal(node.removed,true,"unused empty script node must be removed on exit");
+ }
+ toggle("subscript");
+ const previous=created.at(-1);
+ range={collapsed:true,startContainer:root,insertNode(value){nodes.push(value);}};
+ selection.anchorNode=root;
+ toggle("superscript");
+ assert.equal(previous.removed,true,"switching from x₂ to x² after displaced caret removes empty previous script");
+ assert.equal(typingScriptRef.current,"superscript");
+ assert.equal(button.superscript,true);
+ assert.equal(button.subscript,false);
+ toggle("superscript");
+ assert.equal(typingScriptRef.current,null);
+});
+
+test("Caret x₂/x² formatting state survives programmatic selectionchange and resets on real mouse navigation",()=>{
+ const source=readFileSync("src/features/word-simulator/word-simulator.tsx","utf8");
+ const part=source.slice(source.indexOf('  function syncFormatState()'),source.indexOf('  // Persist selection'));
+ assert.match(part,/const pending=typingScriptNodeRef\.current;/);
+ assert.match(part,/const active=typingScriptRef\.current&&pending&&editor\.current\?\.contains\(pending\)/);
+ assert.match(part,/\?typingScriptRef\.current:fromDOM;/);
+ assert.match(source,/function syncTypingScriptCaret\(\)/);
+ assert.match(source,/if\(pending&&ancestor!==pending\)\{/);
+ assert.match(source,/typingScriptRef\.current=null;/);
+ assert.match(source,/typingScriptNodeRef\.current=null;/);
+ assert.match(source,/function cleanTypingScriptPlaceholder\(\)/);
+ assert.match(source,/node\.deleteData\(index,TYPING_SCRIPT_PLACEHOLDER\.length\);/);
+ assert.match(source,/script\.textContent=TYPING_SCRIPT_PLACEHOLDER;/);
+ assert.match(source,/onInput=\{\(\)=>\{cleanTypingScriptPlaceholder\(\);rememberSelection\(\);markChanged\(\);\}\}/);
+ assert.match(source,/onKeyUp=\{event=>\{if\(\["ArrowLeft","ArrowRight","ArrowUp","ArrowDown","Home","End","PageUp","PageDown"\]\.includes\(event\.key\)\)syncTypingScriptCaret\(\);rememberSelection\(\);\}\}/);
+ assert.match(source,/onMouseUp=\{\(\)=>\{syncTypingScriptCaret\(\);handleEditorMouseUp\(\);\}\}/);
 });
