@@ -481,3 +481,5 @@ Kết quả kiểm tra thực tế trước sửa (người dùng báo): Bold/It
 - **Rà soát kiểm thử khi phát hành:** cập nhật hai assertion cũ dùng Change Case `selectedChange` và listener `syncFormatState();syncRulerIndent();` để phản ánh cơ chế mới; khi chạy helper TS trong Node VM đã loại phần annotation TypeScript và chỉ lấy body của helper `removeEmptyFormattingNodes` để tránh nhầm chú thích thành JavaScript. Các bài kiểm thử vẫn xác nhận DOM và giá trị state, không nới lỏng điều kiện chức năng.
 
 - **Điều chỉnh test VM khi thêm helper vào cùng file:** các kiểm thử cũ trích `rangeHasScript` đến `syncFormatState` nay phải dừng tại `syncFontControls` để không thực thi nhiều function cùng một biểu thức; kiểm thử `syncFontControls` trích riêng body hàm và loại chú thích lân cận. Các kiểm thử DOM mới vẫn giữ nguyên kỳ vọng về chữ đậm, dropdown reset và text trong chỉ số.
+
+- **Lỗi TypeScript được sửa trong build:** với React SyntheticKeyboardEvent, dùng `event.nativeEvent.isComposing` (thuộc native KeyboardEvent) thay cho `event.isComposing` trong `onKeyDown`, tránh chặn xử lý IME nhưng vẫn bắt phím thường để chèn vào thẻ `<sub>/<sup>`. Build phải chạy lại đến READY.
