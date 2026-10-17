@@ -606,7 +606,7 @@ export function WordSimulator(){
     if(root&&formatActive[kind]){
       restoreSelection();
       root.focus?.({preventScroll:true});
-      document.execCommand(kind==="subscript"?"subscript":"superscript",false);
+      document.execCommand?.(kind==="subscript"?"subscript":"superscript",false);
       typingScriptRef.current=null;
       typingScriptNodeRef.current=null;
       typingScriptExitNodeRef.current=null;
