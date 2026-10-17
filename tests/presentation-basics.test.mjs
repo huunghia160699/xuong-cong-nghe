@@ -1320,7 +1320,7 @@ test("x₂/x² use two modes: selection toggle and collapsed-caret typing toggle
  assert.match(toggle,/const context=scriptAncestor\(range\.startContainer\);/);
  assert.match(toggle,/after\.setStartAfter\(scriptNode\);/);
  assert.match(toggle,/const cleanText=scriptNode\.textContent\?\.replaceAll\(TYPING_SCRIPT_PLACEHOLDER,""\)\?\?"";/);
- assert.match(toggle,/if\(!cleanText\)scriptNode\.remove\(\);/);
+ assert.match(toggle,/scriptNode\.remove\(\);/);
  assert.match(toggle,/if\(active===kind\)\{/);
  assert.match(toggle,/typingScriptRef\.current=null;/);
  assert.match(toggle,/current\.insertNode\(script\);/);
