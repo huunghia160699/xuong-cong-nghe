@@ -10,7 +10,7 @@ const page = readFileSync("src/app/(presentation)/cong-cu/trinh-chieu/[lessonId]
 
 test("Word 01 embeds the existing full editor rather than a video or external page", () => {
   assert.match(player, /lesson\.id === "word-lam-quen"/);
-  assert.match(player, /<iframe src="\/cong-cu\/mo-phong-word"/);
+  assert.match(player, /<iframe ref=\{wordFrameRef\} src="\/cong-cu\/mo-phong-word"/);
   assert.match(player, /className=\{"xcn-word-live-lab"/);
   assert.doesNotMatch(player, /window\.open\(/);
   assert.match(page, /word-live-lab\.css/);

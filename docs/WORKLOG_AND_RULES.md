@@ -32,7 +32,7 @@
 - **Kiểm thử:** Có kiểm thử hồi quy tĩnh bằng Node; cần CI thực thi `pnpm test`, `pnpm typecheck`, `pnpm build` và xem thực tế ở 360/768/1280px trước khi xác nhận.
 - **GitHub commit:** Xem commit của lần chỉnh sửa này trên branch `main`.
 - **Vercel Production:** Chưa xác nhận READY và SHA tại thời điểm ghi nhật ký.
-- **Tồn đọng:** Kiểm tra thực tế hiệu năng iframe, bàn phím khi thao tác và điều hướng trong các slide tại production. Nút X của cửa sổ Word khi ở iframe hiện lưu nháp rồi đóng khung thực hành bằng `postMessage` cùng nguồn, thay vì điều hướng iframe sang `/cong-cu`.
+- **Tồn đọng:** Kiểm tra thực tế hiệu năng iframe, bàn phím khi thao tác và điều hướng trong các slide tại production. Nút X của cửa sổ Word khi ở iframe lưu nháp rồi gửi `postMessage` cùng nguồn ở sự kiện capture; giữ nguyên `onClick={onClose}` cũ để không đổi hành vi khi Word mở độc lập. Đã sửa kiểm thử iframe có `ref`.
 
 ### 2026-10-15 — Chuẩn hóa căn giữa và chiều cao nhóm Font, khoảng A-mũi tên 3px
 - **Yêu cầu:** chevron trên A sát hơn để cách khoảng 3px; hai ô chọn Font/Size cùng chiều cao với nút tăng/giảm, hai hàng đều căn giữa các nút, vạch đứng mảnh cùng kích thước.
