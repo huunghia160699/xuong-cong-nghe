@@ -1,5 +1,11 @@
 # Changelog
 
+## 2026-10-18 — Sửa phím Space và font chọn trước khi nhập trong Word
+- Không xóa mọi dấu cách NBSP của trình duyệt; chỉ xóa placeholder thoát Sup/Sub được đánh dấu riêng.
+- Chọn font hoặc cỡ chữ ở con trỏ khi chưa bôi chọn sẽ giữ nguyên trạng thái dropdown và áp dụng lên nội dung gõ sau đó, gồm cả dấu cách.
+- Hỗ trợ chọn lại font/cỡ trước khi gõ mà không tạo lồng thẻ rỗng; xóa zero-width placeholder sau khi nhập ký tự.
+- Thêm kiểm thử hồi quy nhập dấu cách và đổi font ở Range thu gọn.
+
 ## 2026-10-18 — Hoàn thiện Change Case (Aa) trong Word mô phỏng
 - Menu có đủ 5 thao tác: Viết hoa đầu câu, chữ thường, CHỮ HOA, Viết Hoa Từng Từ và đẢO hOA/tHƯỜNG.
 - Nút Aa chính đảo hoa/thường **từng ký tự**, thay vì đổi cả vùng thành một kiểu chữ.

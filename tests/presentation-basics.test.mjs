@@ -1438,7 +1438,7 @@ test("Vietnamese Telex: after turning x² off, next a cannot compose the last su
  assert.equal(caret.data,"\u200Bâ","new composition must be outside the SUP");
  assert.match(source,/parsed\.body\.querySelectorAll\("\[data-script-ime-break\]"\)/);
  assert.match(source,/return parsed\.body\.innerHTML\.replaceAll\("\\u200B",""\)/);
- assert.match(source,/node\.parentElement\?\.closest\("\[data-script-ime-break\]"\)/);
+ assert.match(source,/typingScriptExitAnchorRef\.current=null;/);
  assert.doesNotMatch(source,/boundary\.contentEditable="false"/);
 });
 
@@ -2094,7 +2094,7 @@ test("Caret x₂/x² formatting state survives programmatic selectionchange and 
  assert.match(source,/script\.textContent=TYPING_SCRIPT_PLACEHOLDER;/);
  assert.match(source,/onInput=\{event=>\{repairExitedScriptText/);
 
- assert.match(source,/cleanTypingScriptPlaceholder\(\);cleanScriptExitAnchor\(\);rememberSelection\(\);markChanged\(\);/);
+ assert.match(source,/cleanTypingScriptPlaceholder\(\);cleanPendingFontPlaceholder\(\);cleanScriptExitAnchor\(\);rememberSelection\(\);markChanged\(\);/);
  assert.match(source,/onKeyUp=\{event=>\{repairExitedScriptText\(\);cleanScriptExitAnchor\(\);if\(/);
  assert.match(source,/onMouseUp=\{\(\)=>\{syncTypingScriptCaret\(\);handleEditorMouseUp\(\);\}\}/);
 });
@@ -2154,6 +2154,101 @@ test("Change Case preserves mixed formatting nodes instead of replacing selectio
  assert.match(executable,/document\.createTreeWalker\(fragment,NodeFilter\.SHOW_TEXT\)/);
  assert.match(executable,/range\.insertNode\(fragment\)/);
  assert.doesNotMatch(executable,/execCommand\("insertText"/);
+});
+
+
+test("Word editor preserves native spaces instead of deleting every browser NBSP",()=>{
+ const source=readFileSync("src/features/word-simulator/word-simulator.tsx","utf8");
+ const from=source.indexOf("  function cleanScriptExitAnchor()");
+ const to=source.indexOf("  function insertPendingFontText(",from);
+ assert.ok(from>=0&&to>from);
+ const text=source.slice(from,to);
+ const anchor={data:"\u00A0X",deleteData(index,length){this.data=this.data.slice(0,index)+this.data.slice(index+length)}};
+ const ordinary={data:"hello\u00A0world",deleteData(){throw Error("ordinary spaces must never be deleted")}};
+ const ref={current:anchor};
+ const cleanup=runInNewContext("("+text.trim()+")",{
+   typingScriptExitAnchorRef:ref,
+   SCRIPT_EXIT_ANCHOR:"\u00A0",
+   editor:{current:{contains:node=>node===anchor||node===ordinary}}
+ });
+ cleanup();
+ assert.equal(anchor.data,"X","only the explicitly tracked exit marker is cleared");
+ assert.equal(ordinary.data,"hello\u00A0world","native contentEditable NBSP is preserved");
+ assert.equal(ref.current,null);
+ cleanup();
+ assert.equal(ordinary.data,"hello\u00A0world","repeated input/keyup never removes ordinary spaces");
+ assert.doesNotMatch(text,/createTreeWalker/);
+ assert.match(source,/onKeyDown=\{event=>\{/);
+ assert.match(source,/event\.key\.length===1/);
+});
+
+test("Word font without highlighted text stays selected and applies to the next typed character and spaces",()=>{
+ const src=readFileSync("src/features/word-simulator/word-simulator.tsx","utf8");
+ const begin=src.indexOf('  function insertPendingFontText(');
+ const end=src.indexOf('  function insertTypingScriptText(',begin);
+ assert.ok(begin>=0&&end>begin);
+ const fn=src.slice(begin,end).trim()
+   .replaceAll('value:string','value')
+   .replace('property:"font"|"size",value','property,value')
+   .replace('const valueNode=text as Text','const valueNode=text')
+   .replace('const node=walker.currentNode as Text','const node=walker.currentNode');
+ const root={nodeType:1,contains:node=>node===root||node?.parentNode===root||
+   node?.parentNode?.parentNode===root};
+ const placeholder="\u200B";
+ const pendingRef={current:null};
+ const state={range:{collapsed:true,startContainer:root,startOffset:0,
+   insertNode(node){node.parentNode=root;root.child=node;}}};
+ let selection;
+ selection={
+   rangeCount:1,anchorNode:root,
+   getRangeAt:()=>state.range,
+   removeAllRanges(){selection.rangeCount=0},
+   addRange(range){state.range=range;selection.rangeCount=1;selection.anchorNode=range.startContainer}
+ };
+ const dom={
+   createElement(tag){
+     return {tagName:tag.toUpperCase(),nodeType:1,style:{},children:[],
+       textContent:"",
+       setAttribute(name,value){this[name]=value},
+       appendChild(n){n.parentNode=this;this.children.push(n);this.textContent=n.data},
+       contains(n){return n===this||n.parentNode===this}};
+   },
+   createTextNode(value){return{nodeType:3,data:value}},
+   createRange(){return {
+     collapsed:true,
+     selectNodeContents(node){this.startContainer=node;this.startOffset=node.textContent.length},
+     collapse(value){this.collapsed=value},
+     setStart(node,index){this.startContainer=node;this.startOffset=index},
+     insertNode(node){state.range.insertNode(node)}
+   }}
+ };
+ const ctx={
+   editor:{current:root},window:{getSelection:()=>selection},
+   pendingFontNodeRef:pendingRef,TYPING_SCRIPT_PLACEHOLDER:placeholder,
+   Node:{TEXT_NODE:3},document:dom,
+   restoreSelection(){},rememberSelection(){},markChanged(){}
+ };
+ const input=runInNewContext("("+fn.slice(fn.indexOf("function insertPendingFontText("),
+   fn.indexOf("  function cleanPendingFontPlaceholder()")).trim()+")",ctx);
+ const format=runInNewContext("("+fn.slice(fn.indexOf("  function createPendingFontFormat(")).trim()+")",ctx);
+ assert.equal(format("font","Georgia"),true);
+ const span=root.child;
+ assert.equal(span.style.fontFamily,"Georgia");
+ assert.equal(span.textContent,placeholder);
+ assert.equal(pendingRef.current,span);
+ assert.equal(format("size","5"),true,"font-size selection reuses an empty pending inline format");
+ assert.equal(span.style.fontSize,"18pt");
+ assert.equal(span.style.fontFamily,"Georgia","font stays while selecting a size");
+ assert.equal(input(" "),true,"Space is inserted as a normal character");
+ assert.equal(span.textContent," ");
+ assert.equal(span.textContent.includes(placeholder),false,
+   "pending sentinel is not carried into the newly typed text");
+ assert.equal(pendingRef.current,null);
+ assert.equal(input("a"),false,"subsequent normal typing is owned by the browser");
+ assert.match(src,/if\(!createPendingFontFormat\("font",next\)\)command\("fontName",next\)/);
+ assert.match(src,/if\(!createPendingFontFormat\("size",next\)\)command\("fontSize",next\)/);
+ assert.match(src,/insertPendingFontText\(native\.data\)/);
+ assert.match(src,/insertPendingFontText\(event\.key\)/);
 });
 
 test("Word Change Case supports all five Word modes with punctuation, Vietnamese and mixed formatting",()=>{

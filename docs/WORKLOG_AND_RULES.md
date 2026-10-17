@@ -25,6 +25,13 @@
 
 ## III. Lịch sử
 
+### 2026-10-18 — Sửa Space mất dấu cách và font tự trở về khi không bôi chọn
+- **Lỗi:** Nhấn Space trong vùng Word không tạo khoảng trắng; khi chỉ đặt con trỏ rồi đổi font (không bôi chọn), dropdown lập tức trở về font ban đầu. Có liên quan cả font size.
+- **Nguyên nhân:** `cleanScriptExitAnchor()` trước đó duyệt *toàn bộ* text node, xóa mọi `U+00A0`. Chromium dùng U+00A0 để biểu diễn nhiều lần nhấn Space trong `contentEditable` nên người dùng mất khoảng trắng. `fontName`/`fontSize` qua `execCommand` ở Range thu gọn chưa đảm bảo có DOM mang định dạng; `syncFontControls()` đọc lại font cũ và reset dropdown.
+- **Sửa:** Chỉ dọn duy nhất text node marker do logic thoát Sup/Sub tự tạo, được giữ trong `typingScriptExitAnchorRef`, tuyệt đối không duyệt/xóa khoảng trắng bình thường; vẫn giữ Telex boundary. Với Range thu gọn tạo `span` có font-family hoặc font-size + marker ZWSP, giữ caret trong span để lần gõ tiếp theo nhận định dạng; nếu chưa gõ mà chọn lại font/cỡ thì tái sử dụng span. OnBeforeInput/OnKeyDown xử lý ký tự đầu và Space trong span; onInput dọn marker khi native IME nhập.
+- **Kiểm thử:** Regression tests: U+00A0 bình thường không bị xóa; chỉ dọn NBSP marker được theo dõi; chọn Georgia và cỡ 18 không bôi chọn, nhập Space ở caret; giữ test Telex/Sup/Sub/Change Case. CI đầy đủ Unit tests/Typecheck/Build/Smoke; xác nhận Production READY với main SHA.
+- **Phạm vi:** Chỉ công cụ Word mô phỏng, không chỉnh các ribbon control, slide hoặc các môn khác. Chưa kiểm thử trực quan bằng thao tác UniKey và Space thực tế trong Chromium.
+
 ### 2026-10-18 — Hoàn thiện năm chức năng Change Case cho Word mô phỏng
 - **Mục tiêu:** Bổ sung chức năng thực tế cho nút Change Case (Aa) trong Ribbon Home như Word, không chỉ trình bày menu.
 - **Nút/mode:** `Viết hoa đầu câu` (có nhận dấu câu .!? và qua các thẻ chữ khác nhau), `chữ thường`, `CHỮ HOA`, `Viết Hoa Từng Từ` (nhận ranh giới từ, gạch nối, dấu câu và tiếng Việt), `đẢO hOA/tHƯỜNG` (đảo từng ký tự). Nút Aa chính thực hiện đảo từng ký tự; menu đủ năm lựa chọn.

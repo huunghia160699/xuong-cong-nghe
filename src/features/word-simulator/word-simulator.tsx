@@ -128,6 +128,8 @@ export function WordSimulator(){
   const typingScriptNodeRef=useRef<HTMLElement|null>(null);
   const typingScriptExitNodeRef=useRef<HTMLElement|null>(null);
   const typingScriptExitLengthRef=useRef<number|null>(null);
+  const typingScriptExitAnchorRef=useRef<Text|null>(null);
+  const pendingFontNodeRef=useRef<HTMLElement|null>(null);
   // A zero-width placeholder keeps a collapsed caret inside an empty sub/sup.
   const TYPING_SCRIPT_PLACEHOLDER="\u200B";
   const SCRIPT_EXIT_ANCHOR="\u00A0";
@@ -194,6 +196,8 @@ export function WordSimulator(){
     savedSelection.current=null;
     typingScriptRef.current=null;
     typingScriptNodeRef.current=null;
+    pendingFontNodeRef.current=null;
+    typingScriptExitAnchorRef.current=null;
     setClipboardMode(null);stagedClipboard.current=null;
     updateStats();setRevision(value=>value+1);
   },[updateStats]);
@@ -437,17 +441,92 @@ export function WordSimulator(){
     selection?.addRange(range);
   }
   function cleanScriptExitAnchor(){
+    // Browsers convert ordinary typed spaces into U+00A0 in contentEditable.
+    // Never scan/delete all NBSP: only remove our OWN legacy exit placeholder.
+    const anchor=typingScriptExitAnchorRef.current;
+    typingScriptExitAnchorRef.current=null;
+    if(!anchor||!editor.current?.contains(anchor))return;
+    if(anchor.data.startsWith(SCRIPT_EXIT_ANCHOR)){
+      anchor.deleteData(0,SCRIPT_EXIT_ANCHOR.length);
+    }
+  }
+  function insertPendingFontText(value:string){
+    const pending=pendingFontNodeRef.current;
     const root=editor.current;
-    if(!root)return;
-    const walker=document.createTreeWalker(root,NodeFilter.SHOW_TEXT);
+    const selection=window.getSelection();
+    if(!value||!pending||!root?.contains(pending)||!selection?.rangeCount)return false;
+    const current=selection.getRangeAt(0);
+    if(!current.collapsed||!pending.contains(current.startContainer))return false;
+    const marker=TYPING_SCRIPT_PLACEHOLDER;
+    const insertion=document.createRange();
+    const text=current.startContainer;
+    const oldOffset=current.startOffset;
+    if(text.nodeType===Node.TEXT_NODE&&text.parentNode===pending){
+      const valueNode=text as Text;
+      // Place the inserted character at the caret and remove only our ZWSP.
+      const prefix=valueNode.data.slice(0,oldOffset).replaceAll(marker,"");
+      const suffix=valueNode.data.slice(oldOffset).replaceAll(marker,"");
+      valueNode.data=prefix+value+suffix;
+      insertion.setStart(valueNode,(prefix+value).length);
+    }else{
+      pending.textContent=value;
+      insertion.selectNodeContents(pending);
+      insertion.collapse(false);
+    }
+    insertion.collapse(true);
+    selection.removeAllRanges();
+    selection.addRange(insertion);
+    // The span remains the active inline style. Future native/IME input can
+    // flow inside it; no fontName execCommand on an empty selection is needed.
+    pendingFontNodeRef.current=null;
+    rememberSelection();
+    markChanged();
+    return true;
+  }
+  function cleanPendingFontPlaceholder(){
+    const pending=pendingFontNodeRef.current;
+    if(!pending||!editor.current?.contains(pending))return;
+    if(pending.textContent===TYPING_SCRIPT_PLACEHOLDER)return;
+    const walker=document.createTreeWalker(pending,NodeFilter.SHOW_TEXT);
     while(walker.nextNode()){
       const node=walker.currentNode as Text;
-      const index=node.data.indexOf(SCRIPT_EXIT_ANCHOR);
-      // A protected word boundary must survive text input until the IME
-      // finishes composing the first normal-text word outside <sub>/<sup>.
-      if(index>=0&&!node.parentElement?.closest("[data-script-ime-break]"))
-        node.deleteData(index,SCRIPT_EXIT_ANCHOR.length);
+      const at=node.data.indexOf(TYPING_SCRIPT_PLACEHOLDER);
+      if(at>=0)node.deleteData(at,TYPING_SCRIPT_PLACEHOLDER.length);
     }
+    pendingFontNodeRef.current=null;
+  }
+  function createPendingFontFormat(property:"font"|"size",value:string){
+    restoreSelection();
+    const root=editor.current;
+    const selection=window.getSelection();
+    if(!root||!selection?.rangeCount)return false;
+    const range=selection.getRangeAt(0);
+    if(!range.collapsed||!root.contains(range.startContainer))return false;
+    const existing=pendingFontNodeRef.current;
+    // Before the first typed character, changing font/size only updates the
+    // pending span. Once it has content, create a NEW span at the caret.
+    let span=existing&&root.contains(existing)&&
+      existing.textContent===TYPING_SCRIPT_PLACEHOLDER?existing:null;
+    if(!span){
+      span=document.createElement("span");
+      span.setAttribute("data-font-pending","true");
+      const marker=document.createTextNode(TYPING_SCRIPT_PLACEHOLDER);
+      span.appendChild(marker);
+      range.insertNode(span);
+    }
+    if(property==="font")span.style.fontFamily=value;
+    else {
+      const sizes=["8","10","12","14","18","24","36"];
+      span.style.fontSize=(sizes[Number(value)-1]??"12")+"pt";
+    }
+    const caret=document.createRange();
+    caret.selectNodeContents(span);
+    caret.collapse(false);
+    selection.removeAllRanges();
+    selection.addRange(caret);
+    pendingFontNodeRef.current=span;
+    rememberSelection();
+    return true;
   }
   function insertTypingScriptText(value:string){
     const pending=typingScriptNodeRef.current;
@@ -701,6 +780,7 @@ export function WordSimulator(){
     }
     if(liveRange?.collapsed&&root&&liveScript&&liveText&&typeof document.createTextNode==="function"){
       const anchor=document.createTextNode("\u00A0");
+      typingScriptExitAnchorRef.current=anchor;
       liveScript.parentNode?.insertBefore(anchor,liveScript.nextSibling);
       const outside=document.createRange();
       outside.setStart(anchor,anchor.data.length);
@@ -773,6 +853,7 @@ export function WordSimulator(){
         // A boundary immediately after <sub>/<sup> can be normalized back into
         // that element by contentEditable. Anchor the caret in a real sibling.
         const exitText=document.createTextNode(SCRIPT_EXIT_ANCHOR);
+        typingScriptExitAnchorRef.current=exitText;
         parent.insertBefore(exitText,explicitPending.nextSibling);
         after.setStart(exitText,exitText.data.length);
       }else{
@@ -829,6 +910,7 @@ export function WordSimulator(){
         const cleanText=scriptNode.textContent?.replaceAll(TYPING_SCRIPT_PLACEHOLDER,"")??"";
         if(cleanText&&scriptNode.parentNode){
           const exitAnchor=document.createTextNode(SCRIPT_EXIT_ANCHOR);
+          typingScriptExitAnchorRef.current=exitAnchor;
           scriptNode.parentNode.insertBefore(exitAnchor,scriptNode.nextSibling);
           after.setStart(exitAnchor,exitAnchor.data.length);
         }else{
@@ -882,8 +964,14 @@ export function WordSimulator(){
     }catch{setStatus("Không đủ dung lượng để lưu bản nháp; hãy tải tệp HTML");}
   }
   function blockCommand(tag:string){command("formatBlock",tag);}
-  function editFont(next:string){command("fontName",next);setFont(next);}
-  function editSize(next:string){command("fontSize",next);setFontSize(next);}
+  function editFont(next:string){
+    if(!createPendingFontFormat("font",next))command("fontName",next);
+    setFont(next);
+  }
+  function editSize(next:string){
+    if(!createPendingFontFormat("size",next))command("fontSize",next);
+    setFontSize(next);
+  }
   function insertTable(){
     const table='<table><tbody><tr><th>STT</th><th>Họ và tên</th><th>Ghi chú</th></tr><tr><td>1</td><td><br></td><td><br></td></tr><tr><td>2</td><td><br></td><td><br></td></tr></tbody></table><p><br></p>';
     command("insertHTML",table);
@@ -1341,17 +1429,21 @@ export function WordSimulator(){
               onBeforeInput={event=>{
                  const native=event.nativeEvent as InputEvent;
                  if(native.data&&!native.isComposing&&(!native.inputType||native.inputType==="insertText")&&
-                    (insertExitedScriptText(native.data)||(typingScriptRef.current&&insertTypingScriptText(native.data)))){
+                    (insertExitedScriptText(native.data)||
+                    (typingScriptRef.current&&insertTypingScriptText(native.data))||
+                    insertPendingFontText(native.data))){
                    event.preventDefault();
                  }
                }}
                onKeyDown={event=>{
                  if(event.key.length===1&&!event.ctrlKey&&!event.metaKey&&!event.altKey&&!event.nativeEvent.isComposing&&
-                    (insertExitedScriptText(event.key)||(typingScriptRef.current&&insertTypingScriptText(event.key)))){
+                    (insertExitedScriptText(event.key)||
+                    (typingScriptRef.current&&insertTypingScriptText(event.key))||
+                    insertPendingFontText(event.key))){
                    event.preventDefault();
                  }
                }}
-              onInput={event=>{repairExitedScriptText();cleanTypingScriptPlaceholder();cleanScriptExitAnchor();rememberSelection();markChanged();}}
+              onInput={event=>{repairExitedScriptText();cleanTypingScriptPlaceholder();cleanPendingFontPlaceholder();cleanScriptExitAnchor();rememberSelection();markChanged();}}
                onKeyUp={event=>{repairExitedScriptText();cleanScriptExitAnchor();if(["ArrowLeft","ArrowRight","ArrowUp","ArrowDown","Home","End","PageUp","PageDown"].includes(event.key))syncTypingScriptCaret();rememberSelection();}}
                onMouseUp={()=>{syncTypingScriptCaret();handleEditorMouseUp();}}
               onFocus={rememberSelection} onPaste={event=>{event.preventDefault();setClipboardMode(null);stagedClipboard.current=null;command("insertText",event.clipboardData.getData("text/plain"));}}
