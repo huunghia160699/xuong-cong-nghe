@@ -121,6 +121,7 @@ export function WordSimulator(){
   const fileInput=useRef<HTMLInputElement>(null);
   const imageInput=useRef<HTMLInputElement>(null);
   const savedSelection=useRef<Range|null>(null);
+  const typingScriptRef=useRef<"subscript"|"superscript"|null>(null);
   const indentTarget=useRef<HTMLElement|null>(null);
   const indentDragging=useRef(false);
   const [rulerIndent,setRulerIndent]=useState<RulerIndent>({firstLine:0,left:0,right:0});
@@ -182,6 +183,7 @@ export function WordSimulator(){
     if(!editor.current)return;
     editor.current.innerHTML=sanitize(html);
     savedSelection.current=null;
+    typingScriptRef.current=null;
     setClipboardMode(null);stagedClipboard.current=null;
     updateStats();setRevision(value=>value+1);
   },[updateStats]);
@@ -218,12 +220,47 @@ export function WordSimulator(){
   },[revision,filename,orientation,margins,isReady]);
 
   const formatKeys:WordFormatKey[]=["bold","italic","underline","strikeThrough","subscript","superscript"];
+  function scriptAncestor(node:Node|null):HTMLElement|null{
+    const root=editor.current;
+    if(!root||!node)return null;
+    const element=node.nodeType===Node.ELEMENT_NODE?node as Element:node.parentElement;
+    const ancestor=element?.closest("sub,sup")??null;
+    return ancestor&&root.contains(ancestor)?ancestor as HTMLElement:null;
+  }
+  // Native queryCommandState is unreliable at collapsed carets and with a
+  // selected substring inside <sup>/<sub>. Read the actual selected text.
+  function rangeHasScript(range:Range,kind:"subscript"|"superscript"){
+    const root=editor.current;
+    if(!root||range.collapsed)return false;
+    const tag=kind==="subscript"?"SUB":"SUP";
+    const ancestor=range.commonAncestorContainer;
+    const walker=document.createTreeWalker(ancestor,NodeFilter.SHOW_TEXT);
+    const nodes:Node[]=[];
+    if(ancestor.nodeType===Node.TEXT_NODE)nodes.push(ancestor);
+    else while(walker.nextNode())nodes.push(walker.currentNode);
+    const selected=nodes.filter(node=>{
+      try{return Boolean(node.textContent?.length)&&range.intersectsNode(node);}catch{return false;}
+    });
+    return selected.length>0&&selected.every(node=>scriptAncestor(node)?.tagName===tag);
+  }
   function syncFormatState(){
     const selection=window.getSelection();
     if(!selection?.anchorNode||!editor.current?.contains(selection.anchorNode))return;
     const next={} as Record<WordFormatKey,boolean>;
     for(const key of formatKeys){
       try{next[key]=document.queryCommandState(key);}catch{next[key]=false;}
+    }
+    const range=selection.rangeCount?selection.getRangeAt(0):null;
+    if(range&&!range.collapsed){
+      typingScriptRef.current=null;
+      next.subscript=rangeHasScript(range,"subscript");
+      next.superscript=rangeHasScript(range,"superscript");
+    }else{
+      const ancestor=scriptAncestor(selection.anchorNode);
+      const active=ancestor?.tagName==="SUB"?"subscript":ancestor?.tagName==="SUP"?"superscript":null;
+      typingScriptRef.current=active;
+      next.subscript=active==="subscript";
+      next.superscript=active==="superscript";
     }
     setFormatActive(current=>formatKeys.every(key=>current[key]===next[key])?current:next);
   }
@@ -270,31 +307,61 @@ export function WordSimulator(){
     syncFormatState();
     markChanged();
   }
-  // x₂ and x² are mutually exclusive formatting toggles, matching BIU:
-  // preserve the editor selection, switch the opposite script off first,
-  // then toggle the requested script on/off and refresh the active button.
+  // x₂/x² have two separate behaviors: selected text toggles the formatting
+  // of the selected content; a collapsed caret enters/exits a typing mode.
   function toggleScriptFormat(kind:"subscript"|"superscript"){
     restoreSelection();
+    const selection=window.getSelection();
+    if(!selection?.rangeCount||!editor.current?.contains(selection.anchorNode))return;
     const opposite=kind==="subscript"?"superscript":"subscript";
     try{
-      const wasActive=document.queryCommandState(kind);
-      if(!wasActive&&document.queryCommandState(opposite)){
-        document.execCommand(opposite,false);
-      }
-      const applied=document.execCommand(kind,false);
-      if(!applied){
-        setStatus("Trình duyệt chưa hỗ trợ lệnh này: "+kind);
+      const range=selection.getRangeAt(0);
+      if(!range.collapsed){
+        typingScriptRef.current=null;
+        const wasActive=rangeHasScript(range,kind);
+        const oppositeActive=rangeHasScript(range,opposite);
+        if(!wasActive&&oppositeActive)document.execCommand(opposite,false);
+        const applied=document.execCommand(kind,false);
+        if(!applied){
+          setStatus("Trình duyệt chưa hỗ trợ lệnh này: "+kind);
+          return;
+        }
+        rememberSelection();
+        setFormatActive(current=>({...current,[kind]:!wasActive,[opposite]:false}));
+        markChanged();
         return;
       }
+      const context=scriptAncestor(range.startContainer);
+      const active=context?.tagName==="SUB"?"subscript":context?.tagName==="SUP"?"superscript":null;
+      if(active){
+        // Move the insertion point outside the previous script span so a
+        // second press really returns to normal-size typing.
+        const after=document.createRange();
+        after.setStartAfter(context);
+        after.collapse(true);
+        selection.removeAllRanges();
+        selection.addRange(after);
+        if(!context.textContent)context.remove();
+      }
+      if(active===kind){
+        typingScriptRef.current=null;
+        rememberSelection();
+        setFormatActive(current=>({...current,subscript:false,superscript:false}));
+        return;
+      }
+      // A real empty inline node makes the next typed character inherit the
+      // chosen script; relying on execCommand at a collapsed caret did not.
+      const current=selection.getRangeAt(0);
+      const script=document.createElement(kind==="subscript"?"sub":"sup");
+      current.insertNode(script);
+      const inside=document.createRange();
+      inside.selectNodeContents(script);
+      inside.collapse(true);
+      selection.removeAllRanges();
+      selection.addRange(inside);
+      typingScriptRef.current=kind;
       rememberSelection();
-      const isActive=document.queryCommandState(kind);
-      const oppositeActive=isActive?false:document.queryCommandState(opposite);
-      setFormatActive(current=>({
-        ...current,
-        [kind]:isActive,
-        [opposite]:oppositeActive
-      }));
-      markChanged();
+      setFormatActive(current=>({...current,subscript:kind==="subscript",superscript:kind==="superscript"}));
     }catch{
       setStatus("Không thể áp dụng định dạng chỉ số "+(kind==="subscript"?"dưới":"trên"));
     }
