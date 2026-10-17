@@ -77,24 +77,21 @@
 .wsl-home-font .wsl-font-select:hover:not(:focus-within) {
   border-color: #7c98b8;
 }
-.wsl-home-font .wsl-font-select select {
-  appearance: none;
-  -webkit-appearance: none;
+/* Display text is part of the custom div/listbox control, not a native select. */
+.wsl-home-font .wsl-font-select .wsl-word-dropdown-value {
   display: block;
-  box-sizing: border-box;
-  width: 100%;
-  height: 100%;
+  flex: 1 1 auto;
   min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
   padding: 0 23px 0 6px;
-  border: 0;
-  background: transparent;
-  outline: none;
   color: #26282d;
   font: 12px/1 "Segoe UI", Arial, sans-serif;
   letter-spacing: -.015em;
   cursor: pointer;
 }
-.wsl-home-font .wsl-font-size select { padding-left: 5px; }
+.wsl-home-font .wsl-font-size .wsl-word-dropdown-value { padding-left: 5px; }
 .wsl-home-font .wsl-font-select-chevron {
   position: absolute;
   width: 13px;
