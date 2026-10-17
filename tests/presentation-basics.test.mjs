@@ -1902,3 +1902,166 @@ test("Caret x₂/x² formatting state survives programmatic selectionchange and 
  assert.match(source,/onKeyUp=\{event=>\{if\(\["ArrowLeft","ArrowRight","ArrowUp","ArrowDown","Home","End","PageUp","PageDown"\]\.includes\(event\.key\)\)syncTypingScriptCaret\(\);rememberSelection\(\);\}\}/);
  assert.match(source,/onMouseUp=\{\(\)=>\{syncTypingScriptCaret\(\);handleEditorMouseUp\(\);\}\}/);
 });
+
+
+test("Change Case preserves mixed formatting nodes instead of replacing selection with one text node",()=>{
+ const source=readFileSync("src/features/word-simulator/word-simulator.tsx","utf8");
+ const begin=source.indexOf('  function changeCasePreservingStyles(');
+ const end=source.indexOf('  function changeCase()',begin);
+ assert.ok(begin>=0&&end>begin);
+ const executable=source.slice(begin,end).trim()
+   .replace('mode:"toggle"|"upper"|"lower"|"title"|"sentence"','mode')
+   .replace('walker.currentNode as Text','walker.currentNode');
+ for(const [mode,expected] of [
+  ["upper","<b>AB</b> CD"],
+  ["lower","<b>ab</b> cd"],
+  ["title","<b>Ab</b> Cd"],
+  ["sentence","<b>Ab</b> cd"],
+  ["toggle","<b>AB</b> CD"]
+ ]){
+  const bold={data:"ab"},normal={data:" cd"};
+  const fragment={get textContent(){return bold.data+normal.data;}};
+  let result="",selectedOffset=null,changed=0;
+  const root={contains:()=>true,normalize(){}},anchorNode={};
+  const range={
+   toString(){return"ab cd";},
+   startContainer:anchorNode,startOffset:0,
+   extractContents(){return fragment;},
+   insertNode(){result="<b>"+bold.data+"</b>"+normal.data;}
+  };
+  const selection={rangeCount:1,isCollapsed:false,anchorNode,getRangeAt:()=>range};
+  const ctx={
+   editor:{current:root},window:{getSelection:()=>selection},
+   restoreSelection(){},
+   document:{
+    createRange(){return{
+     selectNodeContents(){},setEnd(){},cloneContents(){return {textContent:""};}
+    };},
+    createTreeWalker(){let i=0;return{
+     nextNode(){this.currentNode=[bold,normal][i];return i++<2;},
+     currentNode:null
+    };}
+   },
+   NodeFilter:{SHOW_TEXT:4},
+   removeEmptyFormattingNodes(){},
+   restoreScriptTextSelection(start,length){selectedOffset=[start,length];},
+   rememberSelection(){},markChanged(){changed++;},setStatus(){}
+  };
+  const change=runInNewContext("("+executable+")",ctx);
+  change(mode);
+  assert.equal(result,expected,mode+" must retain <b> boundary");
+  assert.deepEqual(selectedOffset,[0,5]);
+  assert.equal(changed,1);
+ }
+ assert.match(executable,/range\.extractContents\(\)/);
+ assert.match(executable,/document\.createTreeWalker\(fragment,NodeFilter\.SHOW_TEXT\)/);
+ assert.match(executable,/range\.insertNode\(fragment\)/);
+ assert.doesNotMatch(executable,/execCommand\("insertText"/);
+});
+
+test("Clear Formatting updates font-family/size controls from selected HTML and prunes empty inline marks",()=>{
+ const source=readFileSync("src/features/word-simulator/word-simulator.tsx","utf8");
+ const begin=source.indexOf('  function syncFontControls()');
+ const end=source.indexOf('  function removeEmptyFormattingNodes()',begin);
+ assert.ok(begin>=0&&end>begin);
+ const executable=source.slice(begin,end).trim();
+ const root={contains(){return true;}};
+ let font="Aptos",fontSize="3";
+ const plain={
+  tagName:"P",parentElement:root,
+  getAttribute(){return null;},style:{fontFamily:"",fontSize:""}
+ };
+ const family={
+  tagName:"FONT",parentElement:plain,
+  getAttribute(name){return name==="face"?"Arial":null;},
+  style:{fontFamily:"",fontSize:""}
+ };
+ const size={
+  tagName:"FONT",parentElement:family,
+  getAttribute(name){return name==="size"?"5":null;},
+  style:{fontFamily:"",fontSize:""}
+ };
+ const selection={anchorNode:{nodeType:3,parentElement:size}};
+ const harness={editor:{current:root},window:{getSelection:()=>selection},
+  Node:{ELEMENT_NODE:1},
+  setFont(fn){font=fn(font);},
+  setFontSize(fn){fontSize=fn(fontSize);}
+ };
+ const sync=runInNewContext("("+executable+")",harness);
+ sync();
+ assert.equal(font,"Arial");assert.equal(fontSize,"5");
+ selection.anchorNode={nodeType:3,parentElement:plain};
+ sync();
+ assert.equal(font,"Aptos","plain text after Clear Formatting must reset font control");
+ assert.equal(fontSize,"3","plain text after Clear Formatting must reset size control");
+ const remove=source.slice(source.indexOf('  function removeEmptyFormattingNodes()'),
+  source.indexOf('  function syncFormatState()'));
+ assert.match(remove,/root\.querySelectorAll\("b,strong,i,em,u,s,strike,font,span,sub,sup"\)/);
+ assert.match(remove,/if\(el\.childNodes\.length===0&&!el\.querySelector\("img,br,hr,table"\)\)/);
+ const nodes=[
+  {childNodes:[],querySelector:()=>null,removed:false,remove(){this.removed=true;}},
+  {childNodes:[{}],querySelector:()=>null,removed:false,remove(){this.removed=true;}},
+  {childNodes:[],querySelector:()=>({}),removed:false,remove(){this.removed=true;}}
+ ];
+ const prune=runInNewContext("("+remove.trim()+")",{
+  editor:{current:{querySelectorAll:()=>nodes}}
+ });
+ prune();
+ assert.equal(nodes[0].removed,true,"empty <b> must be removed");
+ assert.equal(nodes[1].removed,false,"formatting with real content stays intact");
+ assert.equal(nodes[2].removed,false,"inline containing an image stays intact");
+ assert.match(source,/if\(name==="removeFormat"\)\{\s*command\("removeFormat"\)/);
+ assert.match(source,/removeEmptyFormattingNodes\(\);\s*syncFontControls\(\);\s*syncFormatState\(\);/);
+});
+
+test("Caret-only sub/sup routes typed keys into active element and removes placeholder",()=>{
+ const source=readFileSync("src/features/word-simulator/word-simulator.tsx","utf8");
+ const start=source.indexOf('  function insertTypingScriptText(');
+ const end=source.indexOf('  function cleanTypingScriptPlaceholder()',start);
+ const executable=source.slice(start,end).trim()
+   .replace('child as Text','child')
+   .replaceAll('current!.','current.');
+ const root={contains(){return true;}};
+ const node={childNodes:[],contains(target){return target===this||this.childNodes.includes(target);},
+  get textContent(){return this.childNodes.map(n=>n.data).join("");}
+ };
+ class TextNode{
+  constructor(data){this.nodeType=3;this.data=data;this.parentNode=node;}
+  remove(){const i=node.childNodes.indexOf(this);if(i>=0)node.childNodes.splice(i,1);}
+ }
+ node.childNodes.push(new TextNode("\u200B"));
+ let current={startContainer:node,endContainer:node,startOffset:1,endOffset:1};
+ const selection={rangeCount:1,getRangeAt:()=>current,removeAllRanges(){},addRange(r){current=r;}};
+ let changes=0;
+ const ctx={
+  typingScriptRef:{current:"subscript"},typingScriptNodeRef:{current:node},
+  editor:{current:root},window:{getSelection:()=>selection},
+  TYPING_SCRIPT_PLACEHOLDER:"\u200B",
+  Node:{TEXT_NODE:3},
+  document:{
+   createTextNode:val=>new TextNode(val),
+   createRange(){return{
+    startContainer:node,endContainer:node,startOffset:1,endOffset:1,
+    selectNodeContents(parent){this.parent=parent;},
+    setStart(container,offset){this.parent=container;this.startContainer=container;this.startOffset=offset;},
+    collapse(){},
+    insertNode(text){this.parent.childNodes.push(text);}
+   };}
+  },
+  rememberSelection(){},markChanged(){changes++;}
+ };
+ const type=runInNewContext("("+executable+")",ctx);
+ assert.equal(type("2"),true);
+ assert.equal(node.textContent,"2","the first typed character must be INSIDE <sub>, not next to it");
+ assert.equal(node.textContent.includes("\u200B"),false);
+ assert.equal(type("3"),true);
+ assert.equal(node.textContent,"23");
+ assert.equal(changes,2);
+ ctx.typingScriptRef.current="superscript";
+ assert.equal(type("4"),true);
+ assert.equal(node.textContent,"234");
+ assert.match(source,/onBeforeInput=\{event=>\{/);
+ assert.match(source,/onKeyDown=\{event=>\{/);
+ assert.match(source,/typingScriptRef\.current&&insertTypingScriptText\(event\.key\)/);
+ assert.match(source,/typingScriptRef\.current&&insertTypingScriptText\(native\.data\)/);
+});
