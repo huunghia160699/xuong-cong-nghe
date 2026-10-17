@@ -604,28 +604,17 @@ export function WordSimulator(){
   function toggleScriptFormat(kind:"subscript"|"superscript"){
     const root=editor.current;
     if(root&&formatActive[kind]){
-      const selection=window.getSelection();
-      const live=scriptAncestor(selection?.anchorNode??null);
-      const currentScript=typingScriptNodeRef.current??live??root.querySelector<HTMLElement>(kind==="subscript"?"sub":"sup");
-      const currentText=currentScript?.textContent?.replaceAll(TYPING_SCRIPT_PLACEHOLDER,"")??"";
-      if(currentScript&&currentText&&currentScript.parentNode){
-        typingScriptRef.current=null;
-        typingScriptNodeRef.current=null;
-        typingScriptExitNodeRef.current=currentScript;
-        typingScriptExitLengthRef.current=currentText.length;
-        currentScript.setAttribute?.("data-script-exit","true");
-        const exitAnchor=document.createTextNode(SCRIPT_EXIT_ANCHOR);
-        currentScript.parentNode.insertBefore(exitAnchor,currentScript.nextSibling);
-        const outside=document.createRange();
-        outside.setStart(exitAnchor,exitAnchor.data.length);
-        outside.collapse(true);
-        root.focus?.({preventScroll:true});
-        selection?.removeAllRanges();
-        selection?.addRange(outside);
-        rememberSelection();
-        setFormatActive(current=>({...current,subscript:false,superscript:false}));
-        return;
-      }
+      restoreSelection();
+      root.focus?.({preventScroll:true});
+      document.execCommand(kind==="subscript"?"subscript":"superscript",false);
+      typingScriptRef.current=null;
+      typingScriptNodeRef.current=null;
+      typingScriptExitNodeRef.current=null;
+      typingScriptExitLengthRef.current=null;
+      root.querySelectorAll?.("[data-script-exit]")?.forEach(node=>node.removeAttribute("data-script-exit"));
+      rememberSelection();
+      setFormatActive(current=>({...current,subscript:false,superscript:false}));
+      return;
     }
     const explicitPending=typingScriptRef.current===kind?typingScriptNodeRef.current:null;
     if(explicitPending){
