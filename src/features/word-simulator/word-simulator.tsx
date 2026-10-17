@@ -367,7 +367,7 @@ export function WordSimulator(){
     if(!selection?.rangeCount||!selection.isCollapsed)return;
     const ancestor=scriptAncestor(selection.anchorNode);
     typingScriptExitNodeRef.current=null;
-    editor.current?.querySelectorAll("[data-script-exit]").forEach(node=>node.removeAttribute("data-script-exit"));
+    editor.current?.querySelectorAll?.("[data-script-exit]")?.forEach(node=>node.removeAttribute("data-script-exit"));
     const pending=typingScriptNodeRef.current;
     // Called only for an actual pointer/key navigation inside the editor;
     // selecting a new caret away from the pending script exits typing mode.
@@ -385,7 +385,7 @@ export function WordSimulator(){
     const script=typingScriptExitNodeRef.current??root?.querySelector<HTMLElement>("[data-script-exit]")??null;
     const selection=window.getSelection();
     if(!value||!script||!root?.contains(script)||!selection)return false;
-    script.removeAttribute("data-script-exit");
+    script.removeAttribute?.("data-script-exit");
     typingScriptExitNodeRef.current=null;
     const text=document.createTextNode(value);
     script.after(text);
@@ -402,7 +402,7 @@ export function WordSimulator(){
     const root=editor.current;
     const script=typingScriptExitNodeRef.current??root?.querySelector<HTMLElement>("[data-script-exit]")??null;
     if(!value||!script||!root?.contains(script))return;
-    script.removeAttribute("data-script-exit");
+    script.removeAttribute?.("data-script-exit");
     const content=script.textContent??"";
     if(!content.endsWith(value))return;
     typingScriptExitNodeRef.current=null;
@@ -596,7 +596,7 @@ export function WordSimulator(){
       typingScriptRef.current=null;
       typingScriptNodeRef.current=null;
       typingScriptExitNodeRef.current=cleanText?explicitPending:null;
-      if(cleanText)explicitPending.setAttribute("data-script-exit","true");
+      if(cleanText)explicitPending.setAttribute?.("data-script-exit","true");
       if(!root?.contains(explicitPending)){
         if(!cleanText){
           explicitPending.remove();
@@ -681,7 +681,7 @@ export function WordSimulator(){
       const current=selection.getRangeAt(0);
       const script=document.createElement(kind==="subscript"?"sub":"sup");
       typingScriptExitNodeRef.current=null;
-      root.querySelectorAll("[data-script-exit]").forEach(node=>node.removeAttribute("data-script-exit"));
+      root.querySelectorAll?.("[data-script-exit]")?.forEach(node=>node.removeAttribute("data-script-exit"));
       script.textContent=TYPING_SCRIPT_PLACEHOLDER;
       current.insertNode(script);
       const inside=document.createRange();
