@@ -621,7 +621,7 @@ export function WordSimulator(){
     }
     const liveScript=scriptAncestor(liveSelection?.anchorNode??null)??boundaryScript;
     const liveText=liveScript?.textContent?.replaceAll(TYPING_SCRIPT_PLACEHOLDER,"")??"";
-    if(root&&liveScript&&liveText){
+    if(root&&liveScript&&liveText&&typeof document.createTextNode==="function"){
       const anchor=document.createTextNode("\u00A0");
       liveScript.parentNode?.insertBefore(anchor,liveScript.nextSibling);
       const outside=document.createRange();
