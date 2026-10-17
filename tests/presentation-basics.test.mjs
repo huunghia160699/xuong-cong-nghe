@@ -1964,7 +1964,10 @@ test("Clear Formatting updates font-family/size controls from selected HTML and 
  const begin=source.indexOf('  function syncFontControls()');
  const end=source.indexOf('  function removeEmptyFormattingNodes()',begin);
  assert.ok(begin>=0&&end>begin);
- const executable=source.slice(begin,end).trim();
+ const executable=source.slice(begin,end).trim()
+  .replace('let element:Element|null=','let element=')
+  .replace('selection.anchorNode as Element','selection.anchorNode')
+  .replaceAll(' as HTMLElement','');
  const root={contains(){return true;}};
  let font="Aptos",fontSize="3";
  const plain={
