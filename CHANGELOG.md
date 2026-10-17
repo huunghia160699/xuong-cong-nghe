@@ -1,5 +1,11 @@
 # Changelog
 
+## 2026-10-17 — Đổi mới toàn bộ bài trình chiếu Word 01
+- Dùng nhiều bố cục theo loại nội dung: cover chữ lớn, so sánh, quy trình ngang/dọc, thẻ kiến thức bất đối xứng, phím tắt, ví dụ văn bản, bài thực hành và quiz.
+- Các bước hướng dẫn Word luôn hiện đầy đủ ngay khi mở slide; không cần bấm từng bước.
+- Bỏ mô phỏng Word trang trí bị trùng; chỉ mở công cụ Word đầy đủ đã tích hợp khi thực hành.
+- Thêm animation/transition nhẹ, phản hồi quiz, responsive và reduced-motion; giữ nguyên dữ liệu và bộ Home Ribbon.
+
 ## 2026-10-17 — Trình soạn thảo Word trực tiếp trong slide Word 01
 
 - Thêm công cụ Word hiện tại vào một cửa sổ thực hành ngay trong slide, không mở trang/tab mới hoặc dùng video.

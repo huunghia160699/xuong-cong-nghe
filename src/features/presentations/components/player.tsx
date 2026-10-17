@@ -11,17 +11,21 @@ import { PRESENTATION_LAYOUTS } from "../types";
 import { PresentationBlockView } from "./blocks";
 import { WordHomeHero } from "./word-home-hero";
 import { WordPurposeSlide } from "./word-purpose-slide";
+import { WordLessonSlide } from "./word-lesson-slide";
 
 const layoutSet = new Set<string>(PRESENTATION_LAYOUTS);
 
-function SlideCanvas({slide, index, count, reset, onAdvance, onWordPractice}: {
+function SlideCanvas({slide, index, count, reset, onAdvance, onWordPractice, wordLesson}: {
   slide: PresentationSlide; index: number; count: number; reset: number;
-  onAdvance: ()=>void; onWordPractice?: ()=>void;
+  onAdvance: ()=>void; onWordPractice?: ()=>void; wordLesson?: boolean;
 }) {
   const cover = slide.layout === "cover";
   const layout = layoutSet.has(slide.layout) ? slide.layout : "full";
   const extras = slide.blocks.filter(block => block.type === "notice");
   const blocks = slide.blocks.filter(block => block.type !== "notice");
+  // Word 01: every command and step is rendered on entry; no duplicate mock editor.
+  if (wordLesson) return <WordLessonSlide slide={slide} index={index} count={count}
+    onAdvance={onAdvance} onOpenWord={onWordPractice}/>;
   // Word lesson 1 reuses the homepage hero rhythm with an accessible working start button.
   if (cover && blocks[0]?.type === "wordHomeHero") {
     return <section aria-label={"Slide " + (index+1) + ": " + slide.title}
@@ -153,8 +157,8 @@ export function PresentationPlayer({lesson, courseTitle, initialClassName = ""}:
   return <div ref={hostRef} className={"xcn-presentation-viewport relative h-[100dvh] w-full overflow-hidden bg-paper text-ink" + (wordLesson ? " xcn-word-lesson" : "")}>
     <main className="xcn-presentation-stage">
       <div className="xcn-presentation-frame">
-        <SlideCanvas key={slide.id} slide={slide} index={current} count={count} reset={reset}
-          onAdvance={() => move(current + 1)}
+        <SlideCanvas key={slide.id + "-rev-" + reset} slide={slide} index={current} count={count}
+          reset={reset} wordLesson={wordLesson} onAdvance={() => move(current + 1)}
           onWordPractice={wordLesson ? () => {setNotesOpen(false); setWordOpen(true);} : undefined}/>
       </div>
     </main>

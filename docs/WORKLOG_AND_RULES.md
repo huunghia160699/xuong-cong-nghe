@@ -25,6 +25,16 @@
 
 ## III. Lịch sử
 
+### 2026-10-17 — Toàn bộ slide Word 01: layout đa dạng và hiện đủ bước
+- **Mục tiêu:** Làm mới toàn bộ slide Word 01 gọn, trực quan, đẹp, có animation/transition; không phải nhấn để hiện các bước, không trùng cửa sổ Word minh họa.
+- **Thay đổi:** `word-lesson-slide.tsx`, `word-lesson-slide.css`, `player.tsx`, import CSS ở route trình chiếu, kiểm thử `word-slide-live-editor.test.mjs`, tài liệu slide, changelog và nhật ký.
+- **Thiết kế:** Renderer riêng cho `word-lam-quen` gồm cover chữ lớn, cặp so sánh, luồng thao tác ngang/dọc/xếp tầng, khối ý chính, keycap, ví dụ văn bản, quiz. Tất cả bước và đường dẫn lệnh luôn hiển thị. Bỏ minh họa Chrome/Ribbon giả ở các slide, giữ công cụ Word iframe thực hành thực tế. Giữ dữ liệu, thứ tự, số slide, ghi chú và bộ Word Home đã duyệt; không thay bài Word khác, Excel hay Explorer.
+- **Chuyển động:** CSS stagger ngắn, hover/focus rõ, hỗ trợ reduced-motion và màn hình nhỏ/thấp không cắt nội dung.
+- **Kiểm thử:** CI sẽ chạy Unit tests, typecheck, build, smoke route; vẫn cần kiểm thử trực quan 360/768/1280/1920px.
+- **GitHub:** Commit của tác vụ này trên main.
+- **Vercel:** Chưa xác nhận READY/SHA tại thời điểm soạn nhật ký.
+- **Tồn đọng:** Nghiệm thu thị giác thực tế và hiệu năng hiển thị tại các độ phân giải máy chiếu.
+
 ### 2026-10-17 — Tích hợp công cụ soạn thảo Word trực tiếp trong slide Word 01
 - **Mục tiêu:** Không phải rời bài trình chiếu hoặc phát clip khi minh họa Word; giữ trình soạn thảo Home Ribbon đúng giao diện đã duyệt.
 - **Thay đổi và file:** `player.tsx` tích hợp iframe Word mô phỏng vào panel nội bộ, chỉ cho bài `word-lam-quen`, giữ iframe tồn tại khi đổi slide; `blocks.tsx` và `word-workspace.tsx` bổ sung nút thực hành bên cạnh quy trình; `word-live-lab.css` bổ sung giao diện slide, thẻ nội dung, responsive và giảm hiệu ứng chuyển động; import trong trang trình chiếu; thêm `tests/word-slide-live-editor.test.mjs`.

@@ -36,3 +36,22 @@ test("Word window close is intercepted only when embedded", () => {
   assert.match(bar, /xcn-word-lab-close/);
   assert.match(bar, /event\.preventDefault\(\)/);
 });
+
+test("Word 01 editorial renderer shows every step immediately, without extra Word screenshots",()=>{
+  const component=readFileSync("src/features/presentations/components/word-lesson-slide.tsx","utf8");
+  const styles=readFileSync("src/features/presentations/word-lesson-slide.css","utf8");
+  assert.ok(player.includes("if (wordLesson) return <WordLessonSlide"));
+  assert.ok(player.includes("wordLesson={wordLesson}"));
+  assert.ok(page.includes("word-lesson-slide.css"));
+  assert.ok(component.includes("data-word-lesson-slide={slide.id}"));
+  assert.ok(component.includes("asSteps(block.steps)"));
+  assert.ok(component.includes("items.map((item,i)=><li"));
+  assert.ok(!component.includes("setIndex("));
+  assert.ok(!/<img|<video|<iframe/.test(component));
+  assert.ok(component.includes('data-native-quiz="true"'));
+  for (const name of ["w01-purpose","w01-process-path","w01-process-list","w01-process-stair",
+    "w01-ideas-editorial","w01-shortcut-grid","w01-sample-layout","w01-quiz-options"])
+    assert.ok(styles.includes(name),name);
+  assert.ok(styles.includes("prefers-reduced-motion"));
+  assert.ok(styles.includes("@media(max-width:560px)"));
+});

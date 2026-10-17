@@ -63,3 +63,11 @@
 - **Không xóa kiến thức thực tế:** tên lệnh File/Home/Insert, phím tắt, trình tự thao tác cần dạy, câu hỏi trắc nghiệm, ví dụ Word/Excel và mục tiêu của bài thực hành vẫn có thể hiển thị khi thực sự cần.
 - Với mô phỏng đổi trạng thái, ưu tiên **đưa ra sự khác biệt bằng hình ảnh/định dạng**; không thêm một bảng giải thích lặp lại hai lựa chọn vừa có. Không tạo “đoạn chữ giả” với nội dung không có nghĩa; dùng một ví dụ cụ thể, giữ nguyên dữ liệu gốc giữa các chế độ để người học nhìn thấy đúng sự thay đổi.
 - Không dùng màn hình slide để giải thích công nghệ triển khai (CSS, React, mô phỏng, phiên bản). Những lưu ý đúng/sai về giới hạn tương thích cần lưu trong **ghi chú giảng viên**, có thể công bố ở tài liệu sử dụng ngoài slide nếu cần.
+
+## 9. Word 01 có Word tích hợp (17/10/2026)
+
+- Riêng `word-lam-quen` dùng renderer phong phú theo nội dung; không giới hạn một vài dạng card/grid.
+- Mọi bước thao tác, lệnh và kết quả xuất hiện **đồng thời**, không cần bấm để hiện; các câu hỏi trắc nghiệm vẫn cho lựa chọn và phản hồi.
+- Không lặp hình/chrome Word minh họa khi đã có công cụ Word trực tiếp trong iframe của trình phát; chỉ trình bày chữ, cấu trúc và ví dụ có ý nghĩa giáo dục.
+- Chuyển cảnh và hoạt ảnh ngắn, không trì hoãn thông tin, có `prefers-reduced-motion`; nội dung trên màn hình thấp và mobile được cuộn, không cắt bỏ.
+- Giữ nguyên nội dung slide, ghi chú giảng viên, số lượng và thứ tự, trừ khi được yêu cầu biên tập riêng.
