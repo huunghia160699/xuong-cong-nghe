@@ -124,6 +124,7 @@ export function WordSimulator(){
   const savedSelection=useRef<Range|null>(null);
   const typingScriptRef=useRef<"subscript"|"superscript"|null>(null);
   const typingScriptNodeRef=useRef<HTMLElement|null>(null);
+  const typingScriptExitNodeRef=useRef<HTMLElement|null>(null);
   // A zero-width placeholder keeps a collapsed caret inside an empty sub/sup.
   const TYPING_SCRIPT_PLACEHOLDER="\u200B";
   const indentTarget=useRef<HTMLElement|null>(null);
@@ -365,6 +366,7 @@ export function WordSimulator(){
     const selection=window.getSelection();
     if(!selection?.rangeCount||!selection.isCollapsed)return;
     const ancestor=scriptAncestor(selection.anchorNode);
+    typingScriptExitNodeRef.current=null;
     const pending=typingScriptNodeRef.current;
     // Called only for an actual pointer/key navigation inside the editor;
     // selecting a new caret away from the pending script exits typing mode.
@@ -377,6 +379,23 @@ export function WordSimulator(){
   }
   // Text input while caret-only script formatting is active must go inside
   // the pending element; native contentEditable may insert it after the span.
+  function insertExitedScriptText(value:string){
+    const script=typingScriptExitNodeRef.current;
+    const root=editor.current;
+    const selection=window.getSelection();
+    if(!value||!script||!root?.contains(script)||!selection)return false;
+    typingScriptExitNodeRef.current=null;
+    const text=document.createTextNode(value);
+    script.after(text);
+    const range=document.createRange();
+    range.setStartAfter(text);
+    range.collapse(true);
+    selection.removeAllRanges();
+    selection.addRange(range);
+    rememberSelection();
+    markChanged();
+    return true;
+  }
   function insertTypingScriptText(value:string){
     const pending=typingScriptNodeRef.current;
     const root=editor.current;
@@ -556,6 +575,7 @@ export function WordSimulator(){
       const cleanText=explicitPending.textContent?.replaceAll(TYPING_SCRIPT_PLACEHOLDER,"")??"";
       typingScriptRef.current=null;
       typingScriptNodeRef.current=null;
+      typingScriptExitNodeRef.current=cleanText?explicitPending:null;
       if(!root?.contains(explicitPending)){
         if(!cleanText){
           explicitPending.remove();
@@ -639,6 +659,7 @@ export function WordSimulator(){
       // sub/sup can lose browser caret ownership before the second click.
       const current=selection.getRangeAt(0);
       const script=document.createElement(kind==="subscript"?"sub":"sup");
+      typingScriptExitNodeRef.current=null;
       script.textContent=TYPING_SCRIPT_PLACEHOLDER;
       current.insertNode(script);
       const inside=document.createRange();
@@ -1110,13 +1131,13 @@ export function WordSimulator(){
               onBeforeInput={event=>{
                  const native=event.nativeEvent as InputEvent;
                  if(native.data&&!native.isComposing&&(!native.inputType||native.inputType==="insertText")&&
-                    typingScriptRef.current&&insertTypingScriptText(native.data)){
+                    (insertExitedScriptText(native.data)||(typingScriptRef.current&&insertTypingScriptText(native.data)))){
                    event.preventDefault();
                  }
                }}
                onKeyDown={event=>{
                  if(event.key.length===1&&!event.ctrlKey&&!event.metaKey&&!event.altKey&&!event.nativeEvent.isComposing&&
-                    typingScriptRef.current&&insertTypingScriptText(event.key)){
+                    (insertExitedScriptText(event.key)||(typingScriptRef.current&&insertTypingScriptText(event.key)))){
                    event.preventDefault();
                  }
                }}
