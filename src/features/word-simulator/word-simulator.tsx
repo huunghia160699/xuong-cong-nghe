@@ -384,8 +384,17 @@ export function WordSimulator(){
   // the pending element; native contentEditable may insert it after the span.
   function insertExitedScriptText(value:string){
     const root=editor.current;
-    const script=typingScriptExitNodeRef.current??root?.querySelector<HTMLElement>("[data-script-exit]")??null;
+    let script=typingScriptExitNodeRef.current??root?.querySelector<HTMLElement>("[data-script-exit]")??null;
     const selection=window.getSelection();
+    if(!script&&selection?.rangeCount&&selection.isCollapsed){
+      const range=selection.getRangeAt(0);
+      const container=range.startContainer;
+      if(container.nodeType===Node.ELEMENT_NODE&&range.startOffset>0){
+        const previous=container.childNodes[range.startOffset-1] as HTMLElement|undefined;
+        const kind=previous?.tagName==="SUB"?"subscript":previous?.tagName==="SUP"?"superscript":null;
+        if(kind&&!formatActive[kind])script=previous;
+      }
+    }
     if(!value||!script||!root?.contains(script)||!selection)return false;
     script.removeAttribute?.("data-script-exit");
     typingScriptExitNodeRef.current=null;
