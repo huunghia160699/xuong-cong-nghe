@@ -673,7 +673,7 @@ export function WordSimulator(){
         const exitNode=scriptNode??pending??context;
         const exitText=exitNode?.textContent?.replaceAll(TYPING_SCRIPT_PLACEHOLDER,"")??"";
         typingScriptExitNodeRef.current=exitText?exitNode:null;
-        if(exitText)exitNode?.setAttribute("data-script-exit","true");
+        if(exitText)exitNode?.setAttribute?.("data-script-exit","true");
         typingScriptRef.current=null;
         typingScriptNodeRef.current=null;
         rememberSelection();
