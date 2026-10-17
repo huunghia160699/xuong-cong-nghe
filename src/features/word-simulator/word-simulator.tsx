@@ -710,7 +710,53 @@ export function WordSimulator(){
     if(!selected){setStatus("Chọn văn bản trước khi sử dụng lệnh");return;}
     document.execCommand("insertText",false,fn(selected));rememberSelection();markChanged();
   }
-  function changeCase(){selectedChange(text=>text===text.toLocaleUpperCase("vi")?text.toLocaleLowerCase("vi"):text.toLocaleUpperCase("vi"));}
+  // Change Case must change text INSIDE each formatting node, never replace
+  // a mixed-selection Range with a single unstyled / first-style text string.
+  function changeCasePreservingStyles(mode:"toggle"|"upper"|"lower"|"title"|"sentence"){
+    restoreSelection();
+    const selection=window.getSelection();
+    const root=editor.current;
+    if(!root||!selection?.rangeCount||selection.isCollapsed||!root.contains(selection.anchorNode)){
+      setStatus("Chọn văn bản trước khi đổi chữ hoa/thường");return;
+    }
+    const range=selection.getRangeAt(0);
+    const original=range.toString();
+    if(!original)return;
+    const upper=mode==="toggle"&&original===original.toLocaleUpperCase("vi");
+    const prefix=document.createRange();
+    prefix.selectNodeContents(root);
+    prefix.setEnd(range.startContainer,range.startOffset);
+    const selectedStart=prefix.cloneContents().textContent?.length??0;
+    const fragment=range.extractContents();
+    const walker=document.createTreeWalker(fragment,NodeFilter.SHOW_TEXT);
+    let atSentenceStart=true;
+    let atWordStart=true;
+    while(walker.nextNode()){
+      const node=walker.currentNode as Text;
+      const value=node.data;
+      if(mode==="upper"||(mode==="toggle"&&!upper)){
+        node.data=value.toLocaleUpperCase("vi");
+      }else if(mode==="lower"||(mode==="toggle"&&upper)){
+        node.data=value.toLocaleLowerCase("vi");
+      }else if(mode==="title"||mode==="sentence"){
+        node.data=Array.from(value.toLocaleLowerCase("vi")).map(char=>{
+          const isLetter=/\p{L}/u.test(char);
+          const uppercase=isLetter&&(mode==="title"?atWordStart:atSentenceStart);
+          if(mode==="title")atWordStart=/\s/u.test(char);
+          else if(isLetter)atSentenceStart=false;
+          return uppercase?char.toLocaleUpperCase("vi"):char;
+        }).join("");
+      }
+    }
+    const resultLength=fragment.textContent?.length??0;
+    range.insertNode(fragment);
+    removeEmptyFormattingNodes();
+    root.normalize();
+    restoreScriptTextSelection(selectedStart,resultLength);
+    rememberSelection();
+    markChanged();
+  }
+  function changeCase(){changeCasePreservingStyles("toggle");}
   function sortLines(){selectedChange(text=>text.split(/\r?\n/).sort((a,b)=>a.localeCompare(b,"vi")).join("\n"));}
   function applyStyle(name:string){
     const tag:Record<string,string>={"Normal":"p","No Spacing":"p","Heading 1":"h1","Heading 2":"h2","Title":"h1","Subtitle":"h2"};
@@ -746,10 +792,9 @@ export function WordSimulator(){
       toggleScriptFormat(name);return;
     }
     if(name==="changeCaseMode"){
-      if(value==="upper")selectedChange(text=>text.toLocaleUpperCase("vi"));
-      else if(value==="lower")selectedChange(text=>text.toLocaleLowerCase("vi"));
-      else if(value==="title")selectedChange(text=>text.toLocaleLowerCase("vi").replace(/(^|\s)(\p{L})/gu,(_,space,letter:string)=>space+letter.toLocaleUpperCase("vi")));
-      else if(value==="sentence")selectedChange(text=>text.charAt(0).toLocaleUpperCase("vi")+text.slice(1).toLocaleLowerCase("vi"));
+      if(value==="upper"||value==="lower"||value==="title"||value==="sentence"){
+        changeCasePreservingStyles(value);
+      }
       return;
     }
     if(name==="underlineMode"){
