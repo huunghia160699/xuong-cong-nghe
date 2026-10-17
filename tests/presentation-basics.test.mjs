@@ -1384,6 +1384,7 @@ test("Unselected caret: x₂/x² enters typing mode, second click exits; switchi
  const button={subscript:false,superscript:false};
  const typingScriptRef={current:null};
  const typingScriptNodeRef={current:null};
+ const typingScriptExitNodeRef={current:null};
  let selectedRange={collapsed:true,startContainer:root,insertNode:node=>nodes.push(node)};
  const selection={
   rangeCount:1,anchorNode:root,
@@ -1397,6 +1398,7 @@ test("Unselected caret: x₂/x² enters typing mode, second click exits; switchi
   editor:{current:root},
   typingScriptRef,
   typingScriptNodeRef,
+  typingScriptExitNodeRef,
   TYPING_SCRIPT_PLACEHOLDER:"\u200B",
   document:{
     createElement(tag){
@@ -1823,6 +1825,7 @@ test("Caret script x₂/x² second click toggles off even when browser relocates
  const nodes=[],created=[];
  const typingScriptRef={current:null};
  const typingScriptNodeRef={current:null};
+ const typingScriptExitNodeRef={current:null};
  const button={subscript:false,superscript:false};
  let range={collapsed:true,startContainer:root,insertNode(node){nodes.push(node);}};
  const selection={
@@ -1834,7 +1837,7 @@ test("Caret script x₂/x² second click toggles off even when browser relocates
  const ctx={
   window:{getSelection:()=>selection},
   editor:{current:root},
-  typingScriptRef,typingScriptNodeRef,TYPING_SCRIPT_PLACEHOLDER:"\u200B",
+  typingScriptRef,typingScriptNodeRef,typingScriptExitNodeRef,TYPING_SCRIPT_PLACEHOLDER:"\u200B",
   document:{
     createElement(tag){
       const node={tagName:tag.toUpperCase(),textContent:"",removed:false,remove(){this.removed=true;}};
