@@ -548,9 +548,37 @@ export function WordSimulator(){
   // x₂/x² have two separate behaviors: selected text toggles the formatting
   // of the selected content; a collapsed caret enters/exits a typing mode.
   function toggleScriptFormat(kind:"subscript"|"superscript"){
+    const root=editor.current;
+    const explicitPending=typingScriptRef.current===kind?typingScriptNodeRef.current:null;
+    if(explicitPending&&root?.contains(explicitPending)){
+      // Exit an explicit caret-only typing mode before focus/selection changes
+      // caused by the Ribbon can make the current Range look ambiguous.
+      const parent=explicitPending.parentNode;
+      if(!parent)return;
+      const after=document.createRange();
+      const cleanText=explicitPending.textContent?.replaceAll(TYPING_SCRIPT_PLACEHOLDER,"")??"";
+      typingScriptRef.current=null;
+      typingScriptNodeRef.current=null;
+      if(cleanText){
+        after.setStartAfter(explicitPending);
+      }else{
+        const index=Array.prototype.indexOf.call(parent.childNodes,explicitPending) as number;
+        explicitPending.remove();
+        after.setStart(parent,Math.max(0,index));
+      }
+      after.collapse(true);
+      root.focus({preventScroll:true});
+      const selection=window.getSelection();
+      selection?.removeAllRanges();
+      selection?.addRange(after);
+      savedSelection.current=after.cloneRange();
+      setFormatActive(current=>({...current,subscript:false,superscript:false}));
+      if(!cleanText)markChanged();
+      return;
+    }
     restoreSelection();
     const selection=window.getSelection();
-    if(!selection?.rangeCount||!editor.current?.contains(selection.anchorNode))return;
+    if(!selection?.rangeCount||!root?.contains(selection.anchorNode))return;
     const opposite=kind==="subscript"?"superscript":"subscript";
     try{
       const range=selection.getRangeAt(0);
