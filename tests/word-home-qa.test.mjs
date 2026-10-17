@@ -336,7 +336,7 @@ test("Word dropdowns use custom div listboxes, not browser-native select: repeat
   assert.match(split,/onClick=\{\(\)=>choose\(index\)\}/);
   assert.match(split,/if\(open\)choose\(activeIndex\);else showMenu\(\);/);
   assert.match(split,/event\.key==="ArrowDown"/);
-  assert.match(split,/event\.key==="ArrowUp"/);
+  assert.match(split,/\["ArrowDown","ArrowUp","Home","End"\]\.includes\(event\.key\)/);
   assert.match(split,/event\.key==="Home"/);
   assert.match(split,/event\.key==="End"/);
   assert.match(split,/event\.key==="Escape"/);
