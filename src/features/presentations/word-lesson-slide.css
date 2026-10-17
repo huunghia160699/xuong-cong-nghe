@@ -407,3 +407,13 @@
   .w01-compare-side{min-height:205px}
   .w01-step p{font-size:16px}
 }
+
+/* Keep the enlarged down arrows entirely inside the whitespace between steps. */
+.w01-process-list{max-width:min(100%,950px);row-gap:clamp(50px,6dvh,65px)}
+.w01-step-link-down{bottom:-49px}
+@media(max-width:800px){
+  .w01-process-path,.w01-process-stair,.w01-process-list{row-gap:52px}
+}
+@media(max-height:680px) and (min-width:801px){
+  .w01-process-list{row-gap:50px}
+}
