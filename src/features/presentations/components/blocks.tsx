@@ -131,14 +131,14 @@ function QuizChoices({block}: {block: PresentationBlock}) {
   </div>;
 }
 
-export function PresentationBlockView({block}: {block: PresentationBlock}) {
+export function PresentationBlockView({block, onOpenWord}: {block: PresentationBlock; onOpenWord?: ()=>void}) {
   switch(block.type) {
     case "lessonCover":
       return <LessonOpeningCover block={block}/>;
     case "warmUpComparison":
       return <WarmUpComparison block={block}/>;
     case "wordWorkspace":
-      return <WordWorkspace block={block}/>;
+      return <WordWorkspace block={block} onOpenWord={onOpenWord}/>;
     case "heroStats":
       return <div className="grid h-full grid-cols-2 gap-3 lg:grid-cols-4">
         {(block.items ?? []).map(([value,label]: [string,string],i:number)=><div key={i} className="border-t border-current/20 pt-3">

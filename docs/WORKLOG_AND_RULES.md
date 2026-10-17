@@ -25,6 +25,15 @@
 
 ## III. Lịch sử
 
+### 2026-10-17 — Tích hợp công cụ soạn thảo Word trực tiếp trong slide Word 01
+- **Mục tiêu:** Không phải rời bài trình chiếu hoặc phát clip khi minh họa Word; giữ trình soạn thảo Home Ribbon đúng giao diện đã duyệt.
+- **Thay đổi và file:** `player.tsx` tích hợp iframe Word mô phỏng vào panel nội bộ, chỉ cho bài `word-lam-quen`, giữ iframe tồn tại khi đổi slide; `blocks.tsx` và `word-workspace.tsx` bổ sung nút thực hành bên cạnh quy trình; `word-live-lab.css` bổ sung giao diện slide, thẻ nội dung, responsive và giảm hiệu ứng chuyển động; import trong trang trình chiếu; thêm `tests/word-slide-live-editor.test.mjs`.
+- **Quyết định / tiêu chuẩn:** Tái sử dụng đúng route `/cong-cu/mo-phong-word` trong iframe cùng nguồn để giữ bộ Ribbon, thước và giấy A4; không sao chép lại công cụ, không sửa CSS hay logic Home Ribbon. Giữ nguyên slide và dữ liệu học tập, nội dung mock vẫn dùng để hướng dẫn từng bước.
+- **Kiểm thử:** Có kiểm thử hồi quy tĩnh bằng Node; cần CI thực thi `pnpm test`, `pnpm typecheck`, `pnpm build` và xem thực tế ở 360/768/1280px trước khi xác nhận.
+- **GitHub commit:** Xem commit của lần chỉnh sửa này trên branch `main`.
+- **Vercel Production:** Chưa xác nhận READY và SHA tại thời điểm ghi nhật ký.
+- **Tồn đọng:** Kiểm tra thực tế hiệu năng iframe, bàn phím khi thao tác và điều hướng trong các slide tại production.
+
 ### 2026-10-15 — Chuẩn hóa căn giữa và chiều cao nhóm Font, khoảng A-mũi tên 3px
 - **Yêu cầu:** chevron trên A sát hơn để cách khoảng 3px; hai ô chọn Font/Size cùng chiều cao với nút tăng/giảm, hai hàng đều căn giữa các nút, vạch đứng mảnh cùng kích thước.
 - **File:** `src/features/word-simulator/word-home-ribbon.tsx`, `word-font-ribbon.css`, `word-paragraph-ribbon.css`, `tests/presentation-basics.test.mjs`, `docs/WORD_SIMULATOR_STANDARD.md`, `docs/WORKLOG_AND_RULES.md`, `CHANGELOG.md`.

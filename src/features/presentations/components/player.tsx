@@ -4,7 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import {
   ArrowDown, ArrowLeft, ArrowUp, Maximize2, Minimize2,
-  MoreHorizontal, PanelRightClose, PanelRightOpen, RotateCcw,
+  FileText, MoreHorizontal, PanelRightClose, PanelRightOpen, RotateCcw, X,
 } from "lucide-react";
 import type { PresentationLesson, PresentationSlide } from "../types";
 import { PRESENTATION_LAYOUTS } from "../types";
@@ -14,8 +14,9 @@ import { WordPurposeSlide } from "./word-purpose-slide";
 
 const layoutSet = new Set<string>(PRESENTATION_LAYOUTS);
 
-function SlideCanvas({slide, index, count, reset, onAdvance}: {
-  slide: PresentationSlide; index: number; count: number; reset: number; onAdvance: ()=>void;
+function SlideCanvas({slide, index, count, reset, onAdvance, onWordPractice}: {
+  slide: PresentationSlide; index: number; count: number; reset: number;
+  onAdvance: ()=>void; onWordPractice?: ()=>void;
 }) {
   const cover = slide.layout === "cover";
   const layout = layoutSet.has(slide.layout) ? slide.layout : "full";
@@ -55,7 +56,7 @@ function SlideCanvas({slide, index, count, reset, onAdvance}: {
       </div>
       <div key={slide.id + "-rev-" + reset} className={"xcn-presentation-grid xcn-presentation-layout-" + layout + " mt-3 sm:mt-5"}>
         {blocks.map((block,i) => <div key={i} className="xcn-presentation-block min-h-0 min-w-0">
-          <PresentationBlockView block={block}/>
+          <PresentationBlockView block={block} onOpenWord={onWordPractice}/>
         </div>)}
       </div>
       {!!extras.length && <div className="mt-3 space-y-2">
@@ -69,6 +70,8 @@ export function PresentationPlayer({lesson, courseTitle, initialClassName = ""}:
   lesson: PresentationLesson; courseTitle: string; initialClassName?: string;
 }) {
   const preview = lesson.kind === "showcase";
+  const wordLesson = lesson.id === "word-lam-quen";
+  const [wordOpen, setWordOpen] = useState(false);
   const [current, setCurrent] = useState(0);
   const [notesOpen, setNotesOpen] = useState(false);
   const [reset, setReset] = useState(0);
@@ -82,6 +85,8 @@ export function PresentationPlayer({lesson, courseTitle, initialClassName = ""}:
   const move = useCallback((next: number) => {
     setCurrent(Math.max(0, Math.min(count - 1, next)));
     setMobileToolsOpen(false);
+    // Keep the editor mounted so its document remains intact between slides.
+    setWordOpen(false);
   }, [count]);
   const slide = lesson.slides[current];
 
@@ -94,6 +99,11 @@ export function PresentationPlayer({lesson, courseTitle, initialClassName = ""}:
   useEffect(() => {
     if (classEntryOpen) return; // Typing a class must never advance slides.
     function keyboard(event: KeyboardEvent) {
+      // Never hijack editing/navigation keys while the embedded Word tool is open.
+      if (wordOpen) {
+        if (event.key === "Escape") { event.preventDefault(); setWordOpen(false); }
+        return;
+      }
       const target = event.target as HTMLElement | null;
       if (target?.closest("input,textarea,select,[contenteditable=true]") || event.altKey || event.metaKey || event.ctrlKey) return;
       // Space should activate an interactive demo button, not change slides.
@@ -117,7 +127,7 @@ export function PresentationPlayer({lesson, courseTitle, initialClassName = ""}:
     }
     window.addEventListener("keydown", keyboard);
     return () => window.removeEventListener("keydown", keyboard);
-  }, [classEntryOpen, move, current, count, slide.layout]);
+  }, [classEntryOpen, move, current, count, slide.layout, wordOpen]);
 
   // Teaching subtitles remain in notes instead of repeating under the heading.
   const notes = [slide.subtitle, slide.notes].filter(Boolean).join("\n\n");
@@ -128,12 +138,35 @@ export function PresentationPlayer({lesson, courseTitle, initialClassName = ""}:
     setMobileToolsOpen(false);
   }
 
-  return <div ref={hostRef} className="xcn-presentation-viewport relative h-[100dvh] w-full overflow-hidden bg-paper text-ink">
+  return <div ref={hostRef} className={"xcn-presentation-viewport relative h-[100dvh] w-full overflow-hidden bg-paper text-ink" + (wordLesson ? " xcn-word-lesson" : "")}>
     <main className="xcn-presentation-stage">
       <div className="xcn-presentation-frame">
-        <SlideCanvas slide={slide} index={current} count={count} reset={reset} onAdvance={() => move(current + 1)}/>
+        <SlideCanvas key={slide.id} slide={slide} index={current} count={count} reset={reset}
+          onAdvance={() => move(current + 1)}
+          onWordPractice={wordLesson ? () => {setNotesOpen(false); setWordOpen(true);} : undefined}/>
       </div>
     </main>
+
+    {wordLesson && <section id="xcn-word-live-lab"
+      className={"xcn-word-live-lab" + (wordOpen ? " is-open" : "")}
+      aria-label="Trình soạn thảo Word trực tiếp trong bài học"
+      aria-hidden={!wordOpen}>
+      <div className="xcn-word-live-lab-top">
+        <div className="xcn-word-live-lab-heading">
+          <span className="xcn-word-live-lab-tag">WORD 01</span>
+          <strong>Trình soạn thảo Word</strong>
+          <span className="xcn-word-live-lab-context">{slide.title}</span>
+        </div>
+        <button type="button" onClick={() => setWordOpen(false)}
+          className="xcn-word-live-lab-close" aria-label="Đóng công cụ Word và quay về slide">
+          <span>Về slide</span><X size={18} aria-hidden="true"/>
+        </button>
+      </div>
+      <div className="xcn-word-live-lab-frame">
+        <iframe src="/cong-cu/mo-phong-word" title="Công cụ Word mô phỏng đầy đủ, sử dụng trực tiếp trong slide"
+          loading="eager" tabIndex={wordOpen ? 0 : -1}/>
+      </div>
+    </section>}
 
     <nav className="xcn-presentation-rail" aria-label="Điều hướng nhanh giữa các slide">
       {lesson.slides.map((entry, index) =>
@@ -197,6 +230,13 @@ export function PresentationPlayer({lesson, courseTitle, initialClassName = ""}:
           <MoreHorizontal size={19}/>
         </button>
 
+        {wordLesson && <button type="button" onClick={() => {setNotesOpen(false); setWordOpen(value => !value);}}
+          title={wordOpen ? "Về slide bài giảng" : "Mở Word trực tiếp ngay trong slide"}
+          aria-label={wordOpen ? "Ẩn công cụ Word" : "Mở công cụ Word để thực hành"}
+          aria-controls="xcn-word-live-lab" aria-expanded={wordOpen}
+          className={"xcn-word-lab-trigger" + (wordOpen ? " is-active" : "")}>
+          <FileText size={18} aria-hidden="true"/><span>Word</span>
+        </button>}
         <span className="xcn-presentation-divider" aria-hidden="true"/>
         <button type="button" onClick={() => move(current - 1)} disabled={current === 0}
           aria-label="Slide trước" title="Slide trước (↑)"
@@ -224,6 +264,10 @@ export function PresentationPlayer({lesson, courseTitle, initialClassName = ""}:
             className="xcn-mobile-tools-row">{notesOpen ? <PanelRightClose size={17}/> : <PanelRightOpen size={17}/>} Ghi chú giảng viên</button>
           {!preview && <button type="button" onClick={changeClass}
             className="xcn-mobile-tools-row">Đổi tên lớp</button>}
+          {wordLesson && <button type="button" className="xcn-mobile-tools-row"
+            onClick={() => {setWordOpen(value => !value); setMobileToolsOpen(false);}}>
+            <FileText size={17}/> {wordOpen ? "Về slide" : "Mở Word trực tiếp"}
+          </button>}
         </div>}
       </nav>
     </div>

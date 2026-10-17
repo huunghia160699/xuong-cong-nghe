@@ -1,0 +1,95 @@
+/* Word 01: an immersive, same-page teaching lab. Keep Word simulator CSS isolated in its iframe. */
+.xcn-word-lesson .xcn-slide-panel {
+  border: 1px solid #d6e4f2;
+  border-radius: clamp(12px,1.4vw,20px);
+  background: #fff;
+  box-shadow: 0 12px 36px rgba(4,18,45,.065);
+  transition: border-color .2s ease, transform .2s ease, box-shadow .2s ease;
+}
+.xcn-word-lesson .xcn-slide-panel:hover {
+  border-color: #aecaf0;
+  box-shadow: 0 16px 42px rgba(4,18,45,.09);
+  transform: translateY(-2px);
+}
+.xcn-word-lesson .xcn-slide-panel .xcn-slide-block-title {color:#04122d}
+.xcn-word-lesson .xcn-slide .xcn-presentation-block {animation:xcnWordBlockIn .35s ease both}
+.xcn-word-lesson .xcn-slide .xcn-presentation-block:nth-child(2) {animation-delay:.07s}
+.xcn-word-lesson .xcn-slide .xcn-presentation-block:nth-child(3) {animation-delay:.13s}
+.xcn-word-lesson .xcn-word-window,.xcn-word-lesson .xcn-word-guide {
+  border-radius: 16px;box-shadow:0 16px 40px rgba(4,18,45,.09);
+}
+.xcn-word-lesson .xcn-word-window {border:1px solid #bed3e8}
+.xcn-word-lesson .xcn-word-titlebar {background:#164087}
+.xcn-word-lesson .xcn-word-guide {border:1px solid #d6e4f2}
+.xcn-word-lesson .xcn-word-step-chip {border-radius:10px;transition:transform .16s ease,background .16s ease}
+.xcn-word-lesson .xcn-word-step-chip:hover {transform:translateY(-2px)}
+.xcn-word-live-launch {
+  display:flex;align-items:center;justify-content:center;gap:10px;
+  width:100%;min-height:46px;flex-shrink:0;margin-top:10px;
+  padding:10px 12px;border:1px solid #005bfd;border-radius:11px;
+  background:#04122d;color:#00e9fd;font-size:clamp(12px,1.05vw,15px);
+  font-weight:750;cursor:pointer;transition:background .15s ease,transform .15s ease;
+}
+.xcn-word-live-launch:hover {background:#17458b;transform:translateY(-1px)}
+.xcn-word-live-launch span {min-width:0}
+.xcn-word-live-launch:focus-visible,.xcn-word-lab-trigger:focus-visible,
+.xcn-word-live-lab-close:focus-visible {outline:3px solid #005bfd;outline-offset:3px}
+.xcn-word-lab-trigger {
+  display:flex;align-items:center;justify-content:center;gap:6px;
+  width:auto;min-width:72px;height:38px;padding:0 11px;border:0;
+  border-radius:999px;background:#04122d;color:#00e9fd;
+  font-size:13px;font-weight:800;cursor:pointer;transition:background .16s ease;
+}
+.xcn-word-lab-trigger:hover,.xcn-word-lab-trigger.is-active {background:#005bfd;color:#fff}
+.xcn-word-live-lab {
+  position:absolute;z-index:37;
+  top:clamp(12px,2.5dvh,26px);
+  right:clamp(35px,3.7vw,64px);
+  bottom:clamp(75px,10dvh,100px);
+  left:clamp(12px,3.7vw,64px);
+  display:flex;flex-direction:column;min-width:0;min-height:0;
+  overflow:hidden;border:1px solid #b7cce3;border-radius:20px;
+  background:#f0f6fd;box-shadow:0 22px 90px rgba(4,18,45,.27);
+  opacity:0;visibility:hidden;pointer-events:none;
+  transform:translateY(9px);
+  transition:opacity .2s ease,transform .2s ease,visibility .2s ease;
+}
+.xcn-word-live-lab.is-open {
+  opacity:1;visibility:visible;pointer-events:auto;transform:translateY(0);
+}
+.xcn-word-live-lab-top {
+  display:flex;align-items:center;justify-content:space-between;
+  gap:12px;min-height:55px;flex-shrink:0;padding:8px 12px 8px 18px;
+  border-bottom:1px solid #d8e4f2;background:#fff;
+}
+.xcn-word-live-lab-heading {display:flex;align-items:center;gap:10px;min-width:0;color:#04122d}
+.xcn-word-live-lab-heading strong {font-size:clamp(14px,1.15vw,17px);white-space:nowrap}
+.xcn-word-live-lab-tag {padding:5px 8px;border-radius:6px;background:#04122d;color:#00e9fd;font-size:10px;font-weight:900;letter-spacing:.09em;white-space:nowrap}
+.xcn-word-live-lab-context {overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#64748b;font-size:12px}
+.xcn-word-live-lab-close {
+  display:flex;align-items:center;justify-content:center;gap:8px;
+  flex-shrink:0;min-height:36px;padding:7px 12px;
+  border:1px solid #d2ddec;border-radius:9px;background:#f0f6fd;
+  color:#04122d;font-size:13px;font-weight:750;cursor:pointer;
+}
+.xcn-word-live-lab-close:hover {border-color:#005bfd;background:#e5efff}
+.xcn-word-live-lab-frame {flex:1;min-height:0;overflow:hidden;background:#e5eaf1}
+.xcn-word-live-lab-frame iframe {display:block;width:100%;height:100%;border:0;background:#e5eaf1}
+@keyframes xcnWordBlockIn {from{opacity:.25;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+@media(max-width:767px){
+  .xcn-word-live-lab {top:7px;left:7px;right:7px;bottom:70px;border-radius:11px}
+  .xcn-word-live-lab-top {min-height:48px;padding:7px 9px}
+  .xcn-word-live-lab-heading {gap:7px}
+  .xcn-word-live-lab-tag {font-size:9px;padding:4px 5px}
+  .xcn-word-live-lab-context {display:none}
+  .xcn-word-live-lab-close {padding:7px}
+  .xcn-word-live-lab-close span {display:none}
+  .xcn-word-lab-trigger {min-width:36px;height:33px;padding:0 8px}
+  .xcn-word-lab-trigger span {display:none}
+  .xcn-word-lesson .xcn-word-window,.xcn-word-lesson .xcn-word-guide {border-radius:11px}
+}
+@media(max-height:550px){.xcn-word-live-lab {top:5px;bottom:65px}}
+@media(prefers-reduced-motion:reduce){
+  .xcn-word-lesson .xcn-presentation-block {animation:none!important}
+  .xcn-word-lesson .xcn-slide-panel,.xcn-word-live-lab,.xcn-word-live-launch {transition:none;transform:none}
+}

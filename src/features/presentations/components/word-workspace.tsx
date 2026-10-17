@@ -49,7 +49,7 @@ function Paper({data,at}:{data:Demo;at:number}) {
   </div>
  </div>;
 }
-export function WordWorkspace({block}:{block:PresentationBlock}) {
+export function WordWorkspace({block,onOpenWord}:{block:PresentationBlock;onOpenWord?:()=>void}) {
  const data=block as Demo;const steps=data.steps??[];
  const [index,setIndex]=useState(0);const [tabOverride,setTabOverride]=useState<string|null>(null);
  const step=steps[index]??{tab:"Home",command:"Normal",title:"Quan sát",detail:"Nhận diện giao diện Word."};
@@ -72,6 +72,9 @@ export function WordWorkspace({block}:{block:PresentationBlock}) {
    <div className="xcn-word-step-controls" aria-label="Các bước minh họa">{steps.map((item,i)=><button type="button" key={i} className={"xcn-word-step-chip "+(i===index?"is-active":"")} aria-current={i===index?"step":undefined} onClick={()=>go(i)} title={item.title}>{i+1}</button>)}</div>
    <div className="xcn-word-step-detail" aria-live="polite"><span className="xcn-word-command-path">{step.tab} <ChevronDown size={12} aria-hidden="true"/> {step.command}</span><h3>{step.title}</h3><p>{step.detail}</p>{step.result&&<div className="xcn-word-result"><CheckCircle2 size={17} aria-hidden="true"/><span>{step.result}</span></div>}</div>
    <div className="xcn-word-guide-actions"><button type="button" onClick={()=>go(index-1)} disabled={index===0}><ArrowLeft size={16}/> Trước</button><button type="button" onClick={()=>go(index+1)} disabled={index===steps.length-1}>Tiếp <ArrowRight size={16}/></button></div>
+   {onOpenWord&&<button type="button" className="xcn-word-live-launch" onClick={onOpenWord}>
+      <FileText size={19} aria-hidden="true"/><span>Thực hành trên Word trực tiếp</span><ArrowRight size={18} aria-hidden="true"/>
+    </button>}
   </aside>
  </div>;
 }
