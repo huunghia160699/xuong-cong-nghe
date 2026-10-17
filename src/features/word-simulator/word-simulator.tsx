@@ -307,6 +307,33 @@ export function WordSimulator(){
     syncFormatState();
     markChanged();
   }
+  // Restore a text selection by offsets so a native formatting command
+  // cannot silently collapse the highlight before the user presses x₂/x² again.
+  function restoreScriptTextSelection(start:number,length:number){
+    if(!editor.current||length<=0)return;
+    const walker=document.createTreeWalker(editor.current,NodeFilter.SHOW_TEXT);
+    const end=start+length;
+    let position=0;
+    let first:Node|null=null,last:Node|null=null,firstOffset=0,lastOffset=0;
+    while(walker.nextNode()){
+      const node=walker.currentNode;
+      const size=node.textContent?.length??0;
+      if(!first&&start>=position&&start<=position+size){
+        first=node;firstOffset=start-position;
+      }
+      if(first&&end>=position&&end<=position+size){
+        last=node;lastOffset=end-position;break;
+      }
+      position+=size;
+    }
+    if(!first||!last)return;
+    const range=document.createRange();
+    range.setStart(first,firstOffset);
+    range.setEnd(last,lastOffset);
+    const selection=window.getSelection();
+    selection?.removeAllRanges();
+    selection?.addRange(range);
+  }
   // x₂/x² have two separate behaviors: selected text toggles the formatting
   // of the selected content; a collapsed caret enters/exits a typing mode.
   function toggleScriptFormat(kind:"subscript"|"superscript"){
@@ -318,6 +345,11 @@ export function WordSimulator(){
       const range=selection.getRangeAt(0);
       if(!range.collapsed){
         typingScriptRef.current=null;
+        const before=document.createRange();
+        before.selectNodeContents(editor.current);
+        before.setEnd(range.startContainer,range.startOffset);
+        const selectedStart=before.cloneContents().textContent?.length??0;
+        const selectedLength=range.cloneContents().textContent?.length??0;
         const wasActive=rangeHasScript(range,kind);
         const oppositeActive=rangeHasScript(range,opposite);
         if(!wasActive&&oppositeActive)document.execCommand(opposite,false);
@@ -326,6 +358,7 @@ export function WordSimulator(){
           setStatus("Trình duyệt chưa hỗ trợ lệnh này: "+kind);
           return;
         }
+        restoreScriptTextSelection(selectedStart,selectedLength);
         rememberSelection();
         setFormatActive(current=>({...current,[kind]:!wasActive,[opposite]:false}));
         markChanged();
