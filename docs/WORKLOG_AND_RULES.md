@@ -25,6 +25,14 @@
 
 ## III. Lịch sử
 
+### 2026-10-17 — Sửa lỗi slide Word 01 bị kéo giãn, tràn trang và co hẹp hai cột
+- **Phản hồi thực tế:** Ảnh người dùng cho thấy slide nhập tiếng Việt có một thẻ kéo dài gần hết màn hình và thẻ thứ hai bị đẩy ra ngoài, tiêu đề bị cắt; slide 2 có hai khối quá hẹp, chữ bị xuống dòng, còn khoảng trắng lớn.
+- **Nguyên nhân trong CSS:** Tập hợp các override liên tiếp dùng `flex:1 0 auto` cho vùng nội dung, `grid-auto-rows:minmax(min-content,1fr)` và `height:100%` cho từng thẻ, khiến lưới phóng chiều cao không theo nội dung; phần khung nhiều quy tắc chồng nhau. Không phải lỗi dữ liệu bài giảng.
+- **Cách sửa:** Xóa chuỗi override chồng nhau ở cuối `src/features/presentations/word-lesson-slide.css`, thay một bộ quy tắc bố cục có chủ đích: slide theo luồng block, nội dung và hàng grid cao tự nhiên, ba bước dọc là ba thẻ gọn có mũi tên 40px cách nhau, không có 1fr kéo dọc; slide 2 là hai cột chia đều trên khung tối đa 1180px, mỗi thẻ rộng theo khung và cao theo chữ; các card ba ý có hàng theo nội dung và một hàng ngang khi đủ không gian. Mobile chuyển thành một cột.
+- **Kiểm thử:** Cập nhật `tests/word-slide-live-editor.test.mjs` để ngăn hồi quy với `flex:1 0 auto`, `grid-auto-rows:minmax(min-content,1fr)` và thẻ chiều cao kéo dài; chạy đầy đủ CI. Cần chụp lại sản phẩm ở 360/768/1280/1920 trước khi xác nhận chất lượng thị giác.
+- **Phạm vi:** Chỉ CSS Word 01 và kiểm thử/tài liệu; không sửa nội dung, dữ liệu slide, toolbar Word, chức năng iframe hoặc môn khác.
+- **GitHub / Vercel:** Xác nhận commit main + Production READY sau khi CI thành công.
+
 ### 2026-10-17 — Đồng bộ kích thước khối, căn chữ và cân đối slide 2 Word 01
 - **Yêu cầu:** Bỏ chi tiết trang trí thừa được phản ánh trên ảnh; các khối cùng loại có cùng kích thước dù độ dài văn bản khác nhau; slide 2 hai thẻ giãn ngang cân đối nhưng không quá cao/rỗng; chữ trong card không chìm xuống đáy.
 - **Thực hiện:** `word-lesson-slide.tsx` bỏ các dấu trang trí 3 vạch cạnh tiêu đề và chữ/hình ký hiệu trang trí lớn trong hai khối slide 2; `word-lesson-slide.css` loại bỏ CSS tương ứng. Các khối kiến thức ba mục dùng ba cột bằng nhau trên màn rộng, một cột trên tablet/điện thoại; CSS Grid chia đều kích thước thẻ theo hàng, bỏ card đầu chiếm hai hàng và căn dưới. Tất cả chữ/số trong card và thẻ bước căn đầu trên; bước dọc có các hàng cao bằng nhau theo nội dung dài nhất. Hai khối slide 2 dùng khung cân đối, chiếm ngang tối đa 1480px, bỏ min-height dư thừa và các khoảng trống giữa tiêu đề/nội dung.

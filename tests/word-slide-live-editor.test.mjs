@@ -69,21 +69,21 @@ test("Word 01 headings stay on one line and shrink to fit rather than wrapping",
   assert.match(styles,/\.w01-cover-copy h1 span\{display:inline\}/);
   assert.match(styles,/overflow-x:auto/);
 });
-test("Three vertical Word steps stay below heading and do not overlap with footer",()=>{
-  const component=readFileSync("src/features/presentations/components/word-lesson-slide.tsx","utf8");
-  const styles=readFileSync("src/features/presentations/word-lesson-slide.css","utf8");
-  assert.match(styles,/\.w01-main\{flex:1 0 auto;min-height:auto;justify-content:safe center\}/);
-  assert.match(styles,/\.w01-main>\*\{flex-shrink:0\}/);
-  assert.match(styles,/\.w01-header\{flex-shrink:0/);
-  assert.match(styles,/\.w01-process-list\{row-gap:clamp/);
-  assert.match(styles,/\.w01-process-list \.w01-step\{grid-template-columns:54px/);
-  assert.match(styles,/\.w01-step\{min-height:0/);
-  assert.match(component,/<ArrowRight className="w01-step-link" size=\{42\}/);
-  assert.match(component,/<ArrowDown className="w01-step-link-down" size=\{40\}/);
-  assert.match(styles,/\.w01-process-list \.w01-step-link-down\{display:block\}/);
-  assert.match(styles,/@media\(max-width:800px\)/);
-  assert.match(styles,/\.w01-process-path \.w01-step-link-down,\.w01-process-stair \.w01-step-link-down/);
-  assert.match(styles,/\.w01-idea\{min-height:0/);
+test("Word 01 uses natural flow so vertical steps do not inflate or overlap headings",()=>{
+ const component=readFileSync("src/features/presentations/components/word-lesson-slide.tsx","utf8");
+ const styles=readFileSync("src/features/presentations/word-lesson-slide.css","utf8");
+ assert.match(styles,/\.w01-slide-inner\{display:block;width:100%/);
+ assert.match(styles,/\.w01-main\{display:block;width:100%/);
+ assert.match(styles,/\.w01-process\{display:grid;min-height:0;height:auto;grid-auto-rows:auto/);
+ assert.match(styles,/\.w01-process-list\{width:min\(100%,1040px\);max-width:1040px/);
+ assert.match(styles,/\.w01-process-list \.w01-step\{display:grid;grid-template-columns:52px minmax\(0,1fr\)/);
+ assert.match(styles,/\.w01-step\{display:flex;flex-direction:column;align-items:stretch;/);
+ assert.match(styles,/\.w01-step-text\{min-width:0;align-self:start\}/);
+ assert.doesNotMatch(styles,/grid-auto-rows:minmax\(min-content,1fr\)/);
+ assert.doesNotMatch(styles,/flex:1 0 auto;min-height:auto;justify-content:safe center/);
+ assert.match(component,/<ArrowRight className="w01-step-link" size=\{42\}/);
+ assert.match(component,/<ArrowDown className="w01-step-link-down" size=\{40\}/);
+ assert.match(styles,/\.w01-process-list \.w01-step-link-down\{display:block\}/);
 });
 
 test("Word 01 has no in-slide progress strip or redundant Word launch on any slide", () => {
@@ -100,23 +100,21 @@ test("Word 01 has no in-slide progress strip or redundant Word launch on any sli
   assert.match(player, /if \(wordLesson\) return <WordLessonSlide slide=\{slide\} index=\{index\} onAdvance=\{onAdvance\}\/>/);
 });
 
-test("Word 01 equalizes teaching cards and prevents content from dropping to the bottom",()=>{
-  const component=readFileSync("src/features/presentations/components/word-lesson-slide.tsx","utf8");
-  const styles=readFileSync("src/features/presentations/word-lesson-slide.css","utf8");
-  assert.doesNotMatch(component,/w01-demo-mark|w01-purpose-mark/);
-  assert.doesNotMatch(styles,/w01-demo-mark|w01-purpose-mark/);
-  assert.match(styles,/\.w01-ideas-editorial,\.w01-ideas-strip,\.w01-ideas-tiles\{[^}]*grid-template-columns:repeat\(3,minmax\(0,1fr\)\)/s);
-  assert.match(styles,/\.w01-ideas-editorial \.w01-idea:first-child\{[^}]*grid-row:auto;min-height:0;justify-content:flex-start/s);
-  assert.match(styles,/\.w01-idea\{[^}]*justify-content:flex-start/s);
-  assert.match(styles,/\.w01-process\{grid-auto-rows:minmax\(min-content,1fr\);align-items:stretch\}/);
-  assert.match(styles,/\.w01-process-list \.w01-step\{align-items:start\}/);
-  assert.match(styles,/\.w01-step-text\{align-self:start\}/);
-  assert.match(styles,/@media\(max-width:900px\)/);
+test("Word 01 teaches three equal cards without forcing the first into a tall spanning tile",()=>{
+ const component=readFileSync("src/features/presentations/components/word-lesson-slide.tsx","utf8");
+ const styles=readFileSync("src/features/presentations/word-lesson-slide.css","utf8");
+ assert.doesNotMatch(component,/w01-demo-mark|w01-purpose-mark/);
+ assert.doesNotMatch(styles,/w01-demo-mark|w01-purpose-mark/);
+ assert.match(styles,/\.w01-ideas,\.w01-ideas-editorial,\.w01-ideas-strip,\.w01-ideas-tiles\{[^}]*grid-template-columns:repeat\(3,minmax\(0,1fr\)\);[^}]*grid-auto-rows:auto/s);
+ assert.match(styles,/\.w01-ideas-editorial \.w01-idea:first-child\{grid-row:auto;\s*min-height:0;justify-content:flex-start/s);
+ assert.match(styles,/\.w01-idea\{display:flex;flex-direction:column;justify-content:flex-start/s);
+ assert.match(styles,/@media\(max-width:900px\)/);
 });
-test("Word 01 purpose slide uses balanced width with content-sized equal panels",()=>{
-  const styles=readFileSync("src/features/presentations/word-lesson-slide.css","utf8");
-  assert.match(styles,/\.w01-purpose\{[^}]*width:100%;max-width:1480px;margin-inline:auto/s);
-  assert.match(styles,/\.w01-purpose-half\{[^}]*min-width:0;min-height:0/s);
-  assert.match(styles,/\.w01-purpose-half\{[^}]*justify-content:flex-start/s);
-  assert.match(styles,/@media\(max-width:560px\)/);
+test("Word 01 two-column purpose slide fills available width without tall empty panels",()=>{
+ const styles=readFileSync("src/features/presentations/word-lesson-slide.css","utf8");
+ assert.match(styles,/\.w01-purpose\{display:grid;width:100%;max-width:1180px;margin:0 auto/s);
+ assert.match(styles,/\.w01-purpose-half\{display:flex;flex-direction:column;justify-content:flex-start/s);
+ assert.match(styles,/\.w01-purpose-half\{[^}]*min-height:0;height:auto/s);
+ assert.match(styles,/\.w01-purpose-half p\{max-width:none;margin:0/s);
+ assert.match(styles,/@media\(max-width:560px\)/);
 });

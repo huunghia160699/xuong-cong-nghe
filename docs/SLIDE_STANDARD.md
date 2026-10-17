@@ -78,3 +78,10 @@
 - Không dùng `justify-content:center` không an toàn trong một vùng flex có nội dung cao hơn vùng khả dụng: nội dung phải đi theo luồng bình thường và có thể cuộn, không chồng lên tiêu đề hoặc footer.
 - Các bước dọc để mũi tên xuống riêng trong khoảng cách giữa khối, các bước ngang để mũi tên sang phải riêng giữa khối. Icon phải dễ quan sát khi trình chiếu.
 - Chiều cao của thẻ theo nội dung và padding hợp lý, không kéo dài thẻ ra gần hết chiều cao màn chiếu chỉ để lấp khoảng trắng.
+
+## 11. Bố cục Word 01 không được phóng chiều cao theo viewport (17/10/2026)
+
+- Đối với thẻ bước theo một cột, không dùng `grid-auto-rows:minmax(min-content,1fr)`, `height:100%` kết hợp `flex:1 0 auto` ở vùng chứa: có thể tạo một thẻ cao toàn màn hình và che nội dung sau.
+- Trang trình chiếu dùng normal flow; card cao theo nội dung. Chỉ dùng hàng cao đồng đều khi các card nằm cạnh nhau trong cùng một hàng theo thiết kế và không phát sinh scroll bất thường.
+- Slide 2 phải có hai cột rộng bằng nhau ở desktop, trong khung không quá rộng, co thành một cột ở mobile; không tự biến thành cột hẹp gây xuống dòng.
+- Trước khi phát hành phải xem ảnh chụp hoặc giao diện thật của slide 2, slide có ba bước ngang/dọc, slide có ba thẻ kiến thức ở tối thiểu 1280×720 và 360px, bên cạnh Unit tests/Typecheck/Build.

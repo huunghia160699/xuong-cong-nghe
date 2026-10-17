@@ -1,5 +1,11 @@
 # Changelog
 
+## 2026-10-17 — Sửa tràn và biến dạng bố cục Word 01
+- Xóa các quy tắc CSS chồng nhau từng làm thẻ bước cao quá mức và tràn khỏi màn hình.
+- Giữ chiều cao khối theo nội dung, không kéo giãn bằng `1fr` hay `height:100%` trên mỗi bước.
+- Slide 2 dùng hai cột cân đối, nội dung không bị dồn thành cột hẹp bên trái; trên điện thoại xếp một cột.
+- Các thẻ Word khác căn đều theo hàng, giữ mũi tên và không làm thay đổi bài học hay công cụ Word.
+
 ## 2026-10-17 — Đồng bộ thẻ kiến thức và cân lại slide 2 Word 01
 - Loại bỏ chi tiết trang trí thừa ở góc tiêu đề và các ký tự minh họa quá lớn trên slide 2.
 - Các thẻ nội dung cùng loại bằng nhau về rộng/cao, không phụ thuộc chữ nhiều hay ít; toàn bộ nội dung bắt đầu từ phía trên thẻ.
