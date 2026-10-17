@@ -1357,13 +1357,17 @@ test("Selected words: x₂ toggles off on second click, x² switches, selection 
   removeAllRanges:()=>{activeRange=null;},
   addRange:range=>{activeRange=range;selection.anchorNode=node;}
  };
- const createRange=()=>({
-  collapsed:false,startContainer:node,startOffset:0,
-  selectNodeContents(){},
-  setEnd(){},
-  setStart(){},
-  cloneContents:()=>({textContent:"H2O"})
- });
+ let rangeCalls=0;
+ const createRange=()=>{
+  const isBefore=++rangeCalls%2===1;
+  return {
+   collapsed:false,startContainer:node,startOffset:0,
+   selectNodeContents(){},
+   setEnd(){},
+   setStart(){},
+   cloneContents:()=>({textContent:isBefore?"":"H2O"})
+  };
+ };
  const harness={
   window:{getSelection:()=>selection},
   editor:{current:{contains:()=>true}},
@@ -1438,6 +1442,7 @@ test("Unselected caret: x₂/x² enters typing mode, second click exits; switchi
         collapsed:true,startContainer:root,
         setStartAfter(){this.startContainer=root;},
         selectNodeContents(node){this.startContainer=node;},
+        insertNode(node){nodes.push(node);},
         collapse(value){this.collapsed=value;}
       };
     }
