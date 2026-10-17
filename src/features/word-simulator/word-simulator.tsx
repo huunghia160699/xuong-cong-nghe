@@ -595,7 +595,7 @@ export function WordSimulator(){
       const currentText=currentScript?.textContent?.replaceAll(TYPING_SCRIPT_PLACEHOLDER,"")??"";
       if(currentScript&&currentText){
         typingScriptExitNodeRef.current=currentScript;
-        currentScript.setAttribute("data-script-exit","true");
+        currentScript.setAttribute?.("data-script-exit","true");
       }
     }
     const explicitPending=typingScriptRef.current===kind?typingScriptNodeRef.current:null;
