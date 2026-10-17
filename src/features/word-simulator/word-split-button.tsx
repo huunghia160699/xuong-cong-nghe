@@ -95,7 +95,7 @@ export function WordSplitButton({label,icon,run,options,className="",vertical=fa
   </>;
 }
 
-/** Native <select> is deliberately not used in the Word simulator. All
+/** Browser-native selection fields are deliberately not used. All
  * dropdown menus share this div-backed, keyboard-operable listbox surface. */
 export type WordDropdownOption={value:string;label:string;disabled?:boolean};
 export function WordCustomDropdown({
