@@ -238,16 +238,19 @@ export function WordSimulator(){
     const nodes:Node[]=[];
     if(ancestor.nodeType===Node.TEXT_NODE)nodes.push(ancestor);
     else while(walker.nextNode())nodes.push(walker.currentNode);
-    // intersectsNode alone can include text touching a range boundary with
-    // zero selected characters, incorrectly reporting mixed formatting.
+    // Intersect text Ranges by their actual DOM endpoints. A selection can
+    // begin/end on an ELEMENT child boundary (not on a text node); using
+    // intersectsNode plus text-node offsets mistakenly includes adjacent text.
+    // That made superscript selection intermittently look "not active" and
+    // a second click re-applied <sup> instead of removing it.
     const selected=nodes.filter(node=>{
-      const length=node.textContent?.length??0;
-      if(!length)return false;
+      if(!node.textContent?.length)return false;
       try{
-        if(!range.intersectsNode(node))return false;
-        const start=range.startContainer===node?range.startOffset:0;
-        const end=range.endContainer===node?range.endOffset:length;
-        return end>start;
+        const textRange=document.createRange();
+        textRange.selectNodeContents(node);
+        const endsAfterStart=range.compareBoundaryPoints(Range.START_TO_END,textRange)>0;
+        const startsBeforeEnd=range.compareBoundaryPoints(Range.END_TO_START,textRange)<0;
+        return endsAfterStart&&startsBeforeEnd;
       }catch{return false;}
     });
     return selected.length>0&&selected.every(node=>scriptAncestor(node)?.tagName===tag);
