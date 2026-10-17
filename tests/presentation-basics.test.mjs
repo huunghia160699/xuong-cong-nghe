@@ -1306,7 +1306,7 @@ test("x₂/x² use two modes: selection toggle and collapsed-caret typing toggle
  const toggle=source.slice(begin,end);
  assert.ok(begin>=0&&end>begin);
  assert.match(toggle,/restoreSelection\(\);/);
- assert.match(toggle,/if\(!selection\?\.rangeCount\|\|!editor\.current\?\.contains\(selection\.anchorNode\)\)return;/);
+ assert.match(toggle,/if\(!selection\?\.rangeCount\|\|!root\?\.contains\(selection\.anchorNode\)\)return;/);
  assert.match(toggle,/const opposite=kind==="subscript"\?"superscript":"subscript";/);
  assert.match(toggle,/if\(!range\.collapsed\)\{/);
  assert.match(toggle,/const selectedStart=before\.cloneContents\(\)\.textContent\?\.length\?\?0;/);
