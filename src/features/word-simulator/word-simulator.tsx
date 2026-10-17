@@ -562,7 +562,7 @@ export function WordSimulator(){
       if(cleanText){
         after.setStartAfter(explicitPending);
       }else{
-        const index=Array.prototype.indexOf.call(parent.childNodes,explicitPending) as number;
+        const index=Array.prototype.indexOf.call(parent.childNodes,explicitPending);
         explicitPending.remove();
         after.setStart(parent,Math.max(0,index));
       }
