@@ -426,3 +426,5 @@ Ngày: 15/10/2026. Đường dẫn: `/cong-cu/mo-phong-word`.
 - **Kiểm thử bổ sung:** `restoreSelection` thực sự ưu tiên Range mới thay vì cached, vẫn có fallback khi focus đã ra khỏi editor; `rangeHasScript` bỏ qua node text có độ dài giao 0; `restoreScriptTextSelection` chọn đúng text node khi offset nằm tại ranh giới; QA lặp lại 10 lần; vẫn giữ các kiểm thử thao tác bôi đen chữ, DOM lồng nhau và chế độ gõ.
 - **Lưu ý:** kiểm thử theo hợp đồng mã và DOM giả lập, không thay thế kiểm tra trên trình duyệt thực. Không được báo bảo đảm 100% không còn lỗi nếu chưa chạy kiểm thử thao tác thực trên trình duyệt.
 - Tuân thủ quy trình bắt buộc: sửa trực tiếp GitHub, cập nhật file MD này, test/build, Vercel Production **READY**.
+
+- **Kiểm thử hồi quy cũ:** trường hợp kiểm tra cập nhật Indent từng đòi hàm lắng nghe `selectionchange` chỉ có một dòng. Do giờ cần lưu Range trực tiếp để chống tình trạng x₂/x² áp dụng sai, đã điều chỉnh kiểm thử cũ để chấp nhận body mới có lưu Range nhưng vẫn kiểm tra `syncFormatState()` và `syncRulerIndent()` còn được gọi.
