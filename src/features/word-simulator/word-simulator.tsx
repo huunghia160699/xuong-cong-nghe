@@ -260,6 +260,51 @@ export function WordSimulator(){
     });
     return selected.length>0&&selected.every(node=>scriptAncestor(node)?.tagName===tag);
   }
+  function syncFontControls(){
+    const selection=window.getSelection();
+    const root=editor.current;
+    if(!root||!selection?.anchorNode||!root.contains(selection.anchorNode))return;
+    let element:Element|null=selection.anchorNode.nodeType===Node.ELEMENT_NODE
+      ?selection.anchorNode as Element:selection.anchorNode.parentElement;
+    let foundFont=false,foundSize=false;
+    let currentFont="Aptos",currentSize="3";
+    const supported=["Aptos","Arial","Calibri","Times New Roman","Georgia","Verdana"];
+    const pointSizes=["8","10","12","14","18","24","36"];
+    while(element&&root.contains(element)&&element!==root){
+      if(!foundFont){
+        const candidate=(element.getAttribute("face")||
+          (element as HTMLElement).style?.fontFamily||"").replaceAll(/["']/g,"").split(",")[0].trim();
+        const match=supported.find(name=>name.toLowerCase()===candidate.toLowerCase());
+        if(match){currentFont=match;foundFont=true;}
+      }
+      if(!foundSize){
+        const attribute=element.tagName==="FONT"?element.getAttribute("size"):null;
+        const cssSize=(element as HTMLElement).style?.fontSize??"";
+        const cssNumber=parseFloat(cssSize);
+        if(attribute&&/^[1-7]$/.test(attribute)){currentSize=attribute;foundSize=true;}
+        else if(cssSize&&Number.isFinite(cssNumber)){
+          const pt=cssSize.endsWith("px")?cssNumber*72/96:cssNumber;
+          const nearest=pointSizes.reduce((best,entry,index)=>
+            Math.abs(Number(entry)-pt)<Math.abs(Number(pointSizes[best])-pt)?index:best,0);
+          currentSize=String(nearest+1);foundSize=true;
+        }
+      }
+      element=element.parentElement;
+    }
+    setFont(value=>value===currentFont?value:currentFont);
+    setFontSize(value=>value===currentSize?value:currentSize);
+  }
+  // Clear Formatting can leave empty inline formatting wrappers behind.
+  // Prune only genuinely empty inline tags, preserving images and line breaks.
+  function removeEmptyFormattingNodes(){
+    const root=editor.current;
+    if(!root)return;
+    for(const el of Array.from(root.querySelectorAll("b,strong,i,em,u,s,strike,font,span,sub,sup")).reverse()){
+      if(el.childNodes.length===0&&!el.querySelector("img,br,hr,table")){
+        el.remove();
+      }
+    }
+  }
   function syncFormatState(){
     const selection=window.getSelection();
     if(!selection?.anchorNode||!editor.current?.contains(selection.anchorNode))return;
@@ -300,7 +345,7 @@ export function WordSimulator(){
         savedSelection.current=selection.getRangeAt(0).cloneRange();
         setHasSelection(!selection.isCollapsed&&Boolean(selection.toString()));
       }
-      syncFormatState();syncRulerIndent();
+      syncFormatState();syncFontControls();syncRulerIndent();
     };
     document.addEventListener("selectionchange",changed);
     return ()=>document.removeEventListener("selectionchange",changed);
@@ -348,6 +393,7 @@ export function WordSimulator(){
       savedSelection.current=selection.getRangeAt(0).cloneRange();
       setHasSelection(!selection.isCollapsed && Boolean(selection.toString()));
       syncFormatState();
+      syncFontControls();
     }
   }
   function restoreSelection(){
@@ -378,6 +424,7 @@ export function WordSimulator(){
     }
     rememberSelection();
     syncFormatState();
+    syncFontControls();
     markChanged();
   }
   // Restore a text selection by offsets so a native formatting command
@@ -544,8 +591,8 @@ export function WordSimulator(){
     }catch{setStatus("Không đủ dung lượng để lưu bản nháp; hãy tải tệp HTML");}
   }
   function blockCommand(tag:string){command("formatBlock",tag);}
-  function editFont(next:string){setFont(next);command("fontName",next);}
-  function editSize(next:string){setFontSize(next);command("fontSize",next);}
+  function editFont(next:string){command("fontName",next);setFont(next);}
+  function editSize(next:string){command("fontSize",next);setFontSize(next);}
   function insertTable(){
     const table='<table><tbody><tr><th>STT</th><th>Họ và tên</th><th>Ghi chú</th></tr><tr><td>1</td><td><br></td><td><br></td></tr><tr><td>2</td><td><br></td><td><br></td></tr></tbody></table><p><br></p>';
     command("insertHTML",table);
@@ -686,6 +733,15 @@ export function WordSimulator(){
     command("insertHTML","<ol><li>"+first+"<ol>"+children+"</ol></li></ol>");
   }
   function runHome(name:string,value?:string){
+    if(name==="removeFormat"){
+      command("removeFormat");
+      typingScriptRef.current=null;
+      typingScriptNodeRef.current=null;
+      removeEmptyFormattingNodes();
+      syncFontControls();
+      syncFormatState();
+      return;
+    }
     if(name==="subscript"||name==="superscript"){
       toggleScriptFormat(name);return;
     }
