@@ -1379,7 +1379,8 @@ test("Unselected caret: x₂/x² enters typing mode, second click exits; switchi
  const begin=source.indexOf('  function toggleScriptFormat(');
  const finish=source.indexOf('  function saveDraft()',begin);
  const executable=source.slice(begin,finish).trim()
-  .replace('kind:"subscript"|"superscript"','kind');
+  .replace('kind:"subscript"|"superscript"','kind')
+  .replaceAll("?.<HTMLElement>","?.");
  const nodes=[];const root={contains:()=>true};
  const button={subscript:false,superscript:false};
  const typingScriptRef={current:null};
@@ -1823,7 +1824,9 @@ test("Caret script x₂/x² second click toggles off even when browser relocates
  const source=readFileSync("src/features/word-simulator/word-simulator.tsx","utf8");
  const start=source.indexOf('  function toggleScriptFormat(');
  const end=source.indexOf('  function saveDraft()',start);
- const executable=source.slice(start,end).trim().replace('kind:"subscript"|"superscript"','kind');
+ const executable=source.slice(start,end).trim()
+   .replace('kind:"subscript"|"superscript"','kind')
+   .replaceAll("?.<HTMLElement>","?.");
  const root={tagName:"DIV",contains(node){return node===this||nodes.includes(node);}};
  const nodes=[],created=[];
  const typingScriptRef={current:null};
