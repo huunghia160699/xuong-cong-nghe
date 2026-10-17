@@ -2,6 +2,7 @@
 
 import {useCallback,useEffect,useRef,useState} from "react";
 import {WordHomeRibbon,type WordFormatKey} from "./word-home-ribbon";
+import {WordCustomDropdown} from "./word-split-button";
 import {WordWindowBar} from "./word-window-bar";
 import {WordPageRulers,type RulerIndent} from "./word-page-rulers";
 import {a4Dimensions} from "./word-paper-metrics";
@@ -830,8 +831,16 @@ export function WordSimulator(){
       </>}
       {activeTab==="Layout"&&<>
         <Group name="Thiết lập trang">
-          <label className="wsl-ribbon-field"><span>Hướng trang</span><select value={orientation} onChange={event=>setOrientation(event.target.value as Orientation)}><option value="portrait">Dọc</option><option value="landscape">Ngang</option></select></label>
-          <label className="wsl-ribbon-field"><span>Lề trang</span><select value={margins} onChange={event=>setMargins(event.target.value as Margins)}><option value="normal">Thông thường</option><option value="narrow">Hẹp</option></select></label>
+          <div className="wsl-ribbon-field"><span>Hướng trang</span>
+            <WordCustomDropdown label="Hướng trang" className="wsl-layout-dropdown"
+              value={orientation} onChange={value=>setOrientation(value as Orientation)}
+              options={[{value:"portrait",label:"Dọc"},{value:"landscape",label:"Ngang"}]}/>
+          </div>
+          <div className="wsl-ribbon-field"><span>Lề trang</span>
+            <WordCustomDropdown label="Lề trang" className="wsl-layout-dropdown"
+              value={margins} onChange={value=>setMargins(value as Margins)}
+              options={[{value:"normal",label:"Thông thường"},{value:"narrow",label:"Hẹp"}]}/>
+          </div>
           <span className="wsl-page-size-label">A4 · 210 × 297 mm</span>
         </Group>
       </>}
