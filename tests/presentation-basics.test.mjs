@@ -1177,7 +1177,10 @@ test("Dragging indent markers applies to current Word paragraph and preserves st
  assert.match(source,/onIndentChange=\{applyRulerIndent\} onIndentEnd=\{endRulerIndent\}/);
  assert.match(source,/for\(const name of \["marginLeft","marginRight","textIndent"\] as const\)/);
  assert.match(source,/safeStyles\.push\(name\.replace\(/);
- assert.match(source,/const changed=\(\)=>\{syncFormatState\(\);syncRulerIndent\(\);\}/);
+ assert.match(source,/const changed=\(\)=>\{/);
+ assert.match(source,/const selection=window\.getSelection\(\);/);
+ assert.match(source,/savedSelection\.current=selection\.getRangeAt\(0\)\.cloneRange\(\);/);
+ assert.match(source,/syncFormatState\(\);syncRulerIndent\(\);/);
  assert.match(ruler,/onIndentStart\?\.\(kind\)/);
  assert.match(ruler,/onIndentEnd\?\.\(\)/);
  assert.match(ruler,/onPointerCancel=\{onPointerCancel\}/);
