@@ -565,8 +565,17 @@ export function WordSimulator(){
         return;
       }
       const after=document.createRange();
-      after.setStartAfter(explicitPending);
-      if(!cleanText)explicitPending.remove();
+      const parent=explicitPending.parentNode;
+      if(cleanText&&parent){
+        // A boundary immediately after <sub>/<sup> can be normalized back into
+        // that element by contentEditable. Anchor the caret in a real sibling.
+        const exitText=document.createTextNode("");
+        parent.insertBefore(exitText,explicitPending.nextSibling);
+        after.setStart(exitText,0);
+      }else{
+        after.setStartAfter(explicitPending);
+        if(!cleanText)explicitPending.remove();
+      }
       after.collapse(true);
       root.focus?.({preventScroll:true});
       const selection=window.getSelection();
