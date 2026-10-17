@@ -128,6 +128,7 @@ export function WordSimulator(){
   const typingScriptExitLengthRef=useRef<number|null>(null);
   // A zero-width placeholder keeps a collapsed caret inside an empty sub/sup.
   const TYPING_SCRIPT_PLACEHOLDER="\u200B";
+  const SCRIPT_EXIT_ANCHOR="\u2060";
   const indentTarget=useRef<HTMLElement|null>(null);
   const indentDragging=useRef(false);
   const [rulerIndent,setRulerIndent]=useState<RulerIndent>({firstLine:0,left:0,right:0});
@@ -420,6 +421,16 @@ export function WordSimulator(){
     selection?.removeAllRanges();
     selection?.addRange(range);
   }
+  function cleanScriptExitAnchor(){
+    const root=editor.current;
+    if(!root)return;
+    const walker=document.createTreeWalker(root,NodeFilter.SHOW_TEXT);
+    while(walker.nextNode()){
+      const node=walker.currentNode as Text;
+      const index=node.data.indexOf(SCRIPT_EXIT_ANCHOR);
+      if(index>=0)node.deleteData(index,SCRIPT_EXIT_ANCHOR.length);
+    }
+  }
   function insertTypingScriptText(value:string){
     const pending=typingScriptNodeRef.current;
     const root=editor.current;
@@ -626,9 +637,9 @@ export function WordSimulator(){
       if(cleanText&&parent){
         // A boundary immediately after <sub>/<sup> can be normalized back into
         // that element by contentEditable. Anchor the caret in a real sibling.
-        const exitText=document.createTextNode("");
+        const exitText=document.createTextNode(SCRIPT_EXIT_ANCHOR);
         parent.insertBefore(exitText,explicitPending.nextSibling);
-        after.setStart(exitText,0);
+        after.setStart(exitText,exitText.data.length);
       }else{
         after.setStartAfter(explicitPending);
         if(!cleanText)explicitPending.remove();
@@ -1184,7 +1195,7 @@ export function WordSimulator(){
                    event.preventDefault();
                  }
                }}
-              onInput={event=>{repairExitedScriptText();cleanTypingScriptPlaceholder();rememberSelection();markChanged();}}
+              onInput={event=>{repairExitedScriptText();cleanTypingScriptPlaceholder();cleanScriptExitAnchor();rememberSelection();markChanged();}}
                onKeyUp={event=>{repairExitedScriptText();if(["ArrowLeft","ArrowRight","ArrowUp","ArrowDown","Home","End","PageUp","PageDown"].includes(event.key))syncTypingScriptCaret();rememberSelection();}}
                onMouseUp={()=>{syncTypingScriptCaret();handleEditorMouseUp();}}
               onFocus={rememberSelection} onPaste={event=>{event.preventDefault();setClipboardMode(null);stagedClipboard.current=null;command("insertText",event.clipboardData.getData("text/plain"));}}
