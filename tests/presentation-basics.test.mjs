@@ -1753,3 +1753,54 @@ test("Superscript x² selected at element boundaries is detected active and togg
  assert.match(source,/const applied=applySelectedScript\(range,kind,!wasActive\);/);
  assert.match(source,/setFormatActive\(current=>\(\{\.\.\.current,\[kind\]:!wasActive,\[opposite\]:false\}\)\);/);
 });
+
+
+test("All Word simulator dropdown surfaces are custom div panels, with no native select/option elements",()=>{
+ const home=readFileSync("src/features/word-simulator/word-home-ribbon.tsx","utf8");
+ const simulator=readFileSync("src/features/word-simulator/word-simulator.tsx","utf8");
+ const split=readFileSync("src/features/word-simulator/word-split-button.tsx","utf8");
+ const windowBar=readFileSync("src/features/word-simulator/word-window-bar.tsx","utf8");
+ const fontCSS=readFileSync("src/features/word-simulator/word-font-ribbon.css","utf8");
+ const interactions=readFileSync("src/features/word-simulator/word-interactions.css","utf8");
+ for(const component of [home,simulator,split,windowBar]){
+   assert.doesNotMatch(component,/<select(?:\s|>)|<option(?:\s|>)/,
+     "No Word dropdown may rely on the browser native HTML select/option");
+ }
+ assert.match(home,/<WordCustomDropdown className="wsl-font-select wsl-font-family"/);
+ assert.match(home,/<WordCustomDropdown className="wsl-font-select wsl-font-size"/);
+ assert.match(simulator,/<WordCustomDropdown label="Hướng trang"/);
+ assert.match(simulator,/<WordCustomDropdown label="Lề trang"/);
+ assert.match(split,/role="combobox" aria-label=\{label\} aria-haspopup="listbox"/);
+ assert.match(split,/role="listbox" aria-label=\{label\}/);
+ assert.match(split,/role="option" aria-selected=\{option\.value===value\}/);
+ assert.match(split,/aria-activedescendant=\{open\?id\+"-option-"\+activeIndex:undefined\}/);
+ assert.match(split,/if\(event\.key==="Enter"\|\|event\.key===" "\)/);
+ assert.match(split,/if\(event\.key==="Escape"\)/);
+ assert.match(split,/if\(event\.key==="Tab"\)\{setOpen\(false\);return;\}/);
+ assert.match(split,/onMouseDown=\{event=>event\.preventDefault\(\)\}/);
+ assert.match(split,/document\.addEventListener\("pointerdown",outside\)/);
+ assert.match(split,/createPortal\(/);
+ assert.match(split,/onChange\(option\.value\)/);
+ assert.match(split,/className="wsl-split-menu"/);
+ assert.match(windowBar,/className="wsl-qat-menu"/);
+ assert.match(fontCSS,/\.wsl-home-font \.wsl-font-select \.wsl-word-dropdown-value/);
+ assert.doesNotMatch(fontCSS,/\.wsl-home-font \.wsl-font-select select/);
+ assert.match(interactions,/\.wsl-word-dropdown-menu\{[\s\S]*?z-index:12500;/);
+ assert.match(interactions,/\.wsl-ribbon-field \.wsl-layout-dropdown\{/);
+ assert.match(interactions,/\.wsl-word-dropdown-option\.is-selected\{/);
+ const values=[
+   {name:"Font",options:["Aptos","Arial","Calibri","Times New Roman","Georgia","Verdana"],selected:"Aptos"},
+   {name:"Font Size",options:["1","2","3","4","5","6","7"],selected:"3"},
+   {name:"Hướng trang",options:["portrait","landscape"],selected:"portrait"},
+   {name:"Lề trang",options:["normal","narrow"],selected:"normal"}
+ ];
+ for(const {name,options,selected} of values){
+   assert.ok(options.includes(selected),name+" selected default exists");
+   const start=options.indexOf(selected);
+   for(let i=0;i<options.length*2;i++){
+     const down=(start+i+1)%options.length;
+     const up=(start-i-1+options.length*2)%options.length;
+     assert.ok(options[down]&&options[up],name+" wraps keyboard arrow selection");
+   }
+ }
+});
