@@ -392,7 +392,7 @@ export function WordSimulator(){
       if(container.nodeType===Node.ELEMENT_NODE&&range.startOffset>0){
         const previous=(container.childNodes[range.startOffset-1] as HTMLElement|undefined)??null;
         const kind=previous?.tagName==="SUB"?"subscript":previous?.tagName==="SUP"?"superscript":null;
-        if(previous&&kind&&!formatActive[kind])script=previous;
+        if(previous&&kind)script=previous;
       }
     }
     if(!value||!script||!root?.contains(script)||!selection)return false;
