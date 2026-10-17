@@ -1284,97 +1284,191 @@ test("Vertical ruler mirrors horizontal centimeter ticks, margin-relative white 
 });
 
 
-test("Subscript and superscript use BIU-style toggles with mutual exclusion and preserved selection",()=>{
+test("x₂/x² use two modes: selection toggle and collapsed-caret typing toggle",()=>{
  const source=readFileSync("src/features/word-simulator/word-simulator.tsx","utf8");
  const home=readFileSync("src/features/word-simulator/word-home-ribbon.tsx","utf8");
  const css=readFileSync("src/features/word-simulator/word-interactions.css","utf8");
- const start=source.indexOf('  function toggleScriptFormat(');
- const end=source.indexOf('  function saveDraft()',start);
- const toggle=source.slice(start,end);
- assert.ok(start>=0&&end>start);
+ assert.match(source,/const typingScriptRef=useRef<"subscript"\|"superscript"\|null>\(null\)/);
+ assert.match(source,/function scriptAncestor\(node:Node\|null\):HTMLElement\|null/);
+ assert.match(source,/function rangeHasScript\(range:Range,kind:"subscript"\|"superscript"\)/);
+ assert.match(source,/const selected=nodes\.filter\(node=>\{/);
+ assert.match(source,/selected\.length>0&&selected\.every\(node=>scriptAncestor\(node\)\?\.tagName===tag\)/);
+ assert.match(source,/function restoreScriptTextSelection\(start:number,length:number\)/);
+ assert.match(source,/const walker=document\.createTreeWalker\(editor\.current,NodeFilter\.SHOW_TEXT\)/);
+ assert.match(source,/range\.setStart\(first,firstOffset\);/);
+ assert.match(source,/range\.setEnd\(last,lastOffset\);/);
+ assert.match(source,/selection\?\.addRange\(range\);/);
+ const begin=source.indexOf('  function toggleScriptFormat(');
+ const end=source.indexOf('  function saveDraft()',begin);
+ const toggle=source.slice(begin,end);
+ assert.ok(begin>=0&&end>begin);
  assert.match(toggle,/restoreSelection\(\);/);
+ assert.match(toggle,/if\(!selection\?\.rangeCount\|\|!editor\.current\?\.contains\(selection\.anchorNode\)\)return;/);
  assert.match(toggle,/const opposite=kind==="subscript"\?"superscript":"subscript";/);
- assert.match(toggle,/const wasActive=document\.queryCommandState\(kind\);/);
- assert.match(toggle,/if\(!wasActive&&document\.queryCommandState\(opposite\)\)\{/);
- assert.match(toggle,/document\.execCommand\(opposite,false\);/);
+ assert.match(toggle,/if\(!range\.collapsed\)\{/);
+ assert.match(toggle,/const selectedStart=before\.cloneContents\(\)\.textContent\?\.length\?\?0;/);
+ assert.match(toggle,/const selectedLength=range\.cloneContents\(\)\.textContent\?\.length\?\?0;/);
+ assert.match(toggle,/const wasActive=rangeHasScript\(range,kind\);/);
+ assert.match(toggle,/const oppositeActive=rangeHasScript\(range,opposite\);/);
+ assert.match(toggle,/if\(!wasActive&&oppositeActive\)document\.execCommand\(opposite,false\);/);
  assert.match(toggle,/const applied=document\.execCommand\(kind,false\);/);
- assert.match(toggle,/if\(!applied\)\{/);
- assert.match(toggle,/rememberSelection\(\);/);
- assert.match(toggle,/const isActive=document\.queryCommandState\(kind\);/);
- assert.match(toggle,/const oppositeActive=isActive\?false:document\.queryCommandState\(opposite\);/);
- assert.match(toggle,/setFormatActive\(current=>\(\{/);
- assert.match(toggle,/\[kind\]:isActive,/);
- assert.match(toggle,/\[opposite\]:oppositeActive/);
- assert.match(toggle,/markChanged\(\);/);
+ assert.match(toggle,/restoreScriptTextSelection\(selectedStart,selectedLength\);/);
+ assert.match(toggle,/setFormatActive\(current=>\(\{\.\.\.current,\[kind\]:!wasActive,\[opposite\]:false\}\)\);/);
+ assert.match(toggle,/const context=scriptAncestor\(range\.startContainer\);/);
+ assert.match(toggle,/after\.setStartAfter\(context\);/);
+ assert.match(toggle,/if\(!context\.textContent\)context\.remove\(\);/);
+ assert.match(toggle,/if\(active===kind\)\{/);
+ assert.match(toggle,/typingScriptRef\.current=null;/);
+ assert.match(toggle,/current\.insertNode\(script\);/);
+ assert.match(toggle,/const script=document\.createElement\(kind==="subscript"\?"sub":"sup"\);/);
+ assert.match(toggle,/inside\.selectNodeContents\(script\);/);
+ assert.match(toggle,/selection\.addRange\(inside\);/);
+ assert.match(toggle,/typingScriptRef\.current=kind;/);
+ assert.match(toggle,/setFormatActive\(current=>\(\{\.\.\.current,subscript:kind==="subscript",superscript:kind==="superscript"\}\)\);/);
  assert.match(source,/if\(name==="subscript"\|\|name==="superscript"\)\{\s*toggleScriptFormat\(name\);return;/);
  assert.match(home,/label="Subscript" active=\{formatActive\.subscript\}[^\n]*run=\{\(\)=>run\("subscript"\)\}/);
  assert.match(home,/label="Superscript" active=\{formatActive\.superscript\}[^\n]*run=\{\(\)=>run\("superscript"\)\}/);
  assert.match(home,/onMouseDown=\{event=>event\.preventDefault\(\)\} onClick=\{run\}/);
  assert.match(css,/\.wsl-home-font \.wsl-hb\.wsl-font-icon-button\.is-active/);
  assert.match(source,/const formatKeys:WordFormatKey\[\]=\["bold","italic","underline","strikeThrough","subscript","superscript"\]/);
- assert.match(source,/document\.queryCommandState\(key\)/);
+ assert.match(source,/next\.subscript=rangeHasScript\(range,"subscript"\);/);
+ assert.match(source,/next\.superscript=rangeHasScript\(range,"superscript"\);/);
+ assert.match(source,/const active=ancestor\?\.tagName==="SUB"\?"subscript":ancestor\?\.tagName==="SUP"\?"superscript":null;/);
  assert.match(source,/ALLOWED_TAGS=new Set\(\["P","BR"/);
 });
 
-
-test("x2 buttons actually toggle twice and switching sub/sup clears the opposite mode",()=>{
+test("Selected words: x₂ toggles off on second click, x² switches, selection stays highlighted",()=>{
  const source=readFileSync("src/features/word-simulator/word-simulator.tsx","utf8");
- const begin=source.indexOf('  function toggleScriptFormat(');
- const finish=source.indexOf('  function saveDraft()',begin);
- assert.ok(begin>=0&&finish>begin);
- const executable=source.slice(begin,finish).trim()
+ const start=source.indexOf('  function restoreScriptTextSelection(');
+ const end=source.indexOf('  function saveDraft()',start);
+ assert.ok(start>=0&&end>start);
+ const executable=source.slice(start,end).trim()
+  .replace('start:number,length:number','start,length')
+  .replace('let first:Node|null=null,last:Node|null=null,firstOffset=0,lastOffset=0;', 'let first=null,last=null,firstOffset=0,lastOffset=0;')
   .replace('kind:"subscript"|"superscript"','kind');
- assert.doesNotMatch(executable,/:\s*"subscript"\|"superscript"/);
+ const node={textContent:"H2O"};
  const native={subscript:false,superscript:false};
  const button={subscript:false,superscript:false};
- const log=[];
- let fail=false;
+ let activeRange={collapsed:false,startContainer:node,startOffset:0,cloneContents:()=>({textContent:"H2O"})};
+ const log=[];let fail=false;
+ const selection={
+  rangeCount:1,anchorNode:node,
+  getRangeAt:()=>activeRange,
+  removeAllRanges:()=>{activeRange=null;},
+  addRange:range=>{activeRange=range;selection.anchorNode=node;}
+ };
+ const createRange=()=>({
+  collapsed:false,startContainer:node,startOffset:0,
+  selectNodeContents(){},
+  setEnd(){},
+  setStart(){},
+  cloneContents:()=>({textContent:"H2O"})
+ });
  const harness={
+  window:{getSelection:()=>selection},
+  editor:{current:{contains:()=>true}},
+  typingScriptRef:{current:null},
   document:{
-    queryCommandState:key=>native[key],
-    execCommand:(key,_ui)=>{
-      log.push("exec:"+key);
-      if(fail)return false;
-      native[key]=!native[key];
-      return true;
-    }
+   createRange,createTreeWalker:()=>{let seen=false;return {
+     currentNode:node,nextNode(){if(seen)return false;seen=true;return true;}
+   };},
+   execCommand:(kind)=>{log.push("exec:"+kind);if(fail)return false;native[kind]=!native[kind];return true;}
   },
+  NodeFilter:{SHOW_TEXT:4},
+  rangeHasScript:(_range,kind)=>native[kind],
   restoreSelection:()=>log.push("restore"),
   rememberSelection:()=>log.push("remember"),
-  setFormatActive:fn=>{
-    Object.assign(button,fn({...button}));
-    log.push("state");
-  },
+  setFormatActive:fn=>Object.assign(button,fn({...button})),
   markChanged:()=>log.push("change"),
   setStatus:msg=>log.push("error:"+msg)
  };
- const toggle=runInNewContext("("+executable+")",harness);
+ const toggle=runInNewContext(executable+";toggleScriptFormat",harness);
  toggle("subscript");
  assert.deepEqual({...button},{subscript:true,superscript:false});
- assert.deepEqual(native,{subscript:true,superscript:false});
- assert.deepEqual(log,["restore","exec:subscript","remember","state","change"]);
+ assert.equal(activeRange.collapsed,false);
+ assert.deepEqual(log,["restore","exec:subscript","remember","change"]);
  log.length=0;
  toggle("subscript");
  assert.deepEqual({...button},{subscript:false,superscript:false});
- assert.deepEqual(log,["restore","exec:subscript","remember","state","change"]);
+ assert.equal(activeRange.collapsed,false,"repeated press must keep highlighting for toggling off");
+ assert.deepEqual(log,["restore","exec:subscript","remember","change"]);
  log.length=0;
  toggle("superscript");
  assert.deepEqual({...button},{subscript:false,superscript:true});
- assert.deepEqual(native,{subscript:false,superscript:true});
  log.length=0;
  toggle("subscript");
  assert.deepEqual({...button},{subscript:true,superscript:false});
- assert.deepEqual(native,{subscript:true,superscript:false});
- assert.deepEqual(log,["restore","exec:superscript","exec:subscript","remember","state","change"]);
- log.length=0;
- toggle("superscript");
- assert.deepEqual({...button},{subscript:false,superscript:true});
- assert.deepEqual(native,{subscript:false,superscript:true});
- assert.deepEqual(log,["restore","exec:subscript","exec:superscript","remember","state","change"]);
+ assert.deepEqual(log,["restore","exec:superscript","exec:subscript","remember","change"]);
  log.length=0;
  fail=true;
- toggle("superscript");
- assert.deepEqual({...button},{subscript:false,superscript:true},"failure must not pretend toggle succeeded");
+ toggle("subscript");
+ assert.deepEqual({...button},{subscript:true,superscript:false},"failure must not claim the formatting changed");
  assert.ok(log.some(item=>item.startsWith("error:")));
- assert.ok(!log.includes("change"),"failure must not mark document edited");
+ assert.ok(!log.includes("change"));
+});
+
+test("Unselected caret: x₂/x² enters typing mode, second click exits; switching modes remains exclusive",()=>{
+ const source=readFileSync("src/features/word-simulator/word-simulator.tsx","utf8");
+ const begin=source.indexOf('  function toggleScriptFormat(');
+ const finish=source.indexOf('  function saveDraft()',begin);
+ const executable=source.slice(begin,finish).trim()
+  .replace('kind:"subscript"|"superscript"','kind');
+ const nodes=[];const root={contains:()=>true};
+ const button={subscript:false,superscript:false};
+ const typingScriptRef={current:null};
+ let selectedRange={collapsed:true,startContainer:root,insertNode:node=>nodes.push(node)};
+ const selection={
+  rangeCount:1,anchorNode:root,
+  getRangeAt:()=>selectedRange,
+  removeAllRanges(){selectedRange=null;},
+  addRange(range){selectedRange=range;selection.anchorNode=range.startContainer;}
+ };
+ const created=[];
+ const harness={
+  window:{getSelection:()=>selection},
+  editor:{current:root},
+  typingScriptRef,
+  document:{
+    createElement(tag){
+      const node={tagName:tag.toUpperCase(),textContent:"",removed:false,remove(){this.removed=true;}};
+      created.push(node);return node;
+    },
+    createRange(){
+      return {
+        collapsed:true,startContainer:root,
+        setStartAfter(){this.startContainer=root;},
+        selectNodeContents(node){this.startContainer=node;},
+        collapse(value){this.collapsed=value;}
+      };
+    }
+  },
+  scriptAncestor:node=>node&&["SUB","SUP"].includes(node.tagName)?node:null,
+  restoreSelection:()=>{},
+  rememberSelection:()=>{},
+  setFormatActive:fn=>Object.assign(button,fn({...button})),
+  markChanged:()=>{},
+  setStatus:()=>{}
+ };
+ const toggle=runInNewContext("("+executable+")",harness);
+ toggle("subscript");
+ assert.equal(created[0].tagName,"SUB");
+ assert.equal(selection.anchorNode,created[0],"caret is placed inside <sub> for next keystroke");
+ assert.deepEqual({...button},{subscript:true,superscript:false});
+ assert.equal(typingScriptRef.current,"subscript");
+ created[0].textContent="2"; // simulate user typing a subscript character
+ toggle("subscript");
+ assert.equal(selection.anchorNode,root,"second click exits the subscript span");
+ assert.deepEqual({...button},{subscript:false,superscript:false});
+ assert.equal(created[0].removed,false,"already typed characters are preserved");
+ assert.equal(typingScriptRef.current,null);
+ toggle("superscript");
+ assert.equal(created[1].tagName,"SUP");
+ assert.deepEqual({...button},{subscript:false,superscript:true});
+ toggle("subscript");
+ assert.equal(created[2].tagName,"SUB","switching from x² to x₂ inserts the correct next typing span");
+ assert.deepEqual({...button},{subscript:true,superscript:false});
+ assert.equal(created[1].removed,true,"unused empty opposite script span is removed");
+ toggle("subscript");
+ assert.deepEqual({...button},{subscript:false,superscript:false});
+ assert.equal(created[2].removed,true,"an unused empty script span is removed on toggle off");
 });
