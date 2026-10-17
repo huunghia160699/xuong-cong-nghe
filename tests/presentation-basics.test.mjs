@@ -1557,3 +1557,119 @@ test("Selected x₂/x² DOM rewrite: actual nested node tree toggles on/off and 
   assert.equal(render(root),"<p>alpha<em>select</em>omega</p>");
  }
 });
+
+
+test("Word script toggles prefer the LIVE highlighted selection over a stale saved range",()=>{
+ const source=readFileSync("src/features/word-simulator/word-simulator.tsx","utf8");
+ const begin=source.indexOf("  function restoreSelection()");
+ const end=source.indexOf("  function command(",begin);
+ assert.ok(begin>=0&&end>begin);
+ const executable=source.slice(begin,end).trim();
+ assert.match(executable,/savedSelection\.current=selection\.getRangeAt\(0\)\.cloneRange\(\)/);
+ assert.match(executable,/root\?\.contains\(saved\.startContainer\)&&root\.contains\(saved\.endContainer\)/);
+ const inside={id:"text"},outside={id:"toolbar"};
+ const root={contains:node=>node===inside,focus(){log.push("focus");}};
+ const liveRange={startContainer:inside,endContainer:inside,
+   cloneRange(){return this;}};
+ const oldRange={startContainer:inside,endContainer:inside,id:"old"};
+ const log=[];
+ const selection={
+   rangeCount:1,anchorNode:inside,focusNode:inside,
+   getRangeAt(){return liveRange;},
+   removeAllRanges(){log.push("remove");},
+   addRange(range){log.push("add:"+String(range.id||"live"));}
+ };
+ const savedSelection={current:oldRange};
+ const restore=runInNewContext("("+executable+")",
+   {editor:{current:root},window:{getSelection:()=>selection},savedSelection});
+ restore();
+ assert.equal(savedSelection.current,liveRange,"must capture newest user drag, not overwrite with old range");
+ assert.deepEqual(log,["focus","remove","add:live"]);
+ log.length=0;
+ selection.anchorNode=outside;selection.focusNode=outside;
+ savedSelection.current=oldRange;
+ restore();
+ assert.equal(savedSelection.current,oldRange,"ribbon focus can safely use previously saved editor range");
+ assert.deepEqual(log,["focus","remove","add:old"]);
+ assert.match(source,/document\.addEventListener\("selectionchange",changed\)/);
+ assert.match(source,/savedSelection\.current=selection\.getRangeAt\(0\)\.cloneRange\(\);/);
+ assert.match(source,/setHasSelection\(!selection\.isCollapsed&&Boolean\(selection\.toString\(\)\)\)/);
+});
+
+test("Word x2 status ignores unselected text nodes that merely touch range boundaries",()=>{
+ const source=readFileSync("src/features/word-simulator/word-simulator.tsx","utf8");
+ const begin=source.indexOf("  function rangeHasScript(");
+ const end=source.indexOf("  function syncFormatState()",begin);
+ assert.ok(begin>=0&&end>begin);
+ const executable=source.slice(begin,end).trim()
+   .replace('range:Range,kind:"subscript"|"superscript"','range,kind')
+   .replace('const nodes:Node[]=[]','const nodes=[]');
+ assert.match(executable,/const start=range\.startContainer===node\?range\.startOffset:0;/);
+ assert.match(executable,/const end=range\.endContainer===node\?range\.endOffset:length;/);
+ assert.match(executable,/return end>start;/);
+ const before={textContent:"xy"},selected={textContent:"H2O"};
+ const root={};
+ const ancestor={nodeType:1};
+ const script=new Map([[before,null],[selected,{tagName:"SUB"}]]);
+ const ctx={
+   editor:{current:root},
+   Node:{TEXT_NODE:3},
+   NodeFilter:{SHOW_TEXT:4},
+   scriptAncestor:node=>script.get(node),
+   document:{createTreeWalker:()=>{let idx=0;return{
+     nextNode(){idx++;this.currentNode=[before,selected][idx-1];return idx<=2;},
+     currentNode:null
+   };}}
+ };
+ const detect=runInNewContext("("+executable+")",ctx);
+ const range={
+   collapsed:false,
+   commonAncestorContainer:ancestor,
+   startContainer:before,startOffset:2,
+   endContainer:selected,endOffset:3,
+   intersectsNode:()=>true
+ };
+ assert.equal(detect(range,"subscript"),true,
+   "preceding unselected text at end offset must not turn off x2");
+ range.startOffset=1;
+ assert.equal(detect(range,"subscript"),false,"actual selected plain text is a mixed range");
+ range.startContainer=selected;range.startOffset=0;
+ assert.equal(detect(range,"subscript"),true);
+ range.endOffset=0;
+ assert.equal(detect(range,"subscript"),false,"empty selected span never counts as formatted");
+});
+
+test("Word script selection restoration selects next text node when start equals previous node end",()=>{
+ const source=readFileSync("src/features/word-simulator/word-simulator.tsx","utf8");
+ const begin=source.indexOf("  function restoreScriptTextSelection(");
+ const end=source.indexOf("  // Use deterministic DOM surgery",begin);
+ assert.ok(begin>=0&&end>begin);
+ const executable=source.slice(begin,end).trim()
+  .replace('start:number,length:number','start,length')
+  .replace('let first:Node|null=null,last:Node|null=null,firstOffset=0,lastOffset=0;',
+    'let first=null,last=null,firstOffset=0,lastOffset=0;');
+ const before={textContent:"xy"},inside={textContent:"H2O"};
+ const saved={};
+ let i=0,range=null;
+ const selection={removeAllRanges(){},addRange(r){range=r;}};
+ const restore=runInNewContext("("+executable+")",{
+  editor:{current:{}},window:{getSelection:()=>selection},
+  NodeFilter:{SHOW_TEXT:4},
+  document:{
+   createTreeWalker:()=>{i=0;return{
+    nextNode(){this.currentNode=[before,inside][i];return ++i<=2;},
+    currentNode:null
+   };},
+   createRange:()=>({
+     setStart(node,offset){saved.startNode=node;saved.startOffset=offset;},
+     setEnd(node,offset){saved.endNode=node;saved.endOffset=offset;}
+   })
+  }
+ });
+ restore(2,3);
+ assert.equal(saved.startNode,inside);
+ assert.equal(saved.startOffset,0);
+ assert.equal(saved.endNode,inside);
+ assert.equal(saved.endOffset,3);
+ assert.ok(range);
+});
