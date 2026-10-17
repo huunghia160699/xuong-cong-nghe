@@ -131,10 +131,10 @@ test("Home Ribbon: repeat state, Escape, selection and dialogs 10 rounds",()=>{
    assert.match(editor,/const active=typingScriptRef\.current&&pending&&editor\.current\?\.contains\(pending\)/);
    assert.match(editor,/const explicitPending=typingScriptRef\.current===kind\?typingScriptNodeRef\.current:null;/);
    assert.match(editor,/if\(explicitPending\)\{/);
-assert.match(editor,/if\(!root\?\.contains\(explicitPending\)\|\|!parent\)\{/);
+assert.match(editor,/if\(!root\?\.contains\(explicitPending\)\)\{/);
    assert.match(editor,/typingScriptRef\.current=null;\s*typingScriptNodeRef\.current=null;/);
    assert.match(editor,/after\.setStartAfter\(explicitPending\);/);
-   assert.match(editor,/savedSelection\.current=after\.cloneRange\(\);/);
+   assert.match(editor,/selection\?\.addRange\(after\);\s*rememberSelection\(\);/);
    assert.match(editor,/if\(active===kind\)\{/);
    assert.match(editor,/typingScriptNodeRef\.current=null;/);
    assert.match(editor,/script\.textContent=TYPING_SCRIPT_PLACEHOLDER;/);
