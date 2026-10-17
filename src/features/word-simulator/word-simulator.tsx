@@ -605,7 +605,7 @@ export function WordSimulator(){
     const root=editor.current;
     if(root&&formatActive[kind]){
       const activeScript=typingScriptNodeRef.current??
-        root.querySelector?.<HTMLElement>(kind==="subscript"?"sub":"sup")??null;
+        root.querySelector?.(kind==="subscript"?"sub":"sup") as HTMLElement|null;
       const activeText=activeScript?.textContent?.replaceAll(TYPING_SCRIPT_PLACEHOLDER,"")??"";
       if(activeText){
         restoreSelection();
