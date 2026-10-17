@@ -1337,7 +1337,8 @@ test("x₂/x² use two modes: selection toggle and collapsed-caret typing toggle
  assert.match(source,/const formatKeys:WordFormatKey\[\]=\["bold","italic","underline","strikeThrough","subscript","superscript"\]/);
  assert.match(source,/next\.subscript=rangeHasScript\(range,"subscript"\);/);
  assert.match(source,/next\.superscript=rangeHasScript\(range,"superscript"\);/);
- assert.match(source,/const active=ancestor\?\.tagName==="SUB"\?"subscript":ancestor\?\.tagName==="SUP"\?"superscript":null;/);
+ assert.match(source,/const fromDOM=ancestor\?\.tagName==="SUB"\?"subscript":ancestor\?\.tagName==="SUP"\?"superscript":null;/);
+ assert.match(source,/const active=typingScriptRef\.current&&pending&&editor\.current\?\.contains\(pending\)/);
  assert.match(source,/ALLOWED_TAGS=new Set\(\["P","BR"/);
 });
 
