@@ -55,3 +55,33 @@ test("Word 01 editorial renderer shows every step immediately, without extra Wor
   assert.ok(styles.includes("prefers-reduced-motion"));
   assert.ok(styles.includes("@media(max-width:560px)"));
 });
+
+test("Word 01 headings stay on one line and shrink to fit rather than wrapping",()=>{
+  const component=readFileSync("src/features/presentations/components/word-lesson-slide.tsx","utf8");
+  const styles=readFileSync("src/features/presentations/word-lesson-slide.css","utf8");
+  assert.match(component,/function SingleLineTitle/);
+  assert.match(component,/ResizeObserver\(fit\)/);
+  assert.match(component,/heading\.scrollWidth>available/);
+  assert.match(component,/requestAnimationFrame\(fit\)/);
+  assert.match(component,/document\.fonts\?\.ready\.then\(fit\)/);
+  assert.match(component,/<SingleLineTitle text=\{slide\.title\}/);
+  assert.match(styles,/\.w01-fitted-title h1,\.w01-fitted-title h2\{[^}]*white-space:nowrap/s);
+  assert.match(styles,/\.w01-cover-copy h1 span\{display:inline\}/);
+  assert.match(styles,/overflow-x:auto/);
+});
+test("Three vertical Word steps stay below heading and do not overlap with footer",()=>{
+  const component=readFileSync("src/features/presentations/components/word-lesson-slide.tsx","utf8");
+  const styles=readFileSync("src/features/presentations/word-lesson-slide.css","utf8");
+  assert.match(styles,/\.w01-main\{flex:1 0 auto;min-height:auto;justify-content:safe center\}/);
+  assert.match(styles,/\.w01-main>\*\{flex-shrink:0\}/);
+  assert.match(styles,/\.w01-header\{flex-shrink:0/);
+  assert.match(styles,/\.w01-process-list\{row-gap:clamp/);
+  assert.match(styles,/\.w01-process-list \.w01-step\{grid-template-columns:54px/);
+  assert.match(styles,/\.w01-step\{min-height:0/);
+  assert.match(component,/<ArrowRight className="w01-step-link" size=\{42\}/);
+  assert.match(component,/<ArrowDown className="w01-step-link-down" size=\{40\}/);
+  assert.match(styles,/\.w01-process-list \.w01-step-link-down\{display:block\}/);
+  assert.match(styles,/@media\(max-width:800px\)/);
+  assert.match(styles,/\.w01-process-path \.w01-step-link-down,\.w01-process-stair \.w01-step-link-down/);
+  assert.match(styles,/\.w01-idea\{min-height:0/);
+});

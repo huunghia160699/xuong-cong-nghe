@@ -71,3 +71,10 @@
 - Không lặp hình/chrome Word minh họa khi đã có công cụ Word trực tiếp trong iframe của trình phát; chỉ trình bày chữ, cấu trúc và ví dụ có ý nghĩa giáo dục.
 - Chuyển cảnh và hoạt ảnh ngắn, không trì hoãn thông tin, có `prefers-reduced-motion`; nội dung trên màn hình thấp và mobile được cuộn, không cắt bỏ.
 - Giữ nguyên nội dung slide, ghi chú giảng viên, số lượng và thứ tự, trừ khi được yêu cầu biên tập riêng.
+
+## 10. Tiêu đề một dòng và khối gọn Word 01 (17/10/2026)
+
+- Tiêu đề Word 01 không tự xuống dòng trên cả cover và slide nội dung; ưu tiên tự đo chiều rộng để giảm cỡ chữ khi cần, chỉ dùng cuộn ngang trong khung tiêu đề khi quá dài trên điện thoại để giữ khả năng đọc.
+- Không dùng `justify-content:center` không an toàn trong một vùng flex có nội dung cao hơn vùng khả dụng: nội dung phải đi theo luồng bình thường và có thể cuộn, không chồng lên tiêu đề hoặc footer.
+- Các bước dọc để mũi tên xuống riêng trong khoảng cách giữa khối, các bước ngang để mũi tên sang phải riêng giữa khối. Icon phải dễ quan sát khi trình chiếu.
+- Chiều cao của thẻ theo nội dung và padding hợp lý, không kéo dài thẻ ra gần hết chiều cao màn chiếu chỉ để lấp khoảng trắng.

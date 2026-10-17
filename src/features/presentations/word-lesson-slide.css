@@ -314,3 +314,96 @@
   .w01-slide *, .w01-slide *::before,.w01-slide *::after{
     animation:none!important;transition:none!important;transform:none!important}
 }
+
+
+/* 17/10: Compact one-line titles and safe, content-sized slide layouts.
+   Do not vertically center overflow: a three-step list must start BELOW the header. */
+.w01-header{flex-shrink:0;align-items:center}
+.w01-fitted-title{flex:1 1 auto;min-width:0;max-width:100%;
+  overflow-x:auto;overflow-y:hidden;scrollbar-width:none;overscroll-behavior-x:contain}
+.w01-fitted-title::-webkit-scrollbar{display:none}
+.w01-fitted-title h1,.w01-fitted-title h2{width:max-content;max-width:none;
+  margin:0;white-space:nowrap;text-wrap:nowrap;overflow-wrap:normal}
+.w01-cover-copy{min-width:0}
+.w01-cover-copy h1 span{display:inline}
+.w01-main{flex:1 0 auto;min-height:auto;justify-content:safe center}
+.w01-main>*{flex-shrink:0}
+.w01-step{min-height:0;gap:clamp(12px,1.8dvh,21px);
+  padding:clamp(16px,1.8vw,28px)}
+.w01-step-index{width:clamp(43px,3.8vw,59px);border-radius:9px;
+  font-size:clamp(18px,1.55vw,25px)}
+.w01-step h3{font-size:clamp(19px,1.65vw,27px);line-height:1.24}
+.w01-step p{margin-top:clamp(6px,1dvh,13px);
+  font-size:clamp(16px,1.16vw,20px);line-height:1.48}
+.w01-command{margin-bottom:clamp(10px,1.5dvh,15px);gap:9px}
+.w01-command svg{flex-shrink:0;width:23px;height:23px}
+.w01-step-result{margin-top:10px}
+.w01-process-path,.w01-process-stair{column-gap:clamp(51px,4.2vw,70px)}
+.w01-process-list{row-gap:clamp(32px,4.5dvh,49px)}
+.w01-process-list .w01-step{grid-template-columns:54px minmax(0,1fr);gap:17px;
+  min-height:0;padding:clamp(14px,1.7dvh,21px) clamp(18px,2.2vw,30px)}
+.w01-process-stair .w01-step:nth-child(2){margin-top:8px}
+.w01-process-stair .w01-step:nth-child(3){margin-top:16px}
+.w01-step-link{top:50%;right:-49px;width:42px;height:42px;
+  transform:translateY(-50%);color:#005bfd}
+.w01-slide.is-dark .w01-step-link,.w01-slide.is-dark .w01-step-link-down{color:#00e9fd}
+.w01-step-link-down{display:none;position:absolute;z-index:2;
+  left:50%;bottom:-43px;width:40px;height:40px;
+  transform:translateX(-50%);color:#005bfd;pointer-events:none}
+.w01-process-list .w01-step-link{display:none}
+.w01-process-list .w01-step-link-down{display:block}
+.w01-idea{min-height:0;gap:clamp(12px,2dvh,25px);
+  padding:clamp(18px,2vw,32px)}
+.w01-ideas-editorial .w01-idea:first-child{min-height:clamp(210px,34dvh,340px)}
+.w01-ideas-editorial .w01-idea:not(:first-child){min-height:0}
+.w01-idea h3{font-size:clamp(22px,2.1vw,34px)}
+.w01-idea p{font-size:clamp(16px,1.22vw,20px);line-height:1.45}
+.w01-compare-side{min-height:clamp(220px,36dvh,355px);
+  padding:clamp(21px,2.6vw,42px)}
+.w01-compare h3{font-size:clamp(26px,2.75vw,46px)}
+.w01-compare p{font-size:clamp(18px,1.45vw,23px)}
+.w01-purpose-half{min-height:clamp(245px,39dvh,405px);
+  gap:clamp(20px,4dvh,43px);padding:clamp(22px,2.6vw,43px)}
+.w01-shortcut-item{min-height:clamp(95px,15dvh,150px);
+  padding:clamp(17px,2.1vw,32px)}
+.w01-shortcut-item kbd{min-height:clamp(54px,4.8vw,75px)}
+.w01-sample-text{min-height:clamp(255px,41dvh,410px)}
+.w01-quiz-option{min-height:clamp(85px,13dvh,135px);
+  padding:clamp(14px,1.8vw,26px)}
+@media(max-width:1100px){
+  .w01-process-path .w01-step,.w01-process-stair .w01-step{
+    min-height:0;padding:clamp(16px,1.8vw,23px)}
+}
+@media(max-width:800px){
+  .w01-process-path,.w01-process-stair,.w01-process-list{row-gap:43px}
+  .w01-process-path .w01-step,.w01-process-stair .w01-step,
+  .w01-process-list .w01-step{
+    min-height:0;grid-template-columns:54px minmax(0,1fr);
+    gap:15px;padding:clamp(14px,2vw,23px)}
+  .w01-process-stair .w01-step:nth-child(n){margin-top:0}
+  .w01-process-path .w01-step-link,.w01-process-stair .w01-step-link{display:none}
+  .w01-process-path .w01-step-link-down,.w01-process-stair .w01-step-link-down{
+    display:block}
+  .w01-ideas-editorial .w01-idea:first-child{min-height:215px}
+  .w01-ideas-strip .w01-idea{min-height:0}
+  .w01-cover-copy h1{font-size:clamp(37px,6vw,65px)}
+}
+@media(max-width:560px){
+  .w01-header{margin-bottom:clamp(18px,3dvh,25px)}
+  .w01-process-path .w01-step,.w01-process-stair .w01-step,
+  .w01-process-list .w01-step{grid-template-columns:43px minmax(0,1fr);
+    padding:14px;gap:12px}
+  .w01-step-index{width:42px}
+  .w01-idea,.w01-ideas-strip .w01-idea,
+  .w01-ideas-editorial .w01-idea:first-child{min-height:0;gap:14px;padding:18px}
+  .w01-purpose-half{min-height:210px}
+  .w01-cover-copy h1{font-size:clamp(24px,6vw,40px)}
+  .w01-open-word{min-height:41px}
+}
+@media(max-height:680px) and (min-width:801px){
+  .w01-step,.w01-idea{min-height:0;gap:12px;padding:17px}
+  .w01-process-list .w01-step{padding:12px 21px}
+  .w01-process-list{row-gap:32px}
+  .w01-compare-side{min-height:205px}
+  .w01-step p{font-size:16px}
+}

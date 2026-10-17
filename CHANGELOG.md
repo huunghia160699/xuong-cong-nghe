@@ -1,5 +1,12 @@
 # Changelog
 
+## 2026-10-17 — Căn chỉnh tiêu đề, thẻ nội dung và mũi tên Word 01
+- Tiêu đề tự co cỡ chữ theo chiều rộng thực để nằm một dòng; tiêu đề quá dài vẫn cuộn ngang thay vì tràn hoặc tự xuống dòng.
+- Khắc phục ba bước xếp dọc tràn lên tiêu đề do căn giữa vùng nội dung khi vượt quá chiều cao.
+- Tăng mũi tên luồng ngang lên 42px, luồng dọc 40px, mũi tên chỉ lệnh 23px; chừa khoảng trống cho mũi tên.
+- Giảm min-height và padding thẻ so sánh, nội dung, quy trình, phím tắt, câu hỏi; giữ khoảng trắng theo nội dung thực.
+- Không sửa nội dung bài học hoặc công cụ Word.
+
 ## 2026-10-17 — Đổi mới toàn bộ bài trình chiếu Word 01
 - Dùng nhiều bố cục theo loại nội dung: cover chữ lớn, so sánh, quy trình ngang/dọc, thẻ kiến thức bất đối xứng, phím tắt, ví dụ văn bản, bài thực hành và quiz.
 - Các bước hướng dẫn Word luôn hiện đầy đủ ngay khi mở slide; không cần bấm từng bước.

@@ -1,9 +1,9 @@
 "use client";
 
-import {useState} from "react";
+import {useLayoutEffect,useRef,useState} from "react";
 import {
-  ArrowRight,ArrowUpRight,Check,CheckCircle2,FileText,
-  CornerDownRight,MoveRight,RotateCcw,X
+  ArrowDown,ArrowRight,ArrowUpRight,Check,CheckCircle2,FileText,
+  CornerDownRight,RotateCcw,X
 } from "lucide-react";
 import type {PresentationBlock,PresentationSlide} from "../types";
 
@@ -18,6 +18,42 @@ const purpose:Pair[] = [
 ];
 const asSteps = (items:unknown):Step[] => Array.isArray(items)?items as Step[]:[];
 const noOp = () => {};
+
+/** Keep every lesson title on one line at any width, without clipping content.
+ * A very long title stays scrollable if the last readable font size still cannot fit.
+ */
+function SingleLineTitle({text,cover=false}:{text:string;cover?:boolean}){
+  const containerRef=useRef<HTMLDivElement>(null);
+  const titleRef=useRef<HTMLHeadingElement>(null);
+  useLayoutEffect(()=>{
+    const container=containerRef.current;
+    const heading=titleRef.current;
+    if(!container||!heading)return;
+    const fit=()=>{
+      heading.style.fontSize="";
+      const available=container.clientWidth;
+      if(!available)return;
+      const preferred=parseFloat(getComputedStyle(heading).fontSize);
+      const min=cover?16:15;
+      if(heading.scrollWidth<=available||!Number.isFinite(preferred))return;
+      let size=Math.max(min,Math.floor(preferred*available/heading.scrollWidth));
+      heading.style.fontSize=size+"px";
+      while(size>min&&heading.scrollWidth>available){
+        size-=1;
+        heading.style.fontSize=size+"px";
+      }
+    };
+    const observer=new ResizeObserver(fit);
+    observer.observe(container);
+    const frame=requestAnimationFrame(fit);
+    void document.fonts?.ready.then(fit);
+    return ()=>{cancelAnimationFrame(frame);observer.disconnect();};
+  },[text,cover]);
+  return <div className="w01-fitted-title" ref={containerRef}>
+    {cover?<h1 ref={titleRef}>Làm quen với <span>Microsoft Word</span></h1>
+      :<h2 ref={titleRef}>{text}</h2>}
+  </div>;
+}
 
 function OpenWord({onOpenWord,light=false,compact=false}:{
   onOpenWord?:()=>void;light?:boolean;compact?:boolean
@@ -37,7 +73,7 @@ function WordCover({slide,onOpenWord,onAdvance}:{
   return <div className="w01-cover-layout">
     <div className="w01-cover-copy">
       <span className="w01-cover-kicker">WORD CƠ BẢN <span aria-hidden="true">/</span> CHỦ ĐỀ 01</span>
-      <h1>Làm quen với <span>Microsoft Word</span></h1>
+      <SingleLineTitle text={slide.title} cover/>
       <p>Từ trang giấy trắng đến văn bản đầu tiên: nhập nội dung, chỉnh sửa và lưu tài liệu.</p>
       <div className="w01-cover-actions">
         <button type="button" className="w01-start" onClick={onAdvance}>
@@ -77,13 +113,16 @@ function ProcessSteps({items,variant,commands=false,practice=false}:{
       <span className="w01-step-index">{pad(i+1)}</span>
       <div className="w01-step-text">
         {commands && <span className="w01-command">
-          <span>{item.tab}</span><CornerDownRight size={14} aria-hidden="true"/><b>{item.command}</b>
+          <span>{item.tab}</span><CornerDownRight size={23} strokeWidth={2.5} aria-hidden="true"/><b>{item.command}</b>
         </span>}
         <h3>{item.title}</h3>
         {(item.detail||item.text)&&<p>{item.detail||item.text}</p>}
         {item.result&&<span className="w01-step-result"><CheckCircle2 size={16} aria-hidden="true"/>{item.result}</span>}
       </div>
-      {i<items.length-1&&<MoveRight className="w01-step-link" size={21} aria-hidden="true"/>}
+      {i<items.length-1&&<>
+        <ArrowRight className="w01-step-link" size={42} strokeWidth={2.6} aria-hidden="true"/>
+        <ArrowDown className="w01-step-link-down" size={40} strokeWidth={2.6} aria-hidden="true"/>
+      </>}
     </li>)}
   </ol>;
 }
@@ -194,7 +233,7 @@ export function WordLessonSlide({slide,index,count,onAdvance,onOpenWord}:{
     {cover?<WordCover slide={slide} onOpenWord={onOpenWord} onAdvance={onAdvance}/>:
     <div className="w01-slide-inner">
       <header className="w01-header">
-        <h2>{slide.title}</h2>
+        <SingleLineTitle text={slide.title}/>
         {demo&&<span className="w01-demo-mark" aria-hidden="true">
           <span/><span/><span/>
         </span>}

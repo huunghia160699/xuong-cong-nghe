@@ -25,6 +25,14 @@
 
 ## III. Lịch sử
 
+### 2026-10-17 — Sửa tiêu đề và các bước dọc Word 01, tăng mũi tên và giảm thẻ
+- **Yêu cầu:** Tiêu đề tất cả slide Word 01 chỉ một dòng; ba bước dọc không được đè lên tiêu đề; mũi tên lớn, rõ; khối chữ nhật vừa đủ nội dung thay vì cao/rộng quá mức.
+- **Thay đổi:** `word-lesson-slide.tsx` thêm `SingleLineTitle` tự đo bề ngang và điều chỉnh cỡ bằng ResizeObserver (chữ dài quá sẽ cuộn ngang thay vì xuống dòng); mũi tên bước ngang 42px, bước dọc 40px, mũi tên đường dẫn lệnh 23px. `word-lesson-slide.css` cho nội dung flex mở theo chiều cao thực (bỏ căn giữa gây tràn ngược), dùng khoảng cách giữa các bước cho mũi tên, giảm min-height/padding của thẻ, responsive và màn hình thấp. Thêm regression tests trong `word-slide-live-editor.test.mjs`, cập nhật quy chuẩn slide, changelog và nhật ký.
+- **Phạm vi:** Chỉ Word 01; không chỉnh nội dung/ghi chú, trình soạn thảo Word, Ribbon, Excel hoặc các bài trình chiếu khác. Giữ nút mở Word tích hợp và các hiệu ứng có hỗ trợ giảm chuyển động.
+- **Kiểm thử:** Chạy GitHub CI (Unit tests, Typecheck, Production build, Smoke test), kiểm tra READY + SHA cùng GitHub main; chưa có nghiệm thu thị giác bằng browser ở 360/768/1280/1920.
+- **GitHub / Vercel:** Xác nhận SHA release theo trạng thái CI và Vercel sau commit.
+- **Lưu ý:** Trên màn hình quá hẹp, tiêu đề rất dài sẽ cuộn ngang tại cỡ chữ tối thiểu để tránh chữ quá nhỏ, luôn một dòng và không cắt nội dung.
+
 ### 2026-10-17 — Toàn bộ slide Word 01: layout đa dạng và hiện đủ bước
 - **Mục tiêu:** Làm mới toàn bộ slide Word 01 gọn, trực quan, đẹp, có animation/transition; không phải nhấn để hiện các bước, không trùng cửa sổ Word minh họa.
 - **Thay đổi:** `word-lesson-slide.tsx`, `word-lesson-slide.css`, `player.tsx`, import CSS ở route trình chiếu, kiểm thử `word-slide-live-editor.test.mjs`, tài liệu slide, changelog và nhật ký.
