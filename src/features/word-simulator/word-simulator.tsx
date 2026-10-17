@@ -334,6 +334,60 @@ export function WordSimulator(){
     selection?.removeAllRanges();
     selection?.addRange(range);
   }
+  // Use deterministic DOM surgery for a highlighted range. Native
+  // execCommand("subscript"/"superscript") emits inconsistent elements across
+  // browsers, so reading <sub>/<sup> on the next click may disagree with it.
+  function applySelectedScript(range:Range,kind:"subscript"|"superscript",enabled:boolean){
+    const root=editor.current;
+    if(!root||!root.contains(range.startContainer)||!root.contains(range.endContainer))return false;
+    const fragment=range.extractContents();
+    const placeholder=document.createElement("span");
+    range.insertNode(placeholder);
+
+    // Pull the insertion anchor outside any existing script ancestor; simply
+    // inserting plain text inside <sub>/<sup> would keep the old formatting.
+    // Split intermediate wrappers so unrelated bold/italic/etc. is preserved.
+    while(true){
+      const script=placeholder.closest("sub,sup");
+      if(!script||!root.contains(script))break;
+      let branch:Node=placeholder;
+      while(branch.parentNode!==script){
+        const parent=branch.parentNode;
+        if(!(parent instanceof Element))break;
+        const before=parent.cloneNode(false) as Element;
+        const middle=parent.cloneNode(false) as Element;
+        const after=parent.cloneNode(false) as Element;
+        while(parent.firstChild&&parent.firstChild!==branch)before.appendChild(parent.firstChild);
+        while(branch.nextSibling)after.appendChild(branch.nextSibling);
+        middle.appendChild(branch);
+        parent.replaceWith(...(before.hasChildNodes()?[before]:[]),middle,...(after.hasChildNodes()?[after]:[]));
+        branch=middle;
+      }
+      const before=script.cloneNode(false) as Element;
+      const after=script.cloneNode(false) as Element;
+      while(script.firstChild&&script.firstChild!==branch)before.appendChild(script.firstChild);
+      while(branch.nextSibling)after.appendChild(branch.nextSibling);
+      script.replaceWith(...(before.hasChildNodes()?[before]:[]),branch,...(after.hasChildNodes()?[after]:[]));
+    }
+
+    // Remove previous script tags (and legacy vertical-align spans) ONLY
+    // inside the extracted selection, leaving surrounding formatting intact.
+    for(const el of Array.from(fragment.querySelectorAll("sub,sup,[style*='vertical-align']")).reverse()){
+      if(el.matches("sub,sup"))el.replaceWith(...Array.from(el.childNodes));
+      else{
+        const style=(el as HTMLElement).style;
+        style.removeProperty("vertical-align");
+        if(!el.getAttribute("style"))el.removeAttribute("style");
+      }
+    }
+    if(enabled){
+      const wrapper=document.createElement(kind==="subscript"?"sub":"sup");
+      wrapper.appendChild(fragment);
+      placeholder.replaceWith(wrapper);
+    }else placeholder.replaceWith(fragment);
+    root.normalize();
+    return true;
+  }
   // x₂/x² have two separate behaviors: selected text toggles the formatting
   // of the selected content; a collapsed caret enters/exits a typing mode.
   function toggleScriptFormat(kind:"subscript"|"superscript"){
@@ -351,11 +405,9 @@ export function WordSimulator(){
         const selectedStart=before.cloneContents().textContent?.length??0;
         const selectedLength=range.cloneContents().textContent?.length??0;
         const wasActive=rangeHasScript(range,kind);
-        const oppositeActive=rangeHasScript(range,opposite);
-        if(!wasActive&&oppositeActive)document.execCommand(opposite,false);
-        const applied=document.execCommand(kind,false);
+        const applied=applySelectedScript(range,kind,!wasActive);
         if(!applied){
-          setStatus("Trình duyệt chưa hỗ trợ lệnh này: "+kind);
+          setStatus("Không thể áp dụng định dạng cho vùng văn bản đã chọn");
           return;
         }
         restoreScriptTextSelection(selectedStart,selectedLength);
