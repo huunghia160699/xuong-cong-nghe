@@ -1889,7 +1889,7 @@ test("Caret x₂/x² formatting state survives programmatic selectionchange and 
  const source=readFileSync("src/features/word-simulator/word-simulator.tsx","utf8");
  const part=source.slice(source.indexOf('  function syncFormatState()'),source.indexOf('  // Persist selection'));
  assert.match(part,/const pending=typingScriptNodeRef\.current;/);
- assert.match(part,/const active=typingScriptRef\.current&&pending&&root\.contains\(pending\)/);
+ assert.match(part,/const active=typingScriptRef\.current&&pending&&editor\.current\?\.contains\(pending\)/);
  assert.match(part,/\?typingScriptRef\.current:fromDOM;/);
  assert.match(source,/function syncTypingScriptCaret\(\)/);
  assert.match(source,/if\(pending&&ancestor!==pending\)\{/);
