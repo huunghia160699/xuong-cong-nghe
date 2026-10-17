@@ -123,6 +123,9 @@ export function WordSimulator(){
   const imageInput=useRef<HTMLInputElement>(null);
   const savedSelection=useRef<Range|null>(null);
   const typingScriptRef=useRef<"subscript"|"superscript"|null>(null);
+  const typingScriptNodeRef=useRef<HTMLElement|null>(null);
+  // A zero-width placeholder keeps a collapsed caret inside an empty sub/sup.
+  const TYPING_SCRIPT_PLACEHOLDER="\u200B";
   const indentTarget=useRef<HTMLElement|null>(null);
   const indentDragging=useRef(false);
   const [rulerIndent,setRulerIndent]=useState<RulerIndent>({firstLine:0,left:0,right:0});
@@ -185,6 +188,7 @@ export function WordSimulator(){
     editor.current.innerHTML=sanitize(html);
     savedSelection.current=null;
     typingScriptRef.current=null;
+    typingScriptNodeRef.current=null;
     setClipboardMode(null);stagedClipboard.current=null;
     updateStats();setRevision(value=>value+1);
   },[updateStats]);
@@ -266,11 +270,18 @@ export function WordSimulator(){
     const range=selection.rangeCount?selection.getRangeAt(0):null;
     if(range&&!range.collapsed){
       typingScriptRef.current=null;
+      typingScriptNodeRef.current=null;
       next.subscript=rangeHasScript(range,"subscript");
       next.superscript=rangeHasScript(range,"superscript");
     }else{
       const ancestor=scriptAncestor(selection.anchorNode);
-      const active=ancestor?.tagName==="SUB"?"subscript":ancestor?.tagName==="SUP"?"superscript":null;
+      const fromDOM=ancestor?.tagName==="SUB"?"subscript":ancestor?.tagName==="SUP"?"superscript":null;
+      // selectionchange can fire after the browser moves a caret out of an
+      // empty inline tag. Keep explicit typing mode until the user turns it
+      // off or deliberately positions the caret somewhere else.
+      const pending=typingScriptNodeRef.current;
+      const active=typingScriptRef.current&&pending&&editor.current?.contains(pending)
+        ?typingScriptRef.current:fromDOM;
       typingScriptRef.current=active;
       next.subscript=active==="subscript";
       next.superscript=active==="superscript";
@@ -305,6 +316,31 @@ export function WordSimulator(){
     document.addEventListener("keydown",escape);
     return ()=>document.removeEventListener("keydown",escape);
   },[clipboardMode,paintArmed]);
+  function syncTypingScriptCaret(){
+    const selection=window.getSelection();
+    if(!selection?.rangeCount||!selection.isCollapsed)return;
+    const ancestor=scriptAncestor(selection.anchorNode);
+    const pending=typingScriptNodeRef.current;
+    // Called only for an actual pointer/key navigation inside the editor;
+    // selecting a new caret away from the pending script exits typing mode.
+    if(pending&&ancestor!==pending){
+      if(pending.textContent===TYPING_SCRIPT_PLACEHOLDER)pending.remove();
+      typingScriptRef.current=null;
+      typingScriptNodeRef.current=null;
+      syncFormatState();
+    }
+  }
+  function cleanTypingScriptPlaceholder(){
+    const pending=typingScriptNodeRef.current;
+    if(!pending||!editor.current?.contains(pending))return;
+    if(pending.textContent===TYPING_SCRIPT_PLACEHOLDER)return;
+    const walker=document.createTreeWalker(pending,NodeFilter.SHOW_TEXT);
+    while(walker.nextNode()){
+      const node=walker.currentNode as Text;
+      const index=node.data.indexOf(TYPING_SCRIPT_PLACEHOLDER);
+      if(index>=0)node.deleteData(index,TYPING_SCRIPT_PLACEHOLDER.length);
+    }
+  }
   function rememberSelection(){
     const selection=window.getSelection();
     if(selection&&selection.rangeCount&&editor.current?.contains(selection.anchorNode)
@@ -456,27 +492,34 @@ export function WordSimulator(){
         return;
       }
       const context=scriptAncestor(range.startContainer);
-      const active=context?.tagName==="SUB"?"subscript":context?.tagName==="SUP"?"superscript":null;
-      if(active&&context){
-        // Move the insertion point outside the previous script span so a
-        // second press really returns to normal-size typing.
+      const fromDOM=context?.tagName==="SUB"?"subscript":context?.tagName==="SUP"?"superscript":null;
+      const pending=typingScriptNodeRef.current;
+      const active=typingScriptRef.current&&pending&&editor.current.contains(pending)
+        ?typingScriptRef.current:fromDOM;
+      const scriptNode=active?(pending&&editor.current.contains(pending)?pending:context):null;
+      if(active&&scriptNode){
+        // A second click must work even when the browser's collapsed Range
+        // has drifted to the parent of the previously empty inline element.
         const after=document.createRange();
-        after.setStartAfter(context);
+        after.setStartAfter(scriptNode);
         after.collapse(true);
         selection.removeAllRanges();
         selection.addRange(after);
-        if(!context.textContent)context.remove();
+        const cleanText=scriptNode.textContent?.replaceAll(TYPING_SCRIPT_PLACEHOLDER,"")??"";
+        if(!cleanText)scriptNode.remove();
       }
       if(active===kind){
         typingScriptRef.current=null;
+        typingScriptNodeRef.current=null;
         rememberSelection();
         setFormatActive(current=>({...current,subscript:false,superscript:false}));
         return;
       }
-      // A real empty inline node makes the next typed character inherit the
-      // chosen script; relying on execCommand at a collapsed caret did not.
+      // Keep a zero-width placeholder until the user types. A genuinely empty
+      // sub/sup can lose browser caret ownership before the second click.
       const current=selection.getRangeAt(0);
       const script=document.createElement(kind==="subscript"?"sub":"sup");
+      script.textContent=TYPING_SCRIPT_PLACEHOLDER;
       current.insertNode(script);
       const inside=document.createRange();
       inside.selectNodeContents(script);
@@ -484,6 +527,7 @@ export function WordSimulator(){
       selection.removeAllRanges();
       selection.addRange(inside);
       typingScriptRef.current=kind;
+      typingScriptNodeRef.current=script;
       rememberSelection();
       setFormatActive(current=>({...current,subscript:kind==="subscript",superscript:kind==="superscript"}));
     }catch{
@@ -889,7 +933,9 @@ export function WordSimulator(){
             <div ref={paperRef} className={"wsl-paper "+(orientation==="landscape"?"is-landscape ":"")+(margins==="narrow"?"is-narrow":"")}
               style={{transform:"scale("+zoom/100+")",transformOrigin:"top left"}}>
             <div ref={editor} className={"wsl-editor "+(showMarks?"show-paragraph-marks":"")} aria-label="Nội dung tài liệu Word" role="textbox" aria-multiline="true" contentEditable suppressContentEditableWarning spellCheck={spellcheck}
-              onInput={()=>{rememberSelection();markChanged();}} onKeyUp={rememberSelection} onMouseUp={handleEditorMouseUp}
+              onInput={()=>{cleanTypingScriptPlaceholder();rememberSelection();markChanged();}}
+               onKeyUp={event=>{if(["ArrowLeft","ArrowRight","ArrowUp","ArrowDown","Home","End","PageUp","PageDown"].includes(event.key))syncTypingScriptCaret();rememberSelection();}}
+               onMouseUp={()=>{syncTypingScriptCaret();handleEditorMouseUp();}}
               onFocus={rememberSelection} onPaste={event=>{event.preventDefault();setClipboardMode(null);stagedClipboard.current=null;command("insertText",event.clipboardData.getData("text/plain"));}}
               onDrop={event=>event.preventDefault()}/>
             </div>
