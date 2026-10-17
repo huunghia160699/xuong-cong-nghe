@@ -621,9 +621,10 @@ export function WordSimulator(){
         document.execCommand?.(kind==="subscript"?"subscript":"superscript",false);
         typingScriptRef.current=null;
         typingScriptNodeRef.current=null;
-        typingScriptExitNodeRef.current=null;
-        typingScriptExitLengthRef.current=null;
+        typingScriptExitNodeRef.current=activeScript;
+        typingScriptExitLengthRef.current=activeText.length;
         root.querySelectorAll?.("[data-script-exit]")?.forEach(node=>node.removeAttribute("data-script-exit"));
+        activeScript.setAttribute?.("data-script-exit","true");
         rememberSelection();
         setFormatActive(current=>({...current,subscript:false,superscript:false}));
         return;
