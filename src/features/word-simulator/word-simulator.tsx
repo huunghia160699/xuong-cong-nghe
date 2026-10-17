@@ -562,6 +562,42 @@ export function WordSimulator(){
   // Use deterministic DOM surgery for a highlighted range. Native
   // execCommand("subscript"/"superscript") emits inconsistent elements across
   // browsers, so reading <sub>/<sup> on the next click may disagree with it.
+  function exitScriptIntoPlainCaret(script:HTMLElement){
+    const root=editor.current;
+    if(!root?.contains(script)||typeof root.blur!=="function"||
+      typeof root.focus!=="function"||typeof script.after!=="function")return false;
+    const selection=window.getSelection();
+    if(!selection)return false;
+    const plain=document.createElement("span");
+    plain.setAttribute("data-script-plain","true");
+    const boundary=document.createElement("span");
+    boundary.setAttribute("data-script-ime-break","true");
+    boundary.contentEditable="false";
+    boundary.setAttribute("aria-hidden","true");
+    boundary.style.fontSize="0";
+    boundary.style.lineHeight="0";
+    boundary.textContent=SCRIPT_EXIT_ANCHOR;
+    const caret=document.createTextNode(TYPING_SCRIPT_PLACEHOLDER);
+    plain.append(boundary,caret);
+    // The Home ribbon preserves selection on mousedown, so blur explicitly:
+    // focus change commits any active Vietnamese IME composition.
+    root.blur();
+    script.after(plain);
+    root.focus({preventScroll:true});
+    const range=document.createRange();
+    range.setStart(caret,caret.data.length);
+    range.collapse(true);
+    selection.removeAllRanges();
+    selection.addRange(range);
+    typingScriptRef.current=null;
+    typingScriptNodeRef.current=null;
+    typingScriptExitNodeRef.current=null;
+    typingScriptExitLengthRef.current=null;
+    root.querySelectorAll?.("[data-script-exit]")?.forEach(node=>node.removeAttribute("data-script-exit"));
+    setFormatActive(current=>({...current,subscript:false,superscript:false}));
+    rememberSelection();
+    return true;
+  }
   function applySelectedScript(range:Range,kind:"subscript"|"superscript",enabled:boolean){
     const root=editor.current;
     if(!root||!root.contains(range.startContainer)||!root.contains(range.endContainer))return false;
@@ -616,42 +652,6 @@ export function WordSimulator(){
   // Finish a superscript/subscript typing run at a hard IME boundary.
   // Windows Vietnamese Telex can otherwise treat the next "a" as another
   // keystroke for the last "a" inside <sup>, converting it into "â".
-  function exitScriptIntoPlainCaret(script:HTMLElement){
-    const root=editor.current;
-    if(!root?.contains(script)||typeof root.blur!=="function"||
-      typeof root.focus!=="function"||typeof script.after!=="function")return false;
-    const selection=window.getSelection();
-    if(!selection)return false;
-    const plain=document.createElement("span");
-    plain.setAttribute("data-script-plain","true");
-    const boundary=document.createElement("span");
-    boundary.setAttribute("data-script-ime-break","true");
-    boundary.contentEditable="false";
-    boundary.setAttribute("aria-hidden","true");
-    boundary.style.fontSize="0";
-    boundary.style.lineHeight="0";
-    boundary.textContent=SCRIPT_EXIT_ANCHOR;
-    const caret=document.createTextNode(TYPING_SCRIPT_PLACEHOLDER);
-    plain.append(boundary,caret);
-    // The Home ribbon preserves selection on mousedown, so blur explicitly:
-    // focus change commits any active Vietnamese IME composition.
-    root.blur();
-    script.after(plain);
-    root.focus({preventScroll:true});
-    const range=document.createRange();
-    range.setStart(caret,caret.data.length);
-    range.collapse(true);
-    selection.removeAllRanges();
-    selection.addRange(range);
-    typingScriptRef.current=null;
-    typingScriptNodeRef.current=null;
-    typingScriptExitNodeRef.current=null;
-    typingScriptExitLengthRef.current=null;
-    root.querySelectorAll?.("[data-script-exit]")?.forEach(node=>node.removeAttribute("data-script-exit"));
-    setFormatActive(current=>({...current,subscript:false,superscript:false}));
-    rememberSelection();
-    return true;
-  }
   // x₂/x² have two separate behaviors: selected text toggles the formatting
   // of the selected content; a collapsed caret enters/exits a typing mode.
   function toggleScriptFormat(kind:"subscript"|"superscript"){

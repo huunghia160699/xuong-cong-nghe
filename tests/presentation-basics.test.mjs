@@ -1378,7 +1378,7 @@ test("Selected Word text uses deterministic DOM extraction, correct second-click
 test("Vietnamese Telex: after turning x² off, next a cannot compose the last superscript a",()=>{
  const source=readFileSync("src/features/word-simulator/word-simulator.tsx","utf8");
  const first=source.indexOf("  function exitScriptIntoPlainCaret(");
- const last=source.indexOf("  // x₂/x² have two separate behaviors",first);
+ const last=source.indexOf("  function applySelectedScript(",first);
  assert.ok(first>=0&&last>first,"plain exit helper must exist");
  const run=source.slice(first,last).trim().replace("script:HTMLElement","script");
  const previous={tagName:"SUP",textContent:"aaaaa",nextSibling:null};
@@ -1493,7 +1493,8 @@ test("Unselected caret: x₂/x² enters typing mode, second click exits; switchi
   rememberSelection:()=>{},
   setFormatActive:fn=>Object.assign(button,fn({...button})),
   markChanged:()=>{},
-  setStatus:()=>{}
+  setStatus:()=>{},
+  exitScriptIntoPlainCaret:()=>false
  };
  const toggle=runInNewContext("("+executable+")",harness);
  toggle("subscript");
@@ -1932,7 +1933,7 @@ test("Caret script x₂/x² second click toggles off even when browser relocates
   scriptAncestor(node){return ["SUB","SUP"].includes(node?.tagName)?node:null;},
   restoreSelection(){},rememberSelection(){},
   setFormatActive(fn){Object.assign(button,fn({...button}));},
-  markChanged(){},setStatus(){}
+  markChanged(){},setStatus(){},exitScriptIntoPlainCaret(){return false;}
  };
  const toggle=runInNewContext("("+executable+")",ctx);
  for(const kind of ["subscript","superscript"]){
