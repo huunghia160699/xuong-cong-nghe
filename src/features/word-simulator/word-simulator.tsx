@@ -375,6 +375,41 @@ export function WordSimulator(){
       syncFormatState();
     }
   }
+  // Text input while caret-only script formatting is active must go inside
+  // the pending element; native contentEditable may insert it after the span.
+  function insertTypingScriptText(value:string){
+    const pending=typingScriptNodeRef.current;
+    const root=editor.current;
+    const selection=window.getSelection();
+    if(!value||!typingScriptRef.current||!pending||!root?.contains(pending)||!selection)return false;
+    const current=selection.rangeCount?selection.getRangeAt(0):null;
+    const inPending=current&&pending.contains(current.startContainer)&&
+      pending.contains(current.endContainer);
+    if(pending.textContent?.includes(TYPING_SCRIPT_PLACEHOLDER)){
+      for(const child of Array.from(pending.childNodes)){
+        if(child.nodeType===Node.TEXT_NODE){
+          const text=child as Text;
+          text.data=text.data.replaceAll(TYPING_SCRIPT_PLACEHOLDER,"");
+          if(!text.data)text.remove();
+        }
+      }
+    }
+    const insertion=document.createRange();
+    if(inPending&&pending.textContent){
+      try{insertion.setStart(current!.startContainer,current!.startOffset);}
+      catch{insertion.selectNodeContents(pending);insertion.collapse(false);}
+    }else{
+      insertion.selectNodeContents(pending);
+      insertion.collapse(false);
+    }
+    insertion.insertNode(document.createTextNode(value));
+    insertion.collapse(false);
+    selection.removeAllRanges();
+    selection.addRange(insertion);
+    rememberSelection();
+    markChanged();
+    return true;
+  }
   function cleanTypingScriptPlaceholder(){
     const pending=typingScriptNodeRef.current;
     if(!pending||!editor.current?.contains(pending))return;
@@ -1034,6 +1069,19 @@ export function WordSimulator(){
             <div ref={paperRef} className={"wsl-paper "+(orientation==="landscape"?"is-landscape ":"")+(margins==="narrow"?"is-narrow":"")}
               style={{transform:"scale("+zoom/100+")",transformOrigin:"top left"}}>
             <div ref={editor} className={"wsl-editor "+(showMarks?"show-paragraph-marks":"")} aria-label="Nội dung tài liệu Word" role="textbox" aria-multiline="true" contentEditable suppressContentEditableWarning spellCheck={spellcheck}
+              onBeforeInput={event=>{
+                 const native=event.nativeEvent as InputEvent;
+                 if(native.data&&!native.isComposing&&(!native.inputType||native.inputType==="insertText")&&
+                    typingScriptRef.current&&insertTypingScriptText(native.data)){
+                   event.preventDefault();
+                 }
+               }}
+               onKeyDown={event=>{
+                 if(event.key.length===1&&!event.ctrlKey&&!event.metaKey&&!event.altKey&&!event.isComposing&&
+                    typingScriptRef.current&&insertTypingScriptText(event.key)){
+                   event.preventDefault();
+                 }
+               }}
               onInput={()=>{cleanTypingScriptPlaceholder();rememberSelection();markChanged();}}
                onKeyUp={event=>{if(["ArrowLeft","ArrowRight","ArrowUp","ArrowDown","Home","End","PageUp","PageDown"].includes(event.key))syncTypingScriptCaret();rememberSelection();}}
                onMouseUp={()=>{syncTypingScriptCaret();handleEditorMouseUp();}}
