@@ -2217,7 +2217,7 @@ test("Word font without highlighted text stays selected and applies to the next 
    createRange(){return {
      collapsed:true,
      selectNodeContents(node){this.startContainer=node;this.startOffset=node.textContent.length},
-     collapse(value){this.collapsed=value},
+     collapse(){this.collapsed=true},
      setStart(node,index){this.startContainer=node;this.startOffset=index},
      insertNode(node){state.range.insertNode(node)}
    }}
