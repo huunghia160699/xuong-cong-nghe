@@ -1405,6 +1405,8 @@ test("Unselected caret: x₂/x² enters typing mode, second click exits; switchi
   typingScriptExitLengthRef,
   TYPING_SCRIPT_PLACEHOLDER:"\u200B",
   document:{
+    // Model the native Word/browser command that exits a populated inline script.
+    execCommand(){selectedRange={collapsed:true,startContainer:root,insertNode:node=>nodes.push(node)};selection.anchorNode=root;return true;},
     createElement(tag){
       const node={tagName:tag.toUpperCase(),textContent:"",removed:false,remove(){this.removed=true;}};
       created.push(node);return node;
