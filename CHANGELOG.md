@@ -1,5 +1,12 @@
 # Changelog
 
+## 2026-10-18 — Khôi phục bôi chọn và Superscript/Subscript
+- Ưu tiên vùng chữ đang được bôi chọn trước logic thoát chế độ gõ chỉ số, tránh xóa selection sai.
+- Sửa cách kiểm tra vùng chọn Sup/Sub theo quy tắc `Range.compareBoundaryPoints` của trình duyệt.
+- Cho phép kéo chọn qua mốc ngăn IME khi chuyển Sup/Sub → văn bản thường.
+- Không tìm và tắt thẻ chỉ số bất kỳ trong tài liệu khi toolbar cập nhật trễ; hỗ trợ chuyển đổi từ Sup sang Sub hoặc ngược lại tại caret.
+- Thêm kiểm thử lựa chọn, bật/tắt và chuyển đổi của cả hai chế độ; giữ logic Telex.
+
 ## 2026-10-17 — Khắc phục Telex tiếp tục ghép chữ trong Sup/Sub
 - Khi tắt Superscript hoặc Subscript, kết thúc phiên IME và chuyển caret ra vùng chữ thường độc lập với thẻ chỉ số.
 - Giữ ranh giới nhập Telex cho đến khi bộ gõ hoàn thành, tránh ký tự kế tiếp sửa ký tự cuối của Sup thành chữ có dấu hoặc tự bật lại Sup.

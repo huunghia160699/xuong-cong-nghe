@@ -1422,7 +1422,7 @@ test("Vietnamese Telex: after turning x² off, next a cannot compose the last su
  assert.equal(slot.tagName,"SPAN");
  assert.equal(slot.attributes["data-script-plain"],"true");
  const [boundary,caret]=slot.children;
- assert.equal(boundary.contentEditable,"false","IME separator must not become editable");
+ assert.equal(boundary.contentEditable,undefined,"IME separator must remain selectable across the boundary");
  assert.equal(boundary.textContent,"\u00A0","the hard word boundary separates Telex runs");
  assert.equal(caret.data,"\u200B");
  assert.equal(selection.anchorNode,caret,"caret is no longer in <sup>");
@@ -1439,6 +1439,59 @@ test("Vietnamese Telex: after turning x² off, next a cannot compose the last su
  assert.match(source,/parsed\.body\.querySelectorAll\("\[data-script-ime-break\]"\)/);
  assert.match(source,/return parsed\.body\.innerHTML\.replaceAll\("\\u200B",""\)/);
  assert.match(source,/node\.parentElement\?\.closest\("\[data-script-ime-break\]"\)/);
+ assert.doesNotMatch(source,/boundary\.contentEditable="false"/);
+});
+
+test("Selected text always applies/removes/swaps Sup/Sub before any caret-exit path",()=>{
+ const src=readFileSync("src/features/word-simulator/word-simulator.tsx","utf8");
+ const begin=src.indexOf("  function toggleScriptFormat(");
+ const end=src.indexOf("  function saveDraft()",begin);
+ const executable=src.slice(begin,end).trim()
+   .replace('kind:"subscript"|"superscript"','kind')
+   .replaceAll("?.<HTMLElement>","?.")
+   .replace("let boundaryScript:HTMLElement|null=null;","let boundaryScript=null;");
+ assert.match(executable,/if\(root&&liveRange&&!liveRange\.collapsed&&/);
+ assert.ok(executable.indexOf("if(root&&liveRange&&!liveRange.collapsed") <
+    executable.indexOf("if(liveRange?.collapsed&&root&&liveScript&&liveText)"),
+    "selected text must not run typing-exit code");
+ for(const [existing,kind,expectedOn] of [
+   [null,"superscript",true],
+   ["superscript","superscript",false],
+   ["superscript","subscript",true],
+   ["subscript","superscript",true],
+   [null,"subscript",true],
+   ["subscript","subscript",false]
+ ]){
+   const calls=[];
+   const container={};
+   const root={contains:node=>node===container};
+   const selected={collapsed:false,startContainer:container,endContainer:container,
+     startOffset:0,cloneContents(){return{textContent:"abc"}}};
+   const selection={rangeCount:1,anchorNode:container,
+     getRangeAt:()=>selected,removeAllRanges(){},addRange(){}};
+   const state={subscript:existing==="subscript",superscript:existing==="superscript"};
+   const typingScriptRef={current:null},typingScriptNodeRef={current:null};
+   const ctx={
+     editor:{current:root},window:{getSelection:()=>selection},
+     formatActive:state,typingScriptRef,typingScriptNodeRef,
+     document:{createRange(){return{
+       selectNodeContents(){},setEnd(){},cloneContents(){return{textContent:""}}
+     }}},
+     rangeHasScript:(_,which)=>existing===which,
+     applySelectedScript:(_,which,enabled)=>{calls.push([which,enabled]);return true;},
+     restoreScriptTextSelection:(start,length)=>calls.push(["selected",start,length]),
+     rememberSelection:()=>{},markChanged:()=>{},
+     setFormatActive:fn=>Object.assign(state,fn({...state})),
+     setStatus:()=>{},
+     exitScriptIntoPlainCaret:()=>{throw Error("selected text must never exit a caret run");}
+   };
+   const toggle=runInNewContext("("+executable+")",ctx);
+   toggle(kind);
+   assert.deepEqual(calls[0],[kind,expectedOn],existing+" -> "+kind);
+   assert.deepEqual(calls[1],["selected",0,3],"must preserve selected characters");
+   assert.equal(state[kind],expectedOn);
+   assert.equal(state[kind==="subscript"?"superscript":"subscript"],false);
+ }
 });
 
 test("Unselected caret: x₂/x² enters typing mode, second click exits; switching modes remains exclusive",()=>{
@@ -1447,7 +1500,8 @@ test("Unselected caret: x₂/x² enters typing mode, second click exits; switchi
  const finish=source.indexOf('  function saveDraft()',begin);
  const executable=source.slice(begin,finish).trim()
   .replace('kind:"subscript"|"superscript"','kind')
-  .replaceAll("?.<HTMLElement>","?.");
+  .replaceAll("?.<HTMLElement>","?.")
+  .replace("let boundaryScript:HTMLElement|null=null;","let boundaryScript=null;");
  const nodes=[];const root={contains:()=>true};
  const button={subscript:false,superscript:false};
  const typingScriptRef={current:null};
@@ -1700,8 +1754,8 @@ test("Word x2 status ignores unselected text nodes that merely touch range bound
    .replace('range:Range,kind:"subscript"|"superscript"','range,kind')
    .replace('const nodes:Node[]=[]','const nodes=[]');
  assert.match(executable,/textRange\.selectNodeContents\(node\);/);
- assert.match(executable,/range\.compareBoundaryPoints\(Range\.START_TO_END,textRange\)>0/);
- assert.match(executable,/range\.compareBoundaryPoints\(Range\.END_TO_START,textRange\)<0/);
+ assert.match(executable,/range\.compareBoundaryPoints\(Range\.END_TO_START,textRange\)>0/);
+ assert.match(executable,/range\.compareBoundaryPoints\(Range\.START_TO_END,textRange\)<0/);
  assert.match(executable,/return endsAfterStart&&startsBeforeEnd;/);
  const before={textContent:"xy"},selected={textContent:"H2O"};
  const root={};
@@ -1732,7 +1786,7 @@ test("Word x2 status ignores unselected text nodes that merely touch range bound
      const end=this.endContainer===before?this.endOffset:2+this.endOffset;
      const left=textRange.textNode===before?0:2;
      const right=left+(textRange.textNode.textContent?.length??0);
-     return Math.sign((how===1?end-left:start-right));
+     return Math.sign((how===1?start-right:end-left));
    }
  };
  assert.equal(detect(range,"subscript"),true,
@@ -1816,7 +1870,7 @@ test("Superscript x² selected at element boundaries is detected active and togg
    const l=all.indexOf(textRange.node),r=l+1;
    const start=this.startContainer===parent?this.startOffset:all.indexOf(this.startContainer)+this.startOffset;
    const end=this.endContainer===parent?this.endOffset:all.indexOf(this.endContainer)+this.endOffset;
-   return Math.sign(how===1?end-l:start-r);
+   return Math.sign(how===1?start-r:end-l);
   }
  };
  assert.equal(detect(selected,"superscript"),true,"selecting exactly <sup>2</sup> must read sup as on");
@@ -1896,7 +1950,8 @@ test("Caret script x₂/x² second click toggles off even when browser relocates
  const end=source.indexOf('  function saveDraft()',start);
  const executable=source.slice(start,end).trim()
    .replace('kind:"subscript"|"superscript"','kind')
-   .replaceAll("?.<HTMLElement>","?.");
+   .replaceAll("?.<HTMLElement>","?.")
+  .replace("let boundaryScript:HTMLElement|null=null;","let boundaryScript=null;");
  const root={tagName:"DIV",contains(node){return node===this||nodes.includes(node);}};
  const nodes=[],created=[];
  const typingScriptRef={current:null};

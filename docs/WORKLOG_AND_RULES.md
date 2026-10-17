@@ -25,6 +25,13 @@
 
 ## III. Lịch sử
 
+### 2026-10-18 — Tổng kiểm tra Sup/Sub: vùng chọn, bật/tắt, đổi chế độ
+- **Lỗi phát sinh sau lần sửa Telex:** Bôi chọn chữ (đặc biệt đang ở trong `<sup>/<sub>`) rồi bấm Sup/Sub bị mất vùng chọn; không thể tắt định dạng hoặc chuyển sang chế độ đối lập. Có thể kéo chọn qua dấu ngăn IME không được.
+- **Nguyên nhân:** `toggleScriptFormat` gọi nhánh thoát chỉ số qua `liveScript` trước khi kiểm tra `!range.collapsed`, biến một selection thực thành thao tác tại caret; bộ phát hiện `rangeHasScript` dùng `Range.compareBoundaryPoints` với dấu/biên bị đảo; và dấu phân cách `contentEditable=false` cản kéo chọn.
+- **Sửa:** Ưu tiên thao tác selection thật trước mọi nhánh typing; sửa `Range.END_TO_START >0` và `Range.START_TO_END <0` để nhận biết nút đang bật; không đặt `contentEditable=false` lên mốc IME (vẫn ẩn và được loại bỏ khi lưu); không chọn và tắt một thẻ `<sup>/<sub>` khác vô tình bằng `querySelector`; trường hợp đổi kiểu tại caret thoát chế độ cũ rồi khởi tạo kiểu mới. Bảo toàn xử lý Telex trước đó.
+- **Kiểm thử:** Bổ sung VM test sáu trường hợp chọn chữ: thường→Sup, Sup→thường, Sup→Sub, Sub→Sup, thường→Sub, Sub→thường; sửa harness mô phỏng so sánh Range theo chuẩn DOM; giữ test Telex. Chạy GitHub Actions Unit tests, Typecheck, Production build, Smoke test; cần thực nghiệm trên trình duyệt và UniKey Windows trước khi khẳng định mọi tương tác đúng.
+- **Triển khai:** GitHub main → Vercel Production chỉ khi CI thành công và deployment READY; commit cụ thể trong lịch sử GitHub.
+
 ### 2026-10-17 — Sửa Telex ghép nhầm chữ khi tắt Superscript/Subscript
 - **Lỗi thực tế:** Trong Word mô phỏng, bật Sup, gõ `aaaaa`, tắt Sup rồi gõ `a` thì bộ gõ tiếng Việt Telex vẫn biến ký tự `a` cuối nằm trong Sup thành `â`, đồng thời toolbar hiển thị Sup đang bật lại.
 - **Nguyên nhân:** Ribbon giữ selection khi `mousedown`; logic thoát Sup cũ chưa kết thúc phiên IME, đặt caret ngay sau thẻ `<sup>`, dọn ký tự mốc quá sớm, khiến Telex tiếp tục xử lý ký tự cũ và DOM selection nhảy vào thẻ định dạng.

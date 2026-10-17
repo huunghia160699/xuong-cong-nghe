@@ -258,8 +258,11 @@ export function WordSimulator(){
       try{
         const textRange=document.createRange();
         textRange.selectNodeContents(node);
-        const endsAfterStart=range.compareBoundaryPoints(Range.START_TO_END,textRange)>0;
-        const startsBeforeEnd=range.compareBoundaryPoints(Range.END_TO_START,textRange)<0;
+        // Per DOM Range, END_TO_START compares our end to the text start;
+        // START_TO_END compares our start to the text end. Reverse signs
+        // would report a selected <sup>/<sub> as ordinary text.
+        const endsAfterStart=range.compareBoundaryPoints(Range.END_TO_START,textRange)>0;
+        const startsBeforeEnd=range.compareBoundaryPoints(Range.START_TO_END,textRange)<0;
         return endsAfterStart&&startsBeforeEnd;
       }catch{return false;}
     });
@@ -575,7 +578,8 @@ export function WordSimulator(){
     plain.setAttribute("data-script-plain","true");
     const boundary=document.createElement("span");
     boundary.setAttribute("data-script-ime-break","true");
-    boundary.contentEditable="false";
+    // Leave the boundary selectable: contentEditable=false makes it
+    // impossible to drag-highlight across this inline boundary in Chromium.
     boundary.setAttribute("aria-hidden","true");
     boundary.style.fontSize="0";
     boundary.style.lineHeight="0";
@@ -658,15 +662,43 @@ export function WordSimulator(){
     const root=editor.current;
     const liveSelection=window.getSelection();
     const liveRange=liveSelection?.rangeCount?liveSelection.getRangeAt(0):null;
-    let boundaryScript=scriptAncestor(null);
+    // Highlighted text always takes precedence over any typing-mode exit.
+    // A selection inside an existing <sup> used to get collapsed here,
+    // preventing selection formatting and deactivating the wrong mode.
+    if(root&&liveRange&&!liveRange.collapsed&&
+      root.contains(liveRange.startContainer)&&root.contains(liveRange.endContainer)){
+      typingScriptRef.current=null;
+      typingScriptNodeRef.current=null;
+      const before=document.createRange();
+      before.selectNodeContents(root);
+      before.setEnd(liveRange.startContainer,liveRange.startOffset);
+      const selectedStart=before.cloneContents().textContent?.length??0;
+      const selectedLength=liveRange.cloneContents().textContent?.length??0;
+      const opposite=kind==="subscript"?"superscript":"subscript";
+      const wasActive=rangeHasScript(liveRange,kind);
+      const applied=applySelectedScript(liveRange,kind,!wasActive);
+      if(!applied){setStatus("Không thể áp dụng định dạng cho vùng văn bản đã chọn");return;}
+      restoreScriptTextSelection(selectedStart,selectedLength);
+      rememberSelection();
+      setFormatActive(current=>({...current,[kind]:!wasActive,[opposite]:false}));
+      markChanged();
+      return;
+    }
+    let boundaryScript:HTMLElement|null=null;
     if(liveRange?.collapsed&&liveRange.startContainer.nodeType===1&&liveRange.startOffset>0){
       const previous=scriptAncestor(liveRange.startContainer.childNodes[liveRange.startOffset-1]??null);
       if(previous?.tagName===(kind==="subscript"?"SUB":"SUP"))boundaryScript=previous;
     }
     const liveScript=scriptAncestor(liveSelection?.anchorNode??null)??boundaryScript;
     const liveText=liveScript?.textContent?.replaceAll(TYPING_SCRIPT_PLACEHOLDER,"")??"";
-    if(root&&liveScript&&liveText&&exitScriptIntoPlainCaret(liveScript))return;
-    if(root&&liveScript&&liveText&&typeof document.createTextNode==="function"){
+    if(liveRange?.collapsed&&root&&liveScript&&liveText){
+      const activeKind=liveScript.tagName==="SUB"?"subscript":"superscript";
+      if(exitScriptIntoPlainCaret(liveScript)){
+        if(activeKind!==kind)toggleScriptFormat(kind);
+        return;
+      }
+    }
+    if(liveRange?.collapsed&&root&&liveScript&&liveText&&typeof document.createTextNode==="function"){
       const anchor=document.createTextNode("\u00A0");
       liveScript.parentNode?.insertBefore(anchor,liveScript.nextSibling);
       const outside=document.createRange();
@@ -684,8 +716,11 @@ export function WordSimulator(){
       return;
     }
     if(root&&formatActive[kind]){
-      const activeScript=typingScriptNodeRef.current??
-        root.querySelector?.(kind==="subscript"?"sub":"sup")??null;
+      // Only exit the active pending run, never the first unrelated script
+      // elsewhere in the document when toolbar state lags selectionchange.
+      const node=typingScriptNodeRef.current;
+      const activeScript=node&&root.contains(node)&&
+        node.tagName===(kind==="subscript"?"SUB":"SUP")?node:null;
       const activeText=activeScript?.textContent?.replaceAll(TYPING_SCRIPT_PLACEHOLDER,"")??"";
       if(activeText&&activeScript&&exitScriptIntoPlainCaret(activeScript))return;
       if(activeText){
