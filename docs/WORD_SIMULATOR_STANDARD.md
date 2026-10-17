@@ -463,3 +463,5 @@ Ngày: 15/10/2026. Đường dẫn: `/cong-cu/mo-phong-word`.
 - Quy trình bắt buộc sau mọi chỉnh sửa: cập nhật chính file Markdown, commit GitHub main, xác minh build + test và deploy Vercel Production đến **READY**.
 
 - **Điều chỉnh hồi quy sau khi thay đổi thuật toán:** các kiểm thử cũ từng yêu cầu thoát caret bằng `Range.setStartAfter(context)` nay dùng `Range.setStartAfter(scriptNode)` để kiểm tra phần tử thực sự đang được lưu trong `typingScriptNodeRef`, kể cả khi Range không còn ở bên trong node. Không đổi yêu cầu tính năng hoặc hiển thị.
+
+- **Cập nhật kiểm thử nhận diện chế độ gõ:** kiểm thử cũ chỉ xét `const active` lấy trực tiếp từ DOM; logic mới dùng `fromDOM` làm dự phòng và ưu tiên `typingScriptRef` khi `typingScriptNodeRef` vẫn còn trong vùng soạn thảo. Đã đổi kiểm thử tương ứng, không sửa hành vi chế độ bôi đen chữ.
