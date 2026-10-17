@@ -1901,7 +1901,9 @@ test("Caret x₂/x² formatting state survives programmatic selectionchange and 
  assert.match(source,/function cleanTypingScriptPlaceholder\(\)/);
  assert.match(source,/node\.deleteData\(index,TYPING_SCRIPT_PLACEHOLDER\.length\);/);
  assert.match(source,/script\.textContent=TYPING_SCRIPT_PLACEHOLDER;/);
- assert.match(source,/onInput=\{\(\)=>\{cleanTypingScriptPlaceholder\(\);rememberSelection\(\);markChanged\(\);\}\}/);
+ assert.match(source,/onInput=\{event=>\{repairExitedScriptText/);
+
+ assert.match(source,/cleanTypingScriptPlaceholder\(\);rememberSelection\(\);markChanged\(\);/);
  assert.match(source,/onKeyUp=\{event=>\{if\(\["ArrowLeft","ArrowRight","ArrowUp","ArrowDown","Home","End","PageUp","PageDown"\]\.includes\(event\.key\)\)syncTypingScriptCaret\(\);rememberSelection\(\);\}\}/);
  assert.match(source,/onMouseUp=\{\(\)=>\{syncTypingScriptCaret\(\);handleEditorMouseUp\(\);\}\}/);
 });
