@@ -403,3 +403,14 @@ Ngày: 15/10/2026. Đường dẫn: `/cong-cu/mo-phong-word`.
 
 
 - **Hiệu chỉnh build:** nhánh thoát chế độ gõ kiểm tra đồng thời `active && context` trước khi gọi `Range.setStartAfter(context)`, bảo đảm phần tử `<sub>/<sup>` tồn tại và đáp ứng kiểm tra kiểu TypeScript nghiêm ngặt. Kiểm thử chức năng vẫn giữ nguyên, phải build lại và xác nhận Production READY sau hiệu chỉnh.
+
+
+## 2026-10-17 — Sửa lần hai trường hợp đã bôi đen chữ (x₂/x²)
+
+- Người dùng xác nhận **chế độ nhập khi chưa bôi đen đã hoạt động**, nhưng **khi đã bôi đen chữ, nhấn lại nút đang bật vẫn chưa trả văn bản về bình thường**. Không thay đổi chế độ gõ không bôi đen hoặc bố cục Ribbon.
+- Xác định nguyên nhân mã cũ kết hợp **`document.execCommand("subscript"/"superscript")`** để định dạng vùng chọn với `rangeHasScript` để kiểm tra các phần tử **`<sub>/<sup>`**: trình duyệt có thể tạo hoặc loại bỏ style khác nhau, khiến nhận diện và kết quả thực tế không khớp. Kiểm thử giả lập `execCommand` cũ không bảo đảm kết quả DOM thực.
+- Nhánh **đã bôi đen** chuyển sang hàm **`applySelectedScript(range,kind,enabled)`** áp dụng/gỡ bằng DOM: dùng `Range.extractContents()` để lấy chính phần chữ chọn, chèn neo tạm, **tách neo khỏi những `<sub>/<sup>` bao ngoài** (đồng thời tách, sao chép các wrapper lồng nhau để giữ đậm, nghiêng và phần chữ lân cận), loại `<sub>/<sup>` hoặc vertical-align cũ **chỉ trong fragment được chọn**, rồi bọc `<sub>`/`<sup>` mới khi bật, hoặc trả nội dung không bọc khi tắt.
+- **Nhấn lần đầu:** chọn chữ thường → `<sub>` hoặc `<sup>`. **Nhấn lần hai:** chọn lại cùng chữ, nhận diện wrapper đang bật → gỡ thật wrapper, trả chữ về bình thường. **Nhấn nút đối lập:** gỡ wrapper cũ, thay wrapper mới; không lồng `<sub><sup>` và không làm mất định dạng ngoài chỉ số của vùng chọn.
+- Vẫn tính trước offset và chiều dài vùng bôi đen, sau chỉnh sửa thực hiện `restoreScriptTextSelection`, lưu Range mới, cập nhật trạng thái nút và bản nháp. Nhánh **chưa bôi đen** giữ nguyên cơ chế caret `<sub>/<sup>` đã có.
+- Tăng kiểm thử hồi quy từ kiểm tra wiring sang thực thi `applySelectedScript` trên cấu trúc DOM giả lập: bật/tắt hai lần, x₂→x², chọn một phần chữ trong wrapper cũ, chữ đậm/ nghiêng lồng nhau, bảo toàn nội dung ngoài vùng chọn. Các tình huống này cần tiếp tục kiểm tra thủ công trên trình duyệt thực trước khi coi là kiểm thử end-to-end.
+- Luôn cập nhật Markdown, commit GitHub, test Next.js và xác nhận Vercel Production **READY**.
