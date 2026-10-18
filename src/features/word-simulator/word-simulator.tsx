@@ -1027,6 +1027,15 @@ export function WordSimulator(){
       setStatus("Không thể áp dụng định dạng chỉ số "+(kind==="subscript"?"dưới":"trên"));
     }
   }
+  function saveDraft(){
+    if(!editor.current)return;
+    try{
+      window.localStorage.setItem(STORAGE_KEY,JSON.stringify({
+        html:sanitize(editor.current.innerHTML),name:safeName(filename),orientation,margins
+      }));
+      setStatus("Đã lưu bản nháp trên trình duyệt");
+    }catch{setStatus("Không đủ dung lượng để lưu bản nháp; hãy tải tệp HTML");}
+  }
   function insertPageBreak(){
     restoreSelection();
     const root=editor.current;
@@ -1036,15 +1045,6 @@ export function WordSimulator(){
     rememberSelection();
     markChanged();
     setStatus("Đã tạo ngắt trang (Ctrl + Enter)");
-  }
-  function saveDraft(){
-    if(!editor.current)return;
-    try{
-      window.localStorage.setItem(STORAGE_KEY,JSON.stringify({
-        html:sanitize(editor.current.innerHTML),name:safeName(filename),orientation,margins
-      }));
-      setStatus("Đã lưu bản nháp trên trình duyệt");
-    }catch{setStatus("Không đủ dung lượng để lưu bản nháp; hãy tải tệp HTML");}
   }
   function blockCommand(tag:string){command("formatBlock",tag);}
   function editFont(next:string){

@@ -231,7 +231,9 @@ function VerticalRulerTicks({landscape,narrow,zoom,scrollTop,verticalHeight}:{
     const editor=document.querySelector<HTMLElement>(".wsl-word-page-body .wsl-editor");
     if(!ruler||!paper||!editor)return;
     const align=()=>{
-      const paperRect=paper.getBoundingClientRect();
+      const firstPage=paper.querySelector<HTMLElement>(".wsl-document-page");
+      const physical=firstPage??paper;
+      const paperRect=physical.getBoundingClientRect();
       const editorRect=editor.getBoundingClientRect();
       const viewportTop=paperRect.top;
       const top=viewportTop-ruler.getBoundingClientRect().top;

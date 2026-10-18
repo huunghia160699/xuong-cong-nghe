@@ -214,7 +214,7 @@ test("Horizontal centimeter ruler and tab chrome: 10 rounds over A4 size and zoo
    assert.match(ruler,/const editorRect=editor\.getBoundingClientRect\(\);/);
    assert.match(ruler,/const viewportLeft=paperRect\.left;/);
    assert.match(ruler,/const editorOffset=firstPage\?padding:editorRect.left-viewportLeft;/);
-   assert.match(ruler,/const editorWidth=editorRect\.width;/);
+   assert.match(ruler,/const editorWidth=firstPage\?firstPage.clientWidth\*zoom\/100-2\*padding:editorRect.width;/);
    assert.match(ruler,/observer\?\.observe\(editor\)/);
    assert.match(ruler,/const contentStart=snapTick\(paperGeometry\.editorOffset\);/);
    assert.match(ruler,/style=\{\{left:contentStart,width:Math\.max\(0,contentEnd-contentStart\)\}\}/);

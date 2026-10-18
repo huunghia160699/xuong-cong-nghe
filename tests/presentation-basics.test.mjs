@@ -800,7 +800,7 @@ test("Word horizontal ruler has paper-edge aligned cm ticks only, leaving vertic
  assert.match(ruler,/const editorRect=editor\.getBoundingClientRect\(\);/);
  assert.match(ruler,/const viewportLeft=paperRect\.left;/);
  assert.match(ruler,/const editorOffset=firstPage\?padding:editorRect.left-viewportLeft;/);
- assert.match(ruler,/const editorWidth=editorRect\.width;/);
+ assert.match(ruler,/const editorWidth=firstPage\?firstPage.clientWidth\*zoom\/100-2\*padding:editorRect.width;/);
  assert.match(ruler,/observer\?\.observe\(editor\)/);
  assert.match(ruler,/const contentStart=snapTick\(paperGeometry\.editorOffset\);/);
  assert.match(ruler,/const contentEnd=snapTick\(paperGeometry\.editorOffset\+paperGeometry\.editorWidth\);/);
@@ -896,7 +896,7 @@ test("Horizontal ruler preserves measured .wsl-paper and vertical ruler mirrors 
  assert.match(editor,/ref=\{paperRef\} className=\{"wsl-paper /);
  assert.match(editor,/const observer=new ResizeObserver\(measure\)/);
  assert.match(editor,/observer\.observe\(page\)/);
- assert.match(editor,/const height=page\.getBoundingClientRect\(\)\.height;/);
+ assert.match(editor,/const height=\(page.querySelector\("\.wsl-document-page"\)\?\?page\).getBoundingClientRect\(\).height;/);
  assert.match(editor,/renderedPaperHeight=\{measuredHeight\}/);
  assert.match(ruler,/renderedPaperHeight\?:number;/);
  assert.match(ruler,/const verticalHeight=renderedPaperHeight\?\?paperHeight\*zoom\/100;/);
@@ -971,7 +971,7 @@ test("White ruler underlay aligns exactly with the editor between A4 page margin
  const css=readFileSync("src/features/word-simulator/word-page-rulers.css","utf8");
  assert.match(ruler,/const editor=document\.querySelector<HTMLElement>\("\.wsl-word-page-body \.wsl-editor"\)/);
  assert.match(ruler,/const editorOffset=firstPage\?padding:editorRect.left-viewportLeft;/);
- assert.match(ruler,/const editorWidth=editorRect\.width;/);
+ assert.match(ruler,/const editorWidth=firstPage\?firstPage.clientWidth\*zoom\/100-2\*padding:editorRect.width;/);
  assert.match(ruler,/Math\.abs\(previous\.editorOffset-editorOffset\)<0\.01/);
  assert.match(ruler,/Math\.abs\(previous\.editorWidth-editorWidth\)<0\.01/);
  assert.match(ruler,/observer\?\.observe\(editor\)/);
