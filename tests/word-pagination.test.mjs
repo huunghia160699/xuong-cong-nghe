@@ -241,7 +241,7 @@ test("Restoring caret uses original paragraph DOM node, not ambiguous zero text 
  assert.equal(active.startOffset,0);
  assert.equal(active.endContainer,secondP);
  assert.match(helper,/if\(root\.contains\(saved\.startNode\)&&root\.contains\(saved\.endNode\)\)/);
- assert.match(helper,/if\(last&&last\.getBoundingClientRect\(\)\.bottom<=bottom\+1\)return 1/);
+ assert.match(helper,/if\(last&&last\.getBoundingClientRect\(\)\.bottom<=bottom\+1\)\{\s*ensureWordCaretInsideParagraph\(root\);\s*return 1;/);
 });
 
 
