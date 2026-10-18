@@ -1,5 +1,10 @@
 # Changelog
 
+## 2026-10-18 — Lề trái chọn dòng không còn nền hover
+- Xóa nền xanh nhạt khi rê chuột vào lề trái của trang Word; lề luôn trong suốt.
+- Giữ nguyên chức năng nhấp chọn dòng, kéo chọn nhiều dòng và con trỏ `pointer`.
+- Bổ sung kiểm thử chống tái xuất hiện màu hover.
+
 ## 2026-10-18 — Sửa trang A4 chồng và lệch lề sau phân trang
 - Loại bỏ padding, nền trắng, viền và min-height A4 cũ trên wrapper `.wsl-paper` trong stylesheet tải sau cùng; chỉ các trang con `.wsl-document-page` được tạo khung giấy.
 - Ngăn trang trắng giả xuất hiện phía sau và trang chứa nội dung bị lệch sang phải/xuống dưới khoảng 87×86px.

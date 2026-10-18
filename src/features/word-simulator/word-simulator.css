@@ -109,7 +109,6 @@
  -webkit-user-select:none;
  background:transparent;
 }
-.wsl-word-selection-gutter:hover{background:rgba(0,91,253,.035)}
 @media print{.wsl-word-selection-gutter{display:none!important}}
 
 /* True A4 pagination: a single rich-text editor with distinct fixed-size pages. */

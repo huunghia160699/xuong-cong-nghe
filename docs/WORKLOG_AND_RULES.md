@@ -25,6 +25,12 @@
 
 ## III. Lịch sử
 
+### 2026-10-18 — Bỏ nền hover ở lề trái chọn dòng Word
+- **Theo ảnh:** Khi rê chuột vào vùng lề trái để chọn dòng, phần lề bị tô xanh nhạt thành một cột lớn, gây mất thẩm mỹ.
+- **Sửa:** Xóa duy nhất quy tắc `.wsl-word-selection-gutter:hover{background:rgba(0,91,253,.035)}` trong `src/features/word-simulator/word-simulator.css`. Vùng chọn tiếp tục có `background:transparent`, `cursor:pointer`, `touch-action:none` và xử lý nhấp/kéo để chọn dòng.
+- **Kiểm thử:** Mở rộng `tests/word-line-selection.test.mjs` xác nhận gutter trong suốt, không có lớp nền hover, các pointer event vẫn hoạt động. Chạy Unit tests, Typecheck, Production build, Smoke routes trước khi deploy.
+- **Giới hạn:** Chưa nghiệm thu trực quan với trình duyệt của người dùng.
+
 ### 2026-10-18 — Hotfix trang A4 chồng lên trang trắng sau khi phân trang
 - **Triệu chứng có ảnh xác nhận:** Tờ giấy trắng nằm sau tại góc (x≈43, y≈20); tờ có nội dung bị đẩy sang phải và xuống khoảng 87×86px, xuất hiện hai trang giấy chồng nhau.
 - **Nguyên nhân:** `src/app/(word-simulator)/cong-cu/mo-phong-word/layout.tsx` nạp `word-page-rulers.css` SAU `word-simulator.css`. Dù stylesheet phân trang mới đã reset `.wsl-paper`, luật cũ trong `word-page-rulers.css` cùng specificity ghi đè và tái tạo padding 86/87px, nền trắng, viền, min-height A4 của chính wrapper `.wsl-paper` — trong khi mỗi trang con `.wsl-document-page` cũng có nền, kích thước và padding riêng.
