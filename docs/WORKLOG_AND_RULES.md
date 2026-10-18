@@ -25,6 +25,16 @@
 
 ## III. Lịch sử
 
+### 2026-10-18 — Sửa hai dấu ¶ tự phát sinh và con trỏ nhảy dòng trong Word phân trang
+- **Triệu chứng do người dùng chụp:** Với trang trống, xuất hiện hai dấu kết thúc đoạn ¶ (trông như Enter thừa). Khi đặt con trỏ và gõ chữ, dấu ¶ ở dưới bị đẩy lên hoặc vị trí nhập không còn cố định.
+- **Nguyên nhân 1:** `paginateWordEditor` kiểm tra `!root.textContent?.length` rồi tự chèn `<p><br></p>` ngay cả khi editor đã chứa đoạn rỗng hợp lệ `<p><br></p>`. Vì `BR` không đóng góp `textContent`, mỗi lần phân trang lại thêm một đoạn dư.
+- **Nguyên nhân 2:** Snapshot caret chỉ lưu offset bằng số ký tự; các đoạn rỗng cùng cho offset 0 nên khi dựng lại DOM, caret bị phục hồi nhầm sang đoạn/trang khác, kéo theo Paragraph Marks thay đổi vị trí.
+- **Nguyên nhân 3:** Toàn bộ DOM gốc bị tháo, chèn lại dù người dùng mới nhập một chữ trên trang chưa đầy; điều đó làm mất tính ổn định native caret/undo trong `contentEditable`.
+- **Sửa:** `src/features/word-simulator/word-pagination.ts` chỉ thêm đoạn mặc định khi `children.length===0`, không dùng `textContent`; `WordPageSelection` lưu tham chiếu `startNode/endNode` và offset để restore trực tiếp nếu DOM nodes vẫn còn; chỉ dùng phép đếm ký tự khi cấu trúc đã cắt/split node. Thêm fast-path trang đơn còn chỗ trống để bỏ qua repagination và không chạm DOM/con trỏ khi nhập chữ bình thường. Giữ lại Ctrl+Enter, trộn định dạng inline, các trang A4.
+- **Kiểm thử hồi quy:** `tests/word-pagination.test.mjs` mới dùng vm mô phỏng phân trang tài liệu đúng một `<p><br></p>`, bảo đảm không tạo thêm đoạn trống qua 2 lần phân trang và không tháo DOM ở lần thứ hai; mô phỏng hai đoạn rỗng có cùng text offset 0, vẫn giữ con trỏ tại đoạn thứ hai. Chạy toàn bộ Unit tests, Typecheck, Build, Smoke.
+- **Giới hạn:** Chưa trực tiếp nghiệm thu trong browser Windows/UniKey; dữ liệu bản nháp đã lưu từ phiên bản lỗi có thể chứa Enter thừa thật, không được tự động xóa vì tránh làm mất đoạn trống người dùng chủ động tạo.
+- **Triển khai:** Chỉ xác nhận thành công khi GitHub CI và Vercel Production READY cùng SHA main.
+
 ### 2026-10-18 — Bỏ nền hover ở lề trái chọn dòng Word
 - **Theo ảnh:** Khi rê chuột vào vùng lề trái để chọn dòng, phần lề bị tô xanh nhạt thành một cột lớn, gây mất thẩm mỹ.
 - **Sửa:** Xóa duy nhất quy tắc `.wsl-word-selection-gutter:hover{background:rgba(0,91,253,.035)}` trong `src/features/word-simulator/word-simulator.css`. Vùng chọn tiếp tục có `background:transparent`, `cursor:pointer`, `touch-action:none` và xử lý nhấp/kéo để chọn dòng.

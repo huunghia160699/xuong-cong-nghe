@@ -1,5 +1,11 @@
 # Changelog
 
+## 2026-10-18 — Sửa lỗi Enter/¶ thừa và con trỏ nhảy trong Word phân trang
+- Khi tài liệu đã có đoạn trống `<p><br></p>`, không tự tạo thêm đoạn rỗng chỉ vì `textContent` trống.
+- Phục hồi vị trí con trỏ theo phần tử và offset gốc, phân biệt các đoạn trống cùng có độ dài 0.
+- Khi nội dung còn vừa một trang A4, không tháo và dựng lại DOM sau mỗi lần gõ, giữ con trỏ ổn định hơn và tránh phá thao tác nhập.
+- Thêm bài kiểm thử tái hiện 2 dấu ¶ và nhập chữ làm con trỏ nhảy; giữ Ctrl+Enter và định dạng khác.
+
 ## 2026-10-18 — Lề trái chọn dòng không còn nền hover
 - Xóa nền xanh nhạt khi rê chuột vào lề trái của trang Word; lề luôn trong suốt.
 - Giữ nguyên chức năng nhấp chọn dòng, kéo chọn nhiều dòng và con trỏ `pointer`.

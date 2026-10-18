@@ -1,6 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import {readFileSync} from "node:fs";
+import {runInNewContext} from "node:vm";
 
 const helper=readFileSync("src/features/word-simulator/word-pagination.ts","utf8");
 const simulator=readFileSync("src/features/word-simulator/word-simulator.tsx","utf8");
@@ -92,4 +93,150 @@ test("No ghost paper behind A4 pages: final-loaded ruler CSS resets legacy wrapp
  assert.match(old,/\.wsl-word-layout \.wsl-document-page\{[^}]*padding:var\(--wsl-paper-top-margin\) var\(--wsl-paper-side-margin\)/s);
  assert.match(simulator,/ref=\{paperRef\} className=\{"wsl-paper /);
  assert.match(simulator,/ref=\{editor\} className=\{"wsl-editor /);
+});
+
+
+test("Empty Word document never inserts a second phantom paragraph mark",()=>{
+ const begin=helper.indexOf('export function paginateWordEditor(');
+ const end=helper.indexOf('export function insertManualWordPageBreak(',begin);
+ const executable=helper.slice(begin,end).trim()
+   .replace('export function paginateWordEditor(root:HTMLElement):number','function paginateWordEditor(root)')
+   .replace('root.firstElementChild as HTMLElement|null','root.firstElementChild')
+   .replaceAll('node as Element','node')
+   .replaceAll('node as HTMLElement','node');
+ let mutations=0,created=[],lastRestored=null;
+ const blank={
+   nodeType:1,tagName:"P",childNodes:[{nodeType:1,tagName:"BR"}],
+   hasAttribute(){return false},
+   getBoundingClientRect(){return {bottom:120}}
+ };
+ const root={
+   childNodes:[blank],
+   get children(){return this.childNodes.filter(n=>n.nodeType===1)},
+   get firstElementChild(){return this.children[0]??null},
+   get textContent(){return ""},
+   replaceChildren(...nodes){this.childNodes=nodes;mutations++},
+   appendChild(node){this.childNodes.push(node)},
+   querySelectorAll(){return created}
+ };
+ const ctx={
+   Node:{ELEMENT_NODE:1},
+   MANUAL_BREAK_ATTRIBUTE:"data-wsl-manual-break",
+   PAGE_ATTRIBUTE:"data-wsl-page",
+   savePageSelection:()=>({start:0,end:0,startNode:blank,startOffset:0,endNode:blank,endOffset:0}),
+   restorePageSelection:(editor,saved)=>{lastRestored=saved},
+   visibleChildren:editor=>[...editor.childNodes],
+   createPage(editor,i){
+     const gutter={nodeType:1,hasAttribute:attr=>attr==="data-wsl-selection-gutter"};
+     const page={
+       nodeType:1,
+       childNodes:[gutter],
+       get children(){return this.childNodes},
+       hasAttribute:attr=>attr==="data-wsl-page",
+       querySelector(){return null},
+       getBoundingClientRect(){return{bottom:1123,height:1123}},
+       offsetHeight:1123,
+       appendChild(node){this.childNodes.push(node)}
+     };
+     created.push(page);
+     editor.appendChild(page);
+     return page;
+   },
+   getComputedStyle:()=>({paddingBottom:"86px"}),
+   document:{
+     createDocumentFragment(){const nodes=[];return{
+       get firstChild(){return nodes[0]??null},
+       appendChild(node){nodes.push(node)},
+       insertBefore(node,reference){nodes.splice(nodes.indexOf(reference),0,node)},
+       removeChild(node){nodes.splice(nodes.indexOf(node),1)}
+     }},
+     createElement(name){return {nodeType:1,tagName:name.toUpperCase(),appendChild(){}}}
+   },
+   breakOversizedParagraph:()=>null
+ };
+ // Simulate real DocumentFragment semantics: appendChild moves from fragment.
+ ctx.createPage=((original)=>original)(ctx.createPage);
+ ctx.visibleChildren=()=>[blank];
+ const oldCreate=ctx.createPage;
+ ctx.createPage=(editor,index)=>{
+   const page=oldCreate(editor,index);
+   const append=page.appendChild.bind(page);
+   page.appendChild=node=>{if(fragmentRef){const i=fragmentRef.nodes.indexOf(node);if(i>=0)fragmentRef.nodes.splice(i,1);}append(node)};
+   return page;
+ };
+ let fragmentRef=null;
+ ctx.document.createDocumentFragment=()=>{
+   const nodes=[];fragmentRef={nodes};
+   return {
+     get firstChild(){return nodes[0]??null},
+     appendChild(node){nodes.push(node)},
+     insertBefore(node,reference){nodes.splice(nodes.indexOf(reference),0,node)}
+   };
+ };
+ const paginate=runInNewContext('('+executable+')',ctx);
+ assert.equal(paginate(root),1);
+ assert.equal(created.length,1);
+ assert.equal(created[0].children.length,2,
+   "one selection gutter plus exactly one existing <p><br></p>");
+ assert.equal(created[0].children[1],blank,"original blank paragraph reused, not duplicated");
+ assert.equal(lastRestored?.startNode,blank);
+ const count=mutations;
+ assert.equal(paginate(root),1,"repeat pagination remains on one sheet");
+ assert.equal(mutations,count,"typing on an in-bounds page must not detach the DOM again");
+ assert.equal(created[0].children.length,2);
+ assert.doesNotMatch(helper,/if\(!root\.textContent\?\.length&&/);
+ assert.match(helper,/if\(children\.length===0\)/);
+});
+
+test("Restoring caret uses original paragraph DOM node, not ambiguous zero text offsets",()=>{
+ const start=helper.indexOf("export function savePageSelection(");
+ const end=helper.indexOf("function findTextOffset(",start);
+ const code=helper.slice(start,end)
+   .replaceAll("export function ","function ")
+   .replace("root:HTMLElement):WordPageSelection|null","root)")
+   .replace("root:HTMLElement,\n  saved:WordPageSelection|null):void","root,saved)")
+   .replace("const textNodes:Text[]=[]","const textNodes=[]")
+   .replace("const find=(position:number):{node:Node;offset:number}=>{","const find=(position)=>{")
+   .replace("const validOffset=(node:Node,offset:number)=>","const validOffset=(node,offset)=>")
+   .replace("querySelector<HTMLElement>","querySelector");
+ const firstP={nodeType:1,childNodes:[{nodeType:1}],textContent:""};
+ const secondP={nodeType:1,childNodes:[{nodeType:1}],textContent:""};
+ const root={childNodes:[firstP,secondP],
+   contains(node){return node===firstP||node===secondP},
+   querySelector(){return null}
+ };
+ let active={
+   startContainer:secondP,startOffset:0,
+   endContainer:secondP,endOffset:0
+ };
+ const selection={rangeCount:1,anchorNode:secondP,
+   getRangeAt:()=>active,
+   removeAllRanges(){this.rangeCount=0},
+   addRange(range){active=range;this.rangeCount=1}
+ };
+ const doc={
+   createRange(){return {
+     startContainer:null,startOffset:0,endContainer:null,endOffset:0,
+     selectNodeContents(){},
+     setStart(node,offset){this.startContainer=node;this.startOffset=offset},
+     setEnd(node,offset){this.endContainer=node;this.endOffset=offset},
+     toString(){return ""}
+   }},
+   createTreeWalker(){throw Error("should not walk text nodes to restore empty caret")}
+ };
+ const ctx={window:{getSelection:()=>selection},document:doc,Node:{TEXT_NODE:3},NodeFilter:{SHOW_TEXT:4}};
+ const funcs=runInNewContext(code+";({savePageSelection,restorePageSelection})",ctx);
+ const stored=funcs.savePageSelection(root);
+ assert.equal(stored.start,0);
+ assert.equal(stored.end,0);
+ assert.equal(stored.startNode,secondP,"capture caret inside second empty paragraph");
+ assert.equal(stored.startOffset,0);
+ // Both paragraphs have zero textContent; text-based restoration would
+ // incorrectly select the first one or the page element.
+ funcs.restorePageSelection(root,stored);
+ assert.equal(active.startContainer,secondP,"caret does not jump above its paragraph");
+ assert.equal(active.startOffset,0);
+ assert.equal(active.endContainer,secondP);
+ assert.match(helper,/if\(root\.contains\(saved\.startNode\)&&root\.contains\(saved\.endNode\)\)/);
+ assert.match(helper,/if\(last&&last\.getBoundingClientRect\(\)\.bottom<=bottom\+1\)return 1/);
 });

@@ -34,7 +34,12 @@ function visibleChildren(root:HTMLElement):Node[]{
   return nodes;
 }
 
-export function savePageSelection(root:HTMLElement):{start:number;end:number}|null{
+export type WordPageSelection={
+  start:number;end:number;
+  startNode:Node;startOffset:number;endNode:Node;endOffset:number;
+};
+
+export function savePageSelection(root:HTMLElement):WordPageSelection|null{
   const selected=window.getSelection();
   if(!selected?.rangeCount||!root.contains(selected.anchorNode))return null;
   const range=selected.getRangeAt(0);
@@ -44,15 +49,42 @@ export function savePageSelection(root:HTMLElement):{start:number;end:number}|nu
     prefix.setEnd(range.startContainer,range.startOffset);
     const start=prefix.toString().length;
     prefix.setEnd(range.endContainer,range.endOffset);
-    return {start,end:prefix.toString().length};
+    return {
+      start,end:prefix.toString().length,
+      // Keep exact DOM boundary containers. Text offsets alone cannot tell
+      // the difference between separate empty <p><br></p> paragraphs, which
+      // caused the caret to jump between ¶ markers after each keystroke.
+      startNode:range.startContainer,startOffset:range.startOffset,
+      endNode:range.endContainer,endOffset:range.endOffset
+    };
   }catch{return null;}
 }
 
 export function restorePageSelection(root:HTMLElement,
-  saved:{start:number;end:number}|null):void{
+  saved:WordPageSelection|null):void{
   if(!saved)return;
   const selection=window.getSelection();
   if(!selection)return;
+  // Pagination moves existing paragraph/text DOM nodes instead of replacing
+  // them. Restore the original element/text offsets before attempting any
+  // lossy character-count fallback (zero for every empty paragraph).
+  if(root.contains(saved.startNode)&&root.contains(saved.endNode)){
+    const validOffset=(node:Node,offset:number)=>
+      offset>=0&&offset<=(
+        node.nodeType===Node.TEXT_NODE?(node.textContent?.length??0):node.childNodes.length
+      );
+    if(validOffset(saved.startNode,saved.startOffset)&&
+       validOffset(saved.endNode,saved.endOffset)){
+      try{
+        const exact=document.createRange();
+        exact.setStart(saved.startNode,saved.startOffset);
+        exact.setEnd(saved.endNode,saved.endOffset);
+        selection.removeAllRanges();
+        selection.addRange(exact);
+        return;
+      }catch{/* Split paragraph can detach the selected text node. */}
+    }
+  }
   const walker=document.createTreeWalker(root,NodeFilter.SHOW_TEXT);
   const textNodes:Text[]=[];
   while(walker.nextNode()){
@@ -132,6 +164,21 @@ function breakOversizedParagraph(block:HTMLElement,limit:number):HTMLElement|nul
 }
 
 export function paginateWordEditor(root:HTMLElement):number{
+  // Do not detach/reinsert the editor DOM on every typed character while a
+  // single page still fits. That disrupts the native caret and undo history.
+  const existingPage=root.children.length===1?
+    root.firstElementChild as HTMLElement|null:null;
+  if(existingPage?.hasAttribute(PAGE_ATTRIBUTE)&&
+     !existingPage.querySelector("["+MANUAL_BREAK_ATTRIBUTE+"]")){
+    const content=Array.from(existingPage.children).filter(child=>
+      !child.hasAttribute("data-wsl-selection-gutter"));
+    const last=content[content.length-1];
+    const bounds=existingPage.getBoundingClientRect();
+    const padding=parseFloat(getComputedStyle(existingPage).paddingBottom)||0;
+    const scale=bounds.height/Math.max(1,existingPage.offsetHeight);
+    const bottom=bounds.bottom-padding*scale;
+    if(last&&last.getBoundingClientRect().bottom<=bottom+1)return 1;
+  }
   const saved=savePageSelection(root);
   const children=visibleChildren(root);
   const fragment=document.createDocumentFragment();
@@ -177,7 +224,10 @@ export function paginateWordEditor(root:HTMLElement):number{
       nextPage();
     }
   }
-  if(!root.textContent?.length&&root.querySelectorAll("[data-wsl-page]").length===1){
+  // An existing <p><br></p> is already a real empty paragraph. Checking
+  // root.textContent here appended a SECOND paragraph every time pagination
+  // ran, because BR/empty paragraphs do not contribute textContent.
+  if(children.length===0){
     const blank=document.createElement("p");
     blank.appendChild(document.createElement("br"));
     page.appendChild(blank);
