@@ -196,6 +196,7 @@ test("Restoring caret uses original paragraph DOM node, not ambiguous zero text 
    .replace("root:HTMLElement):WordPageSelection|null","root)")
    .replace("root:HTMLElement,\n  saved:WordPageSelection|null):void","root,saved)")
    .replace("const textNodes:Text[]=[]","const textNodes=[]")
+   .replaceAll(" as Text","")
    .replace("const find=(position:number):{node:Node;offset:number}=>{","const find=(position)=>{")
    .replace("const validOffset=(node:Node,offset:number)=>","const validOffset=(node,offset)=>")
    .replace("querySelector<HTMLElement>","querySelector");
