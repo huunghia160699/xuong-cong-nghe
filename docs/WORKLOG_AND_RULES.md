@@ -25,6 +25,14 @@
 
 ## III. Lịch sử
 
+### 2026-10-18 — Tổng kiểm thử Paragraph và kéo thước Left Indent đồng bộ đoạn văn
+- **Yêu cầu:** Kiểm thử lại đầy đủ 14 công cụ nhóm Paragraph (bullets, numbering, multilevel, tăng/giảm indent, sort, ¶, 4 kiểu căn hàng, line spacing, shading, borders), và thước ngang dọc. Kéo Left Indent phải làm cả dòng đầu lẫn các dòng còn lại của đoạn đi theo.
+- **Phân tích lỗi:** `word-page-rulers.tsx` trước đây thay `left` trong state nhưng giữ nguyên `firstLine`; `word-simulator.tsx` tính `text-indent = firstLine - left`, nên dòng đầu đứng nguyên khi kéo mốc lề trái bên dưới. Increase/Decrease Indent qua `execCommand("indent"/"outdent")` có thể tạo cấu trúc không tương thích `marginLeft` của ruler. Hàm `currentBlock` ưu tiên savedSelection trước lựa chọn thực, dễ nhắm nhầm đoạn.
+- **Sửa:** Lower Left Indent làm dịch cả `left` và `firstLine` theo cùng delta, giữ độ lệch first-line/hanging hiện có; handle trên vẫn độc lập, handle phải điều chỉnh marginRight. Ràng buộc kéo theo chiều rộng vùng soạn thảo, bước 0.25 cm và zoom. Bỏ `aria-hidden` của thước ngang vì các mốc là nút có thể tương tác. Current block ưu tiên selection thực. Nút Increase/Decrease Indent dùng cùng marginLeft/textIndent/ruler state (bước 1.25 cm), đồng bộ ngược về ruler sau thay đổi, không phụ thuộc `execCommand` tạo blockquote.
+- **Kiểm thử bổ sung:** `tests/word-paragraph-interactions.test.mjs` kiểm tra 14 công cụ ×10 vòng, ba mốc thước ×10 vòng ×60/100/160% zoom; Left Indent đi cùng dòng đầu, thụt lề từng dòng, lề phải; CSS marginLeft, marginRight và textIndent cập nhật theo tọa độ; Increase/Decrease ×10 lần và các tùy chọn line spacing, shading, borders ×10 lần. Sửa assertion cũ `tests/presentation-basics.test.mjs`.
+- **Giới hạn:** Không dùng máy Windows/Chromium để tự kéo chuột nghiệm thu trực quan; CI là mô phỏng logic/event, không thay thế E2E thực tế. Không thay đổi các tính năng khác của Word hoặc bài giảng.
+- **Phát hành:** Cần Unit tests, Typecheck, Build, Smoke và Vercel Production READY cùng GitHub SHA.
+
 ### 2026-10-18 — Sửa Space mất dấu cách và font tự trở về khi không bôi chọn
 - **Lỗi:** Nhấn Space trong vùng Word không tạo khoảng trắng; khi chỉ đặt con trỏ rồi đổi font (không bôi chọn), dropdown lập tức trở về font ban đầu. Có liên quan cả font size.
 - **Nguyên nhân:** `cleanScriptExitAnchor()` trước đó duyệt *toàn bộ* text node, xóa mọi `U+00A0`. Chromium dùng U+00A0 để biểu diễn nhiều lần nhấn Space trong `contentEditable` nên người dùng mất khoảng trắng. `fontName`/`fontSize` qua `execCommand` ở Range thu gọn chưa đảm bảo có DOM mang định dạng; `syncFontControls()` đọc lại font cũ và reset dropdown.

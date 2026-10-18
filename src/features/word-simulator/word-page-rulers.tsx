@@ -25,6 +25,12 @@ type RulerIndentPart=keyof RulerIndent;
 
 type RulerPointerEvent=React.PointerEvent<HTMLButtonElement>;
 
+// The lower Left Indent handle moves the whole paragraph, INCLUDING its
+// first-line mark. The top handle adjusts only the first line (Word behavior).
+function moveLeftIndent(indent:RulerIndent,nextLeft:number):RulerIndent{
+  return {...indent,left:nextLeft,firstLine:Math.max(0,nextLeft+indent.firstLine-indent.left)};
+}
+
 /** Three separate 12px-wide markers. The two left markers are vertically
  * stacked and movable individually; the right marker is a bottom-up tab. */
 function RulerIndentMarker({kind,left,onPointerDown,onPointerMove,onPointerUp,onPointerCancel}:{
@@ -69,13 +75,13 @@ function HorizontalRulerTicks({landscape,narrow,zoom,scrollLeft,indent,onIndentS
   const [paperGeometry,setPaperGeometry]=useState({left:0,viewportLeft:0,pixelRatio:1,editorOffset:0,editorWidth:0});
   const {width:paperWidth}=a4Dimensions(landscape);
   const scaledWidth=paperWidth*zoom/100;
-  const dragRef=useRef<{pointerId:number;kind:RulerIndentPart;startX:number;startValue:number}|null>(null);
+  const dragRef=useRef<{pointerId:number;kind:RulerIndentPart;startX:number;startValue:number;startIndent:RulerIndent}|null>(null);
   const clamped=(value:number,min:number,max:number)=>Math.min(max,Math.max(min,value));
   const onMarkerPointerDown=(event:RulerPointerEvent,kind:RulerIndentPart)=>{
     if(!onIndentChange||!event.isPrimary||event.button!==0)return;
     event.preventDefault();event.stopPropagation();
     onIndentStart?.(kind);
-    dragRef.current={pointerId:event.pointerId,kind,startX:event.clientX,startValue:indent[kind]};
+    dragRef.current={pointerId:event.pointerId,kind,startX:event.clientX,startValue:indent[kind],startIndent:{...indent}};
     event.currentTarget.setPointerCapture(event.pointerId);
   };
   const onMarkerPointerMove=(event:RulerPointerEvent)=>{
@@ -86,10 +92,17 @@ function HorizontalRulerTicks({landscape,narrow,zoom,scrollLeft,indent,onIndentS
     const delta=(event.clientX-drag.startX)*100/zoom*direction;
     const editorWidth=paperGeometry.editorWidth*100/zoom;
     const step=PX_PER_QUARTER_CM;
+    const originalFirstOffset=drag.startIndent.firstLine-drag.startIndent.left;
+    const minimum=drag.kind==="left"?Math.max(0,-originalFirstOffset):0;
     const maximum=drag.kind==="right"?Math.max(0,editorWidth-indent.left-24):
+      drag.kind==="left"?Math.max(minimum,editorWidth-indent.right-24-Math.max(0,originalFirstOffset)):
       Math.max(0,editorWidth-indent.right-24);
-    const value=clamped(Math.round((drag.startValue+delta)/step)*step,0,maximum);
-    if(Math.abs(value-indent[drag.kind])>0.1)onIndentChange({...indent,[drag.kind]:value});
+    const value=clamped(Math.round((drag.startValue+delta)/step)*step,minimum,maximum);
+    if(Math.abs(value-indent[drag.kind])>0.1){
+      // Never leave the first line behind when moving the lower left handle.
+      onIndentChange(drag.kind==="left"?moveLeftIndent(drag.startIndent,value):
+        {...indent,[drag.kind]:value});
+    }
   };
   const onMarkerPointerUp=(event:RulerPointerEvent)=>{
     if(dragRef.current?.pointerId!==event.pointerId)return;
@@ -165,7 +178,7 @@ function HorizontalRulerTicks({landscape,narrow,zoom,scrollLeft,indent,onIndentS
   const contentStart=snapTick(paperGeometry.editorOffset);
   const contentEnd=snapTick(paperGeometry.editorOffset+paperGeometry.editorWidth);
 
-  return <div ref={rulerRef} className="wsl-word-horizontal-ruler" aria-hidden="true">
+  return <div ref={rulerRef} className="wsl-word-horizontal-ruler">
     <div className="wsl-word-ruler-cm-track" style={{left:paperGeometry.left,width:scaledWidth}}>
       {ticks.map(tick=><span key={tick.index}
         className={"wsl-word-ruler-cm-tick wsl-word-ruler-cm-tick-"+tick.kind}

@@ -1040,7 +1040,11 @@ export function WordSimulator(){
   }
 
   function currentBlock():HTMLElement|null{
-    const node=savedSelection.current?.startContainer??window.getSelection()?.anchorNode;
+    const root=editor.current;
+    const active=window.getSelection()?.anchorNode;
+    // Prefer the real current caret/selection so ruler dragging targets the
+    // paragraph the user actually clicked, not a stale cached selection.
+    const node=active&&root?.contains(active)?active:savedSelection.current?.startContainer;
     if(!node)return null;
     const element=node.nodeType===Node.ELEMENT_NODE?node as Element:node.parentElement;
     return (element?.closest("p,div,li,h1,h2,h3,h4,blockquote,td,th")??null) as HTMLElement|null;
@@ -1064,8 +1068,9 @@ export function WordSimulator(){
         old:{left,right,firstLine});
   }
   function beginRulerIndent(){
-    indentDragging.current=true;
+    // Freeze the current paragraph across pointer capture and re-renders.
     indentTarget.current=indentBlock();
+    indentDragging.current=true;
   }
   function applyRulerIndent(next:RulerIndent){
     setRulerIndent(next);
@@ -1080,6 +1085,22 @@ export function WordSimulator(){
   }
   function endRulerIndent(){
     indentDragging.current=false;
+    indentTarget.current=null;
+    syncRulerIndent();
+  }
+  function stepParagraphIndent(direction:1|-1){
+    restoreSelection();
+    const block=indentBlock();
+    if(!block){setStatus("Đặt con trỏ trong đoạn văn cần thụt lề");return;}
+    const left=Math.max(0,parseFloat(block.style.marginLeft)||0);
+    const right=Math.max(0,parseFloat(block.style.marginRight)||0);
+    const firstLine=Math.max(0,left+(parseFloat(block.style.textIndent)||0));
+    const step=96/2.54*1.25; // Word's standard 1.25 cm indent step.
+    const nextLeft=Math.max(0,Math.round((left+direction*step)/step)*step);
+    const nextFirstLine=Math.max(0,firstLine+nextLeft-left);
+    // Ribbon buttons and the ruler use the SAME paragraph style properties.
+    indentTarget.current=block;
+    applyRulerIndent({left:nextLeft,right,firstLine:nextFirstLine});
     indentTarget.current=null;
     syncRulerIndent();
   }
@@ -1264,6 +1285,10 @@ export function WordSimulator(){
       setStatus("Đã sao chép định dạng; chọn chữ đích");return;
     }
     if(name==="multilevelList"){insertMultilevelList();return;}
+    if(name==="indent"||name==="outdent"){
+      stepParagraphIndent(name==="indent"?1:-1);
+      return;
+    }
     if(name==="paragraphShading"){
       restoreSelection();
       const block=currentBlock();

@@ -1,5 +1,12 @@
 # Changelog
 
+## 2026-10-18 — Paragraph và thước Left Indent đồng bộ đoạn văn
+- Kéo Left Indent (mốc bên dưới) làm cả đoạn văn và dòng đầu di chuyển theo; bảo toàn khoảng lệch first-line/hanging indent.
+- Điều chỉnh First Line Indent độc lập, Right Indent theo lề phải; thước căn theo vùng soạn thảo, hỗ trợ zoom 60/100/160%.
+- Increase/Decrease Indent sử dụng cùng margin CSS như thước, tránh lỗi lệch giữa Ribbon và ruler.
+- Ưu tiên đoạn có caret thực khi chọn mục tiêu; thước ngang chứa nút có thể tương tác không còn `aria-hidden`.
+- Kiểm thử 14 công cụ Paragraph và các kiểu khoảng cách, nền, viền, đánh số, căn lề và kéo thước lặp 10 vòng với kiểm tra CSS đoạn văn.
+
 ## 2026-10-18 — Sửa phím Space và font chọn trước khi nhập trong Word
 - Không xóa mọi dấu cách NBSP của trình duyệt; chỉ xóa placeholder thoát Sup/Sub được đánh dấu riêng.
 - Chọn font hoặc cỡ chữ ở con trỏ khi chưa bôi chọn sẽ giữ nguyên trạng thái dropdown và áp dụng lên nội dung gõ sau đó, gồm cả dấu cách.

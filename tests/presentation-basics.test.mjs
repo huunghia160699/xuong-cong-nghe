@@ -1129,7 +1129,7 @@ test("Word ruler indentation markers use three individually movable 12px tabs wi
  assert.match(ruler,/const delta=\(event\.clientX-drag\.startX\)\*100\/zoom\*direction;/);
  assert.match(ruler,/const step=PX_PER_QUARTER_CM;/);
  assert.match(ruler,/Math\.round\(\(drag\.startValue\+delta\)\/step\)\*step/);
- assert.match(ruler,/onIndentChange\(\{\.\.\.indent,\[drag\.kind\]:value\}\)/);
+ assert.match(ruler,/onIndentChange\(drag\.kind==="left"\?moveLeftIndent\(drag\.startIndent,value\):/);
  const wrap=css.match(/\.wsl-word-ruler-indent\{([^}]+)\}/)?.[1];
  const svg=css.match(/\.wsl-word-ruler-indent-svg\{([^}]+)\}/)?.[1];
  assert.ok(wrap&&svg);
