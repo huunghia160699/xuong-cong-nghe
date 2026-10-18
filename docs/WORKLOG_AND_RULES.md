@@ -25,6 +25,13 @@
 
 ## III. Lịch sử
 
+### 2026-10-18 — Fix ký hiệu ¶ nhảy xuống dòng dưới con trỏ ở đoạn trống
+- **Ảnh người dùng:** con trỏ đứng ở dòng thứ nhất, ký hiệu ¶ xuất hiện ở dòng thứ hai; ngay khi gõ chữ, ¶ nhảy ngược lên cạnh chữ, không giống Word. Đây là lỗi *render ký hiệu paragraph mark*, không phải bằng chứng có thêm một đoạn trống thật.
+- **Nguyên nhân gốc:** CSS `word-home-ribbon.css` sử dụng `.wsl-editor.show-paragraph-marks p:after{content:" ¶"}`; đoạn rỗng có DOM `<p><br></p>`, ký tự BR chiếm dòng hiện tại nên ::after là nội dung sau BR và bị đẩy xuống dòng mới. Khi nhập chữ, Chromium loại BR nên ký hiệu ¶ bất ngờ lên cùng dòng.
+- **Sửa có phạm vi hẹp:** Giữ ::after inline cho đoạn có chữ. Với `p:has(>br:only-child)` đặt `position:relative` lên đoạn và `::after{content:"¶";position:absolute;left:3px;top:2px;pointer-events:none}` để ký hiệu ¶ của đoạn trống luôn nằm cạnh caret trên cùng một dòng. Không xóa BR (để tránh mất caret), không chèn/kéo node, không can thiệp auto pagination/Enter hay nhúng keyboard handler.
+- **Kiểm thử:** `tests/word-pagination.test.mjs` bổ sung regression xác nhận ký hiệu đoạn không rỗng vẫn inline, đoạn `<p><br></p>` sử dụng pseudo tuyệt đối trên dòng đầu, con trỏ không bị pseudo chặn; giữ nguyên tất cả test phân trang. Chạy CI bốn bước và Vercel Production READY trùng GitHub main SHA.
+- **Giới hạn:** Đây là sửa CSS dựa trên ảnh và DOM source, chưa chụp nghiệm thu trực tiếp trong Windows Chromium; các đoạn trống đã lưu hoặc tạo bởi nội dung khác `<p><br></p>` cần kiểm tra thêm nếu tái hiện.
+
 ### 2026-10-18 — Sửa hai dấu ¶ tự phát sinh và con trỏ nhảy dòng trong Word phân trang
 - **Triệu chứng do người dùng chụp:** Với trang trống, xuất hiện hai dấu kết thúc đoạn ¶ (trông như Enter thừa). Khi đặt con trỏ và gõ chữ, dấu ¶ ở dưới bị đẩy lên hoặc vị trí nhập không còn cố định.
 - **Nguyên nhân 1:** `paginateWordEditor` kiểm tra `!root.textContent?.length` rồi tự chèn `<p><br></p>` ngay cả khi editor đã chứa đoạn rỗng hợp lệ `<p><br></p>`. Vì `BR` không đóng góp `textContent`, mỗi lần phân trang lại thêm một đoạn dư.

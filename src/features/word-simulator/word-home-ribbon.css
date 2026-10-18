@@ -84,5 +84,18 @@
 .wsl-tabs-back{width:36px;min-width:36px;height:31px;display:grid;place-items:center;border-right:1px solid #d9d9df;color:#37536b}
 .wsl-tabs-back:hover{background:#eaf3ff;color:#005bfd}
 .wsl-tabs-back:focus-visible{outline:2px solid #005bfd;outline-offset:-2px}
-.wsl-editor.show-paragraph-marks p:after{content:" ¶";font:12px Georgia,serif;color:#7892ac;user-select:none}
+.wsl-editor.show-paragraph-marks p:after{content:" ¶";font:12px Georgia,serif;color:#7892ac;user-select:none;pointer-events:none}
+/* An empty editable paragraph is <p><br></p>. The BR establishes the
+   caret line; a normal ::after would be painted on the NEXT line, then
+   jump back when typing removes the BR. Pin only that empty paragraph's
+   visible mark to its first line, without changing BR or the editor DOM. */
+.wsl-editor.show-paragraph-marks p:has(>br:only-child){position:relative}
+.wsl-editor.show-paragraph-marks p:has(>br:only-child)::after{
+  content:"¶";
+  position:absolute;
+  left:3px;
+  top:2px;
+  pointer-events:none;
+  white-space:pre;
+}
 .wsl-editor.show-paragraph-marks h1:after,.wsl-editor.show-paragraph-marks h2:after{content:" ¶";font:12px Georgia,serif;color:#7892ac;user-select:none}

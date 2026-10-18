@@ -1,5 +1,11 @@
 # Changelog
 
+## 2026-10-18 — Dấu ¶ nằm cạnh con trỏ trong đoạn trống
+- Khắc phục CSS khiến dấu kết thúc đoạn ¶ rơi xuống dưới khi đoạn trống có `<br>`; đoạn trống giờ hiển thị ký hiệu cạnh con trỏ trên cùng dòng.
+- Khi nhập chữ, ký hiệu tiếp tục chạy theo cuối dòng thay vì nhảy từ dòng dưới lên.
+- Không sửa tài liệu, không bỏ `<br>`, không tác động Enter, Ctrl+Enter hoặc phân trang.
+- Bổ sung kiểm thử dấu ¶ của đoạn rỗng và đoạn có chữ.
+
 ## 2026-10-18 — Sửa lỗi Enter/¶ thừa và con trỏ nhảy trong Word phân trang
 - Khi tài liệu đã có đoạn trống `<p><br></p>`, không tự tạo thêm đoạn rỗng chỉ vì `textContent` trống.
 - Phục hồi vị trí con trỏ theo phần tử và offset gốc, phân biệt các đoạn trống cùng có độ dài 0.

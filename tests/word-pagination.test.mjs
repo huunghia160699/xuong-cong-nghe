@@ -241,3 +241,26 @@ test("Restoring caret uses original paragraph DOM node, not ambiguous zero text 
  assert.match(helper,/if\(root\.contains\(saved\.startNode\)&&root\.contains\(saved\.endNode\)\)/);
  assert.match(helper,/if\(last&&last\.getBoundingClientRect\(\)\.bottom<=bottom\+1\)return 1/);
 });
+
+
+test("Empty paragraph mark stays on its caret line instead of dropping below <br>",()=>{
+ const css=readFileSync("src/features/word-simulator/word-home-ribbon.css","utf8");
+ const text=css.match(/\.wsl-editor\.show-paragraph-marks p:after\{([^}]*)\}/);
+ const blank=css.match(/\.wsl-editor\.show-paragraph-marks p:has\(>br:only-child\)::after\{([^}]*)\}/);
+ assert.ok(text,"normal paragraph mark is present");
+ assert.ok(blank,"empty paragraphs need a BR-specific marker placement");
+ assert.match(text[1],/content:" ¶"/,"normal text keeps inline paragraph mark");
+ assert.doesNotMatch(text[1],/position:absolute/,"typed text mark follows final character naturally");
+ assert.match(blank[1],/content:"¶"/,"empty paragraph is marked once");
+ assert.match(blank[1],/position:absolute/,"BR cannot push the marker below its caret line");
+ assert.match(blank[1],/top:2px/,"empty marker remains on the first visual row");
+ assert.match(blank[1],/left:3px/,"empty marker sits next to the insertion caret");
+ assert.match(css,/\.wsl-editor\.show-paragraph-marks p:has\(>br:only-child\)\{position:relative\}/);
+ assert.match(blank[1],/pointer-events:none/,"mark must not intercept editing");
+ assert.match(simulator,/const DEFAULT_CONTENT="<p><br><\/p>"/);
+ assert.match(simulator,/showMarks\?"show-paragraph-marks":""/);
+ // A plain p with characters must NOT match the empty paragraph selector.
+ const emptyTags=["<p><br></p>","<p><br/></p>"];
+ for(const html of emptyTags)assert.match(html,/<p><br\s*\/?>\s*<\/p>/);
+ assert.doesNotMatch("<p>adsa</p>",/<p><br\s*\/?>\s*<\/p>/);
+});
