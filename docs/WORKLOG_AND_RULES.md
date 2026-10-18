@@ -25,6 +25,14 @@
 
 ## III. Lịch sử
 
+### 2026-10-19 — Chuẩn hóa giãn dòng và giãn đoạn Word
+- **Triệu chứng:** Một lần Enter tạo khoảng cách dọc gần 38px vì editor 16px × 1.55 line-height + 13px margin-bottom, trong khi đổi Line Spacing chỉ áp dụng được một đoạn.
+- **Sửa:** `word-simulator.css` đặt mặc định 1.15 line-height, 8px cách sau đoạn; `word-simulator.tsx` áp dụng line spacing và before/after spacing cho tất cả đoạn giao vùng bôi chọn, với fallback đoạn tại con trỏ; `word-home-ribbon.tsx` thêm tùy chọn trước/sau đoạn 0/6/12/18px trong menu giãn dòng và hộp thoại Paragraph.
+- **Tính bền vững:** Bộ lọc `sanitize` cho phép `margin-top` theo danh sách giá trị số px an toàn như `margin-bottom`, vì vậy định dạng giãn đoạn không mất khi lưu/khôi phục. Không sửa DOM dấu ¶ hoặc các wrapper phân trang.
+- **Kiểm thử:** Bổ sung kiểm thử mặc định CSS, selection nhiều đoạn, cách trước/sau và lưu định dạng; cập nhật các kiểm thử source contract liên quan. GitHub CI được kiểm tra trước khi nhập nhánh vào main. Chưa kiểm tra thủ công Chrome Windows/UniKey.
+- **GitHub:** nhánh `fix/word-line-paragraph-spacing-20261019`, PR #44.
+- **Vercel Production:** chưa triển khai trước khi merge.
+
 ### 2026-10-19 — Đồng bộ dấu ¶ với kích cỡ chữ và con trỏ; lề chọn dòng dùng mũi tên
 - **Ảnh phản hồi:** dấu ¶ của đoạn rỗng và đoạn có chữ có cỡ nhỏ cố định, thay đổi vị trí theo nội dung; người dùng yêu cầu ¶ ở đúng cuối dòng và cùng cỡ với chữ/con trỏ nháy. Lề chọn dòng không được đổi sang bàn tay `pointer` hoặc tô nền hover.
 - **Nguyên nhân:** `word-home-ribbon.css` dùng `font:12px Georgia` áp vào pseudo `p::after` bất kể cỡ chữ thực tế; đoạn rỗng `p:has(>br:only-child)::after` dùng `left:3px;top:2px` cố định, không tỉ lệ với cỡ chữ. Khi chữ cuối nằm trong thẻ inline có `font-size` khác phần tử p, pseudo không kế thừa trực tiếp cỡ chữ. CSS `.wsl-word-selection-gutter` vẫn `cursor:pointer` (bàn tay).

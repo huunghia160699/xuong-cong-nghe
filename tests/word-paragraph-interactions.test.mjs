@@ -154,7 +154,7 @@ test("Word paragraph CSS follows ruler values for margin left, right and first-l
 });
 
 test("Paragraph Increase/Decrease Indent uses same ruler geometry; 10 rounds",()=>{
- const fn=section(simulator,'  function stepParagraphIndent(direction:1|-1)','  function selectedChange(')
+ const fn=section(simulator,'  function stepParagraphIndent(direction:1|-1)','  // Format every selected paragraph')
   .replace('direction:1|-1','direction');
  const block={style:{marginLeft:"",marginRight:"",textIndent:""}};
  const indentTarget={current:null};
@@ -187,15 +187,17 @@ test("Paragraph Increase/Decrease Indent uses same ruler geometry; 10 rounds",()
  assert.match(simulator,/if\(name==="indent"\|\|name==="outdent"\)\{\s*stepParagraphIndent\(name==="indent"\?1:-1\)/);
 });
 
-test("Paragraph dropdown actions modify shading, spacing and borders without changing unrelated styles",()=>{
+test("Paragraph dropdown actions modify line and paragraph spacing, shading and borders",()=>{
  const fn=section(simulator,'  function runHome(name:string,value?:string)','  function handleEditorMouseUp()')
   .replace('name:string,value?:string','name,value')
   .replace(')?value!:block.style.lineHeight',')?value:block.style.lineHeight');
- const block={style:{backgroundColor:"",lineHeight:"",borderTop:"",borderBottom:"",marginLeft:"25px"}};
+ const block={style:{backgroundColor:"",lineHeight:"",marginTop:"",marginBottom:"",borderTop:"",borderBottom:"",marginLeft:"25px"}};
+ const second={style:{lineHeight:"",marginTop:"",marginBottom:"",marginLeft:"40px"}};
  let changed=0;
  const context={
    editor:{current:{contains:()=>true}},
    restoreSelection(){},currentBlock:()=>block,
+   selectedParagraphBlocks:()=>[block,second],
    markChanged(){changed++},setStatus(m){throw Error(m)},
    command(){throw Error("expected inline paragraph handling")},
    stepParagraphIndent(){},insertMultilevelList(){},
@@ -206,6 +208,15 @@ test("Paragraph dropdown actions modify shading, spacing and borders without cha
   for(const spacing of ["1","1.15","1.5","2"]){
    homeAction("lineSpacing",spacing);
    assert.equal(block.style.lineHeight,spacing);
+   assert.equal(second.style.lineHeight,spacing,"apply to each selected paragraph");
+  }
+  for(const spacing of ["0","6","12","18"]){
+   homeAction("paragraphSpacingBefore",spacing);
+   assert.equal(block.style.marginTop,spacing+"px");
+   assert.equal(second.style.marginTop,spacing+"px");
+   homeAction("paragraphSpacingAfter",spacing);
+   assert.equal(block.style.marginBottom,spacing+"px");
+   assert.equal(second.style.marginBottom,spacing+"px");
   }
   homeAction("paragraphShading","#dbeafe");
   assert.equal(block.style.backgroundColor,"#dbeafe");
@@ -222,7 +233,7 @@ test("Paragraph dropdown actions modify shading, spacing and borders without cha
   assert.equal(block.style.borderBottom,"");
   assert.equal(block.style.marginLeft,"25px","paragraph controls preserve ruler indents");
  }
- assert.equal(changed,10*(4+2+3));
+ assert.equal(changed,10*(4+8+2+3));
 });
 
 
@@ -356,4 +367,32 @@ test("Ruler marker remains pointer on hover and draggable at every zoom",()=>{
    const documentPixels=cssPixels*100/zoom;
    assert.ok(Math.abs(documentPixels-(96/2.54)*(round+1)/4)<0.001);
  }
+});
+
+test("Word spacing defaults, persistence and selection behavior stay consistent",()=>{
+ const css=readFileSync("src/features/word-simulator/word-simulator.css","utf8");
+ assert.match(css,/\.wsl-editor\{[^}]*font:16px\/1\.15 Aptos,Calibri,Arial,sans-serif/s);
+ assert.match(css,/\.wsl-editor p\{margin:0 0 8px;min-height:1em\}/);
+ assert.match(simulator,/const marginTop=style\.marginTop;\s*if\(/);
+ assert.match(simulator,/safeStyles\.push\("margin-top:"\+marginTop\)/);
+ assert.match(home,/run\("paragraphSpacingBefore",value\)/);
+ assert.match(home,/run\("paragraphSpacingAfter",value\)/);
+ const fn=section(simulator,'  function selectedParagraphBlocks():HTMLElement[]{','  function selectedChange(')
+  .replace('function selectedParagraphBlocks():HTMLElement[]{','function selectedParagraphBlocks(){')
+  .replace('root.querySelectorAll<HTMLElement>','root.querySelectorAll');
+ const first={matches:()=>true,contains:()=>false};
+ const second={matches:()=>true,contains:()=>false};
+ const parent={matches:()=>true,contains:other=>other===first};
+ const selected=[parent,first,second];
+ const root={contains:()=>true,querySelectorAll:()=>selected};
+ const selection={rangeCount:1,isCollapsed:false,anchorNode:{},focusNode:{},
+   getRangeAt:()=>({intersectsNode:()=>true})};
+ const selectedBlocks=runInNewContext('('+fn+')',{
+   editor:{current:root},window:{getSelection:()=>selection},currentBlock:()=>first
+ });
+ assert.deepEqual(Array.from(selectedBlocks()),[first,second],
+   "include both selected blocks and avoid formatting their parent twice");
+ selection.isCollapsed=true;
+ assert.deepEqual(Array.from(selectedBlocks()),[first],
+   "collapsed selection formats only the current paragraph");
 });

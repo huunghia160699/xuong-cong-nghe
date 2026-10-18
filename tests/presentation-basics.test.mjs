@@ -654,11 +654,11 @@ test("Word Ribbon splits icon actions and 13px dropdown menus without fake contr
                        'run("paragraphBorder","top")'])
    assert.ok(home.includes(action),action);
  for(const action of ['if(name==="pasteRich")','if(name==="changeCaseMode")','if(name==="underlineMode")',
-                       'if(name==="lineSpacing"||name==="paragraphBorder")'])
+                       'if(name==="lineSpacing"||name==="paragraphSpacingBefore"'])
    assert.ok(editor.includes(action),action);
  assert.match(editor,/sanitize\(await blob\.text\(\)\)/);
  assert.match(editor,/block\.style\.borderTop=/);
- assert.match(editor,/block\.style\.lineHeight=/);
+ assert.match(editor,/paragraph\.style\.lineHeight=/);
  assert.match(editor,/changeCasePreservingStyles\(value\)/);
 });
 

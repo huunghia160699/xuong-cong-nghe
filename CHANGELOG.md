@@ -1,5 +1,11 @@
 # Changelog
 
+## 2026-10-19 — Sửa giãn dòng và giãn đoạn trong Word
+- Mặc định giảm giãn dòng từ 1.55 xuống 1.15; khoảng cách sau mỗi đoạn từ 13px về 8px, tránh Enter một lần tạo dòng trông quá xa.
+- Menu Line Spacing và hộp thoại Paragraph cho chọn giãn dòng 1/1.15/1.5/2 và cách trước/sau đoạn 0/6/12/18px.
+- Khi bôi chọn nhiều đoạn, điều chỉnh giãn dòng, giãn đoạn áp dụng đồng bộ lên toàn bộ đoạn được chọn; lưu và khôi phục được cả cách trước lẫn cách sau.
+- Giữ nguyên phân trang, Ctrl+Enter, ¶ và định dạng nội tuyến.
+
 ## 2026-10-19 — Dấu ¶ cùng cỡ chữ, lề chọn dòng dùng mũi tên
 - Dấu ¶ cuối đoạn và tiêu đề theo cỡ chữ tính từ ký tự cuối, không còn cỡ 12px cố định.
 - Đoạn trống: ¶ nằm cạnh caret trên cùng dòng, dùng khoảng cách tỉ lệ với font thay vì tọa độ 3px/2px. Giữ caret native theo font-size thực.
