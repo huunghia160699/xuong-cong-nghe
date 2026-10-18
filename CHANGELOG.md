@@ -1,5 +1,10 @@
 # Changelog
 
+## 2026-10-18 — Left Indent bỏ đường viền trên khối dưới
+- Loại bỏ border-top của thanh chữ nhật phía dưới Left Indent, giữ cạnh trái, phải, dưới.
+- Không thay chiều cao, vị trí, cursor pointer và cơ chế kéo các dấu thụt lề.
+- Cập nhật kiểm thử SVG để ngăn đường viền trên xuất hiện trở lại.
+
 ## 2026-10-18 — Thiết kế lại dấu thụt lề trên thước Word
 - Left Indent: hình mũi nhọn và thân giống Right Indent, thêm một khối chữ nhật phía dưới để phân biệt.
 - First Line Indent và Right Indent: giảm độ cao phần chữ nhật còn 4px; giữ chiều rộng 12px, nét viền 1px.

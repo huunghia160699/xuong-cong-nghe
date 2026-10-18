@@ -61,8 +61,11 @@ function RulerIndentMarker({kind,left,onPointerDown,onPointerMove,onPointerUp,on
           <path d="M.5 4.5L6 .5L11.5 4.5V8.5H.5Z"
             fill="#fff" stroke="#818181" strokeWidth="1" strokeLinejoin="miter"/>
           {/* The additional bottom bar distinguishes Left from Right. */}
-          {kind==="left"&&<rect x=".5" y="9.5" width="11" height="4"
-            fill="#fff" stroke="#818181" strokeWidth="1"/>}
+          {kind==="left"&&<>
+            <rect x=".5" y="9.5" width="11" height="4" fill="#fff"/>
+            <path d="M.5 9.5V13.5H11.5V9.5" fill="none"
+              stroke="#818181" strokeWidth="1"/>
+          </>}
         </>}
     </svg>
   </button>;

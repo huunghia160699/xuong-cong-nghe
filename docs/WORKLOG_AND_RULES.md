@@ -25,6 +25,12 @@
 
 ## III. Lịch sử
 
+### 2026-10-18 — Bỏ viền trên của thanh chữ nhật dưới Left Indent
+- **Yêu cầu:** Khối chữ nhật bổ sung phía dưới Left Indent không có border top; giữ nguyên ba cạnh trái, phải, dưới, hình dáng các dấu còn lại và con trỏ hover pointer.
+- **Sửa:** `src/features/word-simulator/word-page-rulers.tsx` thay `<rect>` có stroke toàn bộ 4 cạnh bằng `<rect>` nền trắng không stroke và `<path d="M.5 9.5V13.5H11.5V9.5">` kẻ riêng đúng 3 cạnh. Không thay hình học SVG, các vị trí/kích thước, CSS, xử lý pointer-capture và việc dịch chuyển đoạn văn.
+- **Kiểm thử:** Cập nhật `tests/presentation-basics.test.mjs` và `tests/word-home-qa.test.mjs` xác nhận không còn stroke viền trên, chỉ có đường kẻ 3 cạnh. Chạy đủ Unit tests, Typecheck, Production build, Smoke test; xác nhận SHA Production READY mới thông báo.
+- **Giới hạn:** Chưa chụp/kiểm tra trực quan bằng browser Windows tại nhiều độ phân giải.
+
 ### 2026-10-18 — Thiết kế lại ba dấu trên thước, giữ pointer khi hover và kéo
 - **Yêu cầu xác nhận:** Left Indent phải có cùng đầu nhọn/chữ nhật như Right Indent, cộng một khối chữ nhật ngay phía dưới. First Line Indent và Right Indent giảm chiều cao phần chữ nhật. Khi hover giữ con trỏ CSS `cursor:pointer`, vẫn kéo độc lập được.
 - **Triển khai:** Trong `word-page-rulers.tsx`, First Line Indent đổi chữ nhật cao 6px thành 4px, giữ mũi nhọn hướng xuống; Right Indent đổi chữ nhật cao 6px thành 4px, mũi nhọn hướng lên; Left Indent dùng cùng thân của Right với một `<rect>` riêng cao 4px đặt dưới, SVG/viewBox cao 14px (các dấu khác cao 10px), đồng nhất chiều rộng 12px và nét 1px. CSS `word-page-rulers.css` giữ top/bottom anchors, riêng Left cao 14px; cursor chuyển từ `ew-resize` sang `pointer`, giữ `touch-action:none`, `pointer-events:auto`.

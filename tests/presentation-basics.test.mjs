@@ -1111,10 +1111,13 @@ test("Word ruler indentation markers use three individually movable 12px tabs wi
  assert.match(marker,/width="12" height=\{kind==="left"\?14:10\}/);
  assert.match(marker,/kind==="firstLine"\?/);
  assert.match(marker,/d="M\.5 \.5H11\.5V4\.5L6 8\.5L\.5 4\.5Z"/);
- assert.match(marker,/\{kind==="left"&&<rect x="\.5" y="9\.5" width="11" height="4"/);
+ assert.match(marker,/\{kind==="left"&&<>/);
+ assert.match(marker,/<rect x="\.5" y="9\.5" width="11" height="4" fill="#fff"\/>/);
+ assert.match(marker,/<path d="M\.5 9\.5V13\.5H11\.5V9\.5" fill="none"/);
+ assert.doesNotMatch(marker,/<rect x="\.5" y="9\.5"[^>]*stroke=/);
  assert.match(marker,/d="M\.5 4\.5L6 \.5L11\.5 4\.5V8\.5H\.5Z"/);
  assert.doesNotMatch(marker,/M\.5 6\.5H11\.5/);
- assert.equal((marker.match(/<path /g)||[]).length,2);
+ assert.equal((marker.match(/<path /g)||[]).length,3);
  assert.match(marker,/aria-label=\{label\} title=\{label\}/);
  assert.match(marker,/onPointerDown=\{event=>onPointerDown\(event,kind\)\}/);
  assert.match(marker,/onPointerMove=\{onPointerMove\} onPointerUp=\{onPointerUp\}/);
@@ -1204,7 +1207,10 @@ test("Ruler indent markers match new geometry: compact First/Right and left extr
  assert.equal(Number(firstLine[2])-Number(firstLine[1]),4,"first-line triangle");
  assert.equal(Number(rightAndLeft[4])-Number(rightAndLeft[3]),4,"right/left short rectangular body");
  assert.equal(Number(rightAndLeft[3])-Number(rightAndLeft[2]),4,"up-pointing tip");
- assert.match(marker,/\{kind==="left"&&<rect x="\.5" y="9\.5" width="11" height="4"/);
+ assert.match(marker,/\{kind==="left"&&<>/);
+ assert.match(marker,/<rect x="\.5" y="9\.5" width="11" height="4" fill="#fff"\/>/);
+ assert.match(marker,/<path d="M\.5 9\.5V13\.5H11\.5V9\.5" fill="none"/);
+ assert.doesNotMatch(marker,/<rect x="\.5" y="9\.5"[^>]*stroke=/);
  assert.match(marker,/viewBox=\{kind==="left"\?"0 0 12 14":"0 0 12 10"\}/);
  assert.match(marker,/width="12" height=\{kind==="left"\?14:10\}/);
  assert.equal((marker.match(/<rect /g)||[]).length,1,"only Left has lower rectangle");
