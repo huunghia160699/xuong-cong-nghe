@@ -121,6 +121,7 @@ test("Empty Word document never inserts a second phantom paragraph mark",()=>{
    querySelectorAll(){return created}
  };
  const ctx={
+   ensureWordCaretInsideParagraph:()=>false,
    Node:{ELEMENT_NODE:1},
    MANUAL_BREAK_ATTRIBUTE:"data-wsl-manual-break",
    PAGE_ATTRIBUTE:"data-wsl-page",
@@ -336,4 +337,83 @@ test("Scrolling a new page respects current zoom and only moves document scrolle
  };
  scroll(scroller,{getBoundingClientRect(){return{top:9999}}});
  assert.equal(scroller.called.top,100,"clamp beyond scroll maximum");
+});
+
+
+test("Caret on editor outer wrapper is rehomed inside page paragraph, never at paper left edge",()=>{
+ const begin=helper.indexOf("export function ensureWordCaretInsideParagraph(");
+ const end=helper.indexOf("export function savePageSelection(",begin);
+ assert.ok(begin>=0&&end>begin);
+ const code=helper.slice(begin,end).trim()
+   .replace("export function ","function ")
+   .replace("root:HTMLElement,preferred:HTMLElement|null=null","root,preferred=null")
+   .replace("):boolean{","){")
+   .replaceAll(" as Element","")
+   .replaceAll(" as HTMLElement|null","")
+   .replaceAll("querySelectorAll<HTMLElement>","querySelectorAll")
+   .replaceAll("querySelector<HTMLElement>","querySelector");
+ const paragraph={
+   nodeType:1,tagName:"P",childNodes:[{nodeType:1,tagName:"BR"}],
+   matches(query){return query.includes("p")},
+   closest(query){
+     if(query.includes("p,h1"))return this;
+     if(query==="[data-wsl-page]")return page;
+     return null;
+   }
+ };
+ const page={
+   nodeType:1,tagName:"DIV",childNodes:[{},paragraph],
+   closest(query){return query==="[data-wsl-page]"?this:null},
+   querySelectorAll(query){return query.includes("p")?[paragraph]:[]}
+ };
+ const root={
+   nodeType:1,tagName:"DIV",children:[page],childNodes:[page],
+   contains(node){return node===this||node===page||node===paragraph},
+   closest(){return null},
+   querySelector(){return paragraph}
+ };
+ const selection={
+   isCollapsed:true,rangeCount:1,
+   range:{startContainer:root,startOffset:0},
+   getRangeAt(){return this.range},
+   removeAllRanges(){this.rangeCount=0},
+   addRange(range){this.range=range;this.rangeCount=1}
+ };
+ const doc={createRange(){return {
+   startContainer:null,startOffset:0,
+   selectNodeContents(node){this.startContainer=node;this.startOffset=0},
+   collapse(){this.collapsed=true}
+ }}};
+ const ctx={window:{getSelection:()=>selection},document:doc,Node:{ELEMENT_NODE:1}};
+ const repair=runInNewContext('('+code+')',ctx);
+ assert.equal(repair(root),true,"repair caret on editor wrapper");
+ assert.equal(selection.range.startContainer,paragraph);
+ assert.equal(selection.range.startOffset,0,"caret should be at paragraph start, with A4 padding");
+ assert.equal(repair(root),false,"valid paragraph caret must not move or reset");
+ selection.range={startContainer:page,startOffset:1};
+ assert.equal(repair(root),true,"caret between page gutter and paragraph is invalid");
+ assert.equal(selection.range.startContainer,paragraph);
+ selection.isCollapsed=false;
+ selection.range={startContainer:root,startOffset:0};
+ assert.equal(repair(root),false,"cross-paragraph highlighted selection must be preserved");
+});
+
+test("Word guards root/page caret on focus, typing, repagination and manual Ctrl+Enter",()=>{
+ const caretFn=helper.slice(helper.indexOf("export function ensureWordCaretInsideParagraph("),
+   helper.indexOf("export function savePageSelection("));
+ assert.match(caretFn,/element\.closest\("p,h1,h2,h3,h4,blockquote,li,td,th"\)/);
+ assert.match(caretFn,/if\(editableBlock&&root\.contains\(editableBlock\)\)return false/);
+ assert.match(caretFn,/range\.selectNodeContents\(target\)/);
+ assert.match(caretFn,/selection\.addRange\(range\)/);
+ const repaginate=helper.slice(helper.indexOf("export function paginateWordEditor("),
+   helper.indexOf("export function insertManualWordPageBreak("));
+ assert.match(repaginate,/ensureWordCaretInsideParagraph\(root\)/);
+ assert.match(repaginate,/restorePageSelection\(root,saved\);\s*ensureWordCaretInsideParagraph\(root\)/);
+ assert.match(helper,/export function insertManualWordPageBreak\(root:HTMLElement\):boolean\{\s*[\s\S]*?ensureWordCaretInsideParagraph\(root\)/);
+ assert.match(simulator,/onFocus=\{\(\)=>\{if\(editor\.current\)ensureWordCaretInsideParagraph\(editor\.current\);rememberSelection\(\);\}\}/);
+ assert.match(simulator,/onBeforeInput=\{event=>\{[\s\S]*?ensureWordCaretInsideParagraph\(editor\.current\)/);
+ assert.match(simulator,/onKeyDown=\{event=>\{[\s\S]*?ensureWordCaretInsideParagraph\(editor\.current\)/);
+ const start=simulator.indexOf("  function insertPageBreak(){");
+ const end=simulator.indexOf("  function blockCommand(",start);
+ assert.match(simulator.slice(start,end),/if\(root\)ensureWordCaretInsideParagraph\(root\)/);
 });

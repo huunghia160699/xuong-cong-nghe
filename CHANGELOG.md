@@ -1,5 +1,11 @@
 # Changelog
 
+## 2026-10-19 — Ngăn con trỏ nhập nằm ngoài lề A4 sau Ctrl+Enter
+- Khắc phục vùng chọn bị neo ở wrapper của trang giấy hoặc `contentEditable` khiến caret xuất hiện sát biên tờ A4, trong khi dấu ¶ đúng lề bên trong.
+- Tự khôi phục caret về đoạn văn hợp lệ khi phân trang, focus, nhập chữ và Ctrl+Enter; giữ nguyên vùng bôi chọn hợp lệ cùng trạng thái định dạng.
+- Không thay đổi giao diện ký hiệu ¶/Page Break, bố cục A4 và nội dung tài liệu.
+- Bổ sung kiểm thử hồi quy đúng trường hợp caret ở editor root và page wrapper.
+
 ## 2026-10-19 — Hiển thị dấu Page Break và tự chuyển màn hình sang trang mới
 - Khi Ctrl+Enter hoặc Insert → Ngắt trang, hiển thị dấu ngắt trang dạng đường chấm ngang với `Page Break` giữa đường và `¶` ở bên phải, giống hình mẫu Word; marker không xuất hiện khi in.
 - Tự cuộn vùng trang tài liệu đến đầu trang mới sau khi phân trang xong, giữ caret sẵn để gõ. Khi gõ đầy trang khiến nội dung tự chuyển sang trang kế cũng tự cuộn.

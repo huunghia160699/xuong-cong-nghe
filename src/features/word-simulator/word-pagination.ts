@@ -39,6 +39,56 @@ export type WordPageSelection={
   startNode:Node;startOffset:number;endNode:Node;endOffset:number;
 };
 
+/** Never leave a collapsed typing caret on the editor/page wrapper.
+ * Chrome permits ranges between .wsl-document-page nodes; typing there
+ * renders at the unpadded outer paper edge instead of the paragraph margin.
+ * Preserve every valid inline/table/text range and noncollapsed selection.
+ */
+export function ensureWordCaretInsideParagraph(
+  root:HTMLElement,preferred:HTMLElement|null=null
+):boolean{
+  const selection=window.getSelection();
+  if(!selection?.rangeCount||!selection.isCollapsed)return false;
+  const current=selection.getRangeAt(0);
+  const container=current.startContainer;
+  if(!root.contains(container))return false;
+  const element=container.nodeType===Node.ELEMENT_NODE?
+    container as Element:container.parentElement;
+  if(!element)return false;
+  const editableBlock=element.closest("p,h1,h2,h3,h4,blockquote,li,td,th");
+  if(editableBlock&&root.contains(editableBlock))return false;
+  const page=element.closest("[data-wsl-page]") as HTMLElement|null;
+  let target=preferred&&root.contains(preferred)&&
+    preferred.matches("p,h1,h2,h3,h4,blockquote,li,td,th")?preferred:null;
+  if(!target){
+    let targetPage=page;
+    if(!targetPage&&container===root){
+      const at=Math.min(current.startOffset,root.children.length-1);
+      targetPage=root.children[Math.max(0,at)] as HTMLElement|null;
+    }
+    const matches=targetPage?.querySelectorAll<HTMLElement>(
+      "p,h1,h2,h3,h4,blockquote,li,td,th"
+    );
+    if(matches?.length){
+      // A native caret at the END of a page should enter the LAST paragraph,
+      // while a caret just after the margin gutter should enter the FIRST.
+      const last=page&&current.startOffset>1;
+      target=matches[last?matches.length-1:0];
+    }
+  }
+  target??=root.querySelector<HTMLElement>(
+    "[data-wsl-page] p,[data-wsl-page] h1,[data-wsl-page] h2,"+
+    "[data-wsl-page] h3,[data-wsl-page] li,[data-wsl-page] td"
+  );
+  if(!target)return false;
+  const range=document.createRange();
+  range.selectNodeContents(target);
+  range.collapse(true);
+  selection.removeAllRanges();
+  selection.addRange(range);
+  return true;
+}
+
 export function savePageSelection(root:HTMLElement):WordPageSelection|null{
   const selected=window.getSelection();
   if(!selected?.rangeCount||!root.contains(selected.anchorNode))return null;
@@ -164,6 +214,9 @@ function breakOversizedParagraph(block:HTMLElement,limit:number):HTMLElement|nul
 }
 
 export function paginateWordEditor(root:HTMLElement):number{
+  // Fix root/page-wrapper ranges BEFORE collecting selection offsets. Without
+  // this, moving pages can restore an editable caret at the outer paper edge.
+  ensureWordCaretInsideParagraph(root);
   // Do not detach/reinsert the editor DOM on every typed character while a
   // single page still fits. That disrupts the native caret and undo history.
   const existingPage=root.children.length===1?
@@ -177,7 +230,10 @@ export function paginateWordEditor(root:HTMLElement):number{
     const padding=parseFloat(getComputedStyle(existingPage).paddingBottom)||0;
     const scale=bounds.height/Math.max(1,existingPage.offsetHeight);
     const bottom=bounds.bottom-padding*scale;
-    if(last&&last.getBoundingClientRect().bottom<=bottom+1)return 1;
+    if(last&&last.getBoundingClientRect().bottom<=bottom+1){
+      ensureWordCaretInsideParagraph(root);
+      return 1;
+    }
   }
   const saved=savePageSelection(root);
   const children=visibleChildren(root);
@@ -236,10 +292,14 @@ export function paginateWordEditor(root:HTMLElement):number{
     page.appendChild(blank);
   }
   restorePageSelection(root,saved);
+  ensureWordCaretInsideParagraph(root);
   return count;
 }
 
 export function insertManualWordPageBreak(root:HTMLElement):boolean{
+  // Ctrl+Enter must split an actual paragraph, never the page or editor
+  // wrapper. Otherwise the next typing caret appears outside the A4 margin.
+  ensureWordCaretInsideParagraph(root);
   const selection=window.getSelection();
   if(!selection?.rangeCount||!root.contains(selection.anchorNode))return false;
   const range=selection.getRangeAt(0);

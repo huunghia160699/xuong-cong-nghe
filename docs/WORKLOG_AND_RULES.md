@@ -25,6 +25,13 @@
 
 ## III. Lịch sử
 
+### 2026-10-19 — Sửa con trỏ rơi ra ngoài lề trái trang A4 sau ngắt trang
+- **Ảnh lỗi người dùng:** con trỏ đen ở x≈150 ngay sát biên trái của tờ A4, trong khi dấu ¶ ở x≈244 theo lề soạn thảo; gõ vào vị trí này có nguy cơ tạo nội dung nằm bên ngoài các `.wsl-document-page`.
+- **Nguyên nhân:** Mô hình một `contentEditable` chứa nhiều block wrapper `.wsl-document-page` cho phép Chrome đặt collapsed Range tại chính editor root hoặc page wrapper, không phải trong một `<p>`. `restorePageSelection` có thể giữ nguyên Range root (offset vẫn hợp lệ) khi phân trang, dẫn tới caret nằm ngoài padding A4. Các lần sửa CSS ¶/Page Break trước không giải quyết được lỗi Range này.
+- **Sửa:** `word-pagination.ts` thêm `ensureWordCaretInsideParagraph(root,preferred?)`: nếu vùng chọn collapsed ở root hoặc page wrapper thì tạo Range trong đoạn văn tương ứng (hoặc đoạn đầu hợp lệ), nhưng **không can thiệp** selection có chữ đã bôi chọn hoặc caret hợp lệ trong `p/h1.../li/td`. Chạy bảo vệ trước và sau auto pagination, cả nhánh fast-path một trang; trước ngắt trang thủ công. `word-simulator.tsx` thêm bảo vệ khi focus, trước input/keyDown và khi nhấn Ctrl+Enter/Insert Ngắt trang. Không thêm `p` và không sửa CSS/margin A4, giữ nguyên ký hiệu ¶ và kiểu Page Break.
+- **Kiểm thử:** `tests/word-pagination.test.mjs` thêm mô phỏng collapsed selection ở root/page wrapper, yêu cầu chuyển vào đúng `<p>` và offset 0, bỏ qua caret hợp lệ/vùng bôi chọn, xác nhận hook trong input/pagination/shortcut. Chạy CI Unit, Typecheck, Build, Smoke; Vercel Production READY trùng main SHA mới báo.
+- **Giới hạn:** Chưa có E2E Chrome Windows thực tế, chưa khẳng định mọi hành vi contentEditable/phân trang ổn định. Đặc biệt cần kiểm tra trực quan sau Ctrl+Enter và sau gõ nhiều dòng.
+
 ### 2026-10-19 — Hiện đường Page Break như Microsoft Word và tự cuộn khi chuyển trang
 - **Yêu cầu (ảnh mẫu):** Ctrl+Enter tạo dấu ngắt trang có một đường chấm ngang, dòng chữ `Page Break` nằm giữa và `¶` lớn ở mép phải. Sau khi chuyển trang phải tự cuộn vùng soạn thảo đến đầu trang mới, con trỏ có sẵn để gõ tiếp.
 - **Nguyên nhân chưa đạt:** `word-simulator.css` trước đó đặt `.wsl-document-page [data-wsl-manual-break]{display:none!important}` nên dấu ngắt đã tồn tại dưới dạng `<hr data-wsl-manual-break>` nhưng không hiển thị. Sau `insertManualWordPageBreak`, editor chỉ gọi `markChanged()`; effect phân trang không di chuyển scroll container đến trang chứa caret.

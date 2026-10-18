@@ -3,7 +3,7 @@
 import {useCallback,useEffect,useRef,useState} from "react";
 import {WordHomeRibbon,type WordFormatKey,type WordParagraphAlignment} from "./word-home-ribbon";
 import {collectWordVisualLines,wordLineAtY,selectWordVisualLines,type WordVisualLine} from "./word-line-selection";
-import {paginateWordEditor,insertManualWordPageBreak,scrollWordPageIntoView,MANUAL_BREAK_ATTRIBUTE} from "./word-pagination";
+import {paginateWordEditor,insertManualWordPageBreak,scrollWordPageIntoView,ensureWordCaretInsideParagraph,MANUAL_BREAK_ATTRIBUTE} from "./word-pagination";
 import {WordCustomDropdown} from "./word-split-button";
 import {WordWindowBar} from "./word-window-bar";
 import {WordPageRulers,type RulerIndent} from "./word-page-rulers";
@@ -1063,6 +1063,7 @@ export function WordSimulator(){
   function insertPageBreak(){
     restoreSelection();
     const root=editor.current;
+    if(root)ensureWordCaretInsideParagraph(root);
     if(!root||!insertManualWordPageBreak(root)){
       setStatus("Đặt con trỏ trong văn bản để ngắt trang");return;
     }
@@ -1585,6 +1586,8 @@ export function WordSimulator(){
               onCompositionEnd={()=>{composingRef.current=false;markChanged();}}
               onBeforeInput={event=>{
                  const native=event.nativeEvent as InputEvent;
+                 if(!native.isComposing&&editor.current)
+                   ensureWordCaretInsideParagraph(editor.current);
                  if(native.data&&!native.isComposing&&(!native.inputType||native.inputType==="insertText")&&
                     (insertExitedScriptText(native.data)||
                     (typingScriptRef.current&&insertTypingScriptText(native.data))||
@@ -1593,6 +1596,10 @@ export function WordSimulator(){
                  }
                }}
                onKeyDown={event=>{
+                 if((event.key.length===1||event.key==="Enter"||
+                    event.key==="Backspace"||event.key==="Delete")&&
+                    !event.nativeEvent.isComposing&&editor.current)
+                   ensureWordCaretInsideParagraph(editor.current);
                  if(event.key==="Enter"&&(event.ctrlKey||event.metaKey)){
                    event.preventDefault();insertPageBreak();return;
                  }
@@ -1606,7 +1613,7 @@ export function WordSimulator(){
               onInput={event=>{repairExitedScriptText();cleanTypingScriptPlaceholder();cleanPendingFontPlaceholder();cleanScriptExitAnchor();rememberSelection();markChanged();}}
                onKeyUp={event=>{repairExitedScriptText();cleanScriptExitAnchor();if(["ArrowLeft","ArrowRight","ArrowUp","ArrowDown","Home","End","PageUp","PageDown"].includes(event.key))syncTypingScriptCaret();rememberSelection();}}
                onMouseUp={()=>{syncTypingScriptCaret();handleEditorMouseUp();}}
-              onFocus={rememberSelection} onPaste={event=>{event.preventDefault();setClipboardMode(null);stagedClipboard.current=null;command("insertText",event.clipboardData.getData("text/plain"));}}
+              onFocus={()=>{if(editor.current)ensureWordCaretInsideParagraph(editor.current);rememberSelection();}} onPaste={event=>{event.preventDefault();setClipboardMode(null);stagedClipboard.current=null;command("insertText",event.clipboardData.getData("text/plain"));}}
               onDrop={event=>event.preventDefault()}/>
             </div>
           </div>
