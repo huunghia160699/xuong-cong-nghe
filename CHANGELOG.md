@@ -1,5 +1,10 @@
 # Changelog
 
+## 2026-10-18 — Khối chữ nhật dưới Left Indent sát phần trên
+- Kéo phần chữ nhật dưới lên 1px để tiếp giáp với phần thân của dấu Left Indent.
+- Giữ nguyên đáy, tổng kích thước 12×14px, đường viền ba cạnh, `cursor: pointer` và chức năng kéo.
+- Cập nhật kiểm thử SVG theo tọa độ mới.
+
 ## 2026-10-18 — Left Indent bỏ đường viền trên khối dưới
 - Loại bỏ border-top của thanh chữ nhật phía dưới Left Indent, giữ cạnh trái, phải, dưới.
 - Không thay chiều cao, vị trí, cursor pointer và cơ chế kéo các dấu thụt lề.

@@ -25,6 +25,12 @@
 
 ## III. Lịch sử
 
+### 2026-10-18 — Kéo khối chữ nhật dưới Left Indent lên sát thân trên
+- **Yêu cầu:** Ảnh người dùng cho thấy thanh chữ nhật dưới Left Indent cách phần thân phía trên khoảng 1px, cần kéo sát lên.
+- **Sửa:** `src/features/word-simulator/word-page-rulers.tsx` dời nền và viền ba cạnh của khối dưới lên từ `y=9.5` đến `y=8.5`; tăng chiều cao nền từ 4px lên 5px để mép dưới vẫn ở `y=13.5`. Viền vẫn chỉ có 3 cạnh (`M.5 8.5V13.5H11.5V8.5`), không thêm border-top; không đổi viewBox 12x14, CSS, cursor pointer hoặc pointer event.
+- **Kiểm thử:** Cập nhật `tests/presentation-basics.test.mjs` và `tests/word-home-qa.test.mjs` để xác nhận tọa độ liền kề, không có stroke trên `rect` hoặc đường viền trên, giữ các bài test kéo thước; CI đủ Unit tests, Typecheck, Production build, Smoke test. Triển khai Vercel đúng GitHub main SHA khi CI thành công.
+- **Giới hạn:** Chưa nghiệm thu trực quan bằng trình duyệt Windows.
+
 ### 2026-10-18 — Bỏ viền trên của thanh chữ nhật dưới Left Indent
 - **Yêu cầu:** Khối chữ nhật bổ sung phía dưới Left Indent không có border top; giữ nguyên ba cạnh trái, phải, dưới, hình dáng các dấu còn lại và con trỏ hover pointer.
 - **Sửa:** `src/features/word-simulator/word-page-rulers.tsx` thay `<rect>` có stroke toàn bộ 4 cạnh bằng `<rect>` nền trắng không stroke và `<path d="M.5 9.5V13.5H11.5V9.5">` kẻ riêng đúng 3 cạnh. Không thay hình học SVG, các vị trí/kích thước, CSS, xử lý pointer-capture và việc dịch chuyển đoạn văn.
