@@ -1,5 +1,11 @@
 # Changelog
 
+## 2026-10-18 — Sửa trang A4 chồng và lệch lề sau phân trang
+- Loại bỏ padding, nền trắng, viền và min-height A4 cũ trên wrapper `.wsl-paper` trong stylesheet tải sau cùng; chỉ các trang con `.wsl-document-page` được tạo khung giấy.
+- Ngăn trang trắng giả xuất hiện phía sau và trang chứa nội dung bị lệch sang phải/xuống dưới khoảng 87×86px.
+- Giữ nguyên chức năng phân trang và Ctrl+Enter, không sửa DOM/rich-text editor.
+- Thêm regression test kiểm tra thứ tự import CSS và các thuộc tính chống lỗi chồng trang.
+
 ## 2026-10-18 — Phân trang Word A4 tự động và ngắt trang Ctrl+Enter
 - Thay tờ giấy có chiều cao tự kéo dài bằng nhiều trang A4 riêng biệt, cùng kích thước, lề và khoảng cách 24px. Nội dung tự chạy sang trang mới khi đầy.
 - **Ctrl+Enter / Cmd+Enter** và nút Ngắt trang trong Insert chèn ngắt trang thực, đặt con trỏ vào trang kế, ghi dấu ngắt cùng tài liệu khi lưu/khôi phục/xuất.

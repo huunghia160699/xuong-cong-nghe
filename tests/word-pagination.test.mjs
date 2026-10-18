@@ -69,3 +69,27 @@ test("Horizontal/vertical ruler uses the physical first page, not total document
  assert.match(simulator,/page.querySelector\("\.wsl-document-page"\)\?\?page/);
  assert.match(styles,/@media print\{[\s\S]*?break-after:page;/);
 });
+
+test("No ghost paper behind A4 pages: final-loaded ruler CSS resets legacy wrapper box",()=>{
+ const fs=readFileSync("src/app/(word-simulator)/cong-cu/mo-phong-word/layout.tsx","utf8");
+ const late=readFileSync("src/features/word-simulator/word-page-rulers.css","utf8");
+ const old=readFileSync("src/features/word-simulator/word-simulator.css","utf8");
+ assert.ok(fs.indexOf("word-simulator.css")<fs.indexOf("word-page-rulers.css"),
+   "ruler CSS loads after simulator CSS; it must not restore old paper padding");
+ const start=late.indexOf(".wsl-word-layout .wsl-paper,");
+ const end=late.indexOf(".wsl-word-horizontal-ruler{",start);
+ assert.ok(start>=0&&end>start);
+ const paper=late.slice(start,end);
+ assert.match(paper,/min-height:0;/);
+ assert.match(paper,/height:auto;/);
+ assert.match(paper,/padding:0;/);
+ assert.match(paper,/background:transparent;/);
+ assert.match(paper,/border:0;/);
+ assert.match(paper,/box-shadow:none;/);
+ assert.doesNotMatch(paper,/padding:var\(--wsl-paper-top-margin/);
+ assert.doesNotMatch(paper,/background:#fff/);
+ assert.match(old,/\.wsl-word-layout \.wsl-document-page\{[^}]*height:var\(--wsl-paper-height\);/s);
+ assert.match(old,/\.wsl-word-layout \.wsl-document-page\{[^}]*padding:var\(--wsl-paper-top-margin\) var\(--wsl-paper-side-margin\)/s);
+ assert.match(simulator,/ref=\{paperRef\} className=\{"wsl-paper /);
+ assert.match(simulator,/ref=\{editor\} className=\{"wsl-editor /);
+});

@@ -25,6 +25,13 @@
 
 ## III. Lịch sử
 
+### 2026-10-18 — Hotfix trang A4 chồng lên trang trắng sau khi phân trang
+- **Triệu chứng có ảnh xác nhận:** Tờ giấy trắng nằm sau tại góc (x≈43, y≈20); tờ có nội dung bị đẩy sang phải và xuống khoảng 87×86px, xuất hiện hai trang giấy chồng nhau.
+- **Nguyên nhân:** `src/app/(word-simulator)/cong-cu/mo-phong-word/layout.tsx` nạp `word-page-rulers.css` SAU `word-simulator.css`. Dù stylesheet phân trang mới đã reset `.wsl-paper`, luật cũ trong `word-page-rulers.css` cùng specificity ghi đè và tái tạo padding 86/87px, nền trắng, viền, min-height A4 của chính wrapper `.wsl-paper` — trong khi mỗi trang con `.wsl-document-page` cũng có nền, kích thước và padding riêng.
+- **Sửa tại nguồn override:** Reset cuối của `.wsl-word-layout .wsl-paper` và biến thể .is-landscape/.is-narrow trong `word-page-rulers.css`: `position:relative; display:block; width:var(--wsl-paper-width); height:auto; min-height:0; padding:0; margin:0; background:transparent; border:0; box-shadow:none`. Chỉ các `.wsl-document-page` mới có kích thước A4, lề, nền trắng, đường viền và khoảng cách trang.
+- **Kiểm thử:** Thêm regression test `tests/word-pagination.test.mjs` xác minh THỨ TỰ import CSS, không còn padding/background/border ở wrapper trong file tải sau, và nội dung chỉ mang A4 box bên trong. Chạy CI Unit tests, Typecheck, Build, Smoke; Vercel READY trùng SHA mới được báo hoàn tất.
+- **Giới hạn:** Chưa nghiệm thu trực quan trong trình duyệt Windows của người dùng; không xác nhận screenshot đã ổn nếu chưa có browser QA thực tế. Hạn chế sửa đổi trong hotfix chỉ CSS và test để tránh thay logic nhập liệu.
+
 ### 2026-10-18 — Phân trang A4 thật cho trình soạn thảo Word và Ctrl+Enter
 - **Yêu cầu:** Không còn một tờ giấy dài vô hạn. Nội dung tự chuyển sang các trang A4 độc lập khi tới cuối diện tích soạn thảo; Ctrl+Enter tạo ngắt trang thủ công. Nút Ngắt trang ở tab Insert phải dùng cùng lệnh.
 - **Kiến trúc:** Giữ **một** `contentEditable` chung để không phá hoàn toàn các lệnh Font/Paragraph, selection và kiểu chữ. Module mới `word-pagination.ts` phân phối các block DOM gốc vào `.wsl-document-page` cao đúng A4, rộng đúng A4, cùng lề, khoảng cách 24px, số trang bằng pseudo-element. Dòng/đoạn dài hơn chiều cao vùng nhập được cắt thành các block kế tiếp bằng DOM `Range.extractContents` giữ thẻ inline. Quá trình tự phân trang theo `requestAnimationFrame` sau khi thay đổi, tránh can thiệp giữa lúc IME gõ tiếng Việt; dùng logic lưu/khôi phục vùng chọn bằng vị trí ký tự.
