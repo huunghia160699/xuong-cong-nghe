@@ -53,7 +53,7 @@ test("All 14 Paragraph tools are wired; each one checked 10 times",()=>{
 });
 
 test("Left Indent moves first-line and body together, 10 repetitions with hanging and first-line offsets",()=>{
- const raw=section(ruler,'function moveLeftIndent(','/** Three separate');
+ const raw=section(ruler,'function moveLeftIndent(','/** Three independently draggable);
  const expr=raw.replace('indent:RulerIndent,nextLeft:number):RulerIndent','indent,nextLeft)');
  const move=runInNewContext('('+expr+')',{});
  const states=[
@@ -76,7 +76,7 @@ test("Left Indent moves first-line and body together, 10 repetitions with hangin
 });
 
 test("Ruler marker pointer movement tracks zoom, direction and left/first-line linkage",()=>{
- const helper=runInNewContext('('+section(ruler,'function moveLeftIndent(','/** Three separate')
+ const helper=runInNewContext('('+section(ruler,'function moveLeftIndent(','/** Three independently draggable)
   .replace('indent:RulerIndent,nextLeft:number):RulerIndent','indent,nextLeft)')+')',{});
  const eventFn=section(ruler,'  const onMarkerPointerMove=','  const onMarkerPointerUp=')
   .replace('event:RulerPointerEvent','event');
