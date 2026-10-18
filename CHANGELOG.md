@@ -1,5 +1,12 @@
 # Changelog
 
+## 2026-10-19 — Dấu ¶ cùng cỡ chữ, lề chọn dòng dùng mũi tên
+- Dấu ¶ cuối đoạn và tiêu đề theo cỡ chữ tính từ ký tự cuối, không còn cỡ 12px cố định.
+- Đoạn trống: ¶ nằm cạnh caret trên cùng dòng, dùng khoảng cách tỉ lệ với font thay vì tọa độ 3px/2px. Giữ caret native theo font-size thực.
+- Khi đổi cỡ chữ tại con trỏ chưa bôi chọn và nhập tiếp, dấu ¶ cập nhật theo span định dạng mới.
+- Vùng chọn lề trái luôn trong suốt, chuột hiển thị mũi tên chuẩn (`cursor:default`) chứ không phải bàn tay. Giữ khả năng nhấp/kéo chọn dòng.
+- Bổ sung bộ kiểm thử nhiều cỡ chữ và kiểm tra hồi quy về con trỏ.
+
 ## 2026-10-19 — Ngăn con trỏ nhập nằm ngoài lề A4 sau Ctrl+Enter
 - Khắc phục vùng chọn bị neo ở wrapper của trang giấy hoặc `contentEditable` khiến caret xuất hiện sát biên tờ A4, trong khi dấu ¶ đúng lề bên trong.
 - Tự khôi phục caret về đoạn văn hợp lệ khi phân trang, focus, nhập chữ và Ctrl+Enter; giữ nguyên vùng bôi chọn hợp lệ cùng trạng thái định dạng.

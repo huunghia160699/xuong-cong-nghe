@@ -109,7 +109,8 @@ test("Gutter is outside contentEditable and preserves Word's normal editing inte
  assert.match(css,/\.wsl-word-selection-gutter\{[^}]*touch-action:none;/s);
  assert.match(css,/\.wsl-word-selection-gutter\{[^}]*background:transparent;/s);
  assert.doesNotMatch(css,/\.wsl-word-selection-gutter:hover\s*\{[^}]*background:/);
- assert.match(css,/\.wsl-word-selection-gutter\{[^}]*cursor:pointer;/s);
+ assert.match(css,/\.wsl-word-selection-gutter\{[^}]*cursor:default;/s);
+ assert.doesNotMatch(css,/\.wsl-word-selection-gutter\{[^}]*cursor:pointer;/s);
  assert.match(css,/@media print\{\.wsl-word-selection-gutter\{display:none!important\}\}/);
  assert.match(editor,/contentEditable suppressContentEditableWarning spellCheck=\{spellcheck\}/);
 });

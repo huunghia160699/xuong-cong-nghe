@@ -245,28 +245,30 @@ test("Restoring caret uses original paragraph DOM node, not ambiguous zero text 
 });
 
 
-test("Empty paragraph mark stays on its caret line instead of dropping below <br>",()=>{
+test("Paragraph mark stays at text baseline and follows current font size, including an empty paragraph",()=>{
  const css=readFileSync("src/features/word-simulator/word-home-ribbon.css","utf8");
- const text=css.match(/\.wsl-editor\.show-paragraph-marks p:after\{([^}]*)\}/);
+ const text=css.match(/\.wsl-editor\.show-paragraph-marks p::after,([\s\S]*?)\{/);
  const blank=css.match(/\.wsl-editor\.show-paragraph-marks p:has\(>br:only-child\)::after\{([^}]*)\}/);
- assert.ok(text,"normal paragraph mark is present");
- assert.ok(blank,"empty paragraphs need a BR-specific marker placement");
- assert.match(text[1],/content:" ¶"/,"normal text keeps inline paragraph mark");
- assert.doesNotMatch(text[1],/position:absolute/,"typed text mark follows final character naturally");
- assert.match(blank[1],/content:"¶"/,"empty paragraph is marked once");
- assert.match(blank[1],/position:absolute/,"BR cannot push the marker below its caret line");
- assert.match(blank[1],/top:2px/,"empty marker remains on the first visual row");
- assert.match(blank[1],/left:3px/,"empty marker sits next to the insertion caret");
+ assert.ok(text,"paragraph mark must be shared by text and headings");
+ assert.ok(blank,"blank paragraph requires a single-row decoration");
+ assert.match(text[1],/h1::after/);
+ assert.match(text[1],/h2::after/);
+ assert.match(css,/content:" ¶";/,"paragraph mark follows the actual end of the text");
+ assert.match(css,/font-size:var\(--wsl-paragraph-mark-size,1em\)/,
+   "mark must inherit the size of the final typed run, not always 12px");
+ assert.match(css,/vertical-align:baseline;/,"mark and text share a baseline");
+ assert.doesNotMatch(css,/font:12px Georgia,serif/);
+ assert.match(blank[1],/content:"¶"/,"one pilcrow in empty paragraph");
+ assert.match(blank[1],/position:absolute/,"a BR cannot place the mark below the caret");
+ assert.match(blank[1],/inset-inline-start:\.3em/,"blank mark uses em spacing, not fixed pixels");
+ assert.match(blank[1],/top:50%/,"mark is centered in the live caret line box");
+ assert.match(blank[1],/transform:translateY\(-50%\)/);
+ assert.doesNotMatch(blank[1],/left:3px|top:2px/);
  assert.match(css,/\.wsl-editor\.show-paragraph-marks p:has\(>br:only-child\)\{position:relative\}/);
- assert.match(blank[1],/pointer-events:none/,"mark must not intercept editing");
+ assert.match(css,/pointer-events:none/,"visual marks may not intercept caret");
  assert.match(simulator,/const DEFAULT_CONTENT="<p><br><\/p>"/);
  assert.match(simulator,/showMarks\?"show-paragraph-marks":""/);
- // A plain p with characters must NOT match the empty paragraph selector.
- const emptyTags=["<p><br></p>","<p><br/></p>"];
- for(const html of emptyTags)assert.match(html,/<p><br\s*\/?>\s*<\/p>/);
- assert.doesNotMatch("<p>adsa</p>",/<p><br\s*\/?>\s*<\/p>/);
 });
-
 
 test("Visible Word Ctrl+Enter marker matches reference: dotted rule, centered Page Break, right ¶",()=>{
  const token=styles.slice(styles.indexOf("/* Editable Word manual page-break marker"),styles.indexOf("@media print",styles.indexOf("/* Editable Word manual page-break marker")));

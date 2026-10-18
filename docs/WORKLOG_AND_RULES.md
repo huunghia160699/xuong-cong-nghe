@@ -25,6 +25,15 @@
 
 ## III. Lịch sử
 
+### 2026-10-19 — Đồng bộ dấu ¶ với kích cỡ chữ và con trỏ; lề chọn dòng dùng mũi tên
+- **Ảnh phản hồi:** dấu ¶ của đoạn rỗng và đoạn có chữ có cỡ nhỏ cố định, thay đổi vị trí theo nội dung; người dùng yêu cầu ¶ ở đúng cuối dòng và cùng cỡ với chữ/con trỏ nháy. Lề chọn dòng không được đổi sang bàn tay `pointer` hoặc tô nền hover.
+- **Nguyên nhân:** `word-home-ribbon.css` dùng `font:12px Georgia` áp vào pseudo `p::after` bất kể cỡ chữ thực tế; đoạn rỗng `p:has(>br:only-child)::after` dùng `left:3px;top:2px` cố định, không tỉ lệ với cỡ chữ. Khi chữ cuối nằm trong thẻ inline có `font-size` khác phần tử p, pseudo không kế thừa trực tiếp cỡ chữ. CSS `.wsl-word-selection-gutter` vẫn `cursor:pointer` (bàn tay).
+- **Sửa hiển thị:** `word-home-ribbon.css` cho dấu ¶ dùng font-size `var(--wsl-paragraph-mark-size,1em)`, font family kế thừa, theo baseline chữ cuối. Đoạn rỗng vẫn giữ <br> làm chỗ đứng caret, nhưng dấu ¶ là pseudo absolute `top:50%; transform:translateY(-50%); inset-inline-start:.3em` trên cùng line box, không can thiệp DOM/con trỏ. Các heading h1/h2 dùng quy tắc chung.
+- **Sửa đồng bộ cỡ chữ:** Thêm `word-paragraph-marks.ts` lấy cỡ chữ qua computed style của text node cuối trong p/h1/h2, kể cả span định dạng đang chờ nhập với ZWSP, cập nhật một CSS custom property chỉ khi thay đổi; gọi sau phân trang, khi bật/tắt ¶, gõ chữ và đổi Font Size. Không tạo caret giả: caret native vẫn đứng bên trong span mang font-size thực (logic `createPendingFontFormat`) và tự tăng/giảm theo chữ.
+- **Chọn dòng:** Đổi `.wsl-word-selection-gutter` từ `cursor:pointer` sang `cursor:default` (mũi tên), giữ `background:transparent`, bỏ hover và giữ pointer capture để nhấp/kéo chọn dòng.
+- **Kiểm thử:** `word-paragraph-marks.test.mjs` kiểm tra cỡ 8,10,12,14,18,24,36pt, đoạn trống, span định dạng chờ 36pt, heading và không sửa DOM; `word-pagination.test.mjs`, `word-line-selection.test.mjs` xác nhận pseudo baseline, không còn fixed 12px/3px/2px, lề default arrow. Chạy 4 bước CI và Vercel Production READY cùng SHA.
+- **Giới hạn:** Chưa có kiểm tra gõ thực tế bằng Windows/UniKey và cỡ chữ hỗn hợp trên trình duyệt; không khẳng định đã nghiệm thu trực quan.
+
 ### 2026-10-19 — Sửa con trỏ rơi ra ngoài lề trái trang A4 sau ngắt trang
 - **Ảnh lỗi người dùng:** con trỏ đen ở x≈150 ngay sát biên trái của tờ A4, trong khi dấu ¶ ở x≈244 theo lề soạn thảo; gõ vào vị trí này có nguy cơ tạo nội dung nằm bên ngoài các `.wsl-document-page`.
 - **Nguyên nhân:** Mô hình một `contentEditable` chứa nhiều block wrapper `.wsl-document-page` cho phép Chrome đặt collapsed Range tại chính editor root hoặc page wrapper, không phải trong một `<p>`. `restorePageSelection` có thể giữ nguyên Range root (offset vẫn hợp lệ) khi phân trang, dẫn tới caret nằm ngoài padding A4. Các lần sửa CSS ¶/Page Break trước không giải quyết được lỗi Range này.

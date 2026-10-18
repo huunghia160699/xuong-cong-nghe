@@ -103,7 +103,8 @@
  left:1px;
  width:calc(var(--wsl-paper-side-margin,87px) - 2px);
  z-index:2;
- cursor:pointer;
+ /* Standard arrow, not hand/pointer; the gutter stays fully transparent. */
+ cursor:default;
  touch-action:none;
  user-select:none;
  -webkit-user-select:none;

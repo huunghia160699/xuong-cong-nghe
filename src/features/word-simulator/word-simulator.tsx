@@ -4,6 +4,7 @@ import {useCallback,useEffect,useRef,useState} from "react";
 import {WordHomeRibbon,type WordFormatKey,type WordParagraphAlignment} from "./word-home-ribbon";
 import {collectWordVisualLines,wordLineAtY,selectWordVisualLines,type WordVisualLine} from "./word-line-selection";
 import {paginateWordEditor,insertManualWordPageBreak,scrollWordPageIntoView,ensureWordCaretInsideParagraph,MANUAL_BREAK_ATTRIBUTE} from "./word-pagination";
+import {syncWordParagraphMarkSizes} from "./word-paragraph-marks";
 import {WordCustomDropdown} from "./word-split-button";
 import {WordWindowBar} from "./word-window-bar";
 import {WordPageRulers,type RulerIndent} from "./word-page-rulers";
@@ -284,6 +285,16 @@ export function WordSimulator(){
     });
     return ()=>cancelAnimationFrame(frame);
   },[isReady,revision,orientation,margins]);
+  // Decorations follow the actual final inline font size on every edit,
+  // including an empty paragraph with an untyped pending font-size span.
+  // Never draw a fake caret or change the contentEditable text nodes here.
+  useEffect(()=>{
+    if(!isReady||!showMarks||!editor.current)return;
+    const frame=requestAnimationFrame(()=>{
+      if(editor.current)syncWordParagraphMarkSizes(editor.current);
+    });
+    return ()=>cancelAnimationFrame(frame);
+  },[isReady,showMarks,revision,fontSize,orientation,margins]);
   const formatKeys:WordFormatKey[]=["bold","italic","underline","strikeThrough","subscript","superscript"];
   function scriptAncestor(node:Node|null):HTMLElement|null{
     const root=editor.current;
