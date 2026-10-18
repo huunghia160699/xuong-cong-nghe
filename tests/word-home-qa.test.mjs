@@ -210,10 +210,10 @@ test("Horizontal centimeter ruler and tab chrome: 10 rounds over A4 size and zoo
    assert.match(ruler,/const PX_PER_QUARTER_CM=PX_PER_CM\/4/);
    assert.match(ruler,/const scaledWidth=paperWidth\*zoom\/100/);
    assert.match(ruler,/kind:index%4===0\?"cm":index%2===0\?"half":"quarter"/);
-   assert.match(ruler,/const paperRect=paper\.getBoundingClientRect\(\);/);
+   assert.match(ruler,/const paperRect=physical\.getBoundingClientRect\(\);/);
    assert.match(ruler,/const editorRect=editor\.getBoundingClientRect\(\);/);
    assert.match(ruler,/const viewportLeft=paperRect\.left;/);
-   assert.match(ruler,/const editorOffset=editorRect\.left-viewportLeft;/);
+   assert.match(ruler,/const editorOffset=firstPage\?padding:editorRect.left-viewportLeft;/);
    assert.match(ruler,/const editorWidth=editorRect\.width;/);
    assert.match(ruler,/observer\?\.observe\(editor\)/);
    assert.match(ruler,/const contentStart=snapTick\(paperGeometry\.editorOffset\);/);
@@ -307,10 +307,10 @@ test("Vertical Word ruler: repeat mirrored cm subdivisions, numbered white margi
  for(let round=0;round<10;round++){
   const vertical=ruler.slice(ruler.indexOf("function VerticalRulerTicks"),ruler.indexOf("export function WordPageRulers"));
   assert.match(vertical,/function VerticalRulerTicks/);
-  assert.match(vertical,/const paperRect=paper\.getBoundingClientRect\(\);/);
+  assert.match(vertical,/const paperRect=physical\.getBoundingClientRect\(\);/);
   assert.match(vertical,/const editorRect=editor\.getBoundingClientRect\(\);/);
   assert.match(vertical,/const paperHeight=paperRect\.height;/);
-  assert.match(vertical,/const editorOffset=editorRect\.top-viewportTop;/);
+  assert.match(vertical,/const editorOffset=firstPage\?parseFloat\(getComputedStyle\(firstPage\).paddingTop\)\*zoom\/100:/);
   assert.match(vertical,/const contentHeight=Math\.max\(0,pageHeight-2\*geometry\.editorOffset\);/);
   assert.match(vertical,/const step=PX_PER_QUARTER_CM\*zoom\/100;/);
   assert.match(vertical,/kind:index%4===0\?"cm":index%2===0\?"half":"quarter"/);

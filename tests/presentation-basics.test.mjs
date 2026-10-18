@@ -796,10 +796,10 @@ test("Word horizontal ruler has paper-edge aligned cm ticks only, leaving vertic
  assert.match(ruler,/const PX_PER_QUARTER_CM=PX_PER_CM\/4/);
  assert.match(ruler,/function HorizontalRulerTicks/);
  assert.match(ruler,/useLayoutEffect\(\(\)=>/);
- assert.match(ruler,/const paperRect=paper\.getBoundingClientRect\(\);/);
+ assert.match(ruler,/const paperRect=physical\.getBoundingClientRect\(\);/);
  assert.match(ruler,/const editorRect=editor\.getBoundingClientRect\(\);/);
  assert.match(ruler,/const viewportLeft=paperRect\.left;/);
- assert.match(ruler,/const editorOffset=editorRect\.left-viewportLeft;/);
+ assert.match(ruler,/const editorOffset=firstPage\?padding:editorRect.left-viewportLeft;/);
  assert.match(ruler,/const editorWidth=editorRect\.width;/);
  assert.match(ruler,/observer\?\.observe\(editor\)/);
  assert.match(ruler,/const contentStart=snapTick\(paperGeometry\.editorOffset\);/);
@@ -970,7 +970,7 @@ test("White ruler underlay aligns exactly with the editor between A4 page margin
  const ruler=readFileSync("src/features/word-simulator/word-page-rulers.tsx","utf8");
  const css=readFileSync("src/features/word-simulator/word-page-rulers.css","utf8");
  assert.match(ruler,/const editor=document\.querySelector<HTMLElement>\("\.wsl-word-page-body \.wsl-editor"\)/);
- assert.match(ruler,/const editorOffset=editorRect\.left-viewportLeft;/);
+ assert.match(ruler,/const editorOffset=firstPage\?padding:editorRect.left-viewportLeft;/);
  assert.match(ruler,/const editorWidth=editorRect\.width;/);
  assert.match(ruler,/Math\.abs\(previous\.editorOffset-editorOffset\)<0\.01/);
  assert.match(ruler,/Math\.abs\(previous\.editorWidth-editorWidth\)<0\.01/);
@@ -1229,12 +1229,12 @@ test("Vertical ruler mirrors horizontal centimeter ticks, margin-relative white 
  assert.match(vertical,/const rulerRef=useRef<HTMLDivElement>\(null\)/);
  assert.match(vertical,/const paper=document\.querySelector<HTMLElement>\("\.wsl-word-page-body \.wsl-paper"\)/);
  assert.match(vertical,/const editor=document\.querySelector<HTMLElement>\("\.wsl-word-page-body \.wsl-editor"\)/);
- assert.match(vertical,/const paperRect=paper\.getBoundingClientRect\(\);/);
+ assert.match(vertical,/const paperRect=physical\.getBoundingClientRect\(\);/);
  assert.match(vertical,/const editorRect=editor\.getBoundingClientRect\(\);/);
  assert.match(vertical,/const viewportTop=paperRect\.top;/);
  assert.match(vertical,/const top=viewportTop-ruler\.getBoundingClientRect\(\)\.top;/);
  assert.match(vertical,/const paperHeight=paperRect\.height;/);
- assert.match(vertical,/const editorOffset=editorRect\.top-viewportTop;/);
+ assert.match(vertical,/const editorOffset=firstPage\?parseFloat\(getComputedStyle\(firstPage\).paddingTop\)\*zoom\/100:/);
  assert.match(vertical,/observer\?\.observe\(paper\)/);
  assert.match(vertical,/observer\?\.observe\(editor\)/);
  assert.match(vertical,/observer\?\.observe\(ruler\)/);

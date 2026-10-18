@@ -3,6 +3,7 @@
 import {useCallback,useEffect,useRef,useState} from "react";
 import {WordHomeRibbon,type WordFormatKey,type WordParagraphAlignment} from "./word-home-ribbon";
 import {collectWordVisualLines,wordLineAtY,selectWordVisualLines,type WordVisualLine} from "./word-line-selection";
+import {paginateWordEditor,insertManualWordPageBreak,MANUAL_BREAK_ATTRIBUTE} from "./word-pagination";
 import {WordCustomDropdown} from "./word-split-button";
 import {WordWindowBar} from "./word-window-bar";
 import {WordPageRulers,type RulerIndent} from "./word-page-rulers";
@@ -39,6 +40,10 @@ function sanitize(html:string):string {
   const clean=(element:Element)=>{
     for(const child of Array.from(element.children))clean(child);
     if(element===parsed.body)return;
+    if(element.hasAttribute("data-wsl-selection-gutter")){element.remove();return;}
+    if(element.hasAttribute("data-wsl-page")){
+      element.replaceWith(...Array.from(element.childNodes));return;
+    }
     if(FORBIDDEN_TAGS.has(element.tagName)){element.remove();return;}
     if(!ALLOWED_TAGS.has(element.tagName)){
       element.replaceWith(...Array.from(element.childNodes));
@@ -59,6 +64,8 @@ function sanitize(html:string):string {
     const safeStyles:string[]=[];
     const oldAlign=element.getAttribute("align")??"";
     if(["left","right","center","justify"].includes(oldAlign))safeStyles.push("text-align:"+oldAlign);
+    if(element.tagName==="HR"&&element.hasAttribute(MANUAL_BREAK_ATTRIBUTE))
+      safeAttrs[MANUAL_BREAK_ATTRIBUTE]="true";
     if(element.tagName==="FONT"){
       const face=element.getAttribute("face")??"";
       const size=element.getAttribute("size")??"";
@@ -151,6 +158,9 @@ export function WordSimulator(){
   const [spellcheck,setSpellcheck]=useState(true);
   const [stats,setStats]=useState<Stats>({words:0,characters:0});
   const [revision,setRevision]=useState(0);
+  const [pageCount,setPageCount]=useState(1);
+  const [activePage,setActivePage]=useState(1);
+  const composingRef=useRef(false);
   const [status,setStatus]=useState("Tài liệu mới");
   const [isReady,setIsReady]=useState(false);
   const [font,setFont]=useState("Aptos");
@@ -170,13 +180,13 @@ export function WordSimulator(){
   const measuredHeight=measuredPaper?.landscape===isLandscape&&measuredPaper.zoom===zoom
     ?measuredPaper.height:a4Dimensions(isLandscape).height*zoom/100;
 
-  // The page may grow as text is entered; measure the rendered .wsl-paper,
-  // not just its A4 minimum height, to keep the vertical ruler exactly as tall.
+  // Keep the vertical ruler aligned to one physical sheet, not the entire
+  // document stack. Each paginated sheet has a fixed A4 height.
   useEffect(()=>{
     const page=paperRef.current;
     if(!page)return;
     const measure=()=>{
-      const height=page.getBoundingClientRect().height;
+      const height=(page.querySelector(".wsl-document-page")??page).getBoundingClientRect().height;
       if(height<=0)return;
       setMeasuredPaper(previous=>previous?.landscape===isLandscape&&previous.zoom===zoom
         &&Math.abs(previous.height-height)<0.1?previous:{landscape:isLandscape,zoom,height});
@@ -203,6 +213,7 @@ export function WordSimulator(){
     pendingFontNodeRef.current=null;
     typingScriptExitAnchorRef.current=null;
     setParagraphAlignment("left");
+    setPageCount(1);setActivePage(1);
     setClipboardMode(null);stagedClipboard.current=null;
     updateStats();setRevision(value=>value+1);
   },[updateStats]);
@@ -238,6 +249,17 @@ export function WordSimulator(){
     return ()=>window.clearTimeout(handle);
   },[revision,filename,orientation,margins,isReady]);
 
+  // Reflow after text and formatting changes, never while an IME is
+  // composing Vietnamese. The single editor remains editable across pages.
+  useEffect(()=>{
+    if(!isReady||!editor.current||composingRef.current)return;
+    const frame=requestAnimationFrame(()=>{
+      if(!editor.current||composingRef.current)return;
+      const pages=paginateWordEditor(editor.current);
+      setPageCount(previous=>previous===pages?previous:pages);
+    });
+    return ()=>cancelAnimationFrame(frame);
+  },[isReady,revision,orientation,margins]);
   const formatKeys:WordFormatKey[]=["bold","italic","underline","strikeThrough","subscript","superscript"];
   function scriptAncestor(node:Node|null):HTMLElement|null{
     const root=editor.current;
@@ -580,7 +602,8 @@ export function WordSimulator(){
   // Word-style left selection margin: one click selects the full visual
   // line, dragging vertically selects the intervening wrapped/normal lines.
   function beginLineGutterSelection(event:React.PointerEvent<HTMLDivElement>){
-    if(!event.isPrimary||event.button!==0||!editor.current)return;
+    if(!event.isPrimary||event.button!==0||!editor.current||
+      !(event.target as Element).closest?.("[data-wsl-selection-gutter]"))return;
     event.preventDefault();
     const lines=collectWordVisualLines(editor.current);
     const anchor=wordLineAtY(lines,event.clientY);
@@ -621,6 +644,11 @@ export function WordSimulator(){
       &&selection.focusNode&&editor.current.contains(selection.focusNode)){
       savedSelection.current=selection.getRangeAt(0).cloneRange();
       setHasSelection(!selection.isCollapsed && Boolean(selection.toString()));
+    const anchor=selection.anchorNode;
+    const page=anchor?.nodeType===Node.ELEMENT_NODE? (anchor as Element).closest("[data-wsl-page]"):
+      anchor?.parentElement?.closest("[data-wsl-page]");
+    const index=Number(page?.getAttribute("data-wsl-page")||"1");
+    setActivePage(previous=>previous===index?previous:index);
       syncFormatState();
       syncFontControls();
       syncParagraphAlignment();
@@ -998,6 +1026,16 @@ export function WordSimulator(){
     }catch{
       setStatus("Không thể áp dụng định dạng chỉ số "+(kind==="subscript"?"dưới":"trên"));
     }
+  }
+  function insertPageBreak(){
+    restoreSelection();
+    const root=editor.current;
+    if(!root||!insertManualWordPageBreak(root)){
+      setStatus("Đặt con trỏ trong văn bản để ngắt trang");return;
+    }
+    rememberSelection();
+    markChanged();
+    setStatus("Đã tạo ngắt trang (Ctrl + Enter)");
   }
   function saveDraft(){
     if(!editor.current)return;
@@ -1440,7 +1478,7 @@ export function WordSimulator(){
       {activeTab==="Insert"&&<>
         <Group name="Trang">{commands([
           {id:"hr",label:"Đường kẻ",run:()=>command("insertHorizontalRule"),icon:<Minus size={23}/>},
-          {id:"break",label:"Ngắt trang",run:()=>command("insertHTML",'<div class="wsl-page-break" contenteditable="false">Ngắt trang</div><p><br></p>'),icon:<FilePlus2 size={21}/>}
+          {id:"break",label:"Ngắt trang",run:insertPageBreak,icon:<FilePlus2 size={21}/>}
         ])}</Group>
         <Group name="Bảng và hình">{commands([
           {id:"table",label:"Bảng 3×3",run:insertTable,icon:<Table2 size={23}/>},
@@ -1503,18 +1541,18 @@ export function WordSimulator(){
             current.left===node.scrollLeft&&current.top===node.scrollTop?current:{left:node.scrollLeft,top:node.scrollTop});}}>
           <div className="wsl-scale" style={{
             width:a4Dimensions(orientation==="landscape").width*zoom/100,
-            minHeight:a4Dimensions(orientation==="landscape").height*zoom/100
+            minHeight:(a4Dimensions(orientation==="landscape").height+24)*zoom/100*pageCount
           }}>
             <div ref={paperRef} className={"wsl-paper "+(orientation==="landscape"?"is-landscape ":"")+(margins==="narrow"?"is-narrow":"")}
               style={{transform:"scale("+zoom/100+")",transformOrigin:"top left"}}>
-            <div className="wsl-word-selection-gutter" role="presentation"
-              title="Nhấp để chọn trọn dòng; kéo để chọn nhiều dòng"
+            <div ref={editor} className={"wsl-editor "+(showMarks?"show-paragraph-marks":"")} aria-label="Nội dung tài liệu Word" role="textbox" aria-multiline="true" contentEditable suppressContentEditableWarning spellCheck={spellcheck}
               onPointerDown={beginLineGutterSelection}
               onPointerMove={moveLineGutterSelection}
               onPointerUp={endLineGutterSelection}
               onPointerCancel={endLineGutterSelection}
-              onLostPointerCapture={()=>{lineGutterDrag.current=null;}}/>
-            <div ref={editor} className={"wsl-editor "+(showMarks?"show-paragraph-marks":"")} aria-label="Nội dung tài liệu Word" role="textbox" aria-multiline="true" contentEditable suppressContentEditableWarning spellCheck={spellcheck}
+              onLostPointerCapture={()=>{lineGutterDrag.current=null;}}
+              onCompositionStart={()=>{composingRef.current=true;}}
+              onCompositionEnd={()=>{composingRef.current=false;markChanged();}}
               onBeforeInput={event=>{
                  const native=event.nativeEvent as InputEvent;
                  if(native.data&&!native.isComposing&&(!native.inputType||native.inputType==="insertText")&&
@@ -1525,6 +1563,9 @@ export function WordSimulator(){
                  }
                }}
                onKeyDown={event=>{
+                 if(event.key==="Enter"&&(event.ctrlKey||event.metaKey)){
+                   event.preventDefault();insertPageBreak();return;
+                 }
                  if(event.key.length===1&&!event.ctrlKey&&!event.metaKey&&!event.altKey&&!event.nativeEvent.isComposing&&
                     (insertExitedScriptText(event.key)||
                     (typingScriptRef.current&&insertTypingScriptText(event.key))||
@@ -1543,7 +1584,7 @@ export function WordSimulator(){
       </div>
     </main>
     <footer className="wsl-statusbar">
-      <span>Trang 1</span><span>{stats.words} từ</span><span>{stats.characters} ký tự</span>
+      <span>Trang {activePage} / {pageCount}</span><span>{stats.words} từ</span><span>{stats.characters} ký tự</span>
       <span className="wsl-statusbar-spacer"/>
       <span><BookOpen size={15}/> Bố trí in</span><span>Tiếng Việt</span>
       <button aria-label="Giảm mức phóng" type="button" onClick={()=>setZoom(v=>Math.max(60,v-10))}><Minus size={15}/></button>

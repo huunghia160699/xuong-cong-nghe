@@ -1,5 +1,12 @@
 # Changelog
 
+## 2026-10-18 — Phân trang Word A4 tự động và ngắt trang Ctrl+Enter
+- Thay tờ giấy có chiều cao tự kéo dài bằng nhiều trang A4 riêng biệt, cùng kích thước, lề và khoảng cách 24px. Nội dung tự chạy sang trang mới khi đầy.
+- **Ctrl+Enter / Cmd+Enter** và nút Ngắt trang trong Insert chèn ngắt trang thực, đặt con trỏ vào trang kế, ghi dấu ngắt cùng tài liệu khi lưu/khôi phục/xuất.
+- Giữ một vùng rich text `contentEditable` liên tục để dùng định dạng, lựa chọn văn bản, điều khiển Ribbon. Các thẻ trang hiển thị không được lưu vào nội dung.
+- Thanh trạng thái hiển thị số trang hiện tại và tổng số trang; thước tham chiếu trang A4 đầu, vùng chọn dòng lề trái theo từng trang.
+- Bổ sung kiểm thử phân trang, ngắt trang, lưu dấu ngắt, tích hợp thước và trạng thái trang.
+
 ## 2026-10-18 — Chọn dòng và nhiều dòng từ lề trái của trang Word
 - Thêm vùng chọn ở lề trắng bên trái, nằm ngoài khung nhập liệu `contentEditable`.
 - Nhấp vào lề → bôi chọn nguyên dòng hiển thị (kể cả dòng tự xuống do wrap); kéo lên hoặc xuống → mở rộng lựa chọn qua nhiều dòng.

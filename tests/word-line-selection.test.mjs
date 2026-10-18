@@ -90,10 +90,12 @@ test("Dragging in left margin selects consecutive lines in either direction",()=
 
 test("Gutter is outside contentEditable and preserves Word's normal editing interactions",()=>{
  assert.match(editor,/import \{collectWordVisualLines,wordLineAtY,selectWordVisualLines,type WordVisualLine\}/);
- assert.match(editor,/className="wsl-word-selection-gutter" role="presentation"/);
- const gutter=editor.indexOf('className="wsl-word-selection-gutter"');
- const editable=editor.indexOf('className={"wsl-editor "',gutter);
- assert.ok(gutter>=0&&editable>gutter,"gutter is sibling of editor");
+ assert.match(editor,/\[data-wsl-selection-gutter\]/);
+ assert.match(readFileSync("src/features/word-simulator/word-pagination.ts","utf8"),/className="wsl-word-selection-gutter"/);
+ const paged=readFileSync("src/features/word-simulator/word-pagination.ts","utf8");
+ assert.match(paged,/page.appendChild\(gutter\)/);
+ assert.match(paged,/gutter.setAttribute\("contenteditable","false"\)/);
+ assert.match(editor,/!\(event.target as Element\).closest\?\.\("\[data-wsl-selection-gutter\]"\)/);
  assert.match(editor,/onPointerDown=\{beginLineGutterSelection\}/);
  assert.match(editor,/onPointerMove=\{moveLineGutterSelection\}/);
  assert.match(editor,/onPointerUp=\{endLineGutterSelection\}/);

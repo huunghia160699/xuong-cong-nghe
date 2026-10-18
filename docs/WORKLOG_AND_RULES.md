@@ -25,6 +25,15 @@
 
 ## III. Lịch sử
 
+### 2026-10-18 — Phân trang A4 thật cho trình soạn thảo Word và Ctrl+Enter
+- **Yêu cầu:** Không còn một tờ giấy dài vô hạn. Nội dung tự chuyển sang các trang A4 độc lập khi tới cuối diện tích soạn thảo; Ctrl+Enter tạo ngắt trang thủ công. Nút Ngắt trang ở tab Insert phải dùng cùng lệnh.
+- **Kiến trúc:** Giữ **một** `contentEditable` chung để không phá hoàn toàn các lệnh Font/Paragraph, selection và kiểu chữ. Module mới `word-pagination.ts` phân phối các block DOM gốc vào `.wsl-document-page` cao đúng A4, rộng đúng A4, cùng lề, khoảng cách 24px, số trang bằng pseudo-element. Dòng/đoạn dài hơn chiều cao vùng nhập được cắt thành các block kế tiếp bằng DOM `Range.extractContents` giữ thẻ inline. Quá trình tự phân trang theo `requestAnimationFrame` sau khi thay đổi, tránh can thiệp giữa lúc IME gõ tiếng Việt; dùng logic lưu/khôi phục vùng chọn bằng vị trí ký tự.
+- **Ngắt trang thủ công:** `Ctrl+Enter` / `Cmd+Enter` và nút Insert → Ngắt trang dùng `insertManualWordPageBreak`: tách nội dung tại con trỏ, tạo `<hr data-wsl-manual-break="true">` làm mốc ngắt, rồi đưa con trỏ tới đoạn đầu trang mới. Mốc được giữ khi sanitize/lưu nháp/xuất HTML và khi mở lại. Các `.wsl-document-page`/gutter chỉ là lớp trình bày, loại khỏi HTML lưu. Thanh trạng thái hiển thị Trang đang chọn / Tổng trang.
+- **Thước & chọn dòng:** Thước ngang/dọc đo theo tờ A4 **đầu tiên** chứ không theo tổng chiều cao tài liệu; vùng chọn dòng lề trái tạo riêng cho mỗi trang và đi theo trang sau khi phân trang. Giữ zoom, hướng giấy, lề bình thường/hẹp, in nhiều trang.
+- **Files:** `src/features/word-simulator/word-pagination.ts` (mới), `word-simulator.tsx`, `word-simulator.css`, `word-page-rulers.tsx`, tests cập nhật `word-line-selection.test.mjs`, `word-home-qa.test.mjs`, `presentation-basics.test.mjs`, thêm `tests/word-pagination.test.mjs`.
+- **Lưu ý kỹ thuật:** Reflow DOM và cắt khối dài có thể ảnh hưởng undo/redo, composition phức tạp, bảng dài và các tài liệu rất lớn. Cần nghiệm thu trên Chromium/Windows/UniKey thực tế với 2–4 trang, undo/redo, Ctrl+Enter, định dạng hỗn hợp, copy-paste. Kiểm thử source/unit và CI không thay thế E2E. Không tuyên bố hoàn hảo khi chưa có bằng chứng.
+- **Triển khai:** Chỉ deploy khi GitHub CI Unit tests, Typecheck, Production build, Smoke test thành công và Vercel READY trùng SHA main.
+
 ### 2026-10-18 — Chọn nguyên dòng bằng lề trái Word và kéo để chọn nhiều dòng
 - **Yêu cầu:** Di chuột ra mép trái của vùng nhập, trong phần lề trắng trên tờ A4, nhấp chọn nguyên một dòng đang hiển thị; kéo chuột theo chiều dọc chọn toàn bộ các dòng tương ứng, giống selection margin của Word.
 - **Thiết kế:** Trong `word-simulator.tsx`, thêm `div.wsl-word-selection-gutter` làm sibling nằm trước `div.wsl-editor[contentEditable]` trong `wsl-paper`. CSS position absolute đặt đúng phần padding bên trái trang, theo `--wsl-paper-top-margin` và `--wsl-paper-side-margin`, hiển thị nhẹ khi hover, cursor pointer, ẩn khi in, không đè lên nội dung nhập.

@@ -125,12 +125,15 @@ function HorizontalRulerTicks({landscape,narrow,zoom,scrollLeft,indent,onIndentS
     const scroller=document.querySelector<HTMLElement>(".wsl-word-page-body .wsl-page-scroll");
     if(!ruler||!paper||!editor)return;
     const align=()=>{
-      const paperRect=paper.getBoundingClientRect();
+      const firstPage=paper.querySelector<HTMLElement>(".wsl-document-page");
+      const physical=firstPage??paper;
+      const paperRect=physical.getBoundingClientRect();
       const editorRect=editor.getBoundingClientRect();
       const viewportLeft=paperRect.left;
       const left=viewportLeft-ruler.getBoundingClientRect().left;
-      const editorOffset=editorRect.left-viewportLeft;
-      const editorWidth=editorRect.width;
+      const padding=firstPage?parseFloat(getComputedStyle(firstPage).paddingLeft)*zoom/100:0;
+      const editorOffset=firstPage?padding:editorRect.left-viewportLeft;
+      const editorWidth=firstPage?firstPage.clientWidth*zoom/100-2*padding:editorRect.width;
       const pixelRatio=window.devicePixelRatio||1;
       setPaperGeometry(previous=>
         Math.abs(previous.left-left)<0.01&&
@@ -233,7 +236,8 @@ function VerticalRulerTicks({landscape,narrow,zoom,scrollTop,verticalHeight}:{
       const viewportTop=paperRect.top;
       const top=viewportTop-ruler.getBoundingClientRect().top;
       const paperHeight=paperRect.height;
-      const editorOffset=editorRect.top-viewportTop;
+      const editorOffset=firstPage?parseFloat(getComputedStyle(firstPage).paddingTop)*zoom/100:
+        editorRect.top-viewportTop;
       const pixelRatio=window.devicePixelRatio||1;
       setGeometry(old=>
         Math.abs(old.top-top)<0.01&&Math.abs(old.viewportTop-viewportTop)<0.01&&

@@ -111,3 +111,72 @@
 }
 .wsl-word-selection-gutter:hover{background:rgba(0,91,253,.035)}
 @media print{.wsl-word-selection-gutter{display:none!important}}
+
+/* True A4 pagination: a single rich-text editor with distinct fixed-size pages. */
+.wsl-word-layout .wsl-paper,
+.wsl-word-layout .wsl-paper.is-landscape,
+.wsl-word-layout .wsl-paper.is-narrow{
+  width:var(--wsl-paper-width);
+  min-height:0;
+  height:auto;
+  padding:0;
+  margin:0;
+  border:0;
+  background:transparent;
+  box-shadow:none;
+}
+.wsl-word-layout .wsl-editor,
+.wsl-word-layout .wsl-paper.is-landscape .wsl-editor{
+  width:var(--wsl-paper-width);
+  min-height:0;
+  height:auto;
+  background:transparent;
+}
+.wsl-word-layout .wsl-document-page{
+  position:relative;
+  width:var(--wsl-paper-width);
+  height:var(--wsl-paper-height);
+  min-height:0;
+  padding:var(--wsl-paper-top-margin) var(--wsl-paper-side-margin);
+  box-sizing:border-box;
+  background:#fff;
+  border:1px solid #c5c5c8;
+  margin:0 0 24px;
+  overflow:visible;
+  box-shadow:0 3px 10px #1a263419;
+}
+.wsl-word-layout .wsl-document-page:after{
+  content:attr(data-page-number);
+  position:absolute;
+  right:var(--wsl-paper-side-margin);
+  bottom:22px;
+  font:12px/1 "Segoe UI",Arial,sans-serif;
+  color:#9ca8b7;
+  pointer-events:none;
+  user-select:none;
+}
+.wsl-word-layout .wsl-document-page .wsl-word-selection-gutter{
+  top:var(--wsl-paper-top-margin);
+  bottom:var(--wsl-paper-top-margin);
+  left:1px;
+  width:calc(var(--wsl-paper-side-margin) - 2px);
+}
+.wsl-word-layout .wsl-document-page [data-wsl-manual-break]{
+  display:none!important;
+}
+@media print{
+  .wsl-word-layout .wsl-editor{width:100%!important}
+  .wsl-word-layout .wsl-document-page{
+    width:100%!important;
+    height:auto!important;
+    min-height:var(--wsl-paper-height)!important;
+    margin:0!important;
+    padding:20mm!important;
+    border:0!important;
+    box-shadow:none!important;
+    break-after:page;
+    page-break-after:always;
+  }
+  .wsl-word-layout .wsl-document-page:last-child{break-after:auto;page-break-after:auto}
+  .wsl-word-layout .wsl-document-page:after{display:none}
+}
