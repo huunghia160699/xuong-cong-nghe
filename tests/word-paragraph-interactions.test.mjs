@@ -154,7 +154,7 @@ test("Word paragraph CSS follows ruler values for margin left, right and first-l
 });
 
 test("Paragraph Increase/Decrease Indent uses same ruler geometry; 10 rounds",()=>{
- const fn=section(simulator,'  function stepParagraphIndent(direction:1|-1)','  function selectedParagraphBlocks()')
+ const fn=section(simulator,'  function stepParagraphIndent(direction:1|-1)','  // Format every selected paragraph')
   .replace('direction:1|-1','direction');
  const block={style:{marginLeft:"",marginRight:"",textIndent:""}};
  const indentTarget={current:null};
