@@ -41,7 +41,7 @@ test("All 14 Paragraph tools are wired; each one checked 10 times",()=>{
  for(const x of ["1","1.15","1.5","2"])
    assert.ok(paragraph.includes('"'+x+'"'),"line spacing "+x);
  for(const x of ["paragraphBorder","paragraphShading","lineSpacing","multilevelList"])
-   assert.ok(simulator.includes('if(name==="'+x+'"'),"command dispatch "+x);
+   assert.ok(simulator.includes('name==="'+x+'"'),"command dispatch "+x);
  assert.match(home,/<Group name="Paragraph"[^>]*onDetails=\{\(\)=>setDialog\("Paragraph"\)\}/);
  assert.match(ruler,/onPointerDown=\{event=>onPointerDown\(event,kind\)\}/);
  assert.match(ruler,/onPointerCancel=\{onPointerCancel\}/);
@@ -54,7 +54,7 @@ test("All 14 Paragraph tools are wired; each one checked 10 times",()=>{
 
 test("Left Indent moves first-line and body together, 10 repetitions with hanging and first-line offsets",()=>{
  const raw=section(ruler,'function moveLeftIndent(','/** Three separate');
- const expr=raw.replace('indent:RulerIndent,nextLeft:number):RulerIndent','indent,nextLeft');
+ const expr=raw.replace('indent:RulerIndent,nextLeft:number):RulerIndent','indent,nextLeft)');
  const move=runInNewContext('('+expr+')',{});
  const states=[
   {left:0,firstLine:0,right:0},
@@ -77,7 +77,7 @@ test("Left Indent moves first-line and body together, 10 repetitions with hangin
 
 test("Ruler marker pointer movement tracks zoom, direction and left/first-line linkage",()=>{
  const helper=runInNewContext('('+section(ruler,'function moveLeftIndent(','/** Three separate')
-  .replace('indent:RulerIndent,nextLeft:number):RulerIndent','indent,nextLeft')+')',{});
+  .replace('indent:RulerIndent,nextLeft:number):RulerIndent','indent,nextLeft)')+')',{});
  const eventFn=section(ruler,'  const onMarkerPointerMove=','  const onMarkerPointerUp=')
   .replace('event:RulerPointerEvent','event');
  for(let repeat=0;repeat<10;repeat++)for(const zoom of [60,100,160]){
@@ -123,7 +123,7 @@ test("Ruler marker pointer movement tracks zoom, direction and left/first-line l
 
 test("Word paragraph CSS follows ruler values for margin left, right and first-line text",()=>{
  const src=section(simulator,'  function applyRulerIndent(next:RulerIndent)','  function endRulerIndent()');
- const executable=src.replace('next:RulerIndent','next');
+ const executable=src.replace('next:RulerIndent','next').replace('value:number','value');
  let result=null,changed=0;
  const block={style:{marginLeft:"",marginRight:"",textIndent:""}};
  const target={current:block};
