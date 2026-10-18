@@ -92,3 +92,22 @@
  .wsl-editor{min-height:0!important;outline:0!important}
 }
 @media(prefers-reduced-motion:reduce){.wsl-paper{transition:none}}
+
+/* Word-style selection margin. The gutter lives inside page padding, entirely
+   outside the contentEditable text box, and follows page scroll/zoom. */
+.wsl-word-layout .wsl-paper{position:relative}
+.wsl-word-selection-gutter{
+ position:absolute;
+ top:calc(var(--wsl-paper-top-margin,86px) + 1px);
+ bottom:var(--wsl-paper-top-margin,86px);
+ left:1px;
+ width:calc(var(--wsl-paper-side-margin,87px) - 2px);
+ z-index:2;
+ cursor:pointer;
+ touch-action:none;
+ user-select:none;
+ -webkit-user-select:none;
+ background:transparent;
+}
+.wsl-word-selection-gutter:hover{background:rgba(0,91,253,.035)}
+@media print{.wsl-word-selection-gutter{display:none!important}}

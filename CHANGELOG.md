@@ -1,5 +1,12 @@
 # Changelog
 
+## 2026-10-18 — Chọn dòng và nhiều dòng từ lề trái của trang Word
+- Thêm vùng chọn ở lề trắng bên trái, nằm ngoài khung nhập liệu `contentEditable`.
+- Nhấp vào lề → bôi chọn nguyên dòng hiển thị (kể cả dòng tự xuống do wrap); kéo lên hoặc xuống → mở rộng lựa chọn qua nhiều dòng.
+- Hỗ trợ chữ mang nhiều định dạng inline; giữ vùng chọn để dùng công cụ Font và Paragraph.
+- Dùng pointer capture; hiệu ứng hover nhẹ; ẩn vùng chọn khi in, không làm thay đổi dữ liệu tài liệu.
+- Bổ sung kiểm thử chọn dòng, kéo nhiều dòng hai chiều và tích hợp CSS/sự kiện.
+
 ## 2026-10-18 — Khối chữ nhật dưới Left Indent sát phần trên
 - Kéo phần chữ nhật dưới lên 1px để tiếp giáp với phần thân của dấu Left Indent.
 - Giữ nguyên đáy, tổng kích thước 12×14px, đường viền ba cạnh, `cursor: pointer` và chức năng kéo.

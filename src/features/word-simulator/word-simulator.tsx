@@ -2,6 +2,7 @@
 
 import {useCallback,useEffect,useRef,useState} from "react";
 import {WordHomeRibbon,type WordFormatKey,type WordParagraphAlignment} from "./word-home-ribbon";
+import {collectWordVisualLines,wordLineAtY,selectWordVisualLines,type WordVisualLine} from "./word-line-selection";
 import {WordCustomDropdown} from "./word-split-button";
 import {WordWindowBar} from "./word-window-bar";
 import {WordPageRulers,type RulerIndent} from "./word-page-rulers";
@@ -133,6 +134,8 @@ export function WordSimulator(){
   // A zero-width placeholder keeps a collapsed caret inside an empty sub/sup.
   const TYPING_SCRIPT_PLACEHOLDER="\u200B";
   const SCRIPT_EXIT_ANCHOR="\u00A0";
+  const lineGutterDrag=useRef<{pointerId:number;anchor:number;last:number;
+    editorTop:number;lines:WordVisualLine[]}|null>(null);
   const indentTarget=useRef<HTMLElement|null>(null);
   const indentDragging=useRef(false);
   const [rulerIndent,setRulerIndent]=useState<RulerIndent>({firstLine:0,left:0,right:0});
@@ -573,6 +576,44 @@ export function WordSimulator(){
       const index=node.data.indexOf(TYPING_SCRIPT_PLACEHOLDER);
       if(index>=0)node.deleteData(index,TYPING_SCRIPT_PLACEHOLDER.length);
     }
+  }
+  // Word-style left selection margin: one click selects the full visual
+  // line, dragging vertically selects the intervening wrapped/normal lines.
+  function beginLineGutterSelection(event:React.PointerEvent<HTMLDivElement>){
+    if(!event.isPrimary||event.button!==0||!editor.current)return;
+    event.preventDefault();
+    const lines=collectWordVisualLines(editor.current);
+    const anchor=wordLineAtY(lines,event.clientY);
+    if(anchor<0)return;
+    const selection=window.getSelection();
+    if(!selection)return;
+    const editorTop=editor.current.getBoundingClientRect().top;
+    editor.current.focus({preventScroll:true});
+    if(!selectWordVisualLines(lines,anchor,anchor,selection))return;
+    lineGutterDrag.current={pointerId:event.pointerId,anchor,last:anchor,editorTop,lines};
+    event.currentTarget.setPointerCapture(event.pointerId);
+    rememberSelection();
+  }
+  function moveLineGutterSelection(event:React.PointerEvent<HTMLDivElement>){
+    const drag=lineGutterDrag.current;
+    if(!drag||event.pointerId!==drag.pointerId)return;
+    event.preventDefault();
+    const newTop=editor.current?.getBoundingClientRect().top??drag.editorTop;
+    const adjustedY=event.clientY-(newTop-drag.editorTop);
+    const target=wordLineAtY(drag.lines,adjustedY);
+    if(target<0||target===drag.last)return;
+    if(selectWordVisualLines(drag.lines,drag.anchor,target,window.getSelection())){
+      drag.last=target;
+      rememberSelection();
+    }
+  }
+  function endLineGutterSelection(event:React.PointerEvent<HTMLDivElement>){
+    const drag=lineGutterDrag.current;
+    if(!drag||event.pointerId!==drag.pointerId)return;
+    lineGutterDrag.current=null;
+    if(event.currentTarget.hasPointerCapture(event.pointerId))
+      event.currentTarget.releasePointerCapture(event.pointerId);
+    rememberSelection();
   }
   function rememberSelection(){
     const selection=window.getSelection();
@@ -1466,6 +1507,13 @@ export function WordSimulator(){
           }}>
             <div ref={paperRef} className={"wsl-paper "+(orientation==="landscape"?"is-landscape ":"")+(margins==="narrow"?"is-narrow":"")}
               style={{transform:"scale("+zoom/100+")",transformOrigin:"top left"}}>
+            <div className="wsl-word-selection-gutter" role="presentation"
+              title="Nhấp để chọn trọn dòng; kéo để chọn nhiều dòng"
+              onPointerDown={beginLineGutterSelection}
+              onPointerMove={moveLineGutterSelection}
+              onPointerUp={endLineGutterSelection}
+              onPointerCancel={endLineGutterSelection}
+              onLostPointerCapture={()=>{lineGutterDrag.current=null;}}/>
             <div ref={editor} className={"wsl-editor "+(showMarks?"show-paragraph-marks":"")} aria-label="Nội dung tài liệu Word" role="textbox" aria-multiline="true" contentEditable suppressContentEditableWarning spellCheck={spellcheck}
               onBeforeInput={event=>{
                  const native=event.nativeEvent as InputEvent;

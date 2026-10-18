@@ -25,6 +25,14 @@
 
 ## III. Lịch sử
 
+### 2026-10-18 — Chọn nguyên dòng bằng lề trái Word và kéo để chọn nhiều dòng
+- **Yêu cầu:** Di chuột ra mép trái của vùng nhập, trong phần lề trắng trên tờ A4, nhấp chọn nguyên một dòng đang hiển thị; kéo chuột theo chiều dọc chọn toàn bộ các dòng tương ứng, giống selection margin của Word.
+- **Thiết kế:** Trong `word-simulator.tsx`, thêm `div.wsl-word-selection-gutter` làm sibling nằm trước `div.wsl-editor[contentEditable]` trong `wsl-paper`. CSS position absolute đặt đúng phần padding bên trái trang, theo `--wsl-paper-top-margin` và `--wsl-paper-side-margin`, hiển thị nhẹ khi hover, cursor pointer, ẩn khi in, không đè lên nội dung nhập.
+- **Tương tác:** PointerDown lấy danh sách dòng thực tế bằng `collectWordVisualLines` (sử dụng DOM Range.getBoundingClientRect cho từng ký tự, hỗ trợ đoạn xuống dòng tự động và các đoạn có định dạng nội tuyến), focus editor nhưng không cuộn rồi đặt selection trọn dòng. PointerMove theo y dưới pointer capture mở rộng/thu hẹp vùng chọn giữa anchor và dòng hiện tại theo cả hai hướng; PointerUp/Cancel giải phóng capture và lưu selection để nút BIU, Sup/Sub, Paragraph tiếp tục hoạt động. Không sửa HTML, không gọi input events, không thay thước.
+- **Files:** `src/features/word-simulator/word-line-selection.ts` mới chứa bộ nhận diện/chọn dòng; `word-simulator.tsx` tích hợp sự kiện; `word-simulator.css` thêm gutter; `tests/word-line-selection.test.mjs` kiểm thử mô phỏng click một dòng, đoạn wrap nhiều dòng, inline SUP, kéo lên/xuống 10 lần, phần tử độc lập với editor, pointer capture và CSS.
+- **Giới hạn:** Kiểm thử mô phỏng DOM và CI; chưa click-kéo nghiệm thu với trình duyệt Windows thật. Với tài liệu quá dài, vòng đo từng ký tự có thể gây chậm khi bắt đầu kéo, cần kiểm thử thực tế các tài liệu lớn.
+- **Phát hành:** Chạy Unit tests, Typecheck, Build, Smoke. Chỉ triển khai khi CI thành công, xác minh Vercel Production READY + main SHA.
+
 ### 2026-10-18 — Kéo khối chữ nhật dưới Left Indent lên sát thân trên
 - **Yêu cầu:** Ảnh người dùng cho thấy thanh chữ nhật dưới Left Indent cách phần thân phía trên khoảng 1px, cần kéo sát lên.
 - **Sửa:** `src/features/word-simulator/word-page-rulers.tsx` dời nền và viền ba cạnh của khối dưới lên từ `y=9.5` đến `y=8.5`; tăng chiều cao nền từ 4px lên 5px để mép dưới vẫn ở `y=13.5`. Viền vẫn chỉ có 3 cạnh (`M.5 8.5V13.5H11.5V8.5`), không thêm border-top; không đổi viewBox 12x14, CSS, cursor pointer hoặc pointer event.
