@@ -125,6 +125,8 @@ export function WordHomeRibbon({
    {label:"Căn trái",run:()=>run("justifyLeft")},{label:"Căn giữa",run:()=>run("justifyCenter")},
    {label:"Căn phải",run:()=>run("justifyRight")},{label:"Căn đều",run:()=>run("justifyFull")},
    ...["1","1.15","1.5","2"].map(value=>({label:"Giãn dòng "+value,run:()=>run("lineSpacing",value)})),
+   ...["0","6","12","18"].map(value=>({label:"Cách trước đoạn "+value+" px",run:()=>run("paragraphSpacingBefore",value)})),
+   ...["0","6","12","18"].map(value=>({label:"Cách sau đoạn "+value+" px",run:()=>run("paragraphSpacingAfter",value)})),
    {label:"Tăng thụt lề",run:()=>run("indent")},{label:"Giảm thụt lề",run:()=>run("outdent")}
  ]:dialog==="Styles"?["Normal","No Spacing","Heading 1","Heading 2","Title","Subtitle"]
    .map(style=>({label:style,run:()=>selectStyle(style)}))
@@ -251,7 +253,11 @@ export function WordHomeRibbon({
        <WordSplitButton className="wsl-paragraph-split wsl-paragraph-combo-button" label="Line Spacing 1.5"
          icon={<span className="wsl-paragraph-combo wsl-paragraph-line-spacing"><WordLineSpacingGlyph/></span>}
          run={()=>run("lineSpacing")}
-         options={["1","1.15","1.5","2"].map(value=>({label:"Giãn dòng "+value,run:()=>run("lineSpacing",value)}))}/>
+         options={[
+           ...["1","1.15","1.5","2"].map(value=>({label:"Giãn dòng "+value,run:()=>run("lineSpacing",value)})),
+           ...["0","6","12","18"].map(value=>({label:"Cách trước đoạn "+value+" px",run:()=>run("paragraphSpacingBefore",value)})),
+           ...["0","6","12","18"].map(value=>({label:"Cách sau đoạn "+value+" px",run:()=>run("paragraphSpacingAfter",value)}))
+         ]}/>
        <WordSplitButton className="wsl-paragraph-split wsl-paragraph-combo-button" label="Paragraph Shading"
          icon={<span className="wsl-paragraph-combo wsl-paragraph-shading"><PaintBucket size={18}/><span className="wsl-paragraph-shading-swatch"/></span>}
          run={()=>run("paragraphShading")}
