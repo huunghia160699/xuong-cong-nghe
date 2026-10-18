@@ -72,7 +72,7 @@ test("Left Indent moves first-line and body together, 10 repetitions with hangin
  }
  assert.equal(move({left:0,firstLine:0,right:0},cm).firstLine,cm,
    "first line MUST move when lower Left Indent marker moves");
- assert.equal(move({left:cm,firstLine:cm*2,right:0},cm*3).firstLine,cm*4);
+ close(move({left:cm,firstLine:cm*2,right:0},cm*3).firstLine,cm*4,"float-safe first line");
 });
 
 test("Ruler marker pointer movement tracks zoom, direction and left/first-line linkage",()=>{
@@ -93,7 +93,7 @@ test("Ruler marker pointer movement tracks zoom, direction and left/first-line l
    PX_PER_QUARTER_CM:quarter,
    clamped:(v,min,max)=>Math.min(max,Math.max(min,v))
   };
-  const move=runInNewContext(eventFn+';onMarkerPointerMove',ctx);
+  const move=runInNewContext('(()=>{'+eventFn+';return onMarkerPointerMove})()',ctx);
   move({pointerId:7,clientX:200+cm*zoom/100,
    preventDefault(){prevented++}});
   assert.equal(prevented,1);
@@ -108,14 +108,14 @@ test("Ruler marker pointer movement tracks zoom, direction and left/first-line l
   const lineStart={left:cm,firstLine:cm,right:0};
   dragRef.current={pointerId:7,kind:"firstLine",startX:200,startValue:cm,startIndent:lineStart};
   ctx.indent=lineStart;
-  const lineMove=runInNewContext(eventFn+';onMarkerPointerMove',ctx);
+  const lineMove=runInNewContext('(()=>{'+eventFn+';return onMarkerPointerMove})()',ctx);
   lineMove({pointerId:7,clientX:200+cm*zoom/100,preventDefault(){}});
   close(next.left,cm,"top first-line marker does not move body");
   close(next.firstLine,cm*2,"top marker changes only first line");
   next=null;
   dragRef.current={pointerId:7,kind:"right",startX:200,startValue:0,startIndent:start};
   ctx.indent=start;
-  const rightMove=runInNewContext(eventFn+';onMarkerPointerMove',ctx);
+  const rightMove=runInNewContext('(()=>{'+eventFn+';return onMarkerPointerMove})()',ctx);
   rightMove({pointerId:7,clientX:200-cm*zoom/100,preventDefault(){}});
   close(next.right,cm,"right marker moves inward to the left");
  }
