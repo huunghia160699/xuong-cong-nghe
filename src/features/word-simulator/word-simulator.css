@@ -160,9 +160,45 @@
   left:1px;
   width:calc(var(--wsl-paper-side-margin) - 2px);
 }
-.wsl-word-layout .wsl-document-page [data-wsl-manual-break]{
-  display:none!important;
+/* Editable Word manual page-break marker: dotted rule + centered label +
+   pilcrow at the right edge (editing only, never part of printed document).
+   The actual <hr data-wsl-manual-break> remains the persisted break token. */
+.wsl-word-layout .wsl-document-page hr[data-wsl-manual-break]{
+  display:block!important;
+  position:relative;
+  height:26px;
+  min-height:26px;
+  margin:9px 0 12px;
+  padding:0;
+  border:0;
+  background:repeating-linear-gradient(to right,#606872 0 1px,transparent 1px 3px)
+    left center / calc(100% - 22px) 1px no-repeat;
+  box-shadow:none;
+  pointer-events:none;
+  user-select:none;
 }
+.wsl-word-layout .wsl-document-page hr[data-wsl-manual-break]::before{
+  content:"Page Break";
+  position:absolute;
+  left:50%;
+  top:50%;
+  transform:translate(-50%,-50%);
+  padding:0 5px;
+  background:#fff;
+  color:#172232;
+  font:11px/1.15 Arial,sans-serif;
+  white-space:nowrap;
+}
+.wsl-word-layout .wsl-document-page hr[data-wsl-manual-break]::after{
+  content:"¶";
+  position:absolute;
+  right:0;
+  top:50%;
+  transform:translateY(-50%);
+  color:#111;
+  font:25px/1 Georgia,serif;
+}
+
 @media print{
   .wsl-word-layout .wsl-editor{width:100%!important}
   .wsl-word-layout .wsl-document-page{
@@ -176,6 +212,7 @@
     break-after:page;
     page-break-after:always;
   }
+  .wsl-word-layout .wsl-document-page hr[data-wsl-manual-break]{display:none!important}
   .wsl-word-layout .wsl-document-page:last-child{break-after:auto;page-break-after:auto}
   .wsl-word-layout .wsl-document-page:after{display:none}
 }

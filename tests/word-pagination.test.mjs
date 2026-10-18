@@ -34,7 +34,8 @@ test("Ctrl+Enter and Insert tab use the same manual page-break command",()=>{
  assert.match(helper,/range.deleteContents\(\)/);
  assert.match(simulator,/if\(element.tagName==="HR"&&element.hasAttribute\(MANUAL_BREAK_ATTRIBUTE\)\)/);
  assert.match(simulator,/safeAttrs\[MANUAL_BREAK_ATTRIBUTE\]="true"/);
- assert.match(styles,/\[data-wsl-manual-break\]\{\s*display:none!important/);
+ assert.match(styles,/\.wsl-word-layout \.wsl-document-page hr\[data-wsl-manual-break\]\{[^}]*display:block!important;/s);
+ assert.match(styles,/@media print\{[\s\S]*?hr\[data-wsl-manual-break\]\{display:none!important\}/);
 });
 
 test("Automatic pages preserve inline formatting and selection, split long paragraphs",()=>{
@@ -263,4 +264,76 @@ test("Empty paragraph mark stays on its caret line instead of dropping below <br
  const emptyTags=["<p><br></p>","<p><br/></p>"];
  for(const html of emptyTags)assert.match(html,/<p><br\s*\/?>\s*<\/p>/);
  assert.doesNotMatch("<p>adsa</p>",/<p><br\s*\/?>\s*<\/p>/);
+});
+
+
+test("Visible Word Ctrl+Enter marker matches reference: dotted rule, centered Page Break, right ¶",()=>{
+ const token=styles.slice(styles.indexOf("/* Editable Word manual page-break marker"),styles.indexOf("@media print",styles.indexOf("/* Editable Word manual page-break marker")));
+ assert.ok(token.length>100);
+ assert.match(token,/hr\[data-wsl-manual-break\]\{[\s\S]*?display:block!important;/);
+ assert.match(token,/background:repeating-linear-gradient\(to right/);
+ assert.match(token,/calc\(100% - 22px\) 1px no-repeat/);
+ assert.match(token,/hr\[data-wsl-manual-break\]::before\{[\s\S]*?content:"Page Break";/);
+ assert.match(token,/left:50%;[\s\S]*?top:50%;[\s\S]*?transform:translate\(-50%,-50%\);/);
+ assert.match(token,/hr\[data-wsl-manual-break\]::after\{[\s\S]*?content:"¶";/);
+ assert.match(token,/right:0;/);
+ assert.match(styles,/@media print\{[\s\S]*?hr\[data-wsl-manual-break\]\{display:none!important\}/);
+ assert.doesNotMatch(token,/display:none!important/,"marker must appear during editing");
+ assert.match(helper,/hr\.setAttribute\(MANUAL_BREAK_ATTRIBUTE,"true"\)/);
+ assert.match(helper,/contentEditable="false"/);
+ assert.match(helper,/\(node as HTMLElement\)\.contentEditable="false"/);
+});
+
+test("Ctrl+Enter scrolls the editor viewport to the NEW page after repagination",()=>{
+ const before=simulator.indexOf('  function insertPageBreak(){');
+ const end=simulator.indexOf('  function blockCommand(',before);
+ const insert=simulator.slice(before,end);
+ assert.match(insert,/insertManualWordPageBreak\(root\)/);
+ assert.match(insert,/pageBreakScrollTarget\.current=caretElement\?\.closest\("p,h1,h2,h3,h4,blockquote"\)/);
+ assert.match(insert,/rememberSelection\(\);\s*markChanged\(\)/);
+ assert.match(simulator,/const pageScrollRef=useRef<HTMLDivElement>\(null\)/);
+ assert.match(simulator,/const pageBreakScrollTarget=useRef<HTMLElement\|null>\(null\)/);
+ assert.match(simulator,/<div ref=\{pageScrollRef\} className="wsl-page-scroll"/);
+ const effect=simulator.slice(simulator.indexOf('  // Reflow after text and formatting changes'),simulator.indexOf('  const formatKeys:',simulator.indexOf('  // Reflow after text and formatting changes')));
+ assert.match(effect,/const pages=paginateWordEditor\(root\)/);
+ assert.match(effect,/target\?\.isConnected/);
+ assert.match(effect,/target\.closest\("\[data-wsl-page\]"\)/);
+ assert.match(effect,/pageBreakScrollTarget\.current=null/);
+ assert.match(effect,/scrollWordPageIntoView\(pageScrollRef\.current,nextPage\)/);
+ assert.match(effect,/document\.activeElement===root&&afterIndex>beforeIndex\?afterPage:null/,
+   "naturally flowing to a new page should scroll as well");
+ assert.match(effect,/setActivePage\(previous=>previous===afterIndex\?previous:afterIndex\)/);
+ assert.match(simulator,/if\(event\.key==="Enter"&&\(event\.ctrlKey\|\|event\.metaKey\)\)/);
+ assert.match(simulator,/\{id:"break",label:"Ngắt trang",run:insertPageBreak/);
+});
+
+test("Scrolling a new page respects current zoom and only moves document scroller",()=>{
+ const begin=helper.indexOf('export function scrollWordPageIntoView(');
+ assert.ok(begin>0);
+ const code=helper.slice(begin).trim()
+   .replace('export function scrollWordPageIntoView(','function scrollWordPageIntoView(')
+   .replace('scroller:HTMLElement,page:HTMLElement','scroller,page')
+   .replace('):void{','){');
+ const scroll=runInNewContext('('+code+')',{});
+ for(const zoom of [60,80,100,150,200]){
+   let requested;
+   const viewport={top:100,bottom:500};
+   const page={getBoundingClientRect(){return {top:viewport.top+540*zoom/100}}};
+   const scroller={
+     scrollTop:40,scrollHeight:7000,clientHeight:400,
+     getBoundingClientRect(){return viewport},
+     scrollTo(options){requested=options}
+   };
+   scroll(scroller,page);
+   assert.equal(requested.behavior,"smooth");
+   assert.equal(requested.top,40+540*zoom/100-12,
+     "rectangle already includes zoom: no second zoom multiplication");
+ }
+ const scroller={
+   scrollTop:100,scrollHeight:500,clientHeight:400,
+   getBoundingClientRect(){return{top:30}},
+   scrollTo(opts){this.called=opts}
+ };
+ scroll(scroller,{getBoundingClientRect(){return{top:9999}}});
+ assert.equal(scroller.called.top,100,"clamp beyond scroll maximum");
 });

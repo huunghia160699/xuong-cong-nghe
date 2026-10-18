@@ -25,6 +25,13 @@
 
 ## III. Lịch sử
 
+### 2026-10-19 — Hiện đường Page Break như Microsoft Word và tự cuộn khi chuyển trang
+- **Yêu cầu (ảnh mẫu):** Ctrl+Enter tạo dấu ngắt trang có một đường chấm ngang, dòng chữ `Page Break` nằm giữa và `¶` lớn ở mép phải. Sau khi chuyển trang phải tự cuộn vùng soạn thảo đến đầu trang mới, con trỏ có sẵn để gõ tiếp.
+- **Nguyên nhân chưa đạt:** `word-simulator.css` trước đó đặt `.wsl-document-page [data-wsl-manual-break]{display:none!important}` nên dấu ngắt đã tồn tại dưới dạng `<hr data-wsl-manual-break>` nhưng không hiển thị. Sau `insertManualWordPageBreak`, editor chỉ gọi `markChanged()`; effect phân trang không di chuyển scroll container đến trang chứa caret.
+- **Sửa:** `word-simulator.css` trình bày marker HR bằng repeating-linear-gradient chấm 1px với chữ `Page Break` chính giữa, ¶ tại đầu cuối bên phải. Chỉ hiển thị khi chỉnh sửa, ẩn đường kẻ/¶ khi in vì trang đã có page-break CSS. `word-pagination.ts` phục hồi contentEditable=false cho marker đã khôi phục từ bản nháp và thêm `scrollWordPageIntoView(scroller,page)` dùng DOM rectangles đã tính cả zoom, giới hạn scrollTop trong viewport. `word-simulator.tsx` thêm ref vùng scroll, ref target đoạn ngay sau Ctrl+Enter, resolve trang mới **sau** `paginateWordEditor` rồi scroll mượt trong `.wsl-page-scroll`. Khi nội dung tự chảy sang trang tiếp theo trong lúc editor đang có focus cũng tự cuộn; cập nhật `Trang hiện tại / Tổng trang`. Nút Insert → Ngắt trang và Ctrl+Enter cùng sử dụng cơ chế.
+- **Kiểm thử:** `tests/word-pagination.test.mjs` kiểm tra marker dotted, nhãn chính giữa, ¶ phía phải, không in marker, thuộc tính HR noneditable, Ctrl+Enter, Insert command, effect repagination rồi cuộn, scroll zoom 60–200% và giới hạn scrollTop. Chạy Unit tests, Typecheck, Production build, Smoke test, triển khai Vercel READY đúng SHA.
+- **Giới hạn:** Chưa thao tác E2E trên Chromium Windows để xác nhận hình thức đúng từng pixel và khả năng cuộn khi browser dùng IME/zoom; không nói đã trực quan nghiệm thu nếu chưa kiểm tra.
+
 ### 2026-10-18 — Fix ký hiệu ¶ nhảy xuống dòng dưới con trỏ ở đoạn trống
 - **Ảnh người dùng:** con trỏ đứng ở dòng thứ nhất, ký hiệu ¶ xuất hiện ở dòng thứ hai; ngay khi gõ chữ, ¶ nhảy ngược lên cạnh chữ, không giống Word. Đây là lỗi *render ký hiệu paragraph mark*, không phải bằng chứng có thêm một đoạn trống thật.
 - **Nguyên nhân gốc:** CSS `word-home-ribbon.css` sử dụng `.wsl-editor.show-paragraph-marks p:after{content:" ¶"}`; đoạn rỗng có DOM `<p><br></p>`, ký tự BR chiếm dòng hiện tại nên ::after là nội dung sau BR và bị đẩy xuống dòng mới. Khi nhập chữ, Chromium loại BR nên ký hiệu ¶ bất ngờ lên cùng dòng.

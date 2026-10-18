@@ -3,7 +3,7 @@
 import {useCallback,useEffect,useRef,useState} from "react";
 import {WordHomeRibbon,type WordFormatKey,type WordParagraphAlignment} from "./word-home-ribbon";
 import {collectWordVisualLines,wordLineAtY,selectWordVisualLines,type WordVisualLine} from "./word-line-selection";
-import {paginateWordEditor,insertManualWordPageBreak,MANUAL_BREAK_ATTRIBUTE} from "./word-pagination";
+import {paginateWordEditor,insertManualWordPageBreak,scrollWordPageIntoView,MANUAL_BREAK_ATTRIBUTE} from "./word-pagination";
 import {WordCustomDropdown} from "./word-split-button";
 import {WordWindowBar} from "./word-window-bar";
 import {WordPageRulers,type RulerIndent} from "./word-page-rulers";
@@ -128,6 +128,8 @@ function Group({name,children}:{name:string;children:React.ReactNode}){
 export function WordSimulator(){
   const editor=useRef<HTMLDivElement>(null);
   const paperRef=useRef<HTMLDivElement>(null);
+  const pageScrollRef=useRef<HTMLDivElement>(null);
+  const pageBreakScrollTarget=useRef<HTMLElement|null>(null);
   const shell=useRef<HTMLDivElement>(null);
   const fileInput=useRef<HTMLInputElement>(null);
   const imageInput=useRef<HTMLInputElement>(null);
@@ -255,8 +257,30 @@ export function WordSimulator(){
     if(!isReady||!editor.current||composingRef.current)return;
     const frame=requestAnimationFrame(()=>{
       if(!editor.current||composingRef.current)return;
-      const pages=paginateWordEditor(editor.current);
+      const root=editor.current;
+      const currentSelection=window.getSelection();
+      const anchorNode=currentSelection?.anchorNode;
+      const beforeElement=anchorNode?.nodeType===Node.ELEMENT_NODE?
+        anchorNode as Element:anchorNode?.parentElement;
+      const beforeIndex=Number(beforeElement?.closest("[data-wsl-page]")?.getAttribute("data-wsl-page")||"1");
+      const pages=paginateWordEditor(root);
       setPageCount(previous=>previous===pages?previous:pages);
+      const restored=window.getSelection()?.anchorNode;
+      const afterElement=restored?.nodeType===Node.ELEMENT_NODE?
+        restored as Element:restored?.parentElement;
+      const afterPage=afterElement?.closest("[data-wsl-page]") as HTMLElement|null;
+      const afterIndex=Number(afterPage?.getAttribute("data-wsl-page")||"1");
+      const target=pageBreakScrollTarget.current;
+      // Explicit Ctrl+Enter/Insert-page-break always reveals the newly
+      // created page, even when the Ribbon button temporarily has focus.
+      const requestedPage=target?.isConnected?
+        target.closest("[data-wsl-page]") as HTMLElement|null:null;
+      pageBreakScrollTarget.current=null;
+      const nextPage=requestedPage||
+        (document.activeElement===root&&afterIndex>beforeIndex?afterPage:null);
+      if(nextPage&&pageScrollRef.current)
+        scrollWordPageIntoView(pageScrollRef.current,nextPage);
+      setActivePage(previous=>previous===afterIndex?previous:afterIndex);
     });
     return ()=>cancelAnimationFrame(frame);
   },[isReady,revision,orientation,margins]);
@@ -1042,6 +1066,12 @@ export function WordSimulator(){
     if(!root||!insertManualWordPageBreak(root)){
       setStatus("Đặt con trỏ trong văn bản để ngắt trang");return;
     }
+    const afterBreak=window.getSelection();
+    const caretNode=afterBreak?.rangeCount?
+      afterBreak.getRangeAt(0).startContainer:null;
+    const caretElement=caretNode?.nodeType===Node.ELEMENT_NODE?
+      caretNode as Element:caretNode?.parentElement;
+    pageBreakScrollTarget.current=caretElement?.closest("p,h1,h2,h3,h4,blockquote") as HTMLElement|null;
     rememberSelection();
     markChanged();
     setStatus("Đã tạo ngắt trang (Ctrl + Enter)");
@@ -1536,7 +1566,7 @@ export function WordSimulator(){
         {showRuler&&<WordPageRulers axis="vertical" landscape={isLandscape} narrow={margins==="narrow"}
           zoom={zoom} scrollLeft={rulerScroll.left} scrollTop={rulerScroll.top}
           renderedPaperHeight={measuredHeight}/>}
-        <div className="wsl-page-scroll" aria-label="Vùng trang tài liệu"
+        <div ref={pageScrollRef} className="wsl-page-scroll" aria-label="Vùng trang tài liệu"
           onScroll={event=>{const node=event.currentTarget;setRulerScroll(current=>
             current.left===node.scrollLeft&&current.top===node.scrollTop?current:{left:node.scrollLeft,top:node.scrollTop});}}>
           <div className="wsl-scale" style={{

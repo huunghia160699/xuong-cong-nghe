@@ -1,5 +1,12 @@
 # Changelog
 
+## 2026-10-19 — Hiển thị dấu Page Break và tự chuyển màn hình sang trang mới
+- Khi Ctrl+Enter hoặc Insert → Ngắt trang, hiển thị dấu ngắt trang dạng đường chấm ngang với `Page Break` giữa đường và `¶` ở bên phải, giống hình mẫu Word; marker không xuất hiện khi in.
+- Tự cuộn vùng trang tài liệu đến đầu trang mới sau khi phân trang xong, giữ caret sẵn để gõ. Khi gõ đầy trang khiến nội dung tự chuyển sang trang kế cũng tự cuộn.
+- Tôn trọng mức zoom và chỉ cuộn khu vực soạn thảo, không cuộn cả trang web hoặc che Ribbon.
+- Dấu ngắt được giữ khi lưu/khôi phục; tiếp tục không thể sửa bên trong marker.
+- Thêm kiểm thử hiển thị, sự kiện Ctrl+Enter và độ chính xác vị trí scroll.
+
 ## 2026-10-18 — Dấu ¶ nằm cạnh con trỏ trong đoạn trống
 - Khắc phục CSS khiến dấu kết thúc đoạn ¶ rơi xuống dưới khi đoạn trống có `<br>`; đoạn trống giờ hiển thị ký hiệu cạnh con trỏ trên cùng dòng.
 - Khi nhập chữ, ký hiệu tiếp tục chạy theo cuối dòng thay vì nhảy từ dòng dưới lên.

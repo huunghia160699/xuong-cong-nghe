@@ -203,6 +203,9 @@ export function paginateWordEditor(root:HTMLElement):number{
     const node=fragment.firstChild;
     if(node.nodeType===Node.ELEMENT_NODE&&
        (node as Element).hasAttribute(MANUAL_BREAK_ATTRIBUTE)){
+      // Restored drafts pass through HTML sanitization. Reinstate the
+      // non-editable break marker whenever the editor is repaginated.
+      (node as HTMLElement).contentEditable="false";
       page.appendChild(node);
       nextPage();
       continue;
@@ -267,4 +270,19 @@ export function insertManualWordPageBreak(root:HTMLElement):boolean{
   selection.removeAllRanges();
   selection.addRange(caret);
   return true;
+}
+
+/** Scroll only the document viewport; never move the app header/window.
+ * Client rectangles already include page zoom, so don't apply zoom twice. */
+export function scrollWordPageIntoView(
+  scroller:HTMLElement,page:HTMLElement
+):void{
+  const viewport=scroller.getBoundingClientRect();
+  const pageRect=page.getBoundingClientRect();
+  const desired=scroller.scrollTop+pageRect.top-viewport.top-12;
+  const maxScroll=Math.max(0,scroller.scrollHeight-scroller.clientHeight);
+  scroller.scrollTo({
+    top:Math.max(0,Math.min(maxScroll,desired)),
+    behavior:"smooth"
+  });
 }
