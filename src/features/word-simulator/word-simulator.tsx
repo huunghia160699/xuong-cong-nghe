@@ -85,6 +85,8 @@ function sanitize(html:string):string {
     if(/^(?:1(?:\.(?:0|15|5))?|2(?:\.0)?)$/.test(lineHeight))safeStyles.push("line-height:"+lineHeight);
     const marginBottom=style.marginBottom;
     if(/^(?:0|\d{1,2}px)$/.test(marginBottom))safeStyles.push("margin-bottom:"+marginBottom);
+    const marginTop=style.marginTop;
+    if(/^(?:0|\d{1,2}px)$/.test(marginTop))safeStyles.push("margin-top:"+marginTop);
     // Preserve real paragraph indentation when exporting or saving a draft.
     for(const name of ["marginLeft","marginRight","textIndent"] as const){
       const value=style[name];
@@ -1241,6 +1243,26 @@ export function WordSimulator(){
     indentTarget.current=null;
     syncRulerIndent();
   }
+  // Format every selected paragraph, not only the paragraph containing the
+  // selection anchor. Nested list/table blocks are reduced to their leaves.
+  function selectedParagraphBlocks():HTMLElement[]{
+    const root=editor.current;
+    if(!root)return [];
+    const selection=window.getSelection();
+    const single=currentBlock();
+    const fallback=single&&root.contains(single)&&
+      single.matches("p,h1,h2,h3,h4,li,blockquote,td,th,div:not([data-wsl-page])")?[single]:[];
+    if(!selection?.rangeCount||selection.isCollapsed||
+       !selection.anchorNode||!selection.focusNode||
+       !root.contains(selection.anchorNode)||!root.contains(selection.focusNode))return fallback;
+    const range=selection.getRangeAt(0);
+    const intersecting=Array.from(root.querySelectorAll<HTMLElement>(
+      "p,h1,h2,h3,h4,li,blockquote,td,th,div:not([data-wsl-page]):not([data-wsl-selection-gutter])"
+    )).filter(block=>range.intersectsNode(block));
+    const innermost=intersecting.filter(block=>
+      !intersecting.some(other=>other!==block&&block.contains(other)));
+    return innermost.length?innermost:fallback;
+  }
   function selectedChange(fn:(text:string)=>string){
     restoreSelection();
     const selected=window.getSelection()?.toString()??"";
@@ -1433,12 +1455,22 @@ export function WordSimulator(){
       block.style.backgroundColor=value==="none"?"":value&&/^#[0-9a-f]{6}$/i.test(value)?value:block.style.backgroundColor?"":"#fff2a8";
       markChanged();return;
     }
-    if(name==="lineSpacing"||name==="paragraphBorder"){
+    if(name==="lineSpacing"||name==="paragraphSpacingBefore"||
+       name==="paragraphSpacingAfter"||name==="paragraphBorder"){
       restoreSelection();
       const block=currentBlock();
       if(!block||!editor.current?.contains(block)){setStatus("Đặt con trỏ trong đoạn văn");return;}
       if(name==="lineSpacing"){
-        block.style.lineHeight=["1","1.15","1.5","2"].includes(value??"")?value!:block.style.lineHeight==="1.5"?"1":"1.5";
+        const paragraphs=selectedParagraphBlocks();
+        const next=["1","1.15","1.5","2"].includes(value??"")?
+          String(value):paragraphs[0]?.style.lineHeight==="1.5"?"1.15":"1.5";
+        for(const paragraph of paragraphs)paragraph.style.lineHeight=next;
+      }else if(name==="paragraphSpacingBefore"||name==="paragraphSpacingAfter"){
+        if(!["0","6","12","18"].includes(value??""))return;
+        for(const paragraph of selectedParagraphBlocks()){
+          if(name==="paragraphSpacingBefore")paragraph.style.marginTop=value+"px";
+          else paragraph.style.marginBottom=value+"px";
+        }
       }else if(value==="none"){
         block.style.borderBottom="";block.style.borderTop="";
       }else if(value==="top"){
