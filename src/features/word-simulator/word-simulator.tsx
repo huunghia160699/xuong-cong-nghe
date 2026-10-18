@@ -1,7 +1,7 @@
 "use client";
 
 import {useCallback,useEffect,useRef,useState} from "react";
-import {WordHomeRibbon,type WordFormatKey} from "./word-home-ribbon";
+import {WordHomeRibbon,type WordFormatKey,type WordParagraphAlignment} from "./word-home-ribbon";
 import {WordCustomDropdown} from "./word-split-button";
 import {WordWindowBar} from "./word-window-bar";
 import {WordPageRulers,type RulerIndent} from "./word-page-rulers";
@@ -156,6 +156,7 @@ export function WordSimulator(){
   const [query,setQuery]=useState("");
   const [showMarks,setShowMarks]=useState(false);
   const [hasSelection,setHasSelection]=useState(false);
+  const [paragraphAlignment,setParagraphAlignment]=useState<WordParagraphAlignment>("left");
   const [paintArmed,setPaintArmed]=useState(false);
   const [clipboardMode,setClipboardMode]=useState<"copy"|"cut"|null>(null);
   const [formatActive,setFormatActive]=useState<Record<WordFormatKey,boolean>>({
@@ -198,6 +199,7 @@ export function WordSimulator(){
     typingScriptNodeRef.current=null;
     pendingFontNodeRef.current=null;
     typingScriptExitAnchorRef.current=null;
+    setParagraphAlignment("left");
     setClipboardMode(null);stagedClipboard.current=null;
     updateStats();setRevision(value=>value+1);
   },[updateStats]);
@@ -358,7 +360,7 @@ export function WordSimulator(){
         savedSelection.current=selection.getRangeAt(0).cloneRange();
         setHasSelection(!selection.isCollapsed&&Boolean(selection.toString()));
       }
-      syncFormatState();syncFontControls();syncRulerIndent();
+      syncFormatState();syncFontControls();syncParagraphAlignment();syncRulerIndent();
     };
     document.addEventListener("selectionchange",changed);
     return ()=>document.removeEventListener("selectionchange",changed);
@@ -580,6 +582,7 @@ export function WordSimulator(){
       setHasSelection(!selection.isCollapsed && Boolean(selection.toString()));
       syncFormatState();
       syncFontControls();
+      syncParagraphAlignment();
     }
   }
   function restoreSelection(){
@@ -611,6 +614,7 @@ export function WordSimulator(){
     rememberSelection();
     syncFormatState();
     syncFontControls();
+    syncParagraphAlignment();
     markChanged();
   }
   // Restore a text selection by offsets so a native formatting command
@@ -1049,6 +1053,18 @@ export function WordSimulator(){
     const element=node.nodeType===Node.ELEMENT_NODE?node as Element:node.parentElement;
     return (element?.closest("p,div,li,h1,h2,h3,h4,blockquote,td,th")??null) as HTMLElement|null;
   }
+  function syncParagraphAlignment(){
+    const root=editor.current;
+    const block=currentBlock();
+    if(!root||!block||!root.contains(block))return;
+    // The browser stores justify commands as a style or legacy align attribute
+    // on the block. Computed style also covers inherited paragraph alignment.
+    const value=window.getComputedStyle(block).textAlign.toLowerCase();
+    const next:WordParagraphAlignment=value==="center"?"center":
+      value==="right"||value==="end"?"right":
+      value==="justify"||value==="justify-all"?"justify":"left";
+    setParagraphAlignment(current=>current===next?current:next);
+  }
   function indentBlock():HTMLElement|null{
     const root=editor.current;
     if(!root)return null;
@@ -1373,7 +1389,7 @@ export function WordSimulator(){
       {activeTab==="File"&&<Group name="Tệp">{fileActions.map(item=><ToolButton key={item.label} item={{id:item.label,label:item.label,run:item.action,icon:item.icon}}/>)}</Group>}
       {activeTab==="Home"&&<WordHomeRibbon
         font={font} fontSize={fontSize} showMarks={showMarks} hasSelection={hasSelection} paintArmed={paintArmed}
-        formatActive={formatActive} clipboardMode={clipboardMode}
+        formatActive={formatActive} paragraphAlignment={paragraphAlignment} clipboardMode={clipboardMode}
         run={runHome} editFont={editFont} editSize={editSize}
         changeCase={changeCase} sortLines={sortLines} replaceText={replaceText}
         findText={()=>setSearchOpen(true)}

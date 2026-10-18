@@ -25,6 +25,14 @@
 
 ## III. Lịch sử
 
+### 2026-10-18 — Active cho bốn nút căn đoạn văn Left, Center, Right, Justify
+- **Phản hồi:** Trong Word mô phỏng, bốn nút L/C/R/J không có trạng thái active khi đặt con trỏ hoặc chọn đoạn văn đã được căn.
+- **Nguyên nhân:** `WordHomeRibbon` trước đó chỉ có `run("justifyLeft/Center/Right/Full")`, không nhận `paragraphAlignment` và không truyền `active` cho bốn nút, mặc dù lớp CSS `.is-active` đã có.
+- **Sửa:** Khai báo `WordParagraphAlignment` (`left|center|right|justify`). `word-simulator.tsx` thêm state riêng và `syncParagraphAlignment()` đọc `window.getComputedStyle(currentBlock()).textAlign` từ đoạn tại con trỏ; mặc định `left` khi CSS là `start`/trống; đồng bộ khi `selectionchange`, `rememberSelection`, sau `execCommand`; reset state khi tạo/mở lại tài liệu. Truyền trạng thái xuống Home Ribbon, mỗi nút chỉ active khi kiểu căn tương ứng. Giữ toàn bộ hành vi căn văn bản và CSS nút hiện tại.
+- **Kiểm thử:** `tests/word-paragraph-interactions.test.mjs` thêm 2 nhóm test 10 vòng: chuyển caret giữa các đoạn Left, Center, Right, Justify và không định dạng; kiểm tra CSS active/ARIA, nhấn lần lượt 4 lệnh, xác nhận trạng thái cập nhật ngay; không làm sai các nút Paragraph và thước.
+- **Giới hạn:** CI kiểm tra logic/mô phỏng; chưa xác minh trực quan browser Windows với bôi chọn thực tế. Đẩy Vercel Production sau CI thành công, đối chiếu READY + alias và main SHA.
+- **Phạm vi:** Chỉ trạng thái active L/C/R/J trong Word mô phỏng, không chỉnh các tác vụ khác.
+
 ### 2026-10-18 — Tổng kiểm thử Paragraph và kéo thước Left Indent đồng bộ đoạn văn
 - **Yêu cầu:** Kiểm thử lại đầy đủ 14 công cụ nhóm Paragraph (bullets, numbering, multilevel, tăng/giảm indent, sort, ¶, 4 kiểu căn hàng, line spacing, shading, borders), và thước ngang dọc. Kéo Left Indent phải làm cả dòng đầu lẫn các dòng còn lại của đoạn đi theo.
 - **Phân tích lỗi:** `word-page-rulers.tsx` trước đây thay `left` trong state nhưng giữ nguyên `firstLine`; `word-simulator.tsx` tính `text-indent = firstLine - left`, nên dòng đầu đứng nguyên khi kéo mốc lề trái bên dưới. Increase/Decrease Indent qua `execCommand("indent"/"outdent")` có thể tạo cấu trúc không tương thích `marginLeft` của ruler. Hàm `currentBlock` ưu tiên savedSelection trước lựa chọn thực, dễ nhắm nhầm đoạn.

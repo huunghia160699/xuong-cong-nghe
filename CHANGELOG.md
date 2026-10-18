@@ -1,5 +1,11 @@
 # Changelog
 
+## 2026-10-18 — Nút căn đoạn văn hiển thị active theo văn bản
+- Đồng bộ trạng thái **Align Left, Center, Align Right, Justify** với kiểu căn của đoạn tại con trỏ/bôi chọn; nút đang được áp dụng sáng giống Bold/Italic/Underline.
+- Chuyển con trỏ qua các đoạn văn căn khác nhau làm đổi nút active tương ứng, mặc định Left với đoạn chưa định dạng.
+- Sau lệnh căn văn bản, cập nhật active ngay; giữ nguyên hành vi nút, lớp CSS, thước và các chức năng Word khác.
+- Bổ sung kiểm thử chuyển đoạn và thay đổi căn lề theo 10 vòng.
+
 ## 2026-10-18 — Paragraph và thước Left Indent đồng bộ đoạn văn
 - Kéo Left Indent (mốc bên dưới) làm cả đoạn văn và dòng đầu di chuyển theo; bảo toàn khoảng lệch first-line/hanging indent.
 - Điều chỉnh First Line Indent độc lập, Right Indent theo lề phải; thước căn theo vùng soạn thảo, hỗ trợ zoom 60/100/160%.

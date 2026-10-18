@@ -12,8 +12,9 @@ import {
 } from "lucide-react";
 
 export type WordFormatKey="bold"|"italic"|"underline"|"strikeThrough"|"subscript"|"superscript";
+export type WordParagraphAlignment="left"|"center"|"right"|"justify";
 type Props={
-  formatActive:Record<WordFormatKey,boolean>;clipboardMode:"copy"|"cut"|null;
+  formatActive:Record<WordFormatKey,boolean>;paragraphAlignment:WordParagraphAlignment;clipboardMode:"copy"|"cut"|null;
   font:string; fontSize:string; showMarks:boolean; hasSelection:boolean; paintArmed:boolean;
   run:(name:string,value?:string)=>void;
   editFont:(name:string)=>void;editSize:(size:string)=>void;
@@ -103,7 +104,7 @@ const FONTS=["Aptos","Arial","Calibri","Times New Roman","Georgia","Verdana"];
 const RIBBON_EXPAND_ARROW_SIZE=13;
 
 export function WordHomeRibbon({
- font,fontSize,showMarks,hasSelection,paintArmed,formatActive,clipboardMode,run,editFont,editSize,changeCase,sortLines,
+ font,fontSize,showMarks,hasSelection,paintArmed,formatActive,paragraphAlignment,clipboardMode,run,editFont,editSize,changeCase,sortLines,
  replaceText,findText,selectAll,toggleMarks,applyStyle
 }:Props){
  const size=Math.max(1,Math.min(7,Number(fontSize)||3));
@@ -242,10 +243,10 @@ export function WordHomeRibbon({
        <Btn className="wsl-paragraph-icon-button" label="Show/Hide ¶" icon={<span className="wsl-paragraph-pilcrow">¶</span>} active={showMarks} run={toggleMarks}/>
      </div>
      <div className="wsl-paragraph-bottom">
-       <Btn className="wsl-paragraph-icon-button" label="Align Left" icon={<AlignLeft size={18}/>} run={()=>run("justifyLeft")}/>
-       <Btn className="wsl-paragraph-icon-button" label="Center" icon={<AlignCenter size={18}/>} run={()=>run("justifyCenter")}/>
-       <Btn className="wsl-paragraph-icon-button" label="Align Right" icon={<AlignRight size={18}/>} run={()=>run("justifyRight")}/>
-       <Btn className="wsl-paragraph-icon-button" label="Justify" icon={<AlignJustify size={18}/>} run={()=>run("justifyFull")}/>
+       <Btn className="wsl-paragraph-icon-button" label="Align Left" active={paragraphAlignment==="left"} icon={<AlignLeft size={18}/>} run={()=>run("justifyLeft")}/>
+       <Btn className="wsl-paragraph-icon-button" label="Center" active={paragraphAlignment==="center"} icon={<AlignCenter size={18}/>} run={()=>run("justifyCenter")}/>
+       <Btn className="wsl-paragraph-icon-button" label="Align Right" active={paragraphAlignment==="right"} icon={<AlignRight size={18}/>} run={()=>run("justifyRight")}/>
+       <Btn className="wsl-paragraph-icon-button" label="Justify" active={paragraphAlignment==="justify"} icon={<AlignJustify size={18}/>} run={()=>run("justifyFull")}/>
        <span className="wsl-paragraph-divider" aria-hidden="true"/>
        <WordSplitButton className="wsl-paragraph-split wsl-paragraph-combo-button" label="Line Spacing 1.5"
          icon={<span className="wsl-paragraph-combo wsl-paragraph-line-spacing"><WordLineSpacingGlyph/></span>}

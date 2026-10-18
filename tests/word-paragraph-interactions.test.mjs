@@ -224,3 +224,115 @@ test("Paragraph dropdown actions modify shading, spacing and borders without cha
  }
  assert.equal(changed,10*(4+2+3));
 });
+
+
+test("Paragraph L/C/R/J buttons display exactly one active state based on selected paragraph, 10 rounds",()=>{
+ const styles=readFileSync("src/features/word-simulator/word-paragraph-ribbon.css","utf8");
+ const syncSrc=section(simulator,'  function syncParagraphAlignment(){','  function indentBlock():HTMLElement|null{')
+  .replace('const next:WordParagraphAlignment=','const next=');
+ let selected=null;
+ const paragraph={
+   left:{style:{textAlign:"left"}},
+   center:{style:{textAlign:"center"}},
+   right:{style:{textAlign:"right"}},
+   justify:{style:{textAlign:"justify"}},
+   default:{style:{textAlign:""}}
+ };
+ const root={contains:node=>Object.values(paragraph).includes(node)};
+ const currentBlock=()=>selected;
+ let active="left",updateCount=0;
+ const state=(update)=>{
+   const value=typeof update==="function"?update(active):update;
+   if(value!==active){active=value;updateCount++}
+ };
+ const context={
+   editor:{current:root},currentBlock,
+   window:{getComputedStyle:block=>({textAlign:block.style.textAlign||"start"})},
+   setParagraphAlignment:state
+ };
+ const sync=runInNewContext('('+syncSrc+')',context);
+ const controls=[
+   ["Align Left","left","justifyLeft"],["Center","center","justifyCenter"],
+   ["Align Right","right","justifyRight"],["Justify","justify","justifyFull"]
+ ];
+ assert.match(home,/export type WordParagraphAlignment="left"\|"center"\|"right"\|"justify";/);
+ assert.match(home,/paragraphAlignment:WordParagraphAlignment;/);
+ assert.match(simulator,/paragraphAlignment=\{paragraphAlignment\}/);
+ assert.match(simulator,/syncFormatState\(\);syncFontControls\(\);syncParagraphAlignment\(\);syncRulerIndent\(\)/);
+ assert.match(simulator,/syncFontControls\(\);\s*syncParagraphAlignment\(\);\s*markChanged\(\)/);
+ assert.match(simulator,/syncFontControls\(\);\s*syncParagraphAlignment\(\);\s*\}/);
+ const group=section(home,'<Group name="Paragraph"','<Group name="Styles"');
+ for(const [label,alignment,command] of controls){
+   assert.ok(group.includes('label="'+label+'" active={paragraphAlignment==="'+alignment+'"}'),
+     label+" conditional active attribute");
+   assert.ok(group.includes('run={()=>run("'+command+'")}'),
+     label+" retains actual command");
+ }
+ assert.match(home,/className=\{"wsl-hb "\+className\+\(active\?" is-active":""\)\}/);
+ assert.match(home,/aria-pressed=\{active\|\|undefined\}/);
+ assert.match(styles,/\.wsl-home-paragraph \.wsl-hb\.wsl-paragraph-icon-button\.is-active:not\(:disabled\)/);
+ for(let round=0;round<10;round++){
+   for(const [label,alignment] of controls){
+     selected=paragraph[alignment];
+     sync();
+     assert.equal(active,alignment,label+" must highlight when entering paragraph");
+     sync();
+     assert.equal(active,alignment,"repeated selection must remain stable");
+   }
+ }
+ selected=paragraph.default;sync();
+ assert.equal(active,"left","unstyled paragraph defaults to Left");
+ selected=null;sync();
+ assert.equal(active,"left","leaving editor must not switch state to unrelated paragraph");
+ assert.ok(updateCount>1);
+});
+
+test("Paragraph alignment click updates toolbar immediately and caret movement resynchronizes",()=>{
+ const syncSrc=section(simulator,'  function syncParagraphAlignment(){','  function indentBlock():HTMLElement|null{')
+  .replace('const next:WordParagraphAlignment=','const next=');
+ const cmdSrc=section(simulator,'  function command(cmd:string,value?:string){','  // Restore a text selection')
+  .replace('cmd:string,value?:string','cmd,value');
+ const paragraphs=[
+   {style:{textAlign:"left"}},
+   {style:{textAlign:"center"}},
+   {style:{textAlign:"justify"}}
+ ];
+ let current=paragraphs[0],active="left",changed=0,selectionSync=0;
+ const root={contains:node=>paragraphs.includes(node)};
+ const ctx={
+   editor:{current:root},currentBlock:()=>current,
+   window:{getComputedStyle:block=>({textAlign:block.style.textAlign})},
+   setParagraphAlignment:fn=>{active=fn(active)},
+   restoreSelection(){},
+   document:{execCommand(cmd){
+     const align={justifyLeft:"left",justifyCenter:"center",justifyRight:"right",justifyFull:"justify"};
+     if(!(cmd in align))return false;
+     current.style.textAlign=align[cmd];return true;
+   }},
+   rememberSelection(){selectionSync++},syncFormatState(){},syncFontControls(){},
+   markChanged(){changed++},
+   setStatus(msg){throw Error(msg)}
+ };
+ const sync=runInNewContext('('+syncSrc+')',ctx);
+ ctx.syncParagraphAlignment=sync;
+ const command=runInNewContext('('+cmdSrc+')',ctx);
+ for(let repeat=0;repeat<10;repeat++){
+   for(const [cmd,expected] of [
+     ["justifyLeft","left"],["justifyCenter","center"],
+     ["justifyRight","right"],["justifyFull","justify"]]){
+     command(cmd);
+     assert.equal(current.style.textAlign,expected,"command formatted actual paragraph");
+     assert.equal(active,expected,"toolbar is updated after command, not only selectionchange");
+   }
+ }
+ assert.equal(changed,40);
+ assert.equal(selectionSync,40);
+ current=paragraphs[1];sync();
+ assert.equal(active,"center","click caret into different center paragraph");
+ current=paragraphs[2];sync();
+ assert.equal(active,"justify","click caret into different justified paragraph");
+ current=paragraphs[0];sync();
+ assert.equal(active,"justify","style still reflects last command on first paragraph");
+ command("justifyLeft");
+ assert.equal(active,"left");
+});
