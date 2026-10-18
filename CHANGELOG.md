@@ -1,5 +1,12 @@
 # Changelog
 
+## 2026-10-18 — Thiết kế lại dấu thụt lề trên thước Word
+- Left Indent: hình mũi nhọn và thân giống Right Indent, thêm một khối chữ nhật phía dưới để phân biệt.
+- First Line Indent và Right Indent: giảm độ cao phần chữ nhật còn 4px; giữ chiều rộng 12px, nét viền 1px.
+- Left Indent cao 14px; hai dấu còn lại 10px, giữ vị trí neo và thao tác kéo độc lập.
+- Khi hover cả ba dấu dùng `cursor:pointer`, không còn `ew-resize`; giữ pointer capture và đồng bộ văn bản khi kéo.
+- Cập nhật kiểm thử SVG/CSS và hành vi kéo trên các mức zoom, không thay đổi phần còn lại của Ribbon Home.
+
 ## 2026-10-18 — Nút căn đoạn văn hiển thị active theo văn bản
 - Đồng bộ trạng thái **Align Left, Center, Align Right, Justify** với kiểu căn của đoạn tại con trỏ/bôi chọn; nút đang được áp dụng sáng giống Bold/Italic/Underline.
 - Chuyển con trỏ qua các đoạn văn căn khác nhau làm đổi nút active tương ứng, mặc định Left với đoạn chưa định dạng.

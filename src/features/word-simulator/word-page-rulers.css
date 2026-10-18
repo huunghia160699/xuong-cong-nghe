@@ -103,8 +103,8 @@
   user-select:none;
   pointer-events:none;
 }
-/* Three interactive Word-indent tabs, always 12px wide. The two left
-   tabs stack in the top/bottom halves; the right tab faces upward below. */
+/* Three draggable Word-indent tabs. Left adds a lower rectangular bar;
+   First Line and Right have shorter bodies while keeping the same width. */
 .wsl-word-ruler-indent{
   position:absolute;
   transform:translateX(-50%);
@@ -122,13 +122,13 @@
   background:transparent;
   color:#818181;
   line-height:0;
-  cursor:ew-resize;
+  cursor:pointer;
   touch-action:none;
   user-select:none;
   pointer-events:auto;
 }
 .wsl-word-ruler-indent-firstLine{top:1px}
-.wsl-word-ruler-indent-left,
+.wsl-word-ruler-indent-left{height:14px;bottom:1px}
 .wsl-word-ruler-indent-right{bottom:1px}
 .wsl-word-ruler-indent:focus-visible{outline:1px solid #818181;outline-offset:1px}
 .wsl-word-ruler-indent-svg{
@@ -137,6 +137,7 @@
   height:10px;
   pointer-events:none;
 }
+.wsl-word-ruler-indent-left .wsl-word-ruler-indent-svg{height:14px}
 .wsl-word-ruler-cm-tick-cm{height:7px}
 .wsl-word-ruler-cm-tick-half{height:4.5px}
 .wsl-word-ruler-cm-tick-quarter{height:2.5px}

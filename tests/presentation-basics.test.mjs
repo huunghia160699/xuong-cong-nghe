@@ -1107,14 +1107,14 @@ test("Word ruler indentation markers use three individually movable 12px tabs wi
  assert.match(ruler,/export type RulerIndent=\{firstLine:number;left:number;right:number\}/);
  assert.match(marker,/kind:RulerIndentPart;/);
  assert.match(marker,/className=\{"wsl-word-ruler-indent wsl-word-ruler-indent-"\+kind\}/);
- assert.match(marker,/viewBox="0 0 12 10"/);
- assert.match(marker,/width="12" height="10"/);
+ assert.match(marker,/viewBox=\{kind==="left"\?"0 0 12 14":"0 0 12 10"\}/);
+ assert.match(marker,/width="12" height=\{kind==="left"\?14:10\}/);
  assert.match(marker,/kind==="firstLine"\?/);
- assert.match(marker,/d="M\.5 \.5H11\.5V6\.5L6 9\.5L\.5 6\.5Z"/);
- assert.match(marker,/kind==="left"\?<>/);
- assert.match(marker,/d="M\.5 3\.5L6 \.5L11\.5 3\.5V9\.5H\.5Z"/);
- assert.match(marker,/d="M\.5 6\.5H11\.5"/);
- assert.equal((marker.match(/<path /g)||[]).length,4);
+ assert.match(marker,/d="M\.5 \.5H11\.5V4\.5L6 8\.5L\.5 4\.5Z"/);
+ assert.match(marker,/\{kind==="left"&&<rect x="\.5" y="9\.5" width="11" height="4"/);
+ assert.match(marker,/d="M\.5 4\.5L6 \.5L11\.5 4\.5V8\.5H\.5Z"/);
+ assert.doesNotMatch(marker,/M\.5 6\.5H11\.5/);
+ assert.equal((marker.match(/<path /g)||[]).length,2);
  assert.match(marker,/aria-label=\{label\} title=\{label\}/);
  assert.match(marker,/onPointerDown=\{event=>onPointerDown\(event,kind\)\}/);
  assert.match(marker,/onPointerMove=\{onPointerMove\} onPointerUp=\{onPointerUp\}/);
@@ -1133,12 +1133,14 @@ test("Word ruler indentation markers use three individually movable 12px tabs wi
  const wrap=css.match(/\.wsl-word-ruler-indent\{([^}]+)\}/)?.[1];
  const svg=css.match(/\.wsl-word-ruler-indent-svg\{([^}]+)\}/)?.[1];
  assert.ok(wrap&&svg);
- for(const property of ["transform:translateX(-50%);","z-index:3;","width:12px;","min-width:12px;","max-width:12px;","height:10px;","pointer-events:auto;","cursor:ew-resize;","touch-action:none;"])
+ for(const property of ["transform:translateX(-50%);","z-index:3;","width:12px;","min-width:12px;","max-width:12px;","height:10px;","pointer-events:auto;","cursor:pointer;","touch-action:none;"])
    assert.ok(wrap.includes(property),property);
  assert.match(css,/\.wsl-word-ruler-indent-firstLine\{top:1px\}/);
- assert.match(css,/\.wsl-word-ruler-indent-left,\s*\.wsl-word-ruler-indent-right\{bottom:1px\}/);
+ assert.match(css,/\.wsl-word-ruler-indent-left\{height:14px;bottom:1px\}/);
+ assert.match(css,/\.wsl-word-ruler-indent-right\{bottom:1px\}/);
  assert.match(svg,/width:12px;/);
  assert.match(svg,/height:10px;/);
+ assert.match(css,/\.wsl-word-ruler-indent-left \.wsl-word-ruler-indent-svg\{height:14px\}/);
  for(const landscape of [false,true])for(const narrow of [false,true])for(const zoom of [60,100,130,160]){
    const width=(landscape?297:210)*96/25.4*zoom/100;
    const margin=(narrow?48:87)*zoom/100;
@@ -1191,26 +1193,27 @@ test("Dragging indent markers applies to current Word paragraph and preserves st
 });
 
 
-test("Ruler marker triangles become 3px high and leave 6px tall rectangular frames",()=>{
+test("Ruler indent markers match new geometry: compact First/Right and left extra lower rectangle",()=>{
  const ruler=readFileSync("src/features/word-simulator/word-page-rulers.tsx","utf8");
  const css=readFileSync("src/features/word-simulator/word-page-rulers.css","utf8");
- const top=ruler.match(/d="M\.5 \.5H11\.5V([\d.]+)L6 ([\d.]+)L\.5 ([\d.]+)Z"/);
- const lower=ruler.match(/d="M\.5 ([\d.]+)L6 ([\d.]+)L11\.5 ([\d.]+)V9\.5H\.5Z"/g);
- assert.ok(top&&lower&&lower.length===2);
- assert.equal(Number(top[1]),6.5);
- assert.equal(Number(top[2])-Number(top[1]),3);
- assert.equal(Number(top[1])-.5,6);
- assert.equal(lower.length,2);
- assert.equal(3.5-.5,3);
- assert.equal(9.5-3.5,6);
- assert.match(ruler,/d="M\.5 6\.5H11\.5"/);
- assert.doesNotMatch(ruler,/M\.5 7H11\.5|V4\.5L6 9\.5|M\.5 5\.5L6 \.5/);
- assert.match(css,/\.wsl-word-ruler-indent\{[^}]*width:12px;[^}]*min-width:12px;[^}]*max-width:12px;[^}]*height:10px;/);
+ const marker=ruler.slice(ruler.indexOf("function RulerIndentMarker"),ruler.indexOf("function HorizontalRulerTicks"));
+ const firstLine=marker.match(/d="M\.5 \.5H11\.5V([\d.]+)L6 ([\d.]+)L\.5 ([\d.]+)Z"/);
+ const rightAndLeft=marker.match(/d="M\.5 ([\d.]+)L6 ([\d.]+)L11\.5 ([\d.]+)V([\d.]+)H\.5Z"/);
+ assert.ok(firstLine&&rightAndLeft);
+ assert.equal(Number(firstLine[1])-.5,4,"first-line rectangular cap is shorter than 6px");
+ assert.equal(Number(firstLine[2])-Number(firstLine[1]),4,"first-line triangle");
+ assert.equal(Number(rightAndLeft[4])-Number(rightAndLeft[3]),4,"right/left short rectangular body");
+ assert.equal(Number(rightAndLeft[3])-Number(rightAndLeft[2]),4,"up-pointing tip");
+ assert.match(marker,/\{kind==="left"&&<rect x="\.5" y="9\.5" width="11" height="4"/);
+ assert.match(marker,/viewBox=\{kind==="left"\?"0 0 12 14":"0 0 12 10"\}/);
+ assert.match(marker,/width="12" height=\{kind==="left"\?14:10\}/);
+ assert.equal((marker.match(/<rect /g)||[]).length,1,"only Left has lower rectangle");
+ assert.match(css,/\.wsl-word-ruler-indent-left\{height:14px;bottom:1px\}/);
+ assert.match(css,/\.wsl-word-ruler-indent-left \.wsl-word-ruler-indent-svg\{height:14px\}/);
+ assert.match(css,/cursor:pointer;/);
+ assert.doesNotMatch(css,/cursor:ew-resize;/);
  assert.match(ruler,/onPointerMove=\{onPointerMove\} onPointerUp=\{onPointerUp\}/);
- for(const kind of ["firstLine","left","right"])
-   assert.match(ruler,new RegExp('"'+kind+'"'));
 });
-
 
 test("Vertical ruler mirrors horizontal centimeter ticks, margin-relative white area, and numbered labels without indent markers",()=>{
  const ruler=readFileSync("src/features/word-simulator/word-page-rulers.tsx","utf8");

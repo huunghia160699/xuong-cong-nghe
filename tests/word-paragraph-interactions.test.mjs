@@ -336,3 +336,24 @@ test("Paragraph alignment click updates toolbar immediately and caret movement r
  command("justifyLeft");
  assert.equal(active,"left");
 });
+
+test("Ruler marker remains pointer on hover and draggable at every zoom",()=>{
+ const marker=section(ruler,"function RulerIndentMarker","function HorizontalRulerTicks");
+ const css=section(rulerCSS,".wsl-word-ruler-indent{",".wsl-word-ruler-indent-firstLine");
+ assert.match(css,/cursor:pointer;/);
+ assert.doesNotMatch(css,/cursor:ew-resize;/);
+ assert.match(css,/pointer-events:auto;/);
+ assert.match(css,/touch-action:none;/);
+ assert.match(marker,/onPointerDown=\{event=>onPointerDown\(event,kind\)\}/);
+ assert.match(marker,/onPointerMove=\{onPointerMove\} onPointerUp=\{onPointerUp\}/);
+ assert.match(marker,/onPointerCancel=\{onPointerCancel\}/);
+ assert.match(ruler,/event\.currentTarget\.setPointerCapture\(event\.pointerId\)/);
+ assert.match(ruler,/event\.currentTarget\.releasePointerCapture\(event\.pointerId\)/);
+ assert.match(ruler,/const delta=\(event\.clientX-drag\.startX\)\*100\/zoom\*direction;/);
+ assert.match(ruler,/onIndentChange\(drag\.kind==="left"\?moveLeftIndent\(drag\.startIndent,value\):/);
+ for(const zoom of [60,80,100,130,160])for(let round=0;round<10;round++){
+   const cssPixels=(96/2.54)*zoom/100*(round+1)/4;
+   const documentPixels=cssPixels*100/zoom;
+   assert.ok(Math.abs(documentPixels-(96/2.54)*(round+1)/4)<0.001);
+ }
+});

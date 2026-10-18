@@ -25,6 +25,13 @@
 
 ## III. Lịch sử
 
+### 2026-10-18 — Thiết kế lại ba dấu trên thước, giữ pointer khi hover và kéo
+- **Yêu cầu xác nhận:** Left Indent phải có cùng đầu nhọn/chữ nhật như Right Indent, cộng một khối chữ nhật ngay phía dưới. First Line Indent và Right Indent giảm chiều cao phần chữ nhật. Khi hover giữ con trỏ CSS `cursor:pointer`, vẫn kéo độc lập được.
+- **Triển khai:** Trong `word-page-rulers.tsx`, First Line Indent đổi chữ nhật cao 6px thành 4px, giữ mũi nhọn hướng xuống; Right Indent đổi chữ nhật cao 6px thành 4px, mũi nhọn hướng lên; Left Indent dùng cùng thân của Right với một `<rect>` riêng cao 4px đặt dưới, SVG/viewBox cao 14px (các dấu khác cao 10px), đồng nhất chiều rộng 12px và nét 1px. CSS `word-page-rulers.css` giữ top/bottom anchors, riêng Left cao 14px; cursor chuyển từ `ew-resize` sang `pointer`, giữ `touch-action:none`, `pointer-events:auto`.
+- **Chức năng:** Không thay đổi thuật toán `onPointerDown`/`Move`/`Up`, pointer capture, snap 0,25cm, đồng bộ Left/FirstLine/Right với đoạn văn. Không động đến các nhóm Ribbon khác.
+- **Kiểm thử:** Cập nhật `presentation-basics.test.mjs`, `word-home-qa.test.mjs`, `word-paragraph-interactions.test.mjs` để xác nhận SVG path, chiều cao các lớp, cursor:pointer, tính kéo ở 60–160% và toàn bộ unit/typecheck/build/smoke. Chưa nghiệm thu hover/kéo bằng browser Windows thực tế.
+- **Triển khai:** Sau CI thành công mới deploy main SHA và xác nhận Vercel READY, alias production.
+
 ### 2026-10-18 — Active cho bốn nút căn đoạn văn Left, Center, Right, Justify
 - **Phản hồi:** Trong Word mô phỏng, bốn nút L/C/R/J không có trạng thái active khi đặt con trỏ hoặc chọn đoạn văn đã được căn.
 - **Nguyên nhân:** `WordHomeRibbon` trước đó chỉ có `run("justifyLeft/Center/Right/Full")`, không nhận `paragraphAlignment` và không truyền `active` cho bốn nút, mặc dù lớp CSS `.is-active` đã có.

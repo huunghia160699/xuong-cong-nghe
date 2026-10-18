@@ -31,8 +31,10 @@ function moveLeftIndent(indent:RulerIndent,nextLeft:number):RulerIndent{
   return {...indent,left:nextLeft,firstLine:Math.max(0,nextLeft+indent.firstLine-indent.left)};
 }
 
-/** Three separate 12px-wide markers. The two left markers are vertically
- * stacked and movable individually; the right marker is a bottom-up tab. */
+/** Three independently draggable indent handles, all 12px wide.
+ * First Line (top): short rectangular cap and a down-pointing tip.
+ * Left (bottom): same up-pointing body as Right, plus a lower rectangle.
+ * Right (bottom): up-pointing tip and shortened rectangular body. */
 function RulerIndentMarker({kind,left,onPointerDown,onPointerMove,onPointerUp,onPointerCancel}:{
   kind:RulerIndentPart;
   left:number;
@@ -41,7 +43,6 @@ function RulerIndentMarker({kind,left,onPointerDown,onPointerMove,onPointerUp,on
   onPointerUp:(event:RulerPointerEvent)=>void;
   onPointerCancel:(event:RulerPointerEvent)=>void;
 }){
-  // Tips are 3px high, leaving 6px for the rectangular bodies in each 10px icon.
   const label=kind==="firstLine"?"Thụt lề dòng đầu":kind==="left"?"Thụt lề trái":"Thụt lề phải";
   return <button type="button"
     className={"wsl-word-ruler-indent wsl-word-ruler-indent-"+kind}
@@ -49,18 +50,20 @@ function RulerIndentMarker({kind,left,onPointerDown,onPointerMove,onPointerUp,on
     onPointerDown={event=>onPointerDown(event,kind)}
     onPointerMove={onPointerMove} onPointerUp={onPointerUp}
     onPointerCancel={onPointerCancel}>
-    <svg className="wsl-word-ruler-indent-svg" viewBox="0 0 12 10"
-      width="12" height="10" focusable="false" aria-hidden="true">
+    <svg className="wsl-word-ruler-indent-svg"
+      viewBox={kind==="left"?"0 0 12 14":"0 0 12 10"}
+      width="12" height={kind==="left"?14:10} focusable="false" aria-hidden="true">
       {kind==="firstLine"?
-        <path d="M.5 .5H11.5V6.5L6 9.5L.5 6.5Z"
+        <path d="M.5 .5H11.5V4.5L6 8.5L.5 4.5Z"
           fill="#fff" stroke="#818181" strokeWidth="1" strokeLinejoin="miter"/>:
-        kind==="left"?<>
-          <path d="M.5 3.5L6 .5L11.5 3.5V9.5H.5Z"
+        <>
+          {/* Same short up-pointing house for Left and Right Indent. */}
+          <path d="M.5 4.5L6 .5L11.5 4.5V8.5H.5Z"
             fill="#fff" stroke="#818181" strokeWidth="1" strokeLinejoin="miter"/>
-          <path d="M.5 6.5H11.5" stroke="#818181" strokeWidth="1" fill="none"/>
-        </>:
-        <path d="M.5 3.5L6 .5L11.5 3.5V9.5H.5Z"
-          fill="#fff" stroke="#818181" strokeWidth="1" strokeLinejoin="miter"/>}
+          {/* The additional bottom bar distinguishes Left from Right. */}
+          {kind==="left"&&<rect x=".5" y="9.5" width="11" height="4"
+            fill="#fff" stroke="#818181" strokeWidth="1"/>}
+        </>}
     </svg>
   </button>;
 }
