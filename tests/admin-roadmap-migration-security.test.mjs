@@ -39,6 +39,8 @@ test("public table RLS is enabled before any narrow grant",()=>{
  assert.doesNotMatch(normalized,/create policy .* for delete/);
  assert.doesNotMatch(normalized,/security definer/);
  assert.doesNotMatch(normalized,/create function/);
+ assert.doesNotMatch(normalized,/(?:grant|revoke)\s+execute/);
+ assert.doesNotMatch(normalized,/(?:alter|drop)\s+function\s+(?:public\.)?is_admin/);
  assert.doesNotMatch(normalized,/alter table public\.profiles/);
 });
 
@@ -78,5 +80,9 @@ test("release review explicitly gates production SQL and real JWT verification",
  assert.match(doc,/Student Auth JWT/);
  assert.match(doc,/SELECT, INSERT, UPDATE/);
  assert.match(doc,/Security Advisor/);
+ assert.match(doc,/17 RLS policy/);
+ assert.match(doc,/11 bảng/);
+ assert.match(doc,/public_execute=true/);
+ assert.match(doc,/không có JWT/);
  assert.match(doc,/ACTIVE_HEALTHY/);
 });
