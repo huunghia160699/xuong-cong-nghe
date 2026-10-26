@@ -1,5 +1,15 @@
 # Changelog
 
+## 2026-10-27 — Trung tâm Admin mở rộng, tạm dừng Auth/JWT
+- Thêm 6 trang Admin: `/admin/nguoi-dung`, `/admin/phan-quyen`, `/admin/cau-hinh`, `/admin/nhat-ky`, `/admin/he-thong`, `/admin/bao-cao`.
+- Người dùng: đọc danh sách hồ sơ chỉ trong Live đã xác thực Admin; tìm kiếm, lọc vai trò, phân trang và xuất CSV trung hòa công thức bảng tính.
+- Phân quyền: ma trận tham chiếu và chốt an toàn; không tự cấp/nâng quyền qua UI.
+- Cấu hình: chỉnh sửa, xem trước, lưu bản nháp trên trình duyệt, xuất/nhập JSON; **không xuất bản trang công khai**.
+- Nhật ký: ghi hoạt động cục bộ của cấu hình và Roadmap, lọc/xuất/xóa; **không phải audit log máy chủ bất biến**.
+- Giám sát & báo cáo: trạng thái module và số liệu truy vấn server khi Live, không dùng số liệu giả Demo.
+- Đã liên kết sidebar theo nhóm, dashboard, sitemap; test registry, role guard, CSV, cấu hình, journal, responsive và analytics.
+- Không thay đổi Supabase Auth, quyền tài khoản, dữ liệu production hay biến Vercel; Live JWT vẫn đang tạm dừng theo yêu cầu.
+
 ## 2026-10-26 — Lịch sử sao lưu & khôi phục Roadmap Admin
 - Thêm **Bản sao lưu** trong `/admin/roadmap`: tạo điểm khôi phục thủ công, xem lịch sử, tải riêng từng bản JSON, khôi phục và xóa bản sao.
 - Tự tạo checkpoint trước khi xóa một việc lớn, nhập JSON hay khôi phục bản nháp chưa đồng bộ; yêu cầu xác nhận trước khi thay nội dung.
