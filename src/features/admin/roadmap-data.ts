@@ -29,14 +29,15 @@ type Seed={id:string;title:string;summary:string;phase:number;priority:RoadmapPr
  notes?:{kind:RoadmapEntryKind;text:string;date:string}[]};
 const SEEDS:Seed[]=[
  {id:"admin-center",title:"Trung tâm quản trị toàn website",summary:"Dashboard điều hành, điều hướng module, báo cáo hệ thống và quyền admin.",phase:0,priority:"P0",area:"Quản trị",status:"building",
- tasks:["Dashboard tổng quan thực/được ghi nhãn demo","Sidebar quản trị phân nhóm đúng các trang đã có","Roadmap dọc có lọc, tìm kiếm, checklist và nhật ký","Tạo/sửa/xóa nhiệm vụ lớn, nhiệm vụ nhỏ và ghi chú","Lưu roadmap an toàn, xuất Markdown/JSON và nhập sao lưu","Xác minh quyền admin, RLS và kiểm thử đa tài khoản","Kiểm thử trực quan mobile/tablet/desktop và Production"],
- completed:[0,1,2,3],
+ tasks:["Dashboard tổng quan thực/được ghi nhãn demo","Sidebar quản trị phân nhóm đúng các trang đã có","Roadmap dọc có lọc, tìm kiếm, checklist và nhật ký","Tạo/sửa/xóa nhiệm vụ lớn, nhiệm vụ nhỏ và ghi chú","Danh sách người dùng với bộ lọc, phân trang và xuất CSV chỉ đọc khi Live","Ma trận quyền và điều kiện chặn cấp vai trò trái phép","Soạn, xem trước, nhập/xuất và lưu bản nháp cấu hình cục bộ","Nhật ký thao tác cục bộ và xuất dữ liệu","Trung tâm giám sát trạng thái module và quyền","Báo cáo tổng hợp dữ liệu server, không hiển thị số giả Demo","Lưu roadmap an toàn, xuất Markdown/JSON và nhập sao lưu","Xác minh quyền admin, RLS và kiểm thử đa tài khoản","Kiểm thử trực quan mobile/tablet/desktop và Production"],
+ completed:[0,1,2,3,4,5,6,7,8,9],
  notes:[{kind:"note",text:"Ưu tiên hoàn thành Admin + Roadmap trước các phân hệ giáo dục khác.",date:"2026-10-26"},
  {kind:"added",text:"Đã xây trung tâm quản trị, sơ đồ website và Roadmap dọc; có checklist, phân loại, nhật ký, xuất nhập dữ liệu và nút chỉnh sửa.",date:"2026-10-26"},
  {kind:"fixed",text:"Đã ngăn mất bản nháp khi đồng bộ bị lỗi, báo xung đột phiên bản và sửa phục hồi nhầm roadmap rỗng.",date:"2026-10-26"},
  {kind:"added",text:"Đã bổ sung lịch sử sao lưu Roadmap: tạo điểm khôi phục thủ công, tự sao lưu trước khi xóa/nhập, khôi phục và tải JSON từng bản (tối đa 6 bản cục bộ).",date:"2026-10-26"},
  {kind:"fixed",text:"Không đánh dấu lưu thành công trên Demo khi localStorage thất bại; kiểm tra định dạng bản sao trước khi phục hồi.",date:"2026-10-26"},
- {kind:"note",text:"Supabase ACTIVE_HEALTHY nhưng kết nối Postgres qua quản trị bị từ chối 28P01 (postgres / read-only user). Migration/RLS và Live chưa được xác minh; chưa kiểm thử trực quan đa thiết bị.",date:"2026-10-26"}]},
+ {kind:"added",text:"Đã bổ sung các trang quản trị người dùng, phân quyền, cấu hình nháp, nhật ký cục bộ, giám sát và báo cáo; sidebar và sitemap liên kết đầy đủ.",date:"2026-10-27"},
+ {kind:"note",text:"Auth/JWT Admin-Student được tạm dừng; cấu hình chỉ lưu trên thiết bị, audit chưa có máy chủ. Migration Roadmap đã áp, nhưng Live chưa được kiểm thử và kích hoạt.",date:"2026-10-27"}]},
  {id:"system-architecture",title:"Kiến trúc, dữ liệu và bảo mật",summary:"Kiểm kê hệ thống, chuẩn schema, quyền, môi trường và vận hành.",phase:0,priority:"P0",area:"Hệ thống",
  tasks:["Kiểm kê module/routes đã có và tình trạng vận hành","Khóa mô hình quyền khách/học sinh/giáo viên/trường/admin","Thiết lập Dev, Preview, Production và migration an toàn","Kiểm tra RLS chống đọc/sửa dữ liệu chéo","Thiết lập backup, restore, audit logs và giám sát","Kiểm thử tải, bảo mật API và khả năng khôi phục dữ liệu"]},
  {id:"design-system",title:"Thiết kế chung & trải nghiệm responsive",summary:"Hệ token, header, cards, typography và UI cho máy tính/điện thoại.",phase:0,priority:"P0",area:"Giao diện",
