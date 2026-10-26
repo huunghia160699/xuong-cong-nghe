@@ -12,6 +12,7 @@ import {
   type RoadmapEpic,type RoadmapPriority,type RoadmapStatus
 } from "../roadmap-data";
 import {validateRoadmap,roadmapBytes,ROADMAP_MAX_BYTES} from "../roadmap-validation";
+import {recordLocalAdminEvent} from "../admin-local";
 import {ROADMAP_STORAGE_KEY,ROADMAP_LEGACY_STORAGE_KEY,buildDraft,decodeDraft,shouldOfferRecovery,type RoadmapDraft} from "../roadmap-draft";
 import {ROADMAP_HISTORY_KEY,addRoadmapSnapshot,parseRoadmapHistory,removeRoadmapSnapshot,type RoadmapSnapshot} from "../roadmap-history";
 import {RoadmapHistoryButton,RoadmapHistoryPanel} from "./roadmap-history-panel";
@@ -131,6 +132,7 @@ export function RoadmapBoard({mode}:Props){
    if(mode==="demo")return false;
   }
   setItems(next);latestItems.current=next;setNotice("");
+  recordLocalAdminEvent("roadmap","Chỉnh sửa roadmap hoặc checklist ("+next.length+" việc lớn)");
   if(mode==="demo")setLastSaved(new Date().toLocaleString("vi-VN"));
   if(mode==="live")setDirty(true);
   return true;
