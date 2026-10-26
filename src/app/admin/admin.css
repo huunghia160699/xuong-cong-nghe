@@ -151,3 +151,7 @@
  .xcn-roadmap-action-buttons{width:100%}.xcn-roadmap-action-buttons button{flex:1}
 }
 @media(prefers-reduced-motion:reduce){.xcn-roadmap-bar span{transition:none}}
+
+.xcn-roadmap-edit-task{display:flex;align-items:center;gap:5px;flex:1;min-width:0}
+.xcn-roadmap-edit-task input{flex:1;min-width:0;border:1px solid #bad1ea;border-radius:7px;padding:7px 9px;font-size:12px}
+.xcn-roadmap-edit-task button{padding:5px;color:#286eac}
