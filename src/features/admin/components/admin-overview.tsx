@@ -1,7 +1,7 @@
 import Link from "next/link";
 import {
   Activity,ArrowRight,BookOpen,ClipboardCheck,Code2,FileText,LayoutDashboard,Library,
-  ListTodo,Map,MonitorPlay,School,ShieldCheck,Users
+  ListTodo,Map,MonitorPlay,School,ShieldCheck,Users,SlidersHorizontal,Activity,ScrollText,BarChart3
 } from "lucide-react";
 import {ROADMAP_INITIAL,roadmapTotals,roadmapProgress} from "../roadmap-data";
 
@@ -11,6 +11,12 @@ const modules=[
  {title:"Sitemap toàn hệ thống",description:"Sơ đồ vai trò, phân hệ và các đường dẫn đã có/dự kiến.",href:"/admin/sitemap",icon:Map,detail:"Đang hoạt động"},
  {title:"Quản lý khóa học",description:"Tạo bản nháp, xem và xuất bản khóa học.",href:"/admin/khoa-hoc",icon:BookOpen,detail:"Có chức năng cơ bản"},
  {title:"Kho tài liệu",description:"Quản lý kho file trong không gian quản trị.",href:"/admin/kho-tai-lieu",icon:Library,detail:"Tùy môi trường dữ liệu"},
+ {title:"Người dùng & vai trò",description:"Danh sách hồ sơ, bộ lọc và xuất CSV; không tự cấp Admin.",href:"/admin/nguoi-dung",icon:Users,detail:"Live: chỉ đọc"},
+ {title:"Phân quyền hệ thống",description:"Ma trận vai trò và các điều kiện bảo vệ Live.",href:"/admin/phan-quyen",icon:ShieldCheck,detail:"Theo thiết kế"},
+ {title:"Cấu hình website",description:"Bản nháp thương hiệu và thông báo, có xem trước và JSON.",href:"/admin/cau-hinh",icon:SlidersHorizontal,detail:"Lưu trên thiết bị"},
+ {title:"Nhật ký thao tác",description:"Lịch sử hoạt động cục bộ, lọc và xuất JSON.",href:"/admin/nhat-ky",icon:ScrollText,detail:"Lưu trên thiết bị"},
+ {title:"Giám sát hệ thống",description:"Kiểm kê trạng thái module và chốt triển khai.",href:"/admin/he-thong",icon:Activity,detail:"Có thông tin thực tế"},
+ {title:"Báo cáo nền tảng",description:"Thống kê các bảng dữ liệu thật khi Live.",href:"/admin/bao-cao",icon:BarChart3,detail:"Live: số liệu thật"},
  {title:"Mô phỏng Word",description:"Kiểm tra trình soạn thảo và các công cụ thực hành.",href:"/cong-cu/mo-phong-word",icon:FileText,detail:"Công cụ hiện có"},
  {title:"Trình chiếu",description:"Bài giảng Tin học, Word và Excel.",href:"/cong-cu/trinh-chieu",icon:MonitorPlay,detail:"Công cụ hiện có"}
 ];
@@ -36,7 +42,7 @@ export function AdminOverview({live,stats}:Props){
    </div>
    <div className="xcn-admin-hero-aside">
     <span>Ưu tiên hiện tại</span><strong>Admin + Roadmap</strong>
-    <p>Hoàn thiện trung tâm quản trị trước khi mở thêm module giáo dục mới.</p>
+    <p>Hoàn thiện công cụ quản trị, giữ riêng quyền Live chưa xác minh.</p>
    </div>
   </section>
   <div className="xcn-admin-stat-grid">
