@@ -6,6 +6,7 @@ export type RoadmapChecklistItem={id:string;text:string;done:boolean};
 export type RoadmapEntry={id:string;kind:RoadmapEntryKind;text:string;date:string};
 export type RoadmapEpic={
  id:string;title:string;summary:string;phase:string;area:string;
+ owner?:string;targetDate?:string;
  priority:RoadmapPriority;status:RoadmapStatus;order:number;
  checklist:RoadmapChecklistItem[];entries:RoadmapEntry[];
  updatedAt?:string;
