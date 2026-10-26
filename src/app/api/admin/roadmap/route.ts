@@ -18,8 +18,8 @@ const safe=(value:unknown):value is RoadmapEpic[]=>{
     ||typeof item.area!=="string"||item.area.length>80
     ||typeof item.order!=="number"||!Number.isFinite(item.order)
     ||!ROADMAP_PHASES.includes(item.phase as typeof ROADMAP_PHASES[number])
-    ||!Object.prototype.hasOwnProperty.call(ROADMAP_STATUS,item.status)
-    ||!Object.prototype.hasOwnProperty.call(ROADMAP_PRIORITY,item.priority)
+    ||!Object.prototype.hasOwnProperty.call(ROADMAP_STATUS,item.status??"")
+    ||!Object.prototype.hasOwnProperty.call(ROADMAP_PRIORITY,item.priority??"")
     ||!Array.isArray(item.checklist)||item.checklist.length>300
     ||!Array.isArray(item.entries)||item.entries.length>500)return false;
   ids.add(item.id);
