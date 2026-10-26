@@ -25,6 +25,14 @@
 
 ## III. Lịch sử
 
+### 2026-10-26 — Menu Line Spacing giống ảnh Word
+- **Yêu cầu:** Menu Line Spacing giống Microsoft Word: sáu hệ số giãn dòng, Options..., lệnh thêm/bỏ cách đoạn; không dùng dropdown native.
+- **Thực hiện:** `word-split-button.tsx` bổ sung variant popup menu HTML 264px, mục đã chọn, đường phân cách và keyboard; `word-split-ribbon.css` điều chỉnh menu/đối thoại; `word-home-ribbon.tsx` chứa icon, nhãn ngữ cảnh và liên kết lệnh; `word-line-spacing-dialog.tsx` là dialog tự dựng; `word-simulator.tsx` đồng bộ style, cho giãn dòng 2.5/3.0, thêm/bỏ khoảng cách và áp dụng đồng thời giãn dòng/đoạn.
+- **Kiểm thử:** `tests/word-line-spacing-menu.test.mjs` và các test ribbon/paragraph hiện có; chờ CI kiểm tra typecheck/build trước khi merge.
+- **Phạm vi:** Không thay logic phân trang, dấu ¶, Ctrl+Enter, Font, căn lề. Chưa xác minh thao tác trực quan trên Windows/UniKey.
+- **GitHub:** PR #45 — `feat/word-line-spacing-menu-20261026`.
+- **Production:** chỉ triển khai sau khi CI thành công.
+
 ### 2026-10-19 — Chuẩn hóa giãn dòng và giãn đoạn Word
 - **Triệu chứng:** Một lần Enter tạo khoảng cách dọc gần 38px vì editor 16px × 1.55 line-height + 13px margin-bottom, trong khi đổi Line Spacing chỉ áp dụng được một đoạn.
 - **Sửa:** `word-simulator.css` đặt mặc định 1.15 line-height, 8px cách sau đoạn; `word-simulator.tsx` áp dụng line spacing và before/after spacing cho tất cả đoạn giao vùng bôi chọn, với fallback đoạn tại con trỏ; `word-home-ribbon.tsx` thêm tùy chọn trước/sau đoạn 0/6/12/18px trong menu giãn dòng và hộp thoại Paragraph.
