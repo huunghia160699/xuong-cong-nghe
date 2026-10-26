@@ -25,6 +25,12 @@
 
 ## III. Lịch sử
 
+### 2026-10-26 — Sửa header xuống dòng
+- **Yêu cầu:** Header của Xưởng Công Nghệ phải cao một hàng, tên website không xuống dòng.
+- **Thay đổi:** `brand.tsx` cấm wrap wordmark và icon không bị co; `public-header.tsx` bổ sung menu `details/summary` khi hẹp; `globals.css` bỏ quy tắc biến navigation thành hàng thứ hai và đặt responsive breakpoint 1120px/440px.
+- **Kiểm thử:** `tests/public-header-single-row.test.mjs` xác minh không wrap, chuyển menu, và nút đăng nhập/đăng ký trong mobile. CI build/typecheck/smoke theo nhánh.
+- **Phạm vi:** Không sửa Word/Excel, Admin/Roadmap hoặc thay logic định tuyến.
+
 ### 2026-10-26 — Củng cố đầy đủ cơ chế lưu và kiểm thử Admin Roadmap (PR #47)
 - **Mục tiêu:** Tiếp tục hoàn thiện Admin/Roadmap, không mở thêm phân hệ giáo dục mới. Thử lại kết nối Supabase và kiểm thử nhiều tình huống lỗi.
 - **Cập nhật:** `roadmap-validation.ts` làm bộ kiểm tra dữ liệu chung cho frontend/API; `roadmap-draft.ts` lưu bản nháp v3 có baseVersion/pending, có thể đọc dữ liệu v2. `roadmap-board.tsx` phân biệt bản mới trên máy chủ với thay đổi chưa đồng bộ, hiển thị lựa chọn khôi phục/bỏ bản nháp, ghi lại trạng thái chưa đồng bộ và sửa nhật ký; thêm hạn dự kiến và người phụ trách cho mốc lớn; duy trì trạng thái Done đúng với checklist và xử lý roadmap trống.
