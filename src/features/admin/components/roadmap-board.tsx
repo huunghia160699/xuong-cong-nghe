@@ -86,11 +86,22 @@ export function RoadmapBoard({mode}:Props){
     const result=await response.json() as {items?:unknown;version?:number;error?:string};
     if(!response.ok)throw Error(result.error??"Không tải được roadmap.");
     if(valid){
-      setItems(validItems(result.items)&&result.items.length?result.items:ROADMAP_INITIAL);
+      let local:unknown=null;
+      try{local=JSON.parse(localStorage.getItem(LOCAL_KEY)??"null");}catch{ /* invalid local draft */ }
+      const useLocal=!result.version&&validItems(local)&&local.length>0;
+      setItems(validItems(result.items)&&result.items.length?result.items:useLocal?local:ROADMAP_INITIAL);
       setVersion(result.version??0);
-      setNotice(result.version?"Đã tải dữ liệu lưu trên hệ thống.":"Dữ liệu mẫu ban đầu chưa lưu. Hãy nhấn Lưu thay đổi để khởi tạo.");
+      if(useLocal)setDirty(true);
+      setNotice(result.version?"Đã tải dữ liệu lưu trên hệ thống.":useLocal?
+       "Đã khôi phục bản nháp cục bộ. Nhấn Lưu thay đổi để đồng bộ lên hệ thống.":
+       "Dữ liệu mẫu ban đầu chưa lưu. Hãy nhấn Lưu thay đổi để khởi tạo.");
     }
-   }catch(reason){if(valid){setFailure(reason instanceof Error?reason.message:"Không tải được roadmap.");setItems(ROADMAP_INITIAL);}}
+   }catch(reason){if(valid){
+     setFailure((reason instanceof Error?reason.message:"Không tải được roadmap.")+
+       " Bản nháp vẫn có thể được lưu trong trình duyệt và xuất JSON; chưa đồng bộ Supabase.");
+     try{const raw=JSON.parse(localStorage.getItem(LOCAL_KEY)??"null") as unknown;
+      setItems(validItems(raw)?raw:ROADMAP_INITIAL);}catch{setItems(ROADMAP_INITIAL);}
+   }}
    if(valid)setReady(true);
   };
   void init();return()=>{valid=false;};
@@ -104,10 +115,11 @@ export function RoadmapBoard({mode}:Props){
 
  function change(next:RoadmapEpic[]){
   setItems(next);setNotice("");setFailure("");
-  if(mode==="demo"){
-   try{localStorage.setItem(LOCAL_KEY,JSON.stringify(next));setLastSaved(new Date().toLocaleString("vi-VN"));}
-   catch{setFailure("Không thể lưu trên thiết bị. Hãy xuất JSON để sao lưu.");}
-  }else setDirty(true);
+  try{
+   localStorage.setItem(LOCAL_KEY,JSON.stringify(next));
+   if(mode==="demo")setLastSaved(new Date().toLocaleString("vi-VN"));
+  }catch{setFailure("Không thể lưu bản nháp trên thiết bị. Hãy xuất JSON để sao lưu.");}
+  if(mode==="live")setDirty(true);
  }
  function update(id:string,fn:(item:RoadmapEpic)=>RoadmapEpic){
   change(items.map(item=>item.id===id?{...fn(item),updatedAt:new Date().toISOString()}:item));
