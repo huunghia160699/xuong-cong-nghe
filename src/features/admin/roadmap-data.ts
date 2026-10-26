@@ -6,6 +6,7 @@ export type RoadmapChecklistItem={id:string;text:string;done:boolean};
 export type RoadmapEntry={id:string;kind:RoadmapEntryKind;text:string;date:string};
 export type RoadmapEpic={
  id:string;title:string;summary:string;phase:string;area:string;
+ owner?:string;targetDate?:string;
  priority:RoadmapPriority;status:RoadmapStatus;order:number;
  checklist:RoadmapChecklistItem[];entries:RoadmapEntry[];
  updatedAt?:string;
@@ -29,8 +30,11 @@ type Seed={id:string;title:string;summary:string;phase:number;priority:RoadmapPr
 const SEEDS:Seed[]=[
  {id:"admin-center",title:"Trung tâm quản trị toàn website",summary:"Dashboard điều hành, điều hướng module, báo cáo hệ thống và quyền admin.",phase:0,priority:"P0",area:"Quản trị",status:"building",
  tasks:["Dashboard tổng quan thực/được ghi nhãn demo","Sidebar quản trị phân nhóm đúng các trang đã có","Roadmap dọc có lọc, tìm kiếm, checklist và nhật ký","Tạo/sửa/xóa nhiệm vụ lớn, nhiệm vụ nhỏ và ghi chú","Lưu roadmap an toàn, xuất Markdown/JSON và nhập sao lưu","Xác minh quyền admin, RLS và kiểm thử đa tài khoản","Kiểm thử trực quan mobile/tablet/desktop và Production"],
- completed:[0],
- notes:[{kind:"note",text:"Ưu tiên hoàn thành Admin + Roadmap trước các phân hệ giáo dục khác.",date:"2026-10-26"}]},
+ completed:[0,1,2,3],
+ notes:[{kind:"note",text:"Ưu tiên hoàn thành Admin + Roadmap trước các phân hệ giáo dục khác.",date:"2026-10-26"},
+ {kind:"added",text:"Đã xây trung tâm quản trị, sơ đồ website và Roadmap dọc; có checklist, phân loại, nhật ký, xuất nhập dữ liệu và nút chỉnh sửa.",date:"2026-10-26"},
+ {kind:"fixed",text:"Đã ngăn mất bản nháp khi đồng bộ bị lỗi, báo xung đột phiên bản và sửa phục hồi nhầm roadmap rỗng.",date:"2026-10-26"},
+ {kind:"note",text:"Chưa áp và kiểm thử trực tiếp migration/RLS Supabase do timeout; trang production đang ở Demo. Chưa xác minh thao tác trực quan đa thiết bị.",date:"2026-10-26"}]},
  {id:"system-architecture",title:"Kiến trúc, dữ liệu và bảo mật",summary:"Kiểm kê hệ thống, chuẩn schema, quyền, môi trường và vận hành.",phase:0,priority:"P0",area:"Hệ thống",
  tasks:["Kiểm kê module/routes đã có và tình trạng vận hành","Khóa mô hình quyền khách/học sinh/giáo viên/trường/admin","Thiết lập Dev, Preview, Production và migration an toàn","Kiểm tra RLS chống đọc/sửa dữ liệu chéo","Thiết lập backup, restore, audit logs và giám sát","Kiểm thử tải, bảo mật API và khả năng khôi phục dữ liệu"]},
  {id:"design-system",title:"Thiết kế chung & trải nghiệm responsive",summary:"Hệ token, header, cards, typography và UI cho máy tính/điện thoại.",phase:0,priority:"P0",area:"Giao diện",
@@ -101,7 +105,7 @@ export function roadmapAsMarkdown(items:RoadmapEpic[]):string{
  let last="";
  for(const item of [...items].sort((a,b)=>a.order-b.order)){
   if(last!==item.phase){last=item.phase;rows.push("## "+last,"");}
-  rows.push("### "+item.title,"","- Trạng thái: "+ROADMAP_STATUS[item.status]," - Ưu tiên: "+item.priority,"- Phân hệ: "+item.area,"- Mục tiêu: "+item.summary,"");
+  rows.push("### "+item.title,"","- Trạng thái: "+ROADMAP_STATUS[item.status],"- Ưu tiên: "+item.priority,"- Phân hệ: "+item.area,"- Mục tiêu: "+item.summary,"- Phụ trách: "+(item.owner||"Chưa phân công"),"- Hạn dự kiến: "+(item.targetDate||"Chưa đặt"),"");
   for(const task of item.checklist)rows.push("- ["+(task.done?"x":" ")+"] "+task.text);
   if(item.entries.length){
    rows.push("","**Nhật ký:**");

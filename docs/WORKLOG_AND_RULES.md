@@ -25,6 +25,15 @@
 
 ## III. Lịch sử
 
+### 2026-10-26 — Củng cố đầy đủ cơ chế lưu và kiểm thử Admin Roadmap (PR #47)
+- **Mục tiêu:** Tiếp tục hoàn thiện Admin/Roadmap, không mở thêm phân hệ giáo dục mới. Thử lại kết nối Supabase và kiểm thử nhiều tình huống lỗi.
+- **Cập nhật:** `roadmap-validation.ts` làm bộ kiểm tra dữ liệu chung cho frontend/API; `roadmap-draft.ts` lưu bản nháp v3 có baseVersion/pending, có thể đọc dữ liệu v2. `roadmap-board.tsx` phân biệt bản mới trên máy chủ với thay đổi chưa đồng bộ, hiển thị lựa chọn khôi phục/bỏ bản nháp, ghi lại trạng thái chưa đồng bộ và sửa nhật ký; thêm hạn dự kiến và người phụ trách cho mốc lớn; duy trì trạng thái Done đúng với checklist và xử lý roadmap trống.
+- **Kiểm thử:** Bổ sung test validate/import/draft recovery và API mô phỏng cho Demo, 401, 403, CAS 409, 400 invalid, 413 quá dung lượng, tạo/đọc/cập nhật. GitHub Actions được kiểm tra trên từng commit; chạy lại sau khi xử lý TypeScript/Test. Không coi test giả lập là bằng chứng RLS production.
+- **Tình trạng kết nối:** Supabase project báo ACTIVE_HEALTHY, nhưng các lời gọi `list_tables`, `list_migrations`, `execute_sql select 1` vẫn bị connection timeout, giống đợt trước. Vercel production chưa bật Live và thiếu cấu hình công khai cho Supabase. **Migration/RLS và đồng bộ đa thiết bị chưa được kiểm chứng trực tiếp**; tuyệt đối không bật Live trước kiểm thử thật.
+- **Phạm vi:** Không tạo phòng quiz, bài học, bảng giáo viên hoặc học sinh; không thay đổi dữ liệu người dùng; chỉ sửa Admin/Roadmap, kiểm thử và tài liệu.
+- **GitHub:** PR #47, nhánh `fix/admin-roadmap-reliability-20261026`; mã commit sản phẩm và Vercel ghi lại khi hợp nhất xong.
+- **Việc còn lại:** Cần Supabase hoạt động và kiểm thử admin/non-admin + demo/live; kiểm thử trực quan click thực tế qua browser trên 360/768/1280 và nhiều tab.
+
 ### 2026-10-26 — Admin toàn hệ thống, Sitemap và Roadmap tương tác theo timeline
 - **Mục tiêu:** Chỉ tập trung hoàn thiện trung tâm Admin và Roadmap trước khi mở rộng các phân hệ khác; chuyển master plan ưu tiên Tin học thành checklist quản trị thực tế.
 - **Thay đổi:** `src/app/admin/page.tsx` và `src/features/admin/components/admin-overview.tsx` tạo trung tâm điều hành; `/admin/roadmap` và `roadmap-board.tsx` có timeline đường chấm, mốc lớn, việc nhỏ, ghi chú thay đổi, tìm kiếm/lọc/sắp xếp và xuất/import; `/admin/sitemap`, `admin-sitemap.ts` phân biệt các route hiện hữu/dự kiến; `admin.css` thiết kế responsive; sidebar sử dụng các route có thật.

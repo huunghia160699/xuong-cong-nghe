@@ -11,31 +11,29 @@ import {
   type RoadmapChecklistItem,type RoadmapEntry,type RoadmapEntryKind,
   type RoadmapEpic,type RoadmapPriority,type RoadmapStatus
 } from "../roadmap-data";
+import {validateRoadmap,roadmapBytes,ROADMAP_MAX_BYTES} from "../roadmap-validation";
+import {ROADMAP_STORAGE_KEY,ROADMAP_LEGACY_STORAGE_KEY,buildDraft,decodeDraft,shouldOfferRecovery,type RoadmapDraft} from "../roadmap-draft";
 
 type Props={mode:"demo"|"live"};
-type EditorState={id:string|null;title:string;summary:string;phase:string;area:string;priority:RoadmapPriority;status:RoadmapStatus};
-const LOCAL_KEY="xcn-admin-roadmap-v2";
+type EditorState={id:string|null;title:string;summary:string;phase:string;area:string;priority:RoadmapPriority;status:RoadmapStatus;owner:string;targetDate:string};
+function readDraft():RoadmapDraft|null{
+ try{
+  const raw=localStorage.getItem(ROADMAP_STORAGE_KEY);
+  if(raw)return decodeDraft(JSON.parse(raw) as unknown);
+  const legacy=localStorage.getItem(ROADMAP_LEGACY_STORAGE_KEY);
+  return legacy?decodeDraft(JSON.parse(legacy) as unknown):null;
+ }catch{return null;}
+}
+function storeDraft(items:RoadmapEpic[],version:number,pending:boolean):void{
+ const draft=buildDraft(items,version,pending);
+ if(roadmapBytes(draft)>ROADMAP_MAX_BYTES)throw Error("Bản nháp vượt 500 KB. Hãy xuất JSON để sao lưu.");
+ localStorage.setItem(ROADMAP_STORAGE_KEY,JSON.stringify(draft));
+}
 const CATEGORIES=["Tin học","Quản trị","Giao diện","Website","Tài khoản","Hệ thống","Giáo viên","Học sinh","Đánh giá","Tương tác","Nội dung","Nhà trường","Mở rộng"];
-const editorDefault=():EditorState=>({id:null,title:"",summary:"",phase:ROADMAP_PHASES[0],area:"Tin học",priority:"P1",status:"planned"});
+const editorDefault=():EditorState=>({id:null,title:"",summary:"",phase:ROADMAP_PHASES[0],area:"Tin học",priority:"P1",status:"planned",owner:"",targetDate:""});
 const newId=()=>typeof crypto!=="undefined"&&"randomUUID" in crypto?crypto.randomUUID():"id-"+Date.now()+"-"+Math.random().toString(36).slice(2);
 const today=()=>new Date().toISOString().slice(0,10);
 
-function validItems(value:unknown):value is RoadmapEpic[]{
- if(!Array.isArray(value)||value.length>200)return false;
- return value.every((item:unknown)=>{
-  if(!item||typeof item!=="object")return false;
-  const t=item as Partial<RoadmapEpic>;
-  return typeof t.id==="string"&&t.id.length<120&&typeof t.title==="string"&&t.title.length<201
-   &&typeof t.summary==="string"&&t.summary.length<1001&&typeof t.area==="string"
-   &&typeof t.phase==="string"&&ROADMAP_PHASES.includes(t.phase as typeof ROADMAP_PHASES[number])
-   &&Object.hasOwn(ROADMAP_PRIORITY,t.priority??"")&&Object.hasOwn(ROADMAP_STATUS,t.status??"")
-   &&typeof t.order==="number"&&Number.isFinite(t.order)
-   &&Array.isArray(t.checklist)&&t.checklist.length<=300
-   &&t.checklist.every((x:RoadmapChecklistItem)=>typeof x?.id==="string"&&typeof x?.text==="string"&&x.text.length<501&&typeof x?.done==="boolean")
-   &&Array.isArray(t.entries)&&t.entries.length<=500
-   &&t.entries.every((x:RoadmapEntry)=>typeof x?.id==="string"&&typeof x?.text==="string"&&x.text.length<1501&&["note","added","fixed"].includes(x.kind)&&typeof x?.date==="string");
- });
-}
 function downloadFile(name:string,content:string,mime:string){
  const link=document.createElement("a");
  const url=URL.createObjectURL(new Blob([content],{type:mime}));
@@ -67,48 +65,43 @@ export function RoadmapBoard({mode}:Props){
  const [notesFor,setNotesFor]=useState<string|null>(null);
  const [noteKind,setNoteKind]=useState<RoadmapEntryKind>("note");
  const [noteText,setNoteText]=useState("");
+ const [editingNote,setEditingNote]=useState<{id:string;text:string}|null>(null);
  const [lastSaved,setLastSaved]=useState("");
+ const [recovery,setRecovery]=useState<RoadmapDraft|null>(null);
+ const [syncIssue,setSyncIssue]=useState(false);
  const fileRef=useRef<HTMLInputElement>(null);
  useEffect(()=>{latestItems.current=items;},[items]);
 
  useEffect(()=>{
-  let valid=true;
-  const init=async()=>{
+  let mounted=true;
+  const load=async()=>{
+   const draft=readDraft();
    if(mode==="demo"){
-    try{
-     const raw=localStorage.getItem(LOCAL_KEY);
-     const parsed:unknown=raw?JSON.parse(raw):null;
-     if(valid)setItems(validItems(parsed)?parsed:ROADMAP_INITIAL);
-    }catch{if(valid)setItems(ROADMAP_INITIAL);}
-    if(valid)setReady(true);
+    if(mounted){setItems(draft?.items??ROADMAP_INITIAL);setReady(true);}
     return;
    }
    try{
     const response=await fetch("/api/admin/roadmap",{cache:"no-store"});
     const result=await response.json() as {items?:unknown;version?:number;error?:string};
-    if(!response.ok)throw Error(result.error??"Không tải được roadmap.");
-    if(valid){
-      let local:unknown=null;
-      try{local=JSON.parse(localStorage.getItem(LOCAL_KEY)??"null");}catch{ /* invalid local draft */ }
-      const localDraft=validItems(local)?local:null;
-      const useLocal=!result.version&&Boolean(localDraft?.length);
-      setItems(validItems(result.items)&&result.items.length?result.items:
-        useLocal&&localDraft?localDraft:ROADMAP_INITIAL);
-      setVersion(result.version??0);
-      if(useLocal)setDirty(true);
-      setNotice(result.version?"Đã tải dữ liệu lưu trên hệ thống.":useLocal?
-       "Đã khôi phục bản nháp cục bộ. Nhấn Lưu thay đổi để đồng bộ lên hệ thống.":
-       "Dữ liệu mẫu ban đầu chưa lưu. Hãy nhấn Lưu thay đổi để khởi tạo.");
-    }
-   }catch(reason){if(valid){
-     setFailure((reason instanceof Error?reason.message:"Không tải được roadmap.")+
-       " Bản nháp vẫn có thể được lưu trong trình duyệt và xuất JSON; chưa đồng bộ Supabase.");
-     try{const raw=JSON.parse(localStorage.getItem(LOCAL_KEY)??"null") as unknown;
-      setItems(validItems(raw)?raw:ROADMAP_INITIAL);}catch{setItems(ROADMAP_INITIAL);}
-   }}
-   if(valid)setReady(true);
+    if(!response.ok)throw Error(result.error??"Không tải được Roadmap.");
+    if(!mounted)return;
+    const serverVersion=Number.isInteger(result.version)&&Number(result.version)>=0?Number(result.version):0;
+    const serverItems=validateRoadmap(result.items)&&(serverVersion>0||result.items.length>0)?result.items:ROADMAP_INITIAL;
+    setItems(serverItems);setVersion(serverVersion);
+    if(shouldOfferRecovery(draft,serverItems,serverVersion))setRecovery(draft);
+    else setRecovery(null);
+    setNotice(serverVersion?"Đã tải dữ liệu chính thức.":"Roadmap chưa được khởi tạo trong Supabase; có thể lưu lần đầu.");
+   }catch(reason){
+    if(!mounted)return;
+    setSyncIssue(true);
+    setFailure((reason instanceof Error?reason.message:"Không tải được Roadmap.")+
+      " Đang hiển thị bản nháp cục bộ. Chưa thể xác nhận lưu lên máy chủ.");
+    setItems(draft?.items??ROADMAP_INITIAL);
+    setVersion(draft?.baseVersion??0);
+    setDirty(true);
+   }finally{if(mounted)setReady(true);}
   };
-  void init();return()=>{valid=false;};
+  void load();return()=>{mounted=false;};
  },[mode]);
  useEffect(()=>{
   if(mode!=="live"||!dirty)return;
@@ -118,11 +111,15 @@ export function RoadmapBoard({mode}:Props){
  },[mode,dirty]);
 
  function change(next:RoadmapEpic[]){
-  setItems(next);setNotice("");setFailure("");
+  if(!validateRoadmap(next)||roadmapBytes(next)>ROADMAP_MAX_BYTES){
+   setFailure("Dữ liệu chưa hợp lệ hoặc vượt 500 KB. Không áp dụng thay đổi.");
+   return;
+  }
+  setItems(next);latestItems.current=next;setNotice("");setFailure("");
   try{
-   localStorage.setItem(LOCAL_KEY,JSON.stringify(next));
+   storeDraft(next,version,mode==="live");
    if(mode==="demo")setLastSaved(new Date().toLocaleString("vi-VN"));
-  }catch{setFailure("Không thể lưu bản nháp trên thiết bị. Hãy xuất JSON để sao lưu.");}
+  }catch(reason){setFailure(reason instanceof Error?reason.message:"Không lưu được bản nháp.");}
   if(mode==="live")setDirty(true);
  }
  function update(id:string,fn:(item:RoadmapEpic)=>RoadmapEpic){
@@ -143,9 +140,11 @@ export function RoadmapBoard({mode}:Props){
    });
    const result=await response.json() as {version?:number;error?:string};
    if(!response.ok)throw Error(result.error??"Không thể lưu roadmap.");
-   setVersion(result.version??version+1);
+   const nextVersion=result.version??version+1;
+   setVersion(nextVersion);setSyncIssue(false);
    const changedMeanwhile=JSON.stringify(latestItems.current)!==snapshot;
    setDirty(changedMeanwhile);
+   try{storeDraft(latestItems.current,nextVersion,changedMeanwhile);}catch{setFailure("Đã đồng bộ máy chủ nhưng không lưu được bản sao cục bộ.");}
    setNotice(changedMeanwhile?
     "Đã lưu phiên trước. Có thay đổi mới chưa đồng bộ, hãy nhấn Lưu thay đổi lần nữa.":
     "Đã lưu lên hệ thống.");
@@ -155,9 +154,15 @@ export function RoadmapBoard({mode}:Props){
  }
  function commitEditor(){
   if(!editor||editor.title.trim().length<3)return;
+  const existing=items.find(item=>item.id===editor.id);
+  if(editor.status==="done"&&existing?.checklist.some(task=>!task.done)){
+   setFailure("Cần hoàn thành checklist trước khi đánh dấu mốc Đã hoàn thành.");
+   return;
+  }
   const data={title:editor.title.trim().slice(0,200),summary:editor.summary.trim().slice(0,1000),
    phase:editor.phase,area:editor.area.trim().slice(0,80)||"Khác",
-   priority:editor.priority,status:editor.status};
+   priority:editor.priority,status:editor.status,owner:editor.owner.trim().slice(0,100),
+   targetDate:editor.targetDate};
   if(editor.id)update(editor.id,item=>({...item,...data}));
   else{
    const id=newId();
@@ -179,7 +184,7 @@ export function RoadmapBoard({mode}:Props){
  }
  function addTask(id:string){
   const text=taskText.trim().slice(0,500);if(!text)return;
-  update(id,item=>({...item,checklist:[...item.checklist,{id:newId(),text,done:false}]}));
+  update(id,item=>({...item,status:item.status==="done"?"building":item.status,checklist:[...item.checklist,{id:newId(),text,done:false}]}));
   setTaskText("");setEditingItem(null);
  }
  function addNote(id:string){
@@ -194,9 +199,9 @@ export function RoadmapBoard({mode}:Props){
   try{
    const parsed:unknown=JSON.parse(await file.text());
    const raw=Array.isArray(parsed)?parsed:(parsed as {items?:unknown})?.items;
-   if(!validItems(raw)||!raw.length)throw Error("File không đúng cấu trúc dữ liệu roadmap.");
+   if(!validateRoadmap(raw)||roadmapBytes(raw)>ROADMAP_MAX_BYTES)throw Error("File không đúng cấu trúc hoặc vượt 500 KB.");
    if(!confirm("Nhập bản sao lưu sẽ thay thế danh sách roadmap hiện tại. Tiếp tục?"))return;
-   change(raw);setNotice("Đã nhập bản sao lưu. "+(mode==="live"?"Nhấn Lưu thay đổi để ghi lên hệ thống.":"Đã lưu trên thiết bị."));
+   change(raw);setRecovery(null);setNotice("Đã nhập bản sao lưu. "+(mode==="live"?"Nhấn Lưu thay đổi để ghi lên hệ thống.":"Đã lưu trên thiết bị."));
   }catch(reason){setFailure(reason instanceof Error?reason.message:"Không thể đọc file.");}
  }
  const totals=useMemo(()=>roadmapTotals(items),[items]);
@@ -261,6 +266,26 @@ export function RoadmapBoard({mode}:Props){
      className="xcn-admin-primary" onClick={()=>void save()}><Save size={15}/>{saving?"Đang lưu…":"Lưu thay đổi"}</button>
    </div>
   </div>
+  {recovery&&<div role="alert" className="xcn-roadmap-alert is-recovery">
+   <strong>Phát hiện bản nháp chưa đồng bộ.</strong>
+   <p>Máy chủ đang ở phiên bản {version}; bản nháp thiết bị bắt đầu từ phiên bản {recovery.baseVersion}.
+    Chọn khôi phục nếu muốn sử dụng nội dung trên thiết bị, hoặc giữ dữ liệu máy chủ.</p>
+   <div className="xcn-roadmap-recovery-actions">
+    <button type="button" onClick={()=>{
+      if(!confirm("Khôi phục bản nháp sẽ thay thế nội dung đang hiển thị; bạn vẫn cần nhấn Lưu thay đổi để đồng bộ. Tiếp tục?"))return;
+      change(recovery.items);setRecovery(null);setNotice("Đã khôi phục bản nháp. Kiểm tra thay đổi và nhấn Lưu thay đổi.");
+    }}>Khôi phục bản nháp</button>
+    <button type="button" onClick={()=>{
+      setRecovery(null);
+      localStorage.removeItem(ROADMAP_STORAGE_KEY);
+      localStorage.removeItem(ROADMAP_LEGACY_STORAGE_KEY);
+      setNotice("Đã giữ nội dung máy chủ và bỏ bản nháp cũ.");
+    }}>Giữ bản trên máy chủ</button>
+   </div>
+  </div>}
+  {syncIssue&&<div role="status" className="xcn-roadmap-alert is-error">
+   Mất kết nối lưu tập trung: mọi thay đổi hiện chỉ được giữ ở thiết bị này. Hãy xuất JSON để dự phòng.
+  </div>}
   {failure&&<div role="alert" className="xcn-roadmap-alert is-error">{failure}
     {mode==="live"&&<button onClick={()=>location.reload()} type="button">Tải lại dữ liệu</button>}
   </div>}
@@ -287,16 +312,24 @@ export function RoadmapBoard({mode}:Props){
         <div className="xcn-roadmap-card-info">
          <Badge tone={item.status==="done"?"green":item.status==="building"?"blue":"neutral"}>{ROADMAP_STATUS[item.status]}</Badge>
          <Badge>{item.priority}</Badge>
+         {item.targetDate&&<span className="xcn-roadmap-extra"><Clock3 size={13}/> {item.targetDate}</span>}
+         {item.owner&&<span className="xcn-roadmap-extra">Phụ trách: {item.owner}</span>}
          <span className="xcn-roadmap-percent">{percentage}% · {item.checklist.filter(t=>t.done).length}/{item.checklist.length} việc nhỏ</span>
         </div>
         <div className="xcn-roadmap-bar"><span style={{width:percentage+"%"}}/></div>
         {open&&<div className="xcn-roadmap-body">
          <div className="xcn-roadmap-inline-actions">
           <label>Trạng thái <select aria-label={"Trạng thái "+item.title} value={item.status}
-           onChange={e=>update(item.id,old=>({...old,status:e.target.value as RoadmapStatus}))}>
+           onChange={e=>{
+     const next=e.target.value as RoadmapStatus;
+     if(next==="done"&&item.checklist.some(task=>!task.done)){
+      setFailure("Cần hoàn thành checklist trước khi đánh dấu mốc Đã hoàn thành.");return;
+     }
+     update(item.id,old=>({...old,status:next}));
+    }}> 
            {Object.entries(ROADMAP_STATUS).map(([value,label])=><option key={value} value={value}>{label}</option>)}
           </select></label>
-          <button type="button" onClick={()=>setEditor({id:item.id,title:item.title,summary:item.summary,phase:item.phase,area:item.area,priority:item.priority,status:item.status})}><NotebookPen size={15}/> Sửa việc lớn</button>
+          <button type="button" onClick={()=>setEditor({id:item.id,title:item.title,summary:item.summary,phase:item.phase,area:item.area,priority:item.priority,status:item.status,owner:item.owner??"",targetDate:item.targetDate??""})}><NotebookPen size={15}/> Sửa việc lớn</button>
           <button type="button" onClick={()=>moveEpic(item.id,-1)} aria-label={"Đưa "+item.title+" lên"}><ArrowUp size={15}/> Lên</button>
           <button type="button" onClick={()=>moveEpic(item.id,1)} aria-label={"Đưa "+item.title+" xuống"}><ArrowDown size={15}/> Xuống</button>
           <button type="button" className="danger" onClick={()=>removeEpic(item.id)}><Trash2 size={15}/> Xóa</button>
@@ -305,7 +338,7 @@ export function RoadmapBoard({mode}:Props){
          <div className="xcn-roadmap-checklist">
           {item.checklist.map(task=><div className="xcn-roadmap-task" key={task.id}>
            <input id={"road-task-"+task.id} type="checkbox" checked={task.done}
-            onChange={e=>update(item.id,old=>({...old,checklist:old.checklist.map(t=>t.id===task.id?{...t,done:e.target.checked}:t)}))}/>
+            onChange={e=>update(item.id,old=>({...old,status:!e.target.checked&&old.status==="done"?"building":old.status,checklist:old.checklist.map(t=>t.id===task.id?{...t,done:e.target.checked}:t)}))}/>
            {editingTask?.id===task.id?<form className="xcn-roadmap-edit-task" onSubmit={event=>{
             event.preventDefault();
             const text=editingTask.text.trim().slice(0,500);
@@ -347,7 +380,19 @@ export function RoadmapBoard({mode}:Props){
            item.entries.map(entry=><div className="xcn-roadmap-note" key={entry.id}>
             <span className={"xcn-roadmap-note-tag is-"+entry.kind}>{entry.kind==="fixed"?"Đã sửa":entry.kind==="added"?"Đã thêm":"Ghi chú"}</span>
             <span className="xcn-roadmap-note-date"><Clock3 size={12}/>{entry.date}</span>
-            <p>{entry.text}</p>
+            {editingNote?.id===entry.id?<form className="xcn-roadmap-edit-task" onSubmit={event=>{
+             event.preventDefault();
+             const text=editingNote.text.trim().slice(0,1500);
+             if(text)update(item.id,old=>({...old,entries:old.entries.map(e=>e.id===entry.id?{...e,text}:e)}));
+             setEditingNote(null);
+            }}>
+             <input autoFocus required aria-label="Sửa nội dung ghi chú" maxLength={1500}
+              value={editingNote.text} onChange={event=>setEditingNote({...editingNote,text:event.target.value})}/>
+             <button type="submit" aria-label="Lưu chỉnh sửa ghi chú"><Check size={15}/></button>
+             <button type="button" aria-label="Hủy sửa ghi chú" onClick={()=>setEditingNote(null)}><X size={15}/></button>
+            </form>:<p>{entry.text}</p>}
+            <button type="button" aria-label="Sửa ghi chú" className="xcn-roadmap-edit-note"
+             onClick={()=>setEditingNote({id:entry.id,text:entry.text})}><Pencil size={14}/></button>
             <button type="button" aria-label="Xóa ghi chú" onClick={()=>{
              if(confirm("Xóa ghi chú này?"))update(item.id,old=>({...old,entries:old.entries.filter(e=>e.id!==entry.id)}));
             }}><Trash2 size={14}/></button>
@@ -368,6 +413,10 @@ export function RoadmapBoard({mode}:Props){
     <label>Mục tiêu / mô tả<textarea rows={3} maxLength={1000} value={editor.summary}
      onChange={e=>setEditor({...editor,summary:e.target.value})}/></label>
     <div className="xcn-admin-modal-grid">
+     <label>Người phụ trách<input value={editor.owner} maxLength={100} placeholder="Người phụ trách (không bắt buộc)"
+      onChange={e=>setEditor({...editor,owner:e.target.value})}/></label>
+     <label>Hạn dự kiến<input type="date" value={editor.targetDate}
+      onChange={e=>setEditor({...editor,targetDate:e.target.value})}/></label>
      <label>Giai đoạn<select value={editor.phase} onChange={e=>setEditor({...editor,phase:e.target.value})}>
       {ROADMAP_PHASES.map(p=><option key={p}>{p}</option>)}</select></label>
      <label>Phân hệ<input list="roadmap-areas" maxLength={80} value={editor.area}

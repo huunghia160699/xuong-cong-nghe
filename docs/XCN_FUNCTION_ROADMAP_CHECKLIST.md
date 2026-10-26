@@ -21,9 +21,9 @@
 - **Mục tiêu:** Dashboard điều hành, điều hướng module, báo cáo hệ thống và quyền admin.
 
 - [x] Dashboard tổng quan thực/được ghi nhãn demo
-- [ ] Sidebar quản trị phân nhóm đúng các trang đã có
-- [ ] Roadmap dọc có lọc, tìm kiếm, checklist và nhật ký
-- [ ] Tạo/sửa/xóa nhiệm vụ lớn, nhiệm vụ nhỏ và ghi chú
+- [x] Sidebar quản trị phân nhóm đúng các trang đã có
+- [x] Roadmap dọc có lọc, tìm kiếm, checklist và nhật ký
+- [x] Tạo/sửa/xóa nhiệm vụ lớn, nhiệm vụ nhỏ và ghi chú
 - [ ] Lưu roadmap an toàn, xuất Markdown/JSON và nhập sao lưu
 - [ ] Xác minh quyền admin, RLS và kiểm thử đa tài khoản
 - [ ] Kiểm thử trực quan mobile/tablet/desktop và Production

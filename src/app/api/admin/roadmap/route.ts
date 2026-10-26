@@ -1,41 +1,11 @@
 import {NextResponse} from "next/server";
 import {createSupabaseServerClient} from "@/lib/supabase/server";
 import {isLiveMode} from "@/lib/supabase/config";
-import {ROADMAP_PHASES,ROADMAP_PRIORITY,ROADMAP_STATUS,type RoadmapEpic} from "@/features/admin/roadmap-data";
+import {validateRoadmap,roadmapBytes,ROADMAP_MAX_BYTES} from "@/features/admin/roadmap-validation";
 
 export const dynamic="force-dynamic";
 const KEY="global-master-roadmap";
 const fail=(message:string,status:number)=>NextResponse.json({error:message},{status,headers:{"Cache-Control":"no-store"}});
-const safe=(value:unknown):value is RoadmapEpic[]=>{
- if(!Array.isArray(value)||value.length>200)return false;
- const ids=new Set<string>();
- for(const v of value){
-  if(!v||typeof v!=="object")return false;
-  const item=v as Partial<RoadmapEpic>;
-  if(typeof item.id!=="string"||!item.id||item.id.length>120||ids.has(item.id)
-    ||typeof item.title!=="string"||item.title.length<3||item.title.length>200
-    ||typeof item.summary!=="string"||item.summary.length>1000
-    ||typeof item.area!=="string"||item.area.length>80
-    ||typeof item.order!=="number"||!Number.isFinite(item.order)
-    ||!ROADMAP_PHASES.includes(item.phase as typeof ROADMAP_PHASES[number])
-    ||!Object.prototype.hasOwnProperty.call(ROADMAP_STATUS,item.status??"")
-    ||!Object.prototype.hasOwnProperty.call(ROADMAP_PRIORITY,item.priority??"")
-    ||!Array.isArray(item.checklist)||item.checklist.length>300
-    ||!Array.isArray(item.entries)||item.entries.length>500)return false;
-  ids.add(item.id);
-  for(const task of item.checklist){
-   if(!task||typeof task.id!=="string"||task.id.length>120
-      ||typeof task.text!=="string"||task.text.length>500||typeof task.done!=="boolean")return false;
-  }
-  for(const note of item.entries){
-   if(!note||typeof note.id!=="string"||note.id.length>120
-      ||typeof note.text!=="string"||note.text.length>1500
-      ||!["note","added","fixed"].includes(note.kind)
-      ||typeof note.date!=="string"||note.date.length>40)return false;
-  }
- }
- return true;
-};
 async function auth(){
  if(!isLiveMode())return {error:fail("Chế độ Demo lưu roadmap trong trình duyệt, không sử dụng API.",403)};
  const supabase=await createSupabaseServerClient();
@@ -58,9 +28,9 @@ export async function GET(){
 export async function PUT(request:Request){
  try{
   const a=await auth();if(a.error)return a.error;
-  if(Number(request.headers.get("content-length")||0)>500_000)return fail("Roadmap vượt dung lượng cho phép.",413);
+  if(Number(request.headers.get("content-length")||0)>ROADMAP_MAX_BYTES)return fail("Roadmap vượt dung lượng cho phép.",413);
   const body=await request.json() as {items?:unknown;version?:unknown};
-  if(!safe(body.items)||JSON.stringify(body.items).length>500_000
+  if(!validateRoadmap(body.items)||roadmapBytes(body.items)>ROADMAP_MAX_BYTES
     ||!Number.isInteger(body.version)||Number(body.version)<0)return fail("Dữ liệu roadmap không hợp lệ.",400);
   const version=Number(body.version);
   if(version===0){
