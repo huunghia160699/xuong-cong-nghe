@@ -154,6 +154,11 @@ export function RoadmapBoard({mode}:Props){
  }
  function commitEditor(){
   if(!editor||editor.title.trim().length<3)return;
+  const existing=items.find(item=>item.id===editor.id);
+  if(editor.status==="done"&&existing?.checklist.some(task=>!task.done)){
+   setFailure("Cần hoàn thành checklist trước khi đánh dấu mốc Đã hoàn thành.");
+   return;
+  }
   const data={title:editor.title.trim().slice(0,200),summary:editor.summary.trim().slice(0,1000),
    phase:editor.phase,area:editor.area.trim().slice(0,80)||"Khác",
    priority:editor.priority,status:editor.status,owner:editor.owner.trim().slice(0,100),
@@ -261,6 +266,26 @@ export function RoadmapBoard({mode}:Props){
      className="xcn-admin-primary" onClick={()=>void save()}><Save size={15}/>{saving?"Đang lưu…":"Lưu thay đổi"}</button>
    </div>
   </div>
+  {recovery&&<div role="alert" className="xcn-roadmap-alert is-recovery">
+   <strong>Phát hiện bản nháp chưa đồng bộ.</strong>
+   <p>Máy chủ đang ở phiên bản {version}; bản nháp thiết bị bắt đầu từ phiên bản {recovery.baseVersion}.
+    Chọn khôi phục nếu muốn sử dụng nội dung trên thiết bị, hoặc giữ dữ liệu máy chủ.</p>
+   <div className="xcn-roadmap-recovery-actions">
+    <button type="button" onClick={()=>{
+      if(!confirm("Khôi phục bản nháp sẽ thay thế nội dung đang hiển thị; bạn vẫn cần nhấn Lưu thay đổi để đồng bộ. Tiếp tục?"))return;
+      change(recovery.items);setRecovery(null);setNotice("Đã khôi phục bản nháp. Kiểm tra thay đổi và nhấn Lưu thay đổi.");
+    }}>Khôi phục bản nháp</button>
+    <button type="button" onClick={()=>{
+      setRecovery(null);
+      localStorage.removeItem(ROADMAP_STORAGE_KEY);
+      localStorage.removeItem(ROADMAP_LEGACY_STORAGE_KEY);
+      setNotice("Đã giữ nội dung máy chủ và bỏ bản nháp cũ.");
+    }}>Giữ bản trên máy chủ</button>
+   </div>
+  </div>}
+  {syncIssue&&<div role="status" className="xcn-roadmap-alert is-error">
+   Mất kết nối lưu tập trung: mọi thay đổi hiện chỉ được giữ ở thiết bị này. Hãy xuất JSON để dự phòng.
+  </div>}
   {failure&&<div role="alert" className="xcn-roadmap-alert is-error">{failure}
     {mode==="live"&&<button onClick={()=>location.reload()} type="button">Tải lại dữ liệu</button>}
   </div>}
@@ -355,7 +380,19 @@ export function RoadmapBoard({mode}:Props){
            item.entries.map(entry=><div className="xcn-roadmap-note" key={entry.id}>
             <span className={"xcn-roadmap-note-tag is-"+entry.kind}>{entry.kind==="fixed"?"Đã sửa":entry.kind==="added"?"Đã thêm":"Ghi chú"}</span>
             <span className="xcn-roadmap-note-date"><Clock3 size={12}/>{entry.date}</span>
-            <p>{entry.text}</p>
+            {editingNote?.id===entry.id?<form className="xcn-roadmap-edit-task" onSubmit={event=>{
+             event.preventDefault();
+             const text=editingNote.text.trim().slice(0,1500);
+             if(text)update(item.id,old=>({...old,entries:old.entries.map(e=>e.id===entry.id?{...e,text}:e)}));
+             setEditingNote(null);
+            }}>
+             <input autoFocus required aria-label="Sửa nội dung ghi chú" maxLength={1500}
+              value={editingNote.text} onChange={event=>setEditingNote({...editingNote,text:event.target.value})}/>
+             <button type="submit" aria-label="Lưu chỉnh sửa ghi chú"><Check size={15}/></button>
+             <button type="button" aria-label="Hủy sửa ghi chú" onClick={()=>setEditingNote(null)}><X size={15}/></button>
+            </form>:<p>{entry.text}</p>}
+            <button type="button" aria-label="Sửa ghi chú" className="xcn-roadmap-edit-note"
+             onClick={()=>setEditingNote({id:entry.id,text:entry.text})}><Pencil size={14}/></button>
             <button type="button" aria-label="Xóa ghi chú" onClick={()=>{
              if(confirm("Xóa ghi chú này?"))update(item.id,old=>({...old,entries:old.entries.filter(e=>e.id!==entry.id)}));
             }}><Trash2 size={14}/></button>
