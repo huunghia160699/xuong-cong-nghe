@@ -38,8 +38,10 @@ test("All 14 Paragraph tools are wired; each one checked 10 times",()=>{
   assert.ok(paragraph.includes('label="'+label+'"'),"tool "+label+" round "+round);
   assert.ok(paragraph.includes(command),"handler "+label+" round "+round);
  }
- for(const x of ["1","1.15","1.5","2"])
-   assert.ok(paragraph.includes('"'+x+'"'),"line spacing "+x);
+ assert.ok(paragraph.includes("WORD_LINE_SPACING_VALUES.map"),"all six line spacing values share the same list");
+ const optionsDialog=readFileSync("src/features/word-simulator/word-line-spacing-dialog.tsx","utf8");
+ for(const x of ["1","1.15","1.5","2","2.5","3"])
+   assert.ok(optionsDialog.includes('"'+x+'"'),"line spacing "+x);
  for(const x of ["paragraphBorder","paragraphShading","lineSpacing","multilevelList"])
    assert.ok(simulator.includes('name==="'+x+'"'),"command dispatch "+x);
  assert.match(home,/<Group name="Paragraph"[^>]*onDetails=\{\(\)=>setDialog\("Paragraph"\)\}/);
