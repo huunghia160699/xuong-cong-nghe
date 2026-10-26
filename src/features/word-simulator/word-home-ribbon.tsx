@@ -3,6 +3,7 @@
 import {useState,type ReactNode} from "react";
 import {WordCustomDropdown,WordSplitButton} from "./word-split-button";
 import {WordRibbonDialog,type RibbonDialogAction} from "./word-ribbon-dialog";
+import {WordLineSpacingDialog,WORD_LINE_SPACING_VALUES,lineSpacingLabel,type WordParagraphSpacing} from "./word-line-spacing-dialog";
 import {
   AlignCenter,AlignJustify,AlignLeft,AlignRight,
   ArrowDownRight,ArrowRightToLine,ChevronDown,Clipboard,Copy,Eraser,
@@ -16,6 +17,7 @@ export type WordParagraphAlignment="left"|"center"|"right"|"justify";
 type Props={
   formatActive:Record<WordFormatKey,boolean>;paragraphAlignment:WordParagraphAlignment;clipboardMode:"copy"|"cut"|null;
   font:string; fontSize:string; showMarks:boolean; hasSelection:boolean; paintArmed:boolean;
+  paragraphSpacing:WordParagraphSpacing;
   run:(name:string,value?:string)=>void;
   editFont:(name:string)=>void;editSize:(size:string)=>void;
   changeCase:()=>void;sortLines:()=>void;replaceText:()=>void;
@@ -88,6 +90,18 @@ function WordLineSpacingGlyph(){
   </svg>;
 }
 
+function WordParagraphSpaceGlyph({kind}:{kind:"before"|"after"}){
+  return <svg viewBox="0 0 23 23" aria-hidden="true" focusable="false">
+    <g stroke="#57616b" strokeWidth="1.25" fill="none" strokeLinecap="square">
+      <path d="M3 8H21M3 12.5H21M3 17H21"/>
+    </g>
+    <g fill="none" stroke="#1684c3" strokeWidth="1.45" strokeLinecap="round" strokeLinejoin="round">
+      {kind==="before"?<path d="M12 1.5V6.4M9 4 12 7l3-3"/>:
+        <path d="M12 21.5V18M9 20l3-3 3 3"/>}
+    </g>
+  </svg>;
+}
+
 function WordSortGlyph(){
   return <svg className="wsl-paragraph-sort-glyph" viewBox="0 0 24 22" aria-hidden="true" focusable="false">
     <g fontFamily="Arial,sans-serif" fontWeight="700" fontSize="11">
@@ -104,7 +118,7 @@ const FONTS=["Aptos","Arial","Calibri","Times New Roman","Georgia","Verdana"];
 const RIBBON_EXPAND_ARROW_SIZE=13;
 
 export function WordHomeRibbon({
- font,fontSize,showMarks,hasSelection,paintArmed,formatActive,paragraphAlignment,clipboardMode,run,editFont,editSize,changeCase,sortLines,
+ font,fontSize,showMarks,hasSelection,paintArmed,formatActive,paragraphAlignment,paragraphSpacing,clipboardMode,run,editFont,editSize,changeCase,sortLines,
  replaceText,findText,selectAll,toggleMarks,applyStyle
 }:Props){
  const size=Math.max(1,Math.min(7,Number(fontSize)||3));
@@ -113,6 +127,7 @@ export function WordHomeRibbon({
  const [selectedStyle,setSelectedStyle]=useState("Normal");
  const selectStyle=(style:string)=>{applyStyle(style);setSelectedStyle(style);};
  const [dialog,setDialog]=useState<"Clipboard"|"Font"|"Paragraph"|"Styles"|"Editing"|null>(null);
+ const [spacingOptionsOpen,setSpacingOptionsOpen]=useState(false);
  const dialogActions:RibbonDialogAction[]=dialog==="Clipboard"?[
    {label:"Dán",run:()=>run("paste")},{label:"Sao chép",run:()=>run("copy")},
    {label:"Cắt",run:()=>run("cut")},{label:"Sao chép định dạng",run:()=>run("formatPainter")}
@@ -250,13 +265,22 @@ export function WordHomeRibbon({
        <Btn className="wsl-paragraph-icon-button" label="Align Right" active={paragraphAlignment==="right"} icon={<AlignRight size={18}/>} run={()=>run("justifyRight")}/>
        <Btn className="wsl-paragraph-icon-button" label="Justify" active={paragraphAlignment==="justify"} icon={<AlignJustify size={18}/>} run={()=>run("justifyFull")}/>
        <span className="wsl-paragraph-divider" aria-hidden="true"/>
-       <WordSplitButton className="wsl-paragraph-split wsl-paragraph-combo-button" label="Line Spacing 1.5"
+       <WordSplitButton className="wsl-paragraph-split wsl-paragraph-combo-button" label="Line Spacing"
+         menuVariant="line-spacing"
          icon={<span className="wsl-paragraph-combo wsl-paragraph-line-spacing"><WordLineSpacingGlyph/></span>}
          run={()=>run("lineSpacing")}
          options={[
-           ...["1","1.15","1.5","2"].map(value=>({label:"Giãn dòng "+value,run:()=>run("lineSpacing",value)})),
-           ...["0","6","12","18"].map(value=>({label:"Cách trước đoạn "+value+" px",run:()=>run("paragraphSpacingBefore",value)})),
-           ...["0","6","12","18"].map(value=>({label:"Cách sau đoạn "+value+" px",run:()=>run("paragraphSpacingAfter",value)}))
+           ...WORD_LINE_SPACING_VALUES.map(value=>({
+             label:lineSpacingLabel(value),selected:paragraphSpacing.line===value,
+             run:()=>run("lineSpacing",value)
+           })),
+           {label:"Line Spacing Options...",run:()=>setSpacingOptionsOpen(true)},
+           {label:paragraphSpacing.before>0?"Remove Space Before Paragraph":"Add Space Before Paragraph",
+             icon:<WordParagraphSpaceGlyph kind="before"/>,separatorBefore:true,
+             run:()=>run("paragraphSpaceBeforeToggle")},
+           {label:paragraphSpacing.after>0?"Remove Space After Paragraph":"Add Space After Paragraph",
+             icon:<WordParagraphSpaceGlyph kind="after"/>,
+             run:()=>run("paragraphSpaceAfterToggle")}
          ]}/>
        <WordSplitButton className="wsl-paragraph-split wsl-paragraph-combo-button" label="Paragraph Shading"
          icon={<span className="wsl-paragraph-combo wsl-paragraph-shading"><PaintBucket size={18}/><span className="wsl-paragraph-shading-swatch"/></span>}
@@ -305,5 +329,8 @@ export function WordHomeRibbon({
    </Group>
  </div>
    {dialog&&<WordRibbonDialog name={dialog} actions={dialogActions} onClose={()=>setDialog(null)}/>}
+   {spacingOptionsOpen&&<WordLineSpacingDialog initial={paragraphSpacing}
+     onClose={()=>setSpacingOptionsOpen(false)}
+     onApply={next=>run("paragraphSpacingOptions",[next.line,next.before,next.after].join("|"))}/>}
  </>;
 }
