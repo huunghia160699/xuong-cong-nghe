@@ -1,5 +1,12 @@
 # Changelog
 
+## 2026-10-26 — Kiểm tra sâu và củng cố Admin Roadmap
+- Dùng chung bộ kiểm tra dữ liệu giữa giao diện, nhập JSON và API; giới hạn byte, ID trùng, ngày không hợp lệ, quyền ưu tiên/trạng thái.
+- Nâng cấp bản nháp lưu trên trình duyệt có phiên bản, phát hiện thay đổi chưa đồng bộ và cho lựa chọn rõ ràng: khôi phục bản nháp hoặc giữ bản máy chủ.
+- Bổ sung người phụ trách, hạn dự kiến, sửa nội dung ghi chú; ngăn đánh dấu hoàn thành khi còn việc nhỏ chưa xong.
+- Không phục hồi nhầm dữ liệu mẫu khi roadmap đã lưu rỗng; tránh mất các thay đổi khi trang bị tải lại hoặc lưu song song.
+- Bổ sung kiểm thử đơn vị các bộ kiểm tra và API giả lập phân quyền, ghi đè, định dạng sai. Giữ production ở chế độ Demo khi DB Supabase không truy cập được qua công cụ quản trị.
+
 ## 2026-10-26 — Admin Command Center, Sitemap và Roadmap dọc
 - Xây trang `/admin` mới: nhóm module có thật, số liệu Supabase (nếu đang live), tách rõ dữ liệu Demo và phân hệ tương lai.
 - Thêm `/admin/roadmap`: 20 mốc lớn, 115 việc nhỏ ưu tiên Tin học, timeline chấm dọc, bộ lọc, tìm kiếm, sửa mốc, trạng thái, ưu tiên, thứ tự, checklist, nhật ký loại “Ghi chú / Đã thêm / Đã sửa”.
