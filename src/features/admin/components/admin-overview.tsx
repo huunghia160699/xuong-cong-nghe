@@ -1,6 +1,6 @@
 import Link from "next/link";
 import {
-  Activity,ArrowRight,BookOpen,ClipboardCheck,Code2,FileText,LayoutDashboard,Library,
+  ArrowRight,BookOpen,ClipboardCheck,Code2,FileText,LayoutDashboard,Library,
   ListTodo,Map,MonitorPlay,School,ShieldCheck,Users,SlidersHorizontal,Activity,ScrollText,BarChart3
 } from "lucide-react";
 import {ROADMAP_INITIAL,roadmapTotals,roadmapProgress} from "../roadmap-data";
