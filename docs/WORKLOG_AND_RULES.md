@@ -25,6 +25,16 @@
 
 ## III. Lịch sử
 
+### 2026-10-26 — Admin toàn hệ thống, Sitemap và Roadmap tương tác theo timeline
+- **Mục tiêu:** Chỉ tập trung hoàn thiện trung tâm Admin và Roadmap trước khi mở rộng các phân hệ khác; chuyển master plan ưu tiên Tin học thành checklist quản trị thực tế.
+- **Thay đổi:** `src/app/admin/page.tsx` và `src/features/admin/components/admin-overview.tsx` tạo trung tâm điều hành; `/admin/roadmap` và `roadmap-board.tsx` có timeline đường chấm, mốc lớn, việc nhỏ, ghi chú thay đổi, tìm kiếm/lọc/sắp xếp và xuất/import; `/admin/sitemap`, `admin-sitemap.ts` phân biệt các route hiện hữu/dự kiến; `admin.css` thiết kế responsive; sidebar sử dụng các route có thật.
+- **Tài liệu:** `docs/XCN_SITEMAP_2026_2028.md` (Mermaid và route matrix), `docs/XCN_FUNCTION_ROADMAP_CHECKLIST.md` (20 mốc, 115 việc nhỏ), liên kết trong `docs/ROADMAP.md` và README.
+- **Quyết định dữ liệu:** Demo dùng localStorage cục bộ và xuất/nhập backup; Live API `/api/admin/roadmap` kiểm tra session + `profiles.role='admin'`, dùng bảng `admin_roadmap` với RLS và optimistic version để chống ghi đè. Khi Supabase lỗi, giao diện nêu rõ chưa đồng bộ và lưu bản nháp cục bộ, không hứa ghi DB.
+- **Supabase:** project đã được xác định, nhưng kết nối SQL từ công cụ quản trị liên tục timeout, kể cả `apply_migration`; SQL `supabase/migrations/20261026163500_admin_roadmap.sql` **đã commit nhưng chưa xác nhận áp dụng**. Không được đánh dấu Live persistence hoàn tất khi chưa chạy migration và kiểm thử admin/non-admin.
+- **Kiểm thử:** `tests/admin-roadmap.test.mjs` kiểm tra dữ liệu roadmap, cấu trúc UI, schema RLS, API và sitemap; GitHub Actions đang kiểm tra toàn repo (test/typecheck/build/smoke). Chưa đo thiết bị mobile thực tế hoặc test E2E bằng trình duyệt.
+- **GitHub:** PR #46, nhánh `feat/admin-roadmap-sitemap-20261026`. Commit cuối và trạng thái CI/Production cập nhật theo thực tế khi hoàn tất.
+- **Phạm vi:** Không xây Teacher Studio, quiz real-time, Python/SQL hay thay đổi chức năng Word hiện có trong đợt này.
+
 ### 2026-10-26 — Tái lập kế hoạch hệ sinh thái giáo dục Xưởng Công Nghệ
 - **Yêu cầu:** Nghiên cứu mô hình dethiso.vn/teacher/dashboard và lập kế hoạch chi tiết hơn cho Xưởng Công Nghệ theo hướng nền tảng giáo dục lớn.
 - **Nguồn tham khảo:** Trang chủ và tài liệu công khai dethiso.vn (soạn đề Word, quản lý lớp, thi online, đấu trường, ngân hàng câu hỏi, báo cáo); dashboard bên trong tài khoản không truy cập được từ nguồn công khai, nên không nhận là đã kiểm thử UI riêng tư.
