@@ -1986,7 +1986,7 @@ test("All Word simulator dropdown surfaces are custom div panels, with no native
  assert.match(split,/document\.addEventListener\("pointerdown",outside\)/);
  assert.match(split,/createPortal\(/);
  assert.match(split,/onChange\(option\.value\)/);
- assert.match(split,/className="wsl-split-menu"/);
+ assert.match(split,/className=\{"wsl-split-menu"/);
  assert.match(windowBar,/className="wsl-qat-menu"/);
  assert.match(fontCSS,/\.wsl-home-font \.wsl-font-select \.wsl-word-dropdown-value/);
  assert.doesNotMatch(fontCSS,/\.wsl-home-font \.wsl-font-select select/);
