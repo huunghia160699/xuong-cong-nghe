@@ -10,8 +10,12 @@ const text=(value:unknown,max:number,min=0):value is string=>
  typeof value==="string"&&value.length>=min&&value.length<=max;
 const isRecord=(value:unknown):value is Record<string,unknown>=>
  typeof value==="object"&&value!==null&&!Array.isArray(value);
-const date=(value:unknown):value is string=>
- typeof value==="string"&&/^\d{4}-\d{2}-\d{2}$/.test(value)&&!Number.isNaN(Date.parse(value));
+const date=(value:unknown):value is string=>{
+ if(typeof value!=="string"||!/^\d{4}-\d{2}-\d{2}$/.test(value))return false;
+ const [y,m,d]=value.split("-").map(Number);
+ const utc=new Date(Date.UTC(y,m-1,d));
+ return utc.getUTCFullYear()===y&&utc.getUTCMonth()===m-1&&utc.getUTCDate()===d;
+};
 const idsUnique=(records:Record<string,unknown>[])=>{
  const ids=records.map(item=>item.id);
  return new Set(ids).size===ids.length;
