@@ -27,4 +27,40 @@
 - Word Lab, Notes, Tools, Resources
 - Teacher Workspace, AI Tutor, thương mại ở giai đoạn sau
 
+
+## Backlog — Phòng trắc nghiệm tương tác trực tiếp (chờ triển khai)
+
+**Ghi nhận:** 2026-10-26. **Trạng thái:** CHƯA TRIỂN KHAI, chỉ lưu yêu cầu để làm sau.
+**Định hướng đã chọn:** GV mở phòng, HS dùng điện thoại/máy tính tham gia bằng mã, chọn đáp án ngay trên thiết bị; ưu tiên hơn phương án quét thẻ giấy. Học hỏi luồng chức năng, không sao chép thiết kế hoặc mã nguồn của Kahoot, Quizizz hay dethiso.vn.
+
+### Giai đoạn 1 — Live Quiz do giáo viên điều khiển (ưu tiên)
+
+- [ ] GV chọn bộ câu hỏi có sẵn trong ngân hàng/công cụ soạn câu hỏi của HuuNghia Studio, tạo phiên trực tiếp gắn với lớp hoặc phiên khách.
+- [ ] Sinh mã phòng ngắn, khó trùng (đề xuất PIN 6 chữ số, có thời hạn), liên kết chia sẻ và QR tham gia; phòng chờ hiển thị số lượng và danh sách người tham gia.
+- [ ] HS vào phòng từ trình duyệt điện thoại bằng mã/link/QR, nhập tên hoặc chọn đúng hồ sơ HS trong lớp; không bắt buộc đăng ký đối với phiên khách.
+- [ ] GV điều khiển bắt đầu/tạm dừng/tiếp tục/chuyển câu/kết thúc; đặt thời lượng cho từng câu và tùy chọn khóa/cho sửa đáp án trước hạn.
+- [ ] Màn hình trình chiếu hiển thị câu hỏi, trạng thái nhận đáp án và đồng hồ; giao diện HS tối ưu cho màn hình nhỏ, đáp án A/B/C/D rõ ràng, thao tác chạm thuận tiện.
+- [ ] Nhận, lưu, chấm và thống kê câu trả lời theo thời gian thực; đếm HS đã/chưa trả lời. Không gửi đáp án đúng trước khi GV công bố.
+- [ ] Sau khi GV công bố: hiển thị biểu đồ phân bổ A/B/C/D, đáp án đúng, lời giải; GV có thể giảng giải trước khi chuyển câu.
+- [ ] Cuối phiên: tổng hợp theo HS/câu/lớp, lưu lịch sử hoạt động và xuất CSV/Excel; bảng xếp hạng/điểm thưởng là cấu hình tùy chọn, tránh gây áp lực.
+- [ ] Xử lý mất mạng/tải lại trang: tái kết nối bằng token phiên, khôi phục lựa chọn đã gửi, chống ghi trùng hoặc nộp sau hạn; đếm giờ và trạng thái phiên do server xác thực.
+- [ ] Quyền và an toàn: chỉ GV chủ phòng được điều khiển, kiểm soát người lạ/tên trùng/spam, giới hạn lượt tham gia, tránh hiển thị thông tin cá nhân HS công khai.
+- [ ] Kiểm thử thực tế với 40–50 thiết bị trong một lớp; kiểm tra độ trễ, đồng bộ, reconnect, thao tác trên Android/iOS, màn hình máy chiếu và mạng Wi-Fi yếu.
+
+### Giai đoạn 2 — Mở rộng sau khi Live Quiz ổn định
+
+- [ ] HS làm theo tốc độ riêng, giới hạn thời gian toàn bài, giao bài qua lớp hoặc liên kết và nộp/chấm tự động.
+- [ ] Hỗ trợ thêm đúng/sai, nhiều đáp án, điền ngắn và câu hỏi có hình ảnh/công thức; tái sử dụng ngân hàng câu hỏi.
+- [ ] Trò chơi thi đấu đội, bảng điểm trực tiếp, hiệu ứng chuyển câu và các mẫu gamification tùy bật/tắt; không ưu tiên hơn tính ổn định của bản đầu.
+- [ ] Phân tích độ khó câu hỏi, câu HS sai nhiều, theo dõi tiến bộ và xuất báo cáo phục vụ giáo viên.
+
+### Tài liệu tham khảo và phạm vi
+
+- Trang tham khảo: https://dethiso.vn
+- Luồng phòng thi đấu tham khảo: https://dethiso.vn/docs/dau-truong/tao-dau-truong-2-doi
+- Luồng giao bài/chấm/khôi phục: https://dethiso.vn/docs/thi-online/giao-bai-cho-lop
+- Từ dethiso.vn có thể học luồng tạo PIN, phòng chờ, giáo viên điều khiển, HS trả lời trên điện thoại, bảng điểm; các số giới hạn/khẳng định hiệu năng trên website bên ngoài chưa được kiểm chứng độc lập.
+- **Ngoài phạm vi yêu cầu hiện tại:** quét thẻ giấy/Plickers, sửa trực tiếp editor Word, triển khai database hoặc tạo phòng thi thật. Chỉ ghi vào roadmap, không tự xây dựng cho đến khi có yêu cầu.
+
+
 Chi tiết cấu hình: `docs/SUPABASE_SETUP.md`.
