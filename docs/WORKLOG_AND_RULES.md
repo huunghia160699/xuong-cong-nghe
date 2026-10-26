@@ -25,6 +25,15 @@
 
 ## III. Lịch sử
 
+### 2026-10-26 — Ghi nhận tính năng Live Quiz chờ làm; nghiên cứu dethiso.vn
+- **Mục tiêu:** Theo yêu cầu, chỉ ghi tính năng GV tạo phòng, HS tham gia bằng mã và trả lời trên điện thoại vào file Markdown để thực hiện sau; nghiên cứu dethiso.vn làm tham khảo.
+- **Thay đổi và file:** Bổ sung backlog giai đoạn 1 và 2, tiêu chí nghiệm thu, an toàn, đường dẫn tài liệu tham khảo vào `docs/ROADMAP.md`. Không chỉnh sửa mã ứng dụng, không tạo database hay phòng thi thật.
+- **Quyết định:** Ưu tiên Live Quiz do giáo viên điều khiển; thiết bị học sinh trả lời trực tiếp thay vì quét thẻ giấy. Tham khảo quy trình phòng chờ, mã PIN, trả lời và báo cáo từ tài liệu công khai của dethiso.vn; không sao chép giao diện/mã nguồn hoặc coi số liệu marketing là kiểm chứng.
+- **Kiểm thử:** Chỉ chỉnh sửa tài liệu, xác nhận cập nhật GitHub; chưa chạy `pnpm test/typecheck/build` vì không sửa runtime.
+- **GitHub commit:** `56576881c9c6d003c2a0c9cabdf694ad192b8d1e` (Roadmap).
+- **Vercel Production:** Không triển khai ứng dụng vì chỉ thêm yêu cầu chờ làm.
+- **Tồn đọng:** Chưa thiết kế kỹ thuật chi tiết, chưa triển khai và chưa kiểm tra với lớp học.
+
 ### 2026-10-26 — Menu Line Spacing giống ảnh Word
 - **Yêu cầu:** Menu Line Spacing giống Microsoft Word: sáu hệ số giãn dòng, Options..., lệnh thêm/bỏ cách đoạn; không dùng dropdown native.
 - **Thực hiện:** `word-split-button.tsx` bổ sung variant popup menu HTML 264px, mục đã chọn, đường phân cách và keyboard; `word-split-ribbon.css` điều chỉnh menu/đối thoại; `word-home-ribbon.tsx` chứa icon, nhãn ngữ cảnh và liên kết lệnh; `word-line-spacing-dialog.tsx` là dialog tự dựng; `word-simulator.tsx` đồng bộ style, cho giãn dòng 2.5/3.0, thêm/bỏ khoảng cách và áp dụng đồng thời giãn dòng/đoạn.
