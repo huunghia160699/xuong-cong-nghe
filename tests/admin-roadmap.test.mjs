@@ -45,8 +45,13 @@ test("Roadmap has dotted vertical timeline, interactive editor and change log",(
  for(const name of ["Thêm việc lớn","Thêm việc nhỏ","Lưu ghi chú","Đã sửa","Đã thêm","Xuất Markdown","Sao lưu JSON","Nhập JSON","Lưu thay đổi"]){
   assert.ok(board.includes(name),"missing "+name);
  }
- assert.match(board,/localStorage\.setItem\(LOCAL_KEY/);
+ assert.match(board,/localStorage\.setItem\(ROADMAP_STORAGE_KEY/);
  assert.match(board,/fetch\("\/api\/admin\/roadmap"/);
+ assert.match(board,/shouldOfferRecovery/);
+ assert.match(board,/Khôi phục bản nháp/);
+ assert.match(board,/Người phụ trách/);
+ assert.match(board,/Hạn dự kiến/);
+ assert.match(board,/Sửa ghi chú/);
  assert.match(board,/aria-expanded=\{open\}/);
  assert.match(board,/onChange=\{e=>update\(item.id/);
  assert.match(css,/@media\(max-width:700px\)/);
