@@ -29,7 +29,7 @@ test("All 14 Paragraph tools are wired; each one checked 10 times",()=>{
   ["Center",'run={()=>run("justifyCenter")}'],
   ["Align Right",'run={()=>run("justifyRight")}'],
   ["Justify",'run={()=>run("justifyFull")}'],
-  ["Line Spacing 1.5",'run={()=>run("lineSpacing")}'],
+  ["Line Spacing",'run={()=>run("lineSpacing")}'],
   ["Paragraph Shading",'run={()=>run("paragraphShading")}'],
   ["Borders",'run={()=>run("paragraphBorder")}']
  ];
@@ -198,6 +198,9 @@ test("Paragraph dropdown actions modify line and paragraph spacing, shading and 
    editor:{current:{contains:()=>true}},
    restoreSelection(){},currentBlock:()=>block,
    selectedParagraphBlocks:()=>[block,second],
+   paragraphSpacing:{line:"1.15",before:0,after:8},
+   WORD_LINE_SPACING_VALUES:["1","1.15","1.5","2","2.5","3"],
+   syncParagraphSpacing(){},
    markChanged(){changed++},setStatus(m){throw Error(m)},
    command(){throw Error("expected inline paragraph handling")},
    stepParagraphIndent(){},insertMultilevelList(){},
