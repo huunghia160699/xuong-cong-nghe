@@ -168,3 +168,27 @@
 .xcn-roadmap-note .xcn-roadmap-edit-task{flex-basis:100%;padding-right:52px}
 .xcn-roadmap-note .xcn-roadmap-edit-note{position:absolute;right:39px;top:13px;color:#537ba7}
 .xcn-roadmap-note .xcn-roadmap-edit-note:hover{color:#005bfd}
+
+
+/* Roadmap local backup history. Matches existing Admin cards and remains responsive. */
+.xcn-roadmap-history{margin:0 0 20px;border:1px solid #ccdcf0;border-radius:14px;background:#fff;padding:18px;box-shadow:0 6px 20px #09264c0b}
+.xcn-roadmap-history-heading{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:13px;flex-wrap:wrap}
+.xcn-roadmap-history-heading h2{display:flex;align-items:center;gap:8px;font-size:16px;font-weight:800;color:#103360}
+.xcn-roadmap-history-heading p{margin-top:5px;font-size:12px;line-height:1.7;color:#5d7088;max-width:760px}
+.xcn-roadmap-history-heading>button{display:inline-flex;align-items:center;gap:6px;padding:9px 12px;white-space:nowrap;
+  border:1px solid #b5cdef;border-radius:9px;color:#1553a4;background:#f4f9ff;font-size:12px;font-weight:700}
+.xcn-roadmap-history-list{display:grid;gap:8px}
+.xcn-roadmap-history-item{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:12px 13px;border:1px solid #e3eaf3;border-radius:10px;background:#fbfdff}
+.xcn-roadmap-history-meta{min-width:0;display:grid;gap:4px}
+.xcn-roadmap-history-meta strong{font-size:13px;overflow-wrap:anywhere;color:#203d62}
+.xcn-roadmap-history-meta small{font-size:11px;line-height:1.5;color:#75869a}
+.xcn-roadmap-history-buttons{display:flex;flex-wrap:wrap;gap:6px}
+.xcn-roadmap-history-buttons button{display:inline-flex;align-items:center;justify-content:center;gap:5px;
+  padding:8px 10px;border:1px solid #d9e4f1;border-radius:8px;background:#fff;font-size:11px;font-weight:700;color:#3a587b}
+.xcn-roadmap-history-buttons button:hover,.xcn-roadmap-history-heading>button:hover{background:#e9f3ff}
+.xcn-roadmap-history-buttons button:last-child{color:#a43645}
+@media(max-width:700px){
+ .xcn-roadmap-history{padding:13px}
+ .xcn-roadmap-history-item{align-items:stretch;flex-direction:column}
+ .xcn-roadmap-history-buttons button{flex:1}
+}

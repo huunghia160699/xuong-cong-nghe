@@ -25,6 +25,14 @@
 
 ## III. Lịch sử
 
+### 2026-10-26 — Đầu việc tiếp theo P0: sao lưu & khôi phục Roadmap Admin
+- **Lựa chọn theo Roadmap:** trước Teacher Studio/Live Quiz, tiếp tục `admin-center` với lưu an toàn, kiểm soát thay đổi và hồi phục khi mất dữ liệu.
+- **Đã bổ sung mã:** `src/features/admin/roadmap-history.ts` giữ tối đa 6 snapshot cục bộ hợp lệ, tổng tối đa 1,6 MB; `roadmap-history-panel.tsx` giao diện danh sách + tạo/khôi phục/tải JSON/xóa; `roadmap-board.tsx` tạo checkpoint trước khi xóa mốc/nhập JSON/khôi phục bản nháp; điều chỉnh thao tác Demo không được nhận là thành công nếu localStorage thất bại; CSS responsive.
+- **Đã bổ sung test:** `tests/admin-roadmap-history.test.mjs` bao phủ dữ liệu copy bất biến, dedup, giới hạn và xóa vòng tròn, reject dữ liệu hỏng/trùng, các hành động trên giao diện. CI xác minh riêng sau khi tạo PR.
+- **Sự cố Supabase xác định lại:** project `bpxwpfmjoojrgqlfkqgz` phản hồi ACTIVE_HEALTHY nhưng `list_tables` thất bại `28P01 password authentication failed for supabase_read_only_user`, `list_migrations` thất bại cùng lỗi cho `postgres`. **Không thay đổi mật khẩu production**, không chạy migration khi xác thực đang hỏng, không bật Live. Cần kiểm tra credential của kết nối DB trong Supabase dashboard và làm mới tích hợp quản trị; chỉ xác nhận hoàn thành khi query, migration, RLS và hai tài khoản khác vai trò đều đạt.
+- **Giới hạn:** snapshot chỉ là bản sao lưu trên trình duyệt, không thay cho sao lưu DB/đa thiết bị. Không mở rộng sang module giáo dục mới.
+- **GitHub:** nhánh `feat/admin-roadmap-backup-history-20261026`; commit/deploy cập nhật theo CI.
+
 ### 2026-10-26 — Sửa header xuống dòng
 - **Yêu cầu:** Header của Xưởng Công Nghệ phải cao một hàng, tên website không xuống dòng.
 - **Thay đổi:** `brand.tsx` cấm wrap wordmark và icon không bị co; `public-header.tsx` bổ sung menu `details/summary` khi hẹp; `globals.css` bỏ quy tắc biến navigation thành hàng thứ hai và đặt responsive breakpoint 1120px/440px.

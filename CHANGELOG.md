@@ -1,5 +1,12 @@
 # Changelog
 
+## 2026-10-26 — Lịch sử sao lưu & khôi phục Roadmap Admin
+- Thêm **Bản sao lưu** trong `/admin/roadmap`: tạo điểm khôi phục thủ công, xem lịch sử, tải riêng từng bản JSON, khôi phục và xóa bản sao.
+- Tự tạo checkpoint trước khi xóa một việc lớn, nhập JSON hay khôi phục bản nháp chưa đồng bộ; yêu cầu xác nhận trước khi thay nội dung.
+- Giới hạn 6 bản/1,6 MB, xác thực mọi bản sao bằng validator chung, tránh ghi hỏng hoặc đầy localStorage; Demo không áp dụng thay đổi khi bản nháp lưu thất bại.
+- Các snapshot lưu tại **trình duyệt hiện tại**, không phải lịch sử máy chủ và không đồng bộ giữa thiết bị.
+- Supabase project vẫn `ACTIVE_HEALTHY` nhưng kết nối Postgres qua app quản trị bị lỗi `28P01` cho `postgres` và `supabase_read_only_user`; không khẳng định RLS/Live đã triển khai.
+
 ## 2026-10-26 — Header công khai chỉ hiển thị một hàng
 - Giữ logo và tên "Xưởng Công Nghệ" cùng một hàng, không xuống dòng ở desktop/tablet/mobile.
 - Khi không đủ chiều ngang (≤1120px), điều hướng chuyển sang menu mở nổi dưới header thay vì chiếm hàng thứ hai; mobile hẹp giữ menu tài khoản/CTA trong popup.
