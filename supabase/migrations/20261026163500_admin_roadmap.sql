@@ -10,6 +10,7 @@ create table if not exists public.admin_roadmap (
  constraint admin_roadmap_payload_limit check (pg_column_size(items)<600000)
 );
 alter table public.admin_roadmap enable row level security;
+revoke all on table public.admin_roadmap from public,anon,authenticated;
 grant select,insert,update on public.admin_roadmap to authenticated;
 -- auth.uid() and profiles.role are server-backed, not editable user_metadata.
 create policy "Only admins read product roadmap"
