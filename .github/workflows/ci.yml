@@ -40,10 +40,26 @@ jobs:
             if curl --silent --fail http://127.0.0.1:3000/ > /dev/null; then break; fi
             sleep 1
           done
-          for route in "/" "/khoa-hoc/excel-can-ban" "/student" "/student/quiz" "/student/khoa-hoc/excel-can-ban/giao-dien-va-vung-lam-viec" "/cong-cu" "/cong-cu/trinh-chieu" "/cong-cu/trinh-chieu/quan-ly-tep-va-thu-muc" "/cong-cu/trinh-chieu/layout-gallery" "/admin" "/admin/roadmap" "/admin/sitemap"; do
+          for route in "/" "/khoa-hoc/excel-can-ban" "/student" "/student/quiz" "/student/khoa-hoc/excel-can-ban/giao-dien-va-vung-lam-viec" "/cong-cu" "/cong-cu/trinh-chieu" "/cong-cu/trinh-chieu/quan-ly-tep-va-thu-muc" "/cong-cu/trinh-chieu/layout-gallery" "/admin" "/admin/roadmap" "/admin/sitemap" "/admin/nguoi-dung" "/admin/phan-quyen" "/admin/cau-hinh" "/admin/nhat-ky" "/admin/he-thong" "/admin/bao-cao"; do
             echo "Checking $route"
             curl --fail --silent --show-error "http://127.0.0.1:3000$route" > /dev/null
           done
+          # Every Admin control-center screen must respond in Demo without user JWTs.
+          roles_html="$(curl --fail --silent --show-error 'http://127.0.0.1:3000/admin/phan-quyen')"
+          monitor_html="$(curl --fail --silent --show-error 'http://127.0.0.1:3000/admin/he-thong')"
+          report_html="$(curl --fail --silent --show-error 'http://127.0.0.1:3000/admin/bao-cao')"
+          if ! grep -q 'Phân quyền hệ thống' <<< "$roles_html"; then
+            echo "Admin permissions screen missing"
+            exit 1
+          fi
+          if ! grep -q 'Giám sát hệ thống' <<< "$monitor_html"; then
+            echo "Admin system monitor missing"
+            exit 1
+          fi
+          if ! grep -q 'Báo cáo nền tảng' <<< "$report_html"; then
+            echo "Admin report missing"
+            exit 1
+          fi
           # Admin screens must render in Demo; API must stay closed without Live Auth.
           admin_html="$(curl --fail --silent --show-error 'http://127.0.0.1:3000/admin')"
           roadmap_html="$(curl --fail --silent --show-error 'http://127.0.0.1:3000/admin/roadmap')"
