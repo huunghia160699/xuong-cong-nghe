@@ -6,7 +6,6 @@ import type {RoadmapSnapshot} from "../roadmap-history";
 type Props={
  history:RoadmapSnapshot[];
  open:boolean;
- onToggle:()=>void;
  onCreate:()=>void;
  onRestore:(value:RoadmapSnapshot)=>void;
  onDelete:(id:string)=>void;
