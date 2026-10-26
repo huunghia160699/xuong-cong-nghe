@@ -29,7 +29,7 @@ Xem `docs/SUPABASE_SETUP.md` để cấu hình từng bước. Tóm tắt:
 Trung tâm Admin: `/admin` · Roadmap timeline dọc: `/admin/roadmap` · Sitemap: `/admin/sitemap`.
 
 - Demo: roadmap có thể thêm/sửa/xóa mốc, checklist, nhật ký đã thêm/đã sửa và lưu trong `localStorage` của trình duyệt; xuất/nhập JSON và xuất Markdown.
-- Live: API `/api/admin/roadmap` bảo vệ bằng Auth + role admin, lưu vào `admin_roadmap` với RLS và kiểm soát phiên bản; cần áp migration `supabase/migrations/20261026163500_admin_roadmap.sql`.
+- Live: API `/api/admin/roadmap` bảo vệ bằng Auth + role admin, lưu vào `admin_roadmap` với RLS và kiểm soát phiên bản; cần áp migration `supabase/migrations/20261026163500_admin_roadmap.sql`. **Đã rà soát nhưng chưa áp dụng lên DB production.** Xem [báo cáo bảo mật và điều kiện triển khai](docs/ADMIN_ROADMAP_MIGRATION_SECURITY_REVIEW.md).
 - Dự án chưa tự động đồng bộ nội dung đã chỉnh trên giao diện với GitHub. Dùng **Xuất Markdown** từ Admin rồi commit lại khi cần lưu bản tài liệu chính thức.
 - Quy hoạch: `docs/XCN_SITEMAP_2026_2028.md` và `docs/XCN_FUNCTION_ROADMAP_CHECKLIST.md`.
 - **Ưu tiên:** hoàn tất Admin/Roadmap và xác minh Supabase trước khi xây Teacher Studio/Live Quiz/Labs.

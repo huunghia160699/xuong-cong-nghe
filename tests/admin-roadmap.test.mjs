@@ -63,8 +63,8 @@ test("Admin-only API version checks and RLS protect persistent roadmap",()=>{
  assert.match(api,/return fail\("Dữ liệu đã thay đổi ở phiên khác/);
  assert.match(api,/Cache-Control":"no-store"/);
  assert.match(migration,/enable row level security/);
- assert.match(migration,/revoke all on table public\.admin_roadmap from public,anon,authenticated/);
- assert.match(migration,/p\.role='admin'/);
+ assert.match(migration,/revoke all privileges on table public\.admin_roadmap from public,\s*anon,\s*authenticated/);
+ assert.match(migration,/p\.role\s*=\s*'admin'/);
  assert.doesNotMatch(api,/service_role|SERVICE_ROLE/);
  assert.doesNotMatch(migration,/for delete to authenticated/);
 });
