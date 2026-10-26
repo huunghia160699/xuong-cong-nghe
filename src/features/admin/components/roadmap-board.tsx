@@ -297,6 +297,7 @@ export function RoadmapBoard({mode}:Props){
     {lastSaved&&<small>Gần nhất: {lastSaved}</small>}
    </div>
    <div className="xcn-roadmap-action-buttons">
+    <RoadmapHistoryButton count={history.length} open={historyOpen} onClick={()=>setHistoryOpen(v=>!v)}/>
     <button type="button" onClick={()=>downloadFile("xuong-cong-nghe-roadmap.md",roadmapAsMarkdown(items),"text/markdown;charset=utf-8")}>
       <FileDown size={15}/> Xuất Markdown
     </button>
@@ -309,6 +310,11 @@ export function RoadmapBoard({mode}:Props){
      className="xcn-admin-primary" onClick={()=>void save()}><Save size={15}/>{saving?"Đang lưu…":"Lưu thay đổi"}</button>
    </div>
   </div>
+  <RoadmapHistoryPanel history={history} open={historyOpen}
+   onCreate={()=>{if(checkpoint("Điểm khôi phục thủ công"))setNotice("Đã tạo điểm khôi phục trên thiết bị.");}}
+   onRestore={restoreSnapshot} onDelete={deleteSnapshot}
+   onExport={snapshot=>downloadFile("roadmap-backup-"+snapshot.createdAt.slice(0,10)+".json",
+      JSON.stringify({version:1,items:snapshot.items},null,2),"application/json")}/>
   {recovery&&<div role="alert" className="xcn-roadmap-alert is-recovery">
    <strong>Phát hiện bản nháp chưa đồng bộ.</strong>
    <p>Máy chủ đang ở phiên bản {version}; bản nháp thiết bị bắt đầu từ phiên bản {recovery.baseVersion}.
@@ -316,7 +322,8 @@ export function RoadmapBoard({mode}:Props){
    <div className="xcn-roadmap-recovery-actions">
     <button type="button" onClick={()=>{
       if(!confirm("Khôi phục bản nháp sẽ thay thế nội dung đang hiển thị; bạn vẫn cần nhấn Lưu thay đổi để đồng bộ. Tiếp tục?"))return;
-      change(recovery.items);setRecovery(null);setNotice("Đã khôi phục bản nháp. Kiểm tra thay đổi và nhấn Lưu thay đổi.");
+      if(!checkpoint("Trước khi khôi phục bản nháp chưa đồng bộ"))return;
+      if(change(recovery.items)){setRecovery(null);setNotice("Đã khôi phục bản nháp. Kiểm tra thay đổi và nhấn Lưu thay đổi.");}
     }}>Khôi phục bản nháp</button>
     <button type="button" onClick={()=>{
       setRecovery(null);
