@@ -102,7 +102,7 @@ export function roadmapAsMarkdown(items:RoadmapEpic[]):string{
  let last="";
  for(const item of [...items].sort((a,b)=>a.order-b.order)){
   if(last!==item.phase){last=item.phase;rows.push("## "+last,"");}
-  rows.push("### "+item.title,"","- Trạng thái: "+ROADMAP_STATUS[item.status]," - Ưu tiên: "+item.priority,"- Phân hệ: "+item.area,"- Mục tiêu: "+item.summary,"");
+  rows.push("### "+item.title,"","- Trạng thái: "+ROADMAP_STATUS[item.status],"- Ưu tiên: "+item.priority,"- Phân hệ: "+item.area,"- Mục tiêu: "+item.summary,"- Phụ trách: "+(item.owner||"Chưa phân công"),"- Hạn dự kiến: "+(item.targetDate||"Chưa đặt"),"");
   for(const task of item.checklist)rows.push("- ["+(task.done?"x":" ")+"] "+task.text);
   if(item.entries.length){
    rows.push("","**Nhật ký:**");
