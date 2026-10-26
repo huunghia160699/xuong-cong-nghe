@@ -437,7 +437,7 @@ test("Word Paragraph ribbon follows reference layout, correct command mapping an
   const paragraph=home.slice(home.indexOf('<Group name="Paragraph"'),home.indexOf('<Group name="Styles"'));
   const top=paragraph.slice(paragraph.indexOf('className="wsl-paragraph-top"'),paragraph.indexOf('className="wsl-paragraph-bottom"'));
   const bottom=paragraph.slice(paragraph.indexOf('className="wsl-paragraph-bottom"'));
-  for(const [section,labels] of [[top,["Bullets","Numbering","Multilevel List","Decrease Indent","Increase Indent","Sort","Show/Hide ¶"]],[bottom,["Align Left","Center","Align Right","Justify","Line Spacing 1.5","Paragraph Shading","Borders"]]]){
+  for(const [section,labels] of [[top,["Bullets","Numbering","Multilevel List","Decrease Indent","Increase Indent","Sort","Show/Hide ¶"]],[bottom,["Align Left","Center","Align Right","Justify","Line Spacing","Paragraph Shading","Borders"]]]){
     let previous=-1;
     for(const label of labels){
       const index=section.indexOf('label="'+label+'"');
@@ -498,7 +498,7 @@ test("Word ribbon icons use Word-like arrows, nested list and correct sort/spaci
   assert.match(paragraph,/label="Decrease Indent" icon=\{<WordIndentGlyph direction="decrease"\/>\}/);
   assert.match(paragraph,/label="Increase Indent" icon=\{<WordIndentGlyph direction="increase"\/>\}/);
   assert.match(paragraph,/label="Sort" icon=\{<WordSortGlyph\/>\}/);
-  assert.match(paragraph,/label="Line Spacing 1\.5"[\s\S]*?<WordLineSpacingGlyph\/>/);
+  assert.match(paragraph,/label="Line Spacing"[\s\S]*?<WordLineSpacingGlyph\/>/);
   assert.match(source,/M5 19\.5V2\.5/);
   assert.match(source,/fill="#167fc0">A<\/text>/);
   assert.match(source,/x="2" y="19\.2" fill="#3f4c5a">Z<\/text>/);
@@ -646,7 +646,7 @@ test("Word Ribbon splits icon actions and 13px dropdown menus without fake contr
  assert.match(splitCSS,/\.wsl-font-split \.wsl-split-arrow\{width:14px\}/);
  assert.match(splitCSS,/\.wsl-paragraph-split \.wsl-split-arrow\{width:16px\}/);
  const names=["Paste — Dán","Change Case","Underline","Text Highlight Color","Font Color",
-              "Bullets","Numbering","Multilevel List","Line Spacing 1.5","Paragraph Shading","Borders","Styles"];
+              "Bullets","Numbering","Multilevel List","Line Spacing","Paragraph Shading","Borders","Styles"];
  for(const label of names)assert.ok(home.includes('label="'+label+'"'),label);
  for(const action of ['run("pasteRich")','run("changeCaseMode","upper")','run("underlineMode","on")',
                        'run("hiliteColor",highlightColor)','run("foreColor",textColor)',
@@ -1986,7 +1986,7 @@ test("All Word simulator dropdown surfaces are custom div panels, with no native
  assert.match(split,/document\.addEventListener\("pointerdown",outside\)/);
  assert.match(split,/createPortal\(/);
  assert.match(split,/onChange\(option\.value\)/);
- assert.match(split,/className="wsl-split-menu"/);
+ assert.match(split,/className=\{"wsl-split-menu"/);
  assert.match(windowBar,/className="wsl-qat-menu"/);
  assert.match(fontCSS,/\.wsl-home-font \.wsl-font-select \.wsl-word-dropdown-value/);
  assert.doesNotMatch(fontCSS,/\.wsl-home-font \.wsl-font-select select/);

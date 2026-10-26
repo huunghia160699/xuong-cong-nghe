@@ -2,6 +2,7 @@
 
 import {useCallback,useEffect,useRef,useState} from "react";
 import {WordHomeRibbon,type WordFormatKey,type WordParagraphAlignment} from "./word-home-ribbon";
+import {WORD_LINE_SPACING_VALUES,type WordParagraphSpacing} from "./word-line-spacing-dialog";
 import {collectWordVisualLines,wordLineAtY,selectWordVisualLines,type WordVisualLine} from "./word-line-selection";
 import {paginateWordEditor,insertManualWordPageBreak,scrollWordPageIntoView,ensureWordCaretInsideParagraph,MANUAL_BREAK_ATTRIBUTE} from "./word-pagination";
 import {syncWordParagraphMarkSizes} from "./word-paragraph-marks";
@@ -82,7 +83,7 @@ function sanitize(html:string):string {
     const fontSize=style.fontSize;
     if(/^(?:\d{1,2}(?:\.\d)?)(?:pt|px)$/.test(fontSize))safeStyles.push("font-size:"+fontSize);
     const lineHeight=style.lineHeight;
-    if(/^(?:1(?:\.(?:0|15|5))?|2(?:\.0)?)$/.test(lineHeight))safeStyles.push("line-height:"+lineHeight);
+    if(/^(?:1(?:\.(?:0|15|5))?|2(?:\.(?:0|5))?|3(?:\.0)?)$/.test(lineHeight))safeStyles.push("line-height:"+lineHeight);
     const marginBottom=style.marginBottom;
     if(/^(?:0|\d{1,2}px)$/.test(marginBottom))safeStyles.push("margin-bottom:"+marginBottom);
     const marginTop=style.marginTop;
@@ -175,6 +176,7 @@ export function WordSimulator(){
   const [showMarks,setShowMarks]=useState(false);
   const [hasSelection,setHasSelection]=useState(false);
   const [paragraphAlignment,setParagraphAlignment]=useState<WordParagraphAlignment>("left");
+  const [paragraphSpacing,setParagraphSpacing]=useState<WordParagraphSpacing>({line:"1.15",before:0,after:8});
   const [paintArmed,setPaintArmed]=useState(false);
   const [clipboardMode,setClipboardMode]=useState<"copy"|"cut"|null>(null);
   const [formatActive,setFormatActive]=useState<Record<WordFormatKey,boolean>>({
@@ -218,6 +220,7 @@ export function WordSimulator(){
     pendingFontNodeRef.current=null;
     typingScriptExitAnchorRef.current=null;
     setParagraphAlignment("left");
+    setParagraphSpacing({line:"1.15",before:0,after:8});
     setPageCount(1);setActivePage(1);
     setClipboardMode(null);stagedClipboard.current=null;
     updateStats();setRevision(value=>value+1);
@@ -422,7 +425,7 @@ export function WordSimulator(){
         savedSelection.current=selection.getRangeAt(0).cloneRange();
         setHasSelection(!selection.isCollapsed&&Boolean(selection.toString()));
       }
-      syncFormatState();syncFontControls();syncParagraphAlignment();syncRulerIndent();
+      syncFormatState();syncFontControls();syncParagraphAlignment();syncRulerIndent();syncParagraphSpacing();
     };
     document.addEventListener("selectionchange",changed);
     return ()=>document.removeEventListener("selectionchange",changed);
@@ -1227,6 +1230,22 @@ export function WordSimulator(){
     indentTarget.current=null;
     syncRulerIndent();
   }
+  function syncParagraphSpacing(){
+    const block=currentBlock();
+    if(!block||!editor.current?.contains(block))return;
+    const style=window.getComputedStyle(block);
+    const size=parseFloat(style.fontSize)||16;
+    const raw=style.lineHeight;
+    const ratio=raw.endsWith("px")?parseFloat(raw)/size:parseFloat(raw);
+    const nearest=WORD_LINE_SPACING_VALUES.reduce<string>((best,value)=>
+      Math.abs(Number(value)-ratio)<Math.abs(Number(best)-ratio)?value:best,"1.15");
+    const line=Number.isFinite(ratio)&&Math.abs(Number(nearest)-ratio)<0.07?
+      nearest:Number.isFinite(ratio)?String(Math.round(ratio*100)/100):"1.15";
+    const before=Math.max(0,Math.round(parseFloat(style.marginTop)||0));
+    const after=Math.max(0,Math.round(parseFloat(style.marginBottom)||0));
+    setParagraphSpacing(old=>old.line===line&&old.before===before&&old.after===after?
+      old:{line,before,after});
+  }
   function stepParagraphIndent(direction:1|-1){
     restoreSelection();
     const block=indentBlock();
@@ -1456,17 +1475,36 @@ export function WordSimulator(){
       markChanged();return;
     }
     if(name==="lineSpacing"||name==="paragraphSpacingBefore"||
-       name==="paragraphSpacingAfter"||name==="paragraphBorder"){
+       name==="paragraphSpacingAfter"||name==="paragraphSpaceBeforeToggle"||
+       name==="paragraphSpaceAfterToggle"||name==="paragraphSpacingOptions"||
+       name==="paragraphBorder"){
       restoreSelection();
       const block=currentBlock();
       if(!block||!editor.current?.contains(block)){setStatus("Đặt con trỏ trong đoạn văn");return;}
       if(name==="lineSpacing"){
         const paragraphs=selectedParagraphBlocks();
-        const next=["1","1.15","1.5","2"].includes(value??"")?
+        const next=WORD_LINE_SPACING_VALUES.some(item=>item===value)?
           String(value):paragraphs[0]?.style.lineHeight==="1.5"?"1.15":"1.5";
         for(const paragraph of paragraphs)paragraph.style.lineHeight=next;
+      }else if(name==="paragraphSpacingOptions"){
+        const [line,before,after]=value?.split("|")??[];
+        if(!WORD_LINE_SPACING_VALUES.some(item=>item===line)||
+           !/^(?:0|[1-9][0-9]?)$/.test(before??"")||
+           !/^(?:0|[1-9][0-9]?)$/.test(after??""))return;
+        for(const paragraph of selectedParagraphBlocks()){
+          paragraph.style.lineHeight=line;
+          paragraph.style.marginTop=before+"px";
+          paragraph.style.marginBottom=after+"px";
+        }
+      }else if(name==="paragraphSpaceBeforeToggle"||name==="paragraphSpaceAfterToggle"){
+        const before=name==="paragraphSpaceBeforeToggle";
+        const next=(before?paragraphSpacing.before:paragraphSpacing.after)>0?"0px":"8px";
+        for(const paragraph of selectedParagraphBlocks()){
+          if(before)paragraph.style.marginTop=next;
+          else paragraph.style.marginBottom=next;
+        }
       }else if(name==="paragraphSpacingBefore"||name==="paragraphSpacingAfter"){
-        if(!["0","6","12","18"].includes(value??""))return;
+        if(!["0","6","8","12","18"].includes(value??""))return;
         for(const paragraph of selectedParagraphBlocks()){
           if(name==="paragraphSpacingBefore")paragraph.style.marginTop=value+"px";
           else paragraph.style.marginBottom=value+"px";
@@ -1480,6 +1518,7 @@ export function WordSimulator(){
       }else{
         block.style.borderBottom=block.style.borderBottom?"":"1px solid #9ca3af";
       }
+      if(name!=="paragraphBorder")syncParagraphSpacing();
       markChanged();return;
     }
     command(name,value);
@@ -1542,7 +1581,8 @@ export function WordSimulator(){
       {activeTab==="File"&&<Group name="Tệp">{fileActions.map(item=><ToolButton key={item.label} item={{id:item.label,label:item.label,run:item.action,icon:item.icon}}/>)}</Group>}
       {activeTab==="Home"&&<WordHomeRibbon
         font={font} fontSize={fontSize} showMarks={showMarks} hasSelection={hasSelection} paintArmed={paintArmed}
-        formatActive={formatActive} paragraphAlignment={paragraphAlignment} clipboardMode={clipboardMode}
+        formatActive={formatActive} paragraphAlignment={paragraphAlignment}
+        paragraphSpacing={paragraphSpacing} clipboardMode={clipboardMode}
         run={runHome} editFont={editFont} editSize={editSize}
         changeCase={changeCase} sortLines={sortLines} replaceText={replaceText}
         findText={()=>setSearchOpen(true)}

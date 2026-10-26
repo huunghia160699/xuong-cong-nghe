@@ -1,5 +1,11 @@
 # Changelog
 
+## 2026-10-26 — Line Spacing giống Microsoft Word, không dùng dropdown mặc định
+- Menu Line Spacing là popup từ các thẻ HTML và nút tùy chỉnh, rộng khoảng 264px, hiển thị 1.0, 1.15, 1.5, 2.0, 2.5, 3.0, cùng giá trị đang chọn.
+- Bổ sung “Line Spacing Options...”, “Add/Remove Space Before Paragraph”, “Add/Remove Space After Paragraph”, đường phân cách, icon xanh và điều hướng bằng bàn phím.
+- Hộp thoại điều chỉnh giãn dòng và khoảng cách trước/sau bằng các nút và ô số (không dùng `<select>` mặc định).
+- Đồng bộ lựa chọn từ con trỏ, áp dụng cho nhiều đoạn bôi chọn và giữ định dạng 2.5/3.0 khi lưu.
+
 ## 2026-10-19 — Sửa giãn dòng và giãn đoạn trong Word
 - Mặc định giảm giãn dòng từ 1.55 xuống 1.15; khoảng cách sau mỗi đoạn từ 13px về 8px, tránh Enter một lần tạo dòng trông quá xa.
 - Menu Line Spacing và hộp thoại Paragraph cho chọn giãn dòng 1/1.15/1.5/2 và cách trước/sau đoạn 0/6/12/18px.
