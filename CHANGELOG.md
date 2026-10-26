@@ -1,5 +1,13 @@
 # Changelog
 
+## 2026-10-26 — Admin Command Center, Sitemap và Roadmap dọc
+- Xây trang `/admin` mới: nhóm module có thật, số liệu Supabase (nếu đang live), tách rõ dữ liệu Demo và phân hệ tương lai.
+- Thêm `/admin/roadmap`: 20 mốc lớn, 115 việc nhỏ ưu tiên Tin học, timeline chấm dọc, bộ lọc, tìm kiếm, sửa mốc, trạng thái, ưu tiên, thứ tự, checklist, nhật ký loại “Ghi chú / Đã thêm / Đã sửa”.
+- Lưu trình duyệt trong Demo và hỗ trợ sao lưu/nhập JSON, xuất Markdown; Live có API quyền admin, khóa phiên bản để giảm ghi đè và SQL RLS. Chưa áp migration nếu kết nối DB không khả dụng.
+- Thêm `/admin/sitemap` với route đang hoạt động so với route dự kiến; viết sơ đồ Mermaid và checklist chi tiết trong `docs/`.
+- Sidebar quản trị chỉ liên kết các trang có thực; không xây mới các module giáo dục.
+- Chưa xác minh giao diện trực quan trên Android/iOS; trạng thái bản Live DB cần kiểm chứng migration & quyền.
+
 ## 2026-10-26 — Line Spacing giống Microsoft Word, không dùng dropdown mặc định
 - Menu Line Spacing là popup từ các thẻ HTML và nút tùy chỉnh, rộng khoảng 264px, hiển thị 1.0, 1.15, 1.5, 2.0, 2.5, 3.0, cùng giá trị đang chọn.
 - Bổ sung “Line Spacing Options...”, “Add/Remove Space Before Paragraph”, “Add/Remove Space After Paragraph”, đường phân cách, icon xanh và điều hướng bằng bàn phím.
