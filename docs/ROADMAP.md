@@ -1,5 +1,12 @@
 # Roadmap — Xưởng Công Nghệ
 
+> **Ưu tiên hiện tại (khóa phạm vi): Admin + Sitemap + Roadmap trước mọi module khác.**
+> Checklist đầy đủ: [XCN_FUNCTION_ROADMAP_CHECKLIST.md](XCN_FUNCTION_ROADMAP_CHECKLIST.md).
+> Sơ đồ toàn website: [XCN_SITEMAP_2026_2028.md](XCN_SITEMAP_2026_2028.md).
+> Trang quản trị: `/admin` · Timeline: `/admin/roadmap` · Sitemap: `/admin/sitemap`.
+> Tiến độ lưu cục bộ trong Demo; chế độ Live cần migration RLS `20261026163500_admin_roadmap.sql` và kiểm thử quyền.
+
+
 > **Kế hoạch tái cấu trúc tổng thể (đề xuất 2026–2028):** [XƯỞNG CÔNG NGHỆ — MASTER PLAN](XUONG_CONG_NGHE_MASTER_PLAN_2026_2028.md).  
 > Các mục MVP bên dưới là ghi nhận theo những giai đoạn trước; một số ghi chú triển khai có thể không còn phản ánh môi trường production hiện tại. Phải audit môi trường thật và đối chiếu code trước khi cập nhật trạng thái. Tính năng trong Master Plan chưa được xem là đã triển khai.
 
