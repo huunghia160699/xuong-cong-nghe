@@ -11,31 +11,29 @@ import {
   type RoadmapChecklistItem,type RoadmapEntry,type RoadmapEntryKind,
   type RoadmapEpic,type RoadmapPriority,type RoadmapStatus
 } from "../roadmap-data";
+import {validateRoadmap,roadmapBytes,ROADMAP_MAX_BYTES} from "../roadmap-validation";
+import {ROADMAP_STORAGE_KEY,ROADMAP_LEGACY_STORAGE_KEY,buildDraft,decodeDraft,shouldOfferRecovery,type RoadmapDraft} from "../roadmap-draft";
 
 type Props={mode:"demo"|"live"};
 type EditorState={id:string|null;title:string;summary:string;phase:string;area:string;priority:RoadmapPriority;status:RoadmapStatus};
-const LOCAL_KEY="xcn-admin-roadmap-v2";
+function readDraft():RoadmapDraft|null{
+ try{
+  const raw=localStorage.getItem(ROADMAP_STORAGE_KEY);
+  if(raw)return decodeDraft(JSON.parse(raw) as unknown);
+  const legacy=localStorage.getItem(ROADMAP_LEGACY_STORAGE_KEY);
+  return legacy?decodeDraft(JSON.parse(legacy) as unknown):null;
+ }catch{return null;}
+}
+function storeDraft(items:RoadmapEpic[],version:number,pending:boolean):void{
+ const draft=buildDraft(items,version,pending);
+ if(roadmapBytes(draft)>ROADMAP_MAX_BYTES)throw Error("Bản nháp vượt 500 KB. Hãy xuất JSON để sao lưu.");
+ localStorage.setItem(ROADMAP_STORAGE_KEY,JSON.stringify(draft));
+}
 const CATEGORIES=["Tin học","Quản trị","Giao diện","Website","Tài khoản","Hệ thống","Giáo viên","Học sinh","Đánh giá","Tương tác","Nội dung","Nhà trường","Mở rộng"];
 const editorDefault=():EditorState=>({id:null,title:"",summary:"",phase:ROADMAP_PHASES[0],area:"Tin học",priority:"P1",status:"planned"});
 const newId=()=>typeof crypto!=="undefined"&&"randomUUID" in crypto?crypto.randomUUID():"id-"+Date.now()+"-"+Math.random().toString(36).slice(2);
 const today=()=>new Date().toISOString().slice(0,10);
 
-function validItems(value:unknown):value is RoadmapEpic[]{
- if(!Array.isArray(value)||value.length>200)return false;
- return value.every((item:unknown)=>{
-  if(!item||typeof item!=="object")return false;
-  const t=item as Partial<RoadmapEpic>;
-  return typeof t.id==="string"&&t.id.length<120&&typeof t.title==="string"&&t.title.length<201
-   &&typeof t.summary==="string"&&t.summary.length<1001&&typeof t.area==="string"
-   &&typeof t.phase==="string"&&ROADMAP_PHASES.includes(t.phase as typeof ROADMAP_PHASES[number])
-   &&Object.hasOwn(ROADMAP_PRIORITY,t.priority??"")&&Object.hasOwn(ROADMAP_STATUS,t.status??"")
-   &&typeof t.order==="number"&&Number.isFinite(t.order)
-   &&Array.isArray(t.checklist)&&t.checklist.length<=300
-   &&t.checklist.every((x:RoadmapChecklistItem)=>typeof x?.id==="string"&&typeof x?.text==="string"&&x.text.length<501&&typeof x?.done==="boolean")
-   &&Array.isArray(t.entries)&&t.entries.length<=500
-   &&t.entries.every((x:RoadmapEntry)=>typeof x?.id==="string"&&typeof x?.text==="string"&&x.text.length<1501&&["note","added","fixed"].includes(x.kind)&&typeof x?.date==="string");
- });
-}
 function downloadFile(name:string,content:string,mime:string){
  const link=document.createElement("a");
  const url=URL.createObjectURL(new Blob([content],{type:mime}));
@@ -68,47 +66,41 @@ export function RoadmapBoard({mode}:Props){
  const [noteKind,setNoteKind]=useState<RoadmapEntryKind>("note");
  const [noteText,setNoteText]=useState("");
  const [lastSaved,setLastSaved]=useState("");
+ const [recovery,setRecovery]=useState<RoadmapDraft|null>(null);
+ const [syncIssue,setSyncIssue]=useState(false);
  const fileRef=useRef<HTMLInputElement>(null);
  useEffect(()=>{latestItems.current=items;},[items]);
 
  useEffect(()=>{
-  let valid=true;
-  const init=async()=>{
+  let mounted=true;
+  const load=async()=>{
+   const draft=readDraft();
    if(mode==="demo"){
-    try{
-     const raw=localStorage.getItem(LOCAL_KEY);
-     const parsed:unknown=raw?JSON.parse(raw):null;
-     if(valid)setItems(validItems(parsed)?parsed:ROADMAP_INITIAL);
-    }catch{if(valid)setItems(ROADMAP_INITIAL);}
-    if(valid)setReady(true);
+    if(mounted){setItems(draft?.items??ROADMAP_INITIAL);setReady(true);}
     return;
    }
    try{
     const response=await fetch("/api/admin/roadmap",{cache:"no-store"});
     const result=await response.json() as {items?:unknown;version?:number;error?:string};
-    if(!response.ok)throw Error(result.error??"Không tải được roadmap.");
-    if(valid){
-      let local:unknown=null;
-      try{local=JSON.parse(localStorage.getItem(LOCAL_KEY)??"null");}catch{ /* invalid local draft */ }
-      const localDraft=validItems(local)?local:null;
-      const useLocal=!result.version&&Boolean(localDraft?.length);
-      setItems(validItems(result.items)&&result.items.length?result.items:
-        useLocal&&localDraft?localDraft:ROADMAP_INITIAL);
-      setVersion(result.version??0);
-      if(useLocal)setDirty(true);
-      setNotice(result.version?"Đã tải dữ liệu lưu trên hệ thống.":useLocal?
-       "Đã khôi phục bản nháp cục bộ. Nhấn Lưu thay đổi để đồng bộ lên hệ thống.":
-       "Dữ liệu mẫu ban đầu chưa lưu. Hãy nhấn Lưu thay đổi để khởi tạo.");
-    }
-   }catch(reason){if(valid){
-     setFailure((reason instanceof Error?reason.message:"Không tải được roadmap.")+
-       " Bản nháp vẫn có thể được lưu trong trình duyệt và xuất JSON; chưa đồng bộ Supabase.");
-     try{const raw=JSON.parse(localStorage.getItem(LOCAL_KEY)??"null") as unknown;
-      setItems(validItems(raw)?raw:ROADMAP_INITIAL);}catch{setItems(ROADMAP_INITIAL);}
-   }}
-   if(valid)setReady(true);
+    if(!response.ok)throw Error(result.error??"Không tải được Roadmap.");
+    if(!mounted)return;
+    const serverVersion=Number.isInteger(result.version)&&Number(result.version)>=0?Number(result.version):0;
+    const serverItems=validateRoadmap(result.items)&&result.items.length?result.items:ROADMAP_INITIAL;
+    setItems(serverItems);setVersion(serverVersion);
+    if(shouldOfferRecovery(draft,serverItems,serverVersion))setRecovery(draft);
+    else setRecovery(null);
+    setNotice(serverVersion?"Đã tải dữ liệu chính thức.":"Roadmap chưa được khởi tạo trong Supabase; có thể lưu lần đầu.");
+   }catch(reason){
+    if(!mounted)return;
+    setSyncIssue(true);
+    setFailure((reason instanceof Error?reason.message:"Không tải được Roadmap.")+
+      " Đang hiển thị bản nháp cục bộ. Chưa thể xác nhận lưu lên máy chủ.");
+    setItems(draft?.items??ROADMAP_INITIAL);
+    setVersion(draft?.baseVersion??0);
+    setDirty(true);
+   }finally{if(mounted)setReady(true);}
   };
-  void init();return()=>{valid=false;};
+  void load();return()=>{mounted=false;};
  },[mode]);
  useEffect(()=>{
   if(mode!=="live"||!dirty)return;
@@ -118,11 +110,15 @@ export function RoadmapBoard({mode}:Props){
  },[mode,dirty]);
 
  function change(next:RoadmapEpic[]){
-  setItems(next);setNotice("");setFailure("");
+  if(!validateRoadmap(next)||roadmapBytes(next)>ROADMAP_MAX_BYTES){
+   setFailure("Dữ liệu chưa hợp lệ hoặc vượt 500 KB. Không áp dụng thay đổi.");
+   return;
+  }
+  setItems(next);latestItems.current=next;setNotice("");setFailure("");
   try{
-   localStorage.setItem(LOCAL_KEY,JSON.stringify(next));
+   storeDraft(next,version,mode==="live");
    if(mode==="demo")setLastSaved(new Date().toLocaleString("vi-VN"));
-  }catch{setFailure("Không thể lưu bản nháp trên thiết bị. Hãy xuất JSON để sao lưu.");}
+  }catch(reason){setFailure(reason instanceof Error?reason.message:"Không lưu được bản nháp.");}
   if(mode==="live")setDirty(true);
  }
  function update(id:string,fn:(item:RoadmapEpic)=>RoadmapEpic){
@@ -143,9 +139,11 @@ export function RoadmapBoard({mode}:Props){
    });
    const result=await response.json() as {version?:number;error?:string};
    if(!response.ok)throw Error(result.error??"Không thể lưu roadmap.");
-   setVersion(result.version??version+1);
+   const nextVersion=result.version??version+1;
+   setVersion(nextVersion);setSyncIssue(false);
    const changedMeanwhile=JSON.stringify(latestItems.current)!==snapshot;
    setDirty(changedMeanwhile);
+   try{storeDraft(latestItems.current,nextVersion,changedMeanwhile);}catch{setFailure("Đã đồng bộ máy chủ nhưng không lưu được bản sao cục bộ.");}
    setNotice(changedMeanwhile?
     "Đã lưu phiên trước. Có thay đổi mới chưa đồng bộ, hãy nhấn Lưu thay đổi lần nữa.":
     "Đã lưu lên hệ thống.");
@@ -194,9 +192,9 @@ export function RoadmapBoard({mode}:Props){
   try{
    const parsed:unknown=JSON.parse(await file.text());
    const raw=Array.isArray(parsed)?parsed:(parsed as {items?:unknown})?.items;
-   if(!validItems(raw)||!raw.length)throw Error("File không đúng cấu trúc dữ liệu roadmap.");
+   if(!validateRoadmap(raw)||!raw.length||roadmapBytes(raw)>ROADMAP_MAX_BYTES)throw Error("File không đúng cấu trúc hoặc vượt 500 KB.");
    if(!confirm("Nhập bản sao lưu sẽ thay thế danh sách roadmap hiện tại. Tiếp tục?"))return;
-   change(raw);setNotice("Đã nhập bản sao lưu. "+(mode==="live"?"Nhấn Lưu thay đổi để ghi lên hệ thống.":"Đã lưu trên thiết bị."));
+   change(raw);setRecovery(null);setNotice("Đã nhập bản sao lưu. "+(mode==="live"?"Nhấn Lưu thay đổi để ghi lên hệ thống.":"Đã lưu trên thiết bị."));
   }catch(reason){setFailure(reason instanceof Error?reason.message:"Không thể đọc file.");}
  }
  const totals=useMemo(()=>roadmapTotals(items),[items]);
