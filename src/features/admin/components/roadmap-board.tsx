@@ -47,6 +47,7 @@ function Badge({children,tone="neutral"}:{children:React.ReactNode;tone?:"neutra
 }
 export function RoadmapBoard({mode}:Props){
  const [items,setItems]=useState<RoadmapEpic[]>([]);
+ const latestItems=useRef<RoadmapEpic[]>([]);
  const [ready,setReady]=useState(false);
  const [dirty,setDirty]=useState(false);
  const [saving,setSaving]=useState(false);
@@ -68,6 +69,7 @@ export function RoadmapBoard({mode}:Props){
  const [noteText,setNoteText]=useState("");
  const [lastSaved,setLastSaved]=useState("");
  const fileRef=useRef<HTMLInputElement>(null);
+ useEffect(()=>{latestItems.current=items;},[items]);
 
  useEffect(()=>{
   let valid=true;
@@ -133,6 +135,7 @@ export function RoadmapBoard({mode}:Props){
   if(mode==="demo"){setNotice("Dữ liệu đã lưu trên trình duyệt này.");return;}
   if(saving)return;
   setSaving(true);setFailure("");setNotice("");
+  const snapshot=JSON.stringify(items);
   try{
    const response=await fetch("/api/admin/roadmap",{
     method:"PUT",headers:{"Content-Type":"application/json"},
@@ -141,7 +144,12 @@ export function RoadmapBoard({mode}:Props){
    const result=await response.json() as {version?:number;error?:string};
    if(!response.ok)throw Error(result.error??"Không thể lưu roadmap.");
    setVersion(result.version??version+1);
-   setDirty(false);setNotice("Đã lưu lên hệ thống.");setLastSaved(new Date().toLocaleString("vi-VN"));
+   const changedMeanwhile=JSON.stringify(latestItems.current)!==snapshot;
+   setDirty(changedMeanwhile);
+   setNotice(changedMeanwhile?
+    "Đã lưu phiên trước. Có thay đổi mới chưa đồng bộ, hãy nhấn Lưu thay đổi lần nữa.":
+    "Đã lưu lên hệ thống.");
+   setLastSaved(new Date().toLocaleString("vi-VN"));
   }catch(reason){setFailure(reason instanceof Error?reason.message:"Không thể lưu roadmap.");}
   finally{setSaving(false);}
  }
