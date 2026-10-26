@@ -40,10 +40,22 @@ jobs:
             if curl --silent --fail http://127.0.0.1:3000/ > /dev/null; then break; fi
             sleep 1
           done
-          for route in "/" "/khoa-hoc/excel-can-ban" "/student" "/student/quiz" "/student/khoa-hoc/excel-can-ban/giao-dien-va-vung-lam-viec" "/cong-cu" "/cong-cu/trinh-chieu" "/cong-cu/trinh-chieu/quan-ly-tep-va-thu-muc" "/cong-cu/trinh-chieu/layout-gallery"; do
+          for route in "/" "/khoa-hoc/excel-can-ban" "/student" "/student/quiz" "/student/khoa-hoc/excel-can-ban/giao-dien-va-vung-lam-viec" "/cong-cu" "/cong-cu/trinh-chieu" "/cong-cu/trinh-chieu/quan-ly-tep-va-thu-muc" "/cong-cu/trinh-chieu/layout-gallery" "/admin" "/admin/roadmap" "/admin/sitemap"; do
             echo "Checking $route"
             curl --fail --silent --show-error "http://127.0.0.1:3000$route" > /dev/null
           done
+          # Admin screens must render in Demo; API must stay closed without Live Auth.
+          admin_html="$(curl --fail --silent --show-error 'http://127.0.0.1:3000/admin')"
+          roadmap_html="$(curl --fail --silent --show-error 'http://127.0.0.1:3000/admin/roadmap')"
+          sitemap_html="$(curl --fail --silent --show-error 'http://127.0.0.1:3000/admin/sitemap')"
+          grep -q 'Quản trị toàn nền tảng' <<< "$admin_html"
+          grep -q 'Roadmap phát triển' <<< "$roadmap_html"
+          grep -q 'Sơ đồ toàn website' <<< "$sitemap_html"
+          api_status="$(curl --silent --output /tmp/xcn-admin-api.json --write-out '%{http_code}' 'http://127.0.0.1:3000/api/admin/roadmap')"
+          if [ "$api_status" != "403" ]; then
+            echo "Admin Roadmap API must reject Demo requests (got $api_status)"
+            exit 1
+          fi
           # Preserve old teaching-session URLs with a permanent redirect.
           legacy_headers="$(curl --silent --show-error --head 'http://127.0.0.1:3000/cong-cu/trinh-chieu/buoi-01-file-explorer?class=hl-26-27')"
           if ! grep -qi '308 Permanent Redirect' <<< "$legacy_headers"; then
