@@ -1,5 +1,10 @@
 # Changelog
 
+## 2026-10-26 — Header công khai chỉ hiển thị một hàng
+- Giữ logo và tên "Xưởng Công Nghệ" cùng một hàng, không xuống dòng ở desktop/tablet/mobile.
+- Khi không đủ chiều ngang (≤1120px), điều hướng chuyển sang menu mở nổi dưới header thay vì chiếm hàng thứ hai; mobile hẹp giữ menu tài khoản/CTA trong popup.
+- Không thay đổi các đường dẫn và nội dung chức năng. Thêm regression test bảo vệ hành vi responsive.
+
 ## 2026-10-26 — Kiểm tra sâu và củng cố Admin Roadmap
 - Dùng chung bộ kiểm tra dữ liệu giữa giao diện, nhập JSON và API; giới hạn byte, ID trùng, ngày không hợp lệ, quyền ưu tiên/trạng thái.
 - Nâng cấp bản nháp lưu trên trình duyệt có phiên bản, phát hiện thay đổi chưa đồng bộ và cho lựa chọn rõ ràng: khôi phục bản nháp hoặc giữ bản máy chủ.
