@@ -1,4 +1,5 @@
 import { redirect } from "next/navigation";
+import "./admin.css";
 import { AppShell } from "@/components/app-shell";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { isLiveMode } from "@/lib/supabase/config";

@@ -20,11 +20,10 @@ export const studentNav = [
 
 export const adminNav = [
   { label: "Tổng quan", href: "/admin", icon: Gauge },
+  { label: "Roadmap", href: "/admin/roadmap", icon: FolderKanban },
+  { label: "Sitemap hệ thống", href: "/admin/sitemap", icon: Settings },
   { label: "Khóa học", href: "/admin/khoa-hoc", icon: BookOpen },
-  { label: "Câu hỏi & Quiz", href: "/admin#quiz", icon: ClipboardCheck },
   { label: "Kho tài liệu", href: "/admin/kho-tai-lieu", icon: Library },
-  { label: "Dự án", href: "/admin#projects", icon: FolderKanban },
-  { label: "Người dùng", href: "/admin#users", icon: Users },
-  { label: "Hệ thống", href: "/admin#settings", icon: Settings },
-  { label: "Tính năng mới", href: "/admin#features", icon: Sparkles },
+  { label: "Trình chiếu", href: "/cong-cu/trinh-chieu", icon: Presentation },
+  { label: "Word Lab", href: "/cong-cu/mo-phong-word", icon: FileText },
 ];
