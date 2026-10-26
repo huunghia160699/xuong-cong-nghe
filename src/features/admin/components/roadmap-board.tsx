@@ -3,7 +3,7 @@
 import {useEffect,useMemo,useRef,useState,type ChangeEvent} from "react";
 import {
   ArrowDown,ArrowUp,Check,ChevronDown,ChevronRight,Clock3,Download,FileDown,
-  Filter,History,NotebookPen,Plus,Save,Search,Trash2,X
+  Filter,History,NotebookPen,Pencil,Plus,Save,Search,Trash2,X
 } from "lucide-react";
 import {
   ROADMAP_INITIAL,ROADMAP_PHASES,ROADMAP_PRIORITY,ROADMAP_STATUS,
@@ -57,10 +57,12 @@ export function RoadmapBoard({mode}:Props){
  const [phase,setPhase]=useState("all");
  const [area,setArea]=useState("all");
  const [status,setStatus]=useState("all");
+ const [priority,setPriority]=useState("all");
  const [expanded,setExpanded]=useState<string[]>(["admin-center","word-lab","python-practice"]);
  const [editor,setEditor]=useState<EditorState|null>(null);
  const [editingItem,setEditingItem]=useState<string|null>(null);
  const [taskText,setTaskText]=useState("");
+ const [editingTask,setEditingTask]=useState<{id:string;text:string}|null>(null);
  const [notesFor,setNotesFor]=useState<string|null>(null);
  const [noteKind,setNoteKind]=useState<RoadmapEntryKind>("note");
  const [noteText,setNoteText]=useState("");
@@ -93,6 +95,12 @@ export function RoadmapBoard({mode}:Props){
   };
   void init();return()=>{valid=false;};
  },[mode]);
+ useEffect(()=>{
+  if(mode!=="live"||!dirty)return;
+  const warn=(event:BeforeUnloadEvent)=>{event.preventDefault();event.returnValue="";};
+  window.addEventListener("beforeunload",warn);
+  return()=>window.removeEventListener("beforeunload",warn);
+ },[mode,dirty]);
 
  function change(next:RoadmapEpic[]){
   setItems(next);setNotice("");setFailure("");
@@ -175,9 +183,10 @@ export function RoadmapBoard({mode}:Props){
   if(phase!=="all"&&item.phase!==phase)return false;
   if(area!=="all"&&item.area!==area)return false;
   if(status!=="all"&&item.status!==status)return false;
+  if(priority!=="all"&&item.priority!==priority)return false;
   const text=[item.title,item.summary,item.area,...item.checklist.map(c=>c.text),...item.entries.map(e=>e.text)].join(" ").toLocaleLowerCase("vi");
   return text.includes(query.trim().toLocaleLowerCase("vi"));
- }).sort((a,b)=>a.order-b.order),[items,phase,area,status,query]);
+ }).sort((a,b)=>a.order-b.order),[items,phase,area,status,priority,query]);
 
  return <div className="xcn-roadmap" aria-busy={!ready}>
   <div className="xcn-roadmap-heading">
@@ -206,6 +215,9 @@ export function RoadmapBoard({mode}:Props){
    </select></label>
    <label><span className="sr-only">Trạng thái</span><select value={status} onChange={e=>setStatus(e.target.value)}>
     <option value="all">Mọi trạng thái</option>{Object.entries(ROADMAP_STATUS).map(([key,label])=><option key={key} value={key}>{label}</option>)}
+   </select></label>
+   <label><span className="sr-only">Ưu tiên</span><select value={priority} onChange={e=>setPriority(e.target.value)}>
+    <option value="all">Mọi ưu tiên</option>{Object.keys(ROADMAP_PRIORITY).map(key=><option key={key} value={key}>{key}</option>)}
    </select></label>
   </div>
   <div className="xcn-roadmap-actions">
@@ -272,7 +284,20 @@ export function RoadmapBoard({mode}:Props){
           {item.checklist.map(task=><div className="xcn-roadmap-task" key={task.id}>
            <input id={"road-task-"+task.id} type="checkbox" checked={task.done}
             onChange={e=>update(item.id,old=>({...old,checklist:old.checklist.map(t=>t.id===task.id?{...t,done:e.target.checked}:t)}))}/>
-           <label htmlFor={"road-task-"+task.id} className={task.done?"is-done":""}>{task.text}</label>
+           {editingTask?.id===task.id?<form className="xcn-roadmap-edit-task" onSubmit={event=>{
+            event.preventDefault();
+            const text=editingTask.text.trim().slice(0,500);
+            if(text)update(item.id,old=>({...old,checklist:old.checklist.map(t=>t.id===task.id?{...t,text}:t)}));
+            setEditingTask(null);
+           }}>
+            <input autoFocus required maxLength={500} aria-label="Chỉnh nội dung việc nhỏ" value={editingTask.text}
+              onChange={event=>setEditingTask({...editingTask,text:event.target.value})}/>
+            <button type="submit" aria-label="Lưu việc nhỏ"><Check size={16}/></button>
+            <button type="button" aria-label="Hủy sửa việc nhỏ" onClick={()=>setEditingTask(null)}><X size={16}/></button>
+           </form>:
+            <label htmlFor={"road-task-"+task.id} className={task.done?"is-done":""}>{task.text}</label>}
+           <button aria-label={"Sửa việc nhỏ "+task.text} type="button"
+            onClick={()=>setEditingTask({id:task.id,text:task.text})}><Pencil size={14}/></button>
            <button aria-label={"Xóa việc nhỏ "+task.text} type="button"
             onClick={()=>update(item.id,old=>({...old,checklist:old.checklist.filter(t=>t.id!==task.id)}))}><X size={15}/></button>
           </div>)}
