@@ -88,8 +88,10 @@ export function RoadmapBoard({mode}:Props){
     if(valid){
       let local:unknown=null;
       try{local=JSON.parse(localStorage.getItem(LOCAL_KEY)??"null");}catch{ /* invalid local draft */ }
-      const useLocal=!result.version&&validItems(local)&&local.length>0;
-      setItems(validItems(result.items)&&result.items.length?result.items:useLocal?local:ROADMAP_INITIAL);
+      const localDraft=validItems(local)?local:null;
+      const useLocal=!result.version&&Boolean(localDraft?.length);
+      setItems(validItems(result.items)&&result.items.length?result.items:
+        useLocal&&localDraft?localDraft:ROADMAP_INITIAL);
       setVersion(result.version??0);
       if(useLocal)setDirty(true);
       setNotice(result.version?"Đã tải dữ liệu lưu trên hệ thống.":useLocal?
