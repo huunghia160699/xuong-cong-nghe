@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import {readFileSync} from "node:fs";
 import {runInNewContext} from "node:vm";
 import ts from "typescript";
-import {ROADMAP_INITIAL} from "../src/features/admin/roadmap-data.ts";
+import {ROADMAP_INITIAL,ROADMAP_PHASES,ROADMAP_PRIORITY,ROADMAP_STATUS} from "../src/features/admin/roadmap-data.ts";
 
 function load(file,deps={}){
  const source=readFileSync("src/features/admin/"+file+".ts","utf8");
@@ -12,7 +12,7 @@ function load(file,deps={}){
  runInNewContext(js,{
   module,exports:module.exports,
   require:name=>{
-   if(name==="./roadmap-data")return {ROADMAP_INITIAL};
+   if(name==="./roadmap-data")return {ROADMAP_INITIAL,ROADMAP_PHASES,ROADMAP_PRIORITY,ROADMAP_STATUS};
    if(name in deps)return deps[name];
    throw Error("Unknown dependency "+name);
   },
