@@ -25,6 +25,15 @@
 
 ## III. Lịch sử
 
+### 2026-10-27 — Xây hoàn thiện các màn Trung tâm quản trị, tạm dừng tài khoản Auth
+- **Phạm vi:** Người dùng yêu cầu tạm dừng xác minh email, cấp quyền Admin và RLS JWT, tiếp tục xây Admin toàn website.
+- **Đã triển khai trong PR #52:** `/admin/nguoi-dung` (tra cứu/lọc/phân trang/xuất CSV, Live đọc từ profiles và không đọc auth.users); `/admin/phan-quyen` (ma trận quyền dự kiến và chốt kiểm soát); `/admin/cau-hinh` (lưu bản nháp, xem trước, xuất/nhập JSON); `/admin/nhat-ky` (log trình duyệt, lọc/xuất/xóa); `/admin/he-thong` (đánh giá tình trạng module); `/admin/bao-cao` (đếm bản ghi phía server có quyền Admin, không làm giả dữ liệu Demo).
+- **Điều hướng:** cập nhật sidebar theo nhóm và có cuộn dọc cho màn hình thấp, cập nhật sitemap và dashboard.
+- **Bảo mật:** Không cấp vai trò từ UI; auth Live vẫn được bảo vệ bởi `admin/layout.tsx`; bản nháp cấu hình không thể xuất bản nội dung website; log cục bộ được ghi rõ không phải hệ thống kiểm toán máy chủ. CSV chống Excel formula injection.
+- **Test:** `tests/admin-control-center.test.mjs` kiểm tra route/sidebar/sitemap, phân vai, dữ liệu nháp, log, báo cáo, responsive. Chờ kết quả GitHub CI và production để điền xác nhận.
+- **KHÔNG thực hiện:** không xác minh hoặc gửi email, không thay đổi profiles.role, không chạy JWT, không thay đổi Supabase migration/DB, không cấu hình Vercel Live.
+- **Chưa xong:** tính năng phát hành cấu hình tập trung, audit log máy chủ, cấp quyền thật, test JWT E2E và kiểm thử mobile trực quan (chỉ triển khai sau khi mở lại quy trình xác thực).
+
 ### 2026-10-27 — Chuẩn bị kiểm thử RLS bằng JWT thật cho Admin và Student
 - **Preflight read-only production:** migration `20261026163500_admin_roadmap` đã áp; bảng `admin_roadmap` tồn tại, bật RLS, ba policy Admin đúng cấu trúc, bảng có 0 hàng; Auth có 0 user và profiles có 0 hàng; anon không SELECT; authenticated SELECT/INSERT/UPDATE nhưng không DELETE/TRUNCATE; tài khoản thông thường không thể UPDATE `profiles.role`.
 - **Công cụ kiểm thử:** `scripts/verify-roadmap-rls.mjs` dùng hai client độc lập, đăng nhập Supabase Auth bằng mật khẩu và xác nhận phiên JWT thật, kiểm tra role, anon và khả năng đọc của hai vai trò. Chế độ mặc định chỉ đọc. `--write` **chặn project production** và đòi hai cờ xác nhận trên DB thử nghiệm riêng.
