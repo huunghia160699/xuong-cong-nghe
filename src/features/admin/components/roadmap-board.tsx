@@ -142,6 +142,7 @@ export function RoadmapBoard({mode}:Props){
    const next=addRoadmapSnapshot(history,{items,baseVersion:version,label},newId(),new Date().toISOString());
    localStorage.setItem(ROADMAP_HISTORY_KEY,JSON.stringify(next));
    setHistory(next);setHistoryOpen(true);setFailure("");
+   recordLocalAdminEvent("backup","Tạo điểm khôi phục Roadmap: "+label);
    return true;
   }catch(reason){
    setFailure((reason instanceof Error?reason.message:"Không thể tạo bản sao lưu.")+
