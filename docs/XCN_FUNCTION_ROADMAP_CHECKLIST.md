@@ -1,6 +1,6 @@
 # Xưởng Công Nghệ — Checklist chức năng 2026–2028
 
-> Cập nhật: 2026-10-26. **Ưu tiên khóa:** hoàn thiện Admin + Roadmap trước, sau đó mới phát triển module khác.  
+> Cập nhật: 2026-10-27. **Ưu tiên khóa:** hoàn thiện Admin + Roadmap trước, sau đó mới phát triển module khác.  
 > Đây là bộ checklist gốc đã chuyển vào giao diện Admin Roadmap. Dấu [x] là mã nguồn/khả năng đã ghi nhận, không tự chứng minh đã kiểm thử Production.  
 > Để cập nhật sau này: thay đổi trong `/admin/roadmap` → **Xuất Markdown** → rà soát và commit lại tài liệu. Thay đổi trong Admin không tự động tạo commit GitHub.
 
@@ -24,6 +24,12 @@
 - [x] Sidebar quản trị phân nhóm đúng các trang đã có
 - [x] Roadmap dọc có lọc, tìm kiếm, checklist và nhật ký
 - [x] Tạo/sửa/xóa nhiệm vụ lớn, nhiệm vụ nhỏ và ghi chú
+- [x] Danh sách người dùng với bộ lọc, phân trang và xuất CSV chỉ đọc khi Live
+- [x] Ma trận quyền và điều kiện chặn cấp vai trò trái phép
+- [x] Soạn, xem trước, nhập/xuất và lưu bản nháp cấu hình cục bộ
+- [x] Nhật ký thao tác cục bộ và xuất dữ liệu
+- [x] Trung tâm giám sát trạng thái module và quyền
+- [x] Báo cáo tổng hợp dữ liệu server, không hiển thị số giả Demo
 - [ ] Lưu roadmap an toàn, xuất Markdown/JSON và nhập sao lưu
 - [ ] Xác minh quyền admin, RLS và kiểm thử đa tài khoản
 - [ ] Kiểm thử trực quan mobile/tablet/desktop và Production
