@@ -30,7 +30,7 @@ export async function PUT(request:Request){
   const a=await auth();if(a.error)return a.error;
   if(Number(request.headers.get("content-length")||0)>ROADMAP_MAX_BYTES)return fail("Roadmap vượt dung lượng cho phép.",413);
   const body=await request.json() as {items?:unknown;version?:unknown};
-  if(!validateRoadmap(body.items)||roadmapBytes(body.items)>ROADMAP_MAX_BYTES)
+  if(!validateRoadmap(body.items)||roadmapBytes(body.items)>ROADMAP_MAX_BYTES
     ||!Number.isInteger(body.version)||Number(body.version)<0)return fail("Dữ liệu roadmap không hợp lệ.",400);
   const version=Number(body.version);
   if(version===0){
