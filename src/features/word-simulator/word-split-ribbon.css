@@ -101,3 +101,129 @@
 .wsl-split-menu-footer{border-top:1px solid #dce1e8;margin-top:4px;padding:8px 9px}
 .wsl-split-custom-color{display:flex;align-items:center;justify-content:space-between;gap:10px;white-space:nowrap}
 .wsl-split-custom-color input[type="color"]{width:34px;height:25px;padding:0;border:0;background:transparent;cursor:pointer}
+
+/* Microsoft Word-style line-spacing menu, still rendered by HTML buttons. */
+.wsl-split-menu.wsl-line-spacing-menu{
+  width:264px;
+  min-width:264px;
+  max-width:calc(100vw - 16px);
+  max-height:min(410px,calc(100vh - 16px));
+  overflow-y:auto;
+  padding:1px;
+  border:1px solid #bcbcbc;
+  border-radius:3px;
+  background:#fff;
+  box-shadow:0 5px 12px #00000026;
+  font:14px/1.25 "Segoe UI",Arial,sans-serif;
+  color:#454545;
+}
+.wsl-line-spacing-menu .wsl-split-menu-item{
+  min-height:34px;
+  height:34px;
+  padding:0 11px 0 12px;
+  gap:7px;
+  border-radius:0;
+  font-size:14px;
+  font-weight:400;
+  color:#494949;
+}
+.wsl-line-spacing-menu .wsl-split-menu-item:hover,
+.wsl-line-spacing-menu .wsl-split-menu-item:focus-visible{
+  outline:none;
+  background:#e5f0fb;
+  color:#222;
+}
+.wsl-line-spacing-menu .wsl-split-menu-item.is-selected{
+  background:#d1d1d1;
+  color:#1b1b1b;
+}
+.wsl-line-spacing-menu .wsl-split-menu-item.is-selected:hover,
+.wsl-line-spacing-menu .wsl-split-menu-item.is-selected:focus-visible{background:#c9e1f9}
+.wsl-line-spacing-menu .wsl-split-menu-item.has-separator{
+  border-top:1px solid #d2d2d2;
+  margin-top:2px;
+}
+.wsl-line-spacing-menu-icon{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  width:26px;
+  min-width:26px;
+  height:25px;
+  color:#1681bd;
+}
+.wsl-line-spacing-menu-icon svg{width:23px;height:22px}
+.wsl-spacing-dialog-backdrop{
+  position:fixed;
+  inset:0;
+  z-index:13000;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:16px;
+  background:#06182c78;
+}
+.wsl-spacing-dialog{
+  width:min(440px,100%);
+  max-height:calc(100vh - 32px);
+  overflow:auto;
+  border:1px solid #bcc8d4;
+  border-radius:5px;
+  background:#fff;
+  box-shadow:0 16px 48px #11213855;
+  color:#263442;
+  font:13px/1.45 "Segoe UI",Arial,sans-serif;
+}
+.wsl-spacing-dialog-header{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:13px 17px;
+  border-bottom:1px solid #dce4ec;
+}
+.wsl-spacing-dialog-header strong{font-size:15px;font-weight:600}
+.wsl-spacing-dialog-close{
+  width:28px;height:28px;
+  display:grid;place-items:center;
+  padding:0;border:0;border-radius:3px;
+  background:transparent;color:#3d4b5c;cursor:pointer;
+}
+.wsl-spacing-dialog-close:hover{background:#eaf2fb}
+.wsl-spacing-dialog-body{padding:17px}
+.wsl-spacing-dialog-hint{margin:0 0 16px;color:#5b6879}
+.wsl-spacing-dialog-fieldset{
+  min-width:0;
+  margin:0;
+  padding:11px 10px 13px;
+  border:1px solid #d6dee7;
+  border-radius:3px;
+}
+.wsl-spacing-dialog-fieldset legend{padding:0 5px;font-weight:600}
+.wsl-spacing-dialog-choices{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:4px}
+.wsl-spacing-choice{
+  min-height:33px;padding:4px;border:1px solid #cbd4df;border-radius:3px;
+  background:#fff;color:#314154;font:inherit;cursor:pointer;
+}
+.wsl-spacing-choice:hover,.wsl-spacing-choice:focus-visible{background:#eaf2fb;border-color:#7fb0e9;outline:none}
+.wsl-spacing-choice.is-active{background:#d8e9fc;border-color:#4c91dc;color:#12528b}
+.wsl-spacing-dialog-fields{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:16px}
+.wsl-spacing-dialog-fields label{display:flex;flex-direction:column;gap:6px;font-weight:500}
+.wsl-spacing-dialog-fields input{
+  width:100%;height:34px;padding:5px 9px;
+  border:1px solid #bcc8d4;border-radius:3px;
+  background:#fff;color:#203043;font:inherit;
+}
+.wsl-spacing-dialog-fields input:focus-visible{outline:2px solid #005bfd;outline-offset:1px}
+.wsl-spacing-dialog-footer{
+  display:flex;gap:9px;justify-content:flex-end;
+  padding:13px 17px;border-top:1px solid #dce4ec;
+}
+.wsl-spacing-dialog-footer button{
+  min-width:76px;min-height:32px;
+  padding:5px 12px;border-radius:3px;border:1px solid #a8b6c7;
+  font:inherit;cursor:pointer;
+}
+.wsl-spacing-dialog-cancel{background:#fff;color:#263442}
+.wsl-spacing-dialog-apply{background:#005bfd!important;color:#fff;border-color:#005bfd!important}
+.wsl-spacing-dialog-footer button:disabled{opacity:.45;cursor:default}
+@media(max-width:420px){.wsl-spacing-dialog-fields{grid-template-columns:1fr}}
