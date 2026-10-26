@@ -15,7 +15,7 @@ import {validateRoadmap,roadmapBytes,ROADMAP_MAX_BYTES} from "../roadmap-validat
 import {ROADMAP_STORAGE_KEY,ROADMAP_LEGACY_STORAGE_KEY,buildDraft,decodeDraft,shouldOfferRecovery,type RoadmapDraft} from "../roadmap-draft";
 
 type Props={mode:"demo"|"live"};
-type EditorState={id:string|null;title:string;summary:string;phase:string;area:string;priority:RoadmapPriority;status:RoadmapStatus};
+type EditorState={id:string|null;title:string;summary:string;phase:string;area:string;priority:RoadmapPriority;status:RoadmapStatus;owner:string;targetDate:string};
 function readDraft():RoadmapDraft|null{
  try{
   const raw=localStorage.getItem(ROADMAP_STORAGE_KEY);
@@ -30,7 +30,7 @@ function storeDraft(items:RoadmapEpic[],version:number,pending:boolean):void{
  localStorage.setItem(ROADMAP_STORAGE_KEY,JSON.stringify(draft));
 }
 const CATEGORIES=["Tin học","Quản trị","Giao diện","Website","Tài khoản","Hệ thống","Giáo viên","Học sinh","Đánh giá","Tương tác","Nội dung","Nhà trường","Mở rộng"];
-const editorDefault=():EditorState=>({id:null,title:"",summary:"",phase:ROADMAP_PHASES[0],area:"Tin học",priority:"P1",status:"planned"});
+const editorDefault=():EditorState=>({id:null,title:"",summary:"",phase:ROADMAP_PHASES[0],area:"Tin học",priority:"P1",status:"planned",owner:"",targetDate:""});
 const newId=()=>typeof crypto!=="undefined"&&"randomUUID" in crypto?crypto.randomUUID():"id-"+Date.now()+"-"+Math.random().toString(36).slice(2);
 const today=()=>new Date().toISOString().slice(0,10);
 
@@ -65,6 +65,7 @@ export function RoadmapBoard({mode}:Props){
  const [notesFor,setNotesFor]=useState<string|null>(null);
  const [noteKind,setNoteKind]=useState<RoadmapEntryKind>("note");
  const [noteText,setNoteText]=useState("");
+ const [editingNote,setEditingNote]=useState<{id:string;text:string}|null>(null);
  const [lastSaved,setLastSaved]=useState("");
  const [recovery,setRecovery]=useState<RoadmapDraft|null>(null);
  const [syncIssue,setSyncIssue]=useState(false);
@@ -155,7 +156,8 @@ export function RoadmapBoard({mode}:Props){
   if(!editor||editor.title.trim().length<3)return;
   const data={title:editor.title.trim().slice(0,200),summary:editor.summary.trim().slice(0,1000),
    phase:editor.phase,area:editor.area.trim().slice(0,80)||"Khác",
-   priority:editor.priority,status:editor.status};
+   priority:editor.priority,status:editor.status,owner:editor.owner.trim().slice(0,100),
+   targetDate:editor.targetDate};
   if(editor.id)update(editor.id,item=>({...item,...data}));
   else{
    const id=newId();
@@ -285,16 +287,24 @@ export function RoadmapBoard({mode}:Props){
         <div className="xcn-roadmap-card-info">
          <Badge tone={item.status==="done"?"green":item.status==="building"?"blue":"neutral"}>{ROADMAP_STATUS[item.status]}</Badge>
          <Badge>{item.priority}</Badge>
+         {item.targetDate&&<span className="xcn-roadmap-extra"><Clock3 size={13}/> {item.targetDate}</span>}
+         {item.owner&&<span className="xcn-roadmap-extra">Phụ trách: {item.owner}</span>}
          <span className="xcn-roadmap-percent">{percentage}% · {item.checklist.filter(t=>t.done).length}/{item.checklist.length} việc nhỏ</span>
         </div>
         <div className="xcn-roadmap-bar"><span style={{width:percentage+"%"}}/></div>
         {open&&<div className="xcn-roadmap-body">
          <div className="xcn-roadmap-inline-actions">
           <label>Trạng thái <select aria-label={"Trạng thái "+item.title} value={item.status}
-           onChange={e=>update(item.id,old=>({...old,status:e.target.value as RoadmapStatus}))}>
+           onChange={e=>{
+     const next=e.target.value as RoadmapStatus;
+     if(next==="done"&&item.checklist.some(task=>!task.done)){
+      setFailure("Cần hoàn thành checklist trước khi đánh dấu mốc Đã hoàn thành.");return;
+     }
+     update(item.id,old=>({...old,status:next}));
+    }}> 
            {Object.entries(ROADMAP_STATUS).map(([value,label])=><option key={value} value={value}>{label}</option>)}
           </select></label>
-          <button type="button" onClick={()=>setEditor({id:item.id,title:item.title,summary:item.summary,phase:item.phase,area:item.area,priority:item.priority,status:item.status})}><NotebookPen size={15}/> Sửa việc lớn</button>
+          <button type="button" onClick={()=>setEditor({id:item.id,title:item.title,summary:item.summary,phase:item.phase,area:item.area,priority:item.priority,status:item.status,owner:item.owner??"",targetDate:item.targetDate??""})}><NotebookPen size={15}/> Sửa việc lớn</button>
           <button type="button" onClick={()=>moveEpic(item.id,-1)} aria-label={"Đưa "+item.title+" lên"}><ArrowUp size={15}/> Lên</button>
           <button type="button" onClick={()=>moveEpic(item.id,1)} aria-label={"Đưa "+item.title+" xuống"}><ArrowDown size={15}/> Xuống</button>
           <button type="button" className="danger" onClick={()=>removeEpic(item.id)}><Trash2 size={15}/> Xóa</button>
@@ -366,6 +376,10 @@ export function RoadmapBoard({mode}:Props){
     <label>Mục tiêu / mô tả<textarea rows={3} maxLength={1000} value={editor.summary}
      onChange={e=>setEditor({...editor,summary:e.target.value})}/></label>
     <div className="xcn-admin-modal-grid">
+     <label>Người phụ trách<input value={editor.owner} maxLength={100} placeholder="Người phụ trách (không bắt buộc)"
+      onChange={e=>setEditor({...editor,owner:e.target.value})}/></label>
+     <label>Hạn dự kiến<input type="date" value={editor.targetDate}
+      onChange={e=>setEditor({...editor,targetDate:e.target.value})}/></label>
      <label>Giai đoạn<select value={editor.phase} onChange={e=>setEditor({...editor,phase:e.target.value})}>
       {ROADMAP_PHASES.map(p=><option key={p}>{p}</option>)}</select></label>
      <label>Phân hệ<input list="roadmap-areas" maxLength={80} value={editor.area}
