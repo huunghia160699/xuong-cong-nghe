@@ -86,7 +86,7 @@ export function RoadmapBoard({mode}:Props){
     if(!response.ok)throw Error(result.error??"Không tải được Roadmap.");
     if(!mounted)return;
     const serverVersion=Number.isInteger(result.version)&&Number(result.version)>=0?Number(result.version):0;
-    const serverItems=validateRoadmap(result.items)&&result.items.length?result.items:ROADMAP_INITIAL;
+    const serverItems=validateRoadmap(result.items)&&(serverVersion>0||result.items.length>0)?result.items:ROADMAP_INITIAL;
     setItems(serverItems);setVersion(serverVersion);
     if(shouldOfferRecovery(draft,serverItems,serverVersion))setRecovery(draft);
     else setRecovery(null);
@@ -184,7 +184,7 @@ export function RoadmapBoard({mode}:Props){
  }
  function addTask(id:string){
   const text=taskText.trim().slice(0,500);if(!text)return;
-  update(id,item=>({...item,checklist:[...item.checklist,{id:newId(),text,done:false}]}));
+  update(id,item=>({...item,status:item.status==="done"?"building":item.status,checklist:[...item.checklist,{id:newId(),text,done:false}]}));
   setTaskText("");setEditingItem(null);
  }
  function addNote(id:string){
@@ -199,7 +199,7 @@ export function RoadmapBoard({mode}:Props){
   try{
    const parsed:unknown=JSON.parse(await file.text());
    const raw=Array.isArray(parsed)?parsed:(parsed as {items?:unknown})?.items;
-   if(!validateRoadmap(raw)||!raw.length||roadmapBytes(raw)>ROADMAP_MAX_BYTES)throw Error("File không đúng cấu trúc hoặc vượt 500 KB.");
+   if(!validateRoadmap(raw)||roadmapBytes(raw)>ROADMAP_MAX_BYTES)throw Error("File không đúng cấu trúc hoặc vượt 500 KB.");
    if(!confirm("Nhập bản sao lưu sẽ thay thế danh sách roadmap hiện tại. Tiếp tục?"))return;
    change(raw);setRecovery(null);setNotice("Đã nhập bản sao lưu. "+(mode==="live"?"Nhấn Lưu thay đổi để ghi lên hệ thống.":"Đã lưu trên thiết bị."));
   }catch(reason){setFailure(reason instanceof Error?reason.message:"Không thể đọc file.");}
@@ -338,7 +338,7 @@ export function RoadmapBoard({mode}:Props){
          <div className="xcn-roadmap-checklist">
           {item.checklist.map(task=><div className="xcn-roadmap-task" key={task.id}>
            <input id={"road-task-"+task.id} type="checkbox" checked={task.done}
-            onChange={e=>update(item.id,old=>({...old,checklist:old.checklist.map(t=>t.id===task.id?{...t,done:e.target.checked}:t)}))}/>
+            onChange={e=>update(item.id,old=>({...old,status:!e.target.checked&&old.status==="done"?"building":old.status,checklist:old.checklist.map(t=>t.id===task.id?{...t,done:e.target.checked}:t)}))}/>
            {editingTask?.id===task.id?<form className="xcn-roadmap-edit-task" onSubmit={event=>{
             event.preventDefault();
             const text=editingTask.text.trim().slice(0,500);
