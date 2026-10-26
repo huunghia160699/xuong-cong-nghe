@@ -25,6 +25,16 @@
 
 ## III. Lịch sử
 
+### 2026-10-26 — Tái lập kế hoạch hệ sinh thái giáo dục Xưởng Công Nghệ
+- **Yêu cầu:** Nghiên cứu mô hình dethiso.vn/teacher/dashboard và lập kế hoạch chi tiết hơn cho Xưởng Công Nghệ theo hướng nền tảng giáo dục lớn.
+- **Nguồn tham khảo:** Trang chủ và tài liệu công khai dethiso.vn (soạn đề Word, quản lý lớp, thi online, đấu trường, ngân hàng câu hỏi, báo cáo); dashboard bên trong tài khoản không truy cập được từ nguồn công khai, nên không nhận là đã kiểm thử UI riêng tư.
+- **Thay đổi và file:** Tạo `docs/XUONG_CONG_NGHE_MASTER_PLAN_2026_2028.md` làm master plan đề xuất (15 chương, 4 sản phẩm, 12 nhóm module, IA, quy trình, kiến trúc, bảo mật, backlog, mốc MVP/KPI, 7 chặng); liên kết tài liệu trong `docs/ROADMAP.md`.
+- **Quyết định:** Teacher Studio + Student Hub + School Manager + Content Library trên một nền chung; tái sử dụng nền Word/Excel/slide/quiz hiện có. Giải pháp đầu tiên là lớp + question bank + exam/assignment + live quiz học sinh dùng điện thoại; game phức tạp, AI và marketplace làm sau, không phát triển đồng thời.
+- **Kiểm thử:** Đọc mã nguồn cấu trúc và xác nhận GitHub lưu tài liệu; không chạy `pnpm test`, `pnpm typecheck`, `pnpm build` vì không sửa mã runtime. Các thông số chất lượng mới là mục tiêu kế hoạch, chưa đo.
+- **GitHub:** master plan `7ecf9168184a233fb9d411dd84d0e8cee71aa43e`; roadmap link `f1d57f9a70e57d4d5aad50744359c0db397efe7b`.
+- **Vercel Production:** Không triển khai phiên bản ứng dụng mới cho nhiệm vụ tài liệu.
+- **Tồn đọng:** Cần kiểm toán môi trường Supabase/production, xác định nguồn lực thực tế, chốt wireframe và pilot giáo viên trước khi triển khai các module mới.
+
 ### 2026-10-26 — Ghi nhận tính năng Live Quiz chờ làm; nghiên cứu dethiso.vn
 - **Mục tiêu:** Theo yêu cầu, chỉ ghi tính năng GV tạo phòng, HS tham gia bằng mã và trả lời trên điện thoại vào file Markdown để thực hiện sau; nghiên cứu dethiso.vn làm tham khảo.
 - **Thay đổi và file:** Bổ sung backlog giai đoạn 1 và 2, tiêu chí nghiệm thu, an toàn, đường dẫn tài liệu tham khảo vào `docs/ROADMAP.md`. Không chỉnh sửa mã ứng dụng, không tạo database hay phòng thi thật.
