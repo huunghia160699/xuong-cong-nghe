@@ -25,6 +25,16 @@
 
 ## III. Lịch sử
 
+### 2026-10-27 — Rà soát migration Admin Roadmap trước production
+- **Mục tiêu:** Kiểm tra schema, quyền truy cập và RLS của `supabase/migrations/20261026163500_admin_roadmap.sql`, KHÔNG áp DB production.
+- **Đối chiếu PostgreSQL thực:** kết nối SQL ổn định, `public.profiles` đã bật RLS; `profiles.role` là enum có student/teacher/admin; `authenticated` đọc được profiles nhưng không có quyền UPDATE `profiles.role`; `admin_roadmap` chưa tồn tại; Supabase Auth chưa có tài khoản thật.
+- **Sửa file SQL trên nhánh review:** `CREATE TABLE` không bỏ qua sự khác biệt schema; `CHECK` giới hạn đúng một tài liệu `global-master-roadmap`; ràng buộc JSON mảng/version dương; thu hẹp GRANT và bật RLS; SELECT/INSERT/UPDATE chỉ cho authenticated có role admin, yêu cầu `updated_by=auth.uid()` khi ghi; không thêm DELETE policy hoặc SECURITY DEFINER.
+- **Security Advisor:** `public.is_admin()` hiện được public/anon gọi dưới SECURITY DEFINER và đã bị Supabase cảnh báo. Hàm đang được bảng profiles dùng; không tự thay đổi trong đợt này. Đã ghi nguy cơ cần review riêng.
+- **Tài liệu:** `docs/ADMIN_ROADMAP_MIGRATION_SECURITY_REVIEW.md`, kiểm tra read-only và checklist bắt buộc trước khi áp production; cập nhật liên kết trong README/ROADMAP.
+- **Kiểm thử:** `tests/admin-roadmap-migration-security.test.mjs` kiểm tra hợp đồng SQL tĩnh; chạy CI để xác minh. Chưa chạy migration trên staging và chưa kiểm thử bằng JWT Admin/student thật; tuyệt đối không báo RLS Live đã đạt.
+- **GitHub:** nhánh `security/review-admin-roadmap-migration-20261027`. Pull Request và CI cập nhật sau.
+- **Production/Vercel:** KHÔNG chạy migration, KHÔNG thay đổi env, KHÔNG bật Live, không chỉnh hồ sơ người dùng.
+
 ### 2026-10-26 — Đầu việc tiếp theo P0: sao lưu & khôi phục Roadmap Admin
 - **Lựa chọn theo Roadmap:** trước Teacher Studio/Live Quiz, tiếp tục `admin-center` với lưu an toàn, kiểm soát thay đổi và hồi phục khi mất dữ liệu.
 - **Đã bổ sung mã:** `src/features/admin/roadmap-history.ts` giữ tối đa 6 snapshot cục bộ hợp lệ, tổng tối đa 1,6 MB; `roadmap-history-panel.tsx` giao diện danh sách + tạo/khôi phục/tải JSON/xóa; `roadmap-board.tsx` tạo checkpoint trước khi xóa mốc/nhập JSON/khôi phục bản nháp; điều chỉnh thao tác Demo không được nhận là thành công nếu localStorage thất bại; CSS responsive.
