@@ -9,6 +9,9 @@ export type WordMenuOption={
   run:()=>void;
   color?:string;
   disabled?:boolean;
+  selected?:boolean;
+  separatorBefore?:boolean;
+  icon?:ReactNode;
 };
 
 type Props={
@@ -22,11 +25,12 @@ type Props={
   footer?:ReactNode;
   disabled?:boolean;
   active?:boolean;
+  menuVariant?:"line-spacing";
 };
 
 // Keep the editor selection when any part of a split control is clicked.
 // The popup is portaled to body because the Ribbon scrolls horizontally.
-export function WordSplitButton({label,icon,run,options,className="",vertical=false,arrowOnly=false,footer,disabled=false,active=false}:Props){
+export function WordSplitButton({label,icon,run,options,className="",vertical=false,arrowOnly=false,footer,disabled=false,active=false,menuVariant}:Props){
   const anchor=useRef<HTMLDivElement>(null);
   const menu=useRef<HTMLDivElement>(null);
   const [open,setOpen]=useState(false);
@@ -37,10 +41,11 @@ export function WordSplitButton({label,icon,run,options,className="",vertical=fa
     if(open){setOpen(false);return;}
     const box=anchor.current?.getBoundingClientRect();
     if(!box)return;
-    const width=214;
+    const width=menuVariant==="line-spacing"?264:214;
     const topSpace=box.top;
     const bottomSpace=window.innerHeight-box.bottom;
-    const openAbove=bottomSpace<165 && topSpace>bottomSpace;
+    const popupHeight=menuVariant==="line-spacing"?335:Math.min(320,options.length*31+12);
+    const openAbove=bottomSpace<popupHeight && topSpace>bottomSpace;
     setCoords({
       left:Math.max(8,Math.min(box.left,window.innerWidth-width-8)),
       ...(openAbove?{bottom:window.innerHeight-box.top+4}:{top:box.bottom+4}),
@@ -50,7 +55,8 @@ export function WordSplitButton({label,icon,run,options,className="",vertical=fa
   }
   useEffect(()=>{
     if(!open)return;
-    menu.current?.querySelector<HTMLButtonElement>('[role="menuitem"]')?.focus({preventScroll:true});
+    (menu.current?.querySelector<HTMLButtonElement>(".wsl-split-menu-item.is-selected")??
+      menu.current?.querySelector<HTMLButtonElement>('[role="menuitem"]'))?.focus({preventScroll:true});
     function outside(event:PointerEvent){
       if(event.target instanceof Node && !anchor.current?.contains(event.target) && !menu.current?.contains(event.target))setOpen(false);
     }
@@ -83,10 +89,25 @@ export function WordSplitButton({label,icon,run,options,className="",vertical=fa
       </button>
     </div>
     {open&&typeof document!=="undefined"&&createPortal(
-      <div ref={menu} className="wsl-split-menu" style={coords} role="menu" aria-label={"Tùy chọn "+label}>
+      <div ref={menu} className={"wsl-split-menu"+(menuVariant==="line-spacing"?" wsl-line-spacing-menu":"")}
+        style={coords} role="menu" aria-label={"Tùy chọn "+label}
+        onKeyDown={event=>{
+          if(!["ArrowDown","ArrowUp","Home","End"].includes(event.key))return;
+          const items=Array.from(menu.current?.querySelectorAll<HTMLButtonElement>('[role="menuitem"]:not(:disabled)')??[]);
+          if(!items.length)return;
+          event.preventDefault();
+          const index=items.indexOf(document.activeElement as HTMLButtonElement);
+          const next=event.key==="Home"?0:event.key==="End"?items.length-1:
+            (index+(event.key==="ArrowDown"?1:-1)+items.length)%items.length;
+          items[next].focus({preventScroll:true});
+        }}>
         {options.map(option=><button key={option.label} type="button" role="menuitem"
-          disabled={option.disabled} className="wsl-split-menu-item"
+          aria-current={option.selected?"true":undefined}
+          disabled={option.disabled}
+          className={"wsl-split-menu-item"+(option.selected?" is-selected":"")+
+            (option.separatorBefore?" has-separator":"")}
           onMouseDown={e=>e.preventDefault()} onClick={()=>{setOpen(false);option.run();}}>
+          {menuVariant==="line-spacing"&&<span className="wsl-line-spacing-menu-icon" aria-hidden="true">{option.icon}</span>}
           {option.color&&<span className="wsl-split-menu-swatch" style={{backgroundColor:option.color}} aria-hidden="true"/>}
           <span>{option.label}</span>
         </button>)}
