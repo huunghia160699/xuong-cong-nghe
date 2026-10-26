@@ -327,7 +327,7 @@ Mọi KPI chỉ trở thành cam kết sau khi đo baseline ở môi trường t
 3. [ ] Khóa vai trò trong PRD: khách, học sinh, giáo viên, quản trị trường, platform admin.
 4. [ ] Phác thảo wireframe Teacher Dashboard 1440px/768px/360px, Student join 360px, Host/Projector live.
 5. [ ] Chốt mô hình `Classroom + Enrollment + Question + Version + Assignment + Attempt + LiveSession`.
-6. [ ] Viết user stories và E2E mẫu một giáo viên/45 học sinh, einschließlich các tình huống mạng lỗi.
+6. [ ] Viết user stories và E2E mẫu một giáo viên/45 học sinh, bao gồm các tình huống mất mạng và khôi phục.
 7. [ ] Thiết kế cách tích hợp câu hỏi từ slide và nội dung mô phỏng vào ngân hàng câu hỏi chung.
 8. [ ] Thiết lập đo lường logs/KPI pilot và ngân sách tải realtime.
 9. [ ] Chọn một lớp Tin học thử nghiệm và bộ câu hỏi thật để đánh giá UX; dùng dữ liệu giả/được cho phép trong quá trình phát triển.
