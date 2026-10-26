@@ -5,6 +5,7 @@
 > Sơ đồ toàn website: [XCN_SITEMAP_2026_2028.md](XCN_SITEMAP_2026_2028.md).
 > Trang quản trị: `/admin` · Timeline: `/admin/roadmap` · Sitemap: `/admin/sitemap`.
 > Tiến độ lưu cục bộ trong Demo; chế độ Live cần migration RLS `20261026163500_admin_roadmap.sql` và kiểm thử quyền.
+> **Rà soát bảo mật (27/10/2026):** [ADMIN_ROADMAP_MIGRATION_SECURITY_REVIEW.md](ADMIN_ROADMAP_MIGRATION_SECURITY_REVIEW.md) — file migration đã được gia cố; **chưa áp dụng DB production** và chưa thử RLS với tài khoản thật.
 
 
 > **Kế hoạch tái cấu trúc tổng thể (đề xuất 2026–2028):** [XƯỞNG CÔNG NGHỆ — MASTER PLAN](XUONG_CONG_NGHE_MASTER_PLAN_2026_2028.md).  
