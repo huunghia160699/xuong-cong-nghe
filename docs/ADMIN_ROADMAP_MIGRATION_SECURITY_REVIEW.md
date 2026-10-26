@@ -18,6 +18,9 @@
 | `authenticated` có UPDATE trên profiles.role | Không |
 | `anon` có UPDATE trên profiles.role | Không |
 | `authenticated` có CREATE trên schema public | Không |
+| `public.is_admin()` — quyền EXECUTE | `PUBLIC=true`, `anon=true`, `authenticated=true` |
+| `public.is_admin()` — hành vi khi không có JWT | `auth.uid()` là `NULL`, hàm trả `false` |
+| RLS policy đang gọi `is_admin()` | **17 policy trên 11 bảng**; cần bảo vệ tương thích |
 | Chính sách profiles SELECT | `id = auth.uid() OR is_admin()` |
 | Chính sách profiles UPDATE | `id = auth.uid()` (nhưng role hiện không được GRANT UPDATE) |
 | `public.admin_roadmap` | Chưa tồn tại |
@@ -52,6 +55,7 @@
 - [ ] Admin Auth JWT có thể SELECT/INSERT/UPDATE; ghi `updated_by` chính xác.
 - [ ] Student Auth JWT bị từ chối mọi SELECT/INSERT/UPDATE/DELETE và không thể đổi `profiles.role`.
 - [ ] Anonymous không thể đọc hoặc ghi bảng; không thấy dữ liệu Roadmap qua Data API.
+- [ ] Tài khoản không có JWT gọi `public.is_admin()` trả `false` qua Data API và không làm rò dữ liệu; rà soát cảnh báo EXECUTE/SECURITY DEFINER độc lập trên 17 policy.
 - [ ] Thao tác lưu đồng thời 2 cửa sổ trả về lỗi `409`, không ghi đè bản mới.
 - [ ] Sau khi tạo Auth Admin, Vercel env và Live mode vận hành đúng; kiểm tra 360/768/1280px.
 - [ ] Dữ liệu Roadmap đã lưu có thể xuất JSON và được sao lưu trước thay đổi.
@@ -60,13 +64,17 @@
 
 ## 3. Cảnh báo của Supabase Security Advisor (chưa thay đổi)
 
-Advisor phát hiện hàm `public.is_admin()` là SECURITY DEFINER và hiện cho phép cả `anon` và `authenticated` gọi. Hàm kiểm tra `auth.uid()` trên `public.profiles`, nên cảnh báo này **chưa chứng minh có lỗi nâng quyền**. Tuy nhiên, cần kiểm tra lịch sử và mục đích gọi trước khi cân nhắc thu hồi EXECUTE vì các chính sách `profiles` và bảng khác đang phụ thuộc vào hàm đó.
+**Đã xác minh trực tiếp:** `public.is_admin()` có owner `postgres`, thuộc tính `STABLE SECURITY DEFINER`, `search_path='public'`; hàm chỉ thực hiện `EXISTS (SELECT 1 FROM public.profiles WHERE id = auth.uid() AND role = 'admin')`. Quyền `EXECUTE` được cấp cho **PUBLIC, anon và authenticated**. Truy vấn không có JWT trả `auth.uid() IS NULL` và `public.is_admin()=false`. Chưa có tài khoản Auth thật nên chưa thể kết luận bằng JWT học sinh/Admin thực tế.
+
+**Phụ thuộc hiện có:** 17 RLS policy trên 11 bảng (bao gồm `profiles`, `courses`, `chapters`, `quizzes`, `quiz_attempts`...) đang gọi `is_admin()`. Vì vậy, thu hồi `EXECUTE` từ `anon`/`authenticated` hoặc chuyển hàm sang `SECURITY INVOKER` mà không sửa các policy liên quan có thể khiến truy cập bị từ chối hoặc gây đệ quy RLS. **Không triển khai thay đổi này cùng migration Roadmap.**
+
+**Phân loại review:** Cảnh báo **WARN tồn tại từ trước, không do PR #50 tạo ra**. Không có bằng chứng hiện tại cho thấy người chưa đăng nhập nhận được quyền Admin, nhưng bề mặt `SECURITY DEFINER` có thể gọi qua REST vẫn cần xử lý riêng trước khi chốt bảo mật Live toàn hệ thống. Cách xử lý phù hợp là thiết kế helper trong schema không public hoặc tái cấu trúc ACL/policy theo transaction, kiểm thử 17 policy trên staging và dùng JWT thật trước khi thay đổi production.
 
 Tài liệu khắc phục:  
 - https://supabase.com/docs/guides/database/database-linter?lint=0028_anon_security_definer_function_executable
 - https://supabase.com/docs/guides/database/database-linter?lint=0029_authenticated_security_definer_function_executable
 
-**Không sửa `public.is_admin()` trong migration Roadmap này** để tránh làm gián đoạn phân quyền hiện có. Roadmap policies chủ động dùng điều kiện hồ sơ, không bổ sung dependency lên SECURITY DEFINER mới.
+**Không sửa `public.is_admin()` trong migration Roadmap này** để tránh làm gián đoạn phân quyền hiện có. Roadmap policies chủ động dùng điều kiện hồ sơ, không bổ sung dependency lên SECURITY DEFINER mới. Không được chỉ chạy `REVOKE EXECUTE` theo cảnh báo advisor mà chưa rà lại các policy đang phụ thuộc. Tài liệu về quyền function: https://supabase.com/kb/troubleshooting/custom-role-inherits-privileges-that-were-not-explicitly-granted
 
 ## 4. Hướng triển khai khi được phê duyệt (CHƯA THỰC HIỆN)
 
@@ -112,7 +120,35 @@ Mong đợi: `relrowsecurity=true`; ba policy cho `authenticated`; `anon_select=
 
 **Các xác minh chỉ đọc không thay thế test RLS bằng hai tài khoản thật.**
 
-## 6. Phương án khôi phục an toàn
+### SQL rà soát quyền EXECUTE của `public.is_admin()` (read-only)
+
+```sql
+select p.proname, p.prosecdef, p.proowner::regrole as owner,
+  has_function_privilege('anon',p.oid,'EXECUTE') as anon_execute,
+  has_function_privilege('authenticated',p.oid,'EXECUTE') as authenticated_execute,
+  exists (
+    select 1 from aclexplode(coalesce(p.proacl,acldefault('f',p.proowner))) acl
+    where acl.grantee=0 and acl.privilege_type='EXECUTE'
+  ) as public_execute
+from pg_proc p join pg_namespace n on n.oid=p.pronamespace
+where n.nspname='public' and p.proname='is_admin';
+
+select count(*) as dependent_policies, count(distinct tablename) as affected_tables
+from pg_policies where schemaname='public'
+  and (coalesce(qual,'') like '%is_admin%'
+    or coalesce(with_check,'') like '%is_admin%');
+```
+
+Thực đo trước khi áp migration: `anon_execute=true`, `authenticated_execute=true`, `public_execute=true`, **17 policies / 11 tables**.
+
+## 6. Kết luận review PR #50 và điều kiện merge
+
+- **Đạt review tĩnh:** Schema singleton; 3 policy Admin; `updated_by=auth.uid()` khi ghi; không cấp `DELETE` cho `authenticated`, `anon` hoặc `PUBLIC`; API đọc role từ bảng thật và có kiểm soát phiên bản.
+- **Rủi ro còn tồn tại:** `public.is_admin()` callable dưới SECURITY DEFINER từ anon/authenticated; đã xác nhận no-JWT false, không phải lỗ hổng do migration mới. Cần một task hardening riêng cùng regression suite 17 policies; không thay đổi helper trong PR này.
+- **Chưa đạt nghiệm thu Live:** migration chưa chạy trong database/staging; RLS chưa test bằng JWT thật; Auth chưa có admin/student và env Live chưa cấu hình. PASS của CI chỉ là kiểm tra mã, không chứng minh quyền production.
+- **Quyết định:** PR #50 có thể merge **chỉ như một thay đổi mã nguồn và tài liệu**, vì workflow CI không có thao tác apply migration. **Không áp DB migration, không bật Live hoặc thay đổi Vercel** trong lần review này. Migration chỉ được áp riêng sau các bước preflight đã liệt kê và xác nhận quy trình release.
+
+## 7. Phương án khôi phục an toàn
 
 Chưa có bảng Roadmap trên production ở thời điểm review, nên migration chỉ tạo bảng và quyền mới. Nếu triển khai gặp lỗi: **dừng bật Live, giữ Demo + bản sao JSON trên trình duyệt**; điều tra migration/permission và sửa bằng migration tiếp theo. Không tự `DROP TABLE` khi có dữ liệu, không xóa người dùng để rollback. Kiểm tra sao lưu DB trước mọi quyết định phá hủy dữ liệu.
 
