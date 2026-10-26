@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { Fragment, useState } from "react";
 import Link from "next/link";
 import { Menu, X } from "lucide-react";
 import { usePathname } from "next/navigation";
@@ -20,13 +20,16 @@ export function AppShell({ role, children }: { role: "student" | "admin"; childr
     <div className="flex items-center justify-between"><Brand />{mobile && <button type="button" onClick={() => setMenuOpen(false)} aria-label="Đóng menu" className="grid h-9 w-9 place-items-center rounded-lg border border-zinc-200"><X size={19} /></button>}</div>
     <div className="mt-9 text-[10px] font-bold uppercase tracking-[.2em] text-zinc-400">{role === "admin" ? "Khu vực quản trị" : "Không gian học tập"}</div>
     <nav className="mt-3 space-y-1" aria-label={role === "admin" ? "Menu quản trị" : "Menu học viên"}>
-      {nav.map((item) => {
+      {nav.map((item,index) => {
         const active = item.href.split("#")[0] === pathname && !item.href.includes("#");
         const Icon = item.icon;
-        return <Link key={item.label} href={item.href} onClick={() => setMenuOpen(false)}
+        const group = role==="admin" ? ({0:"Điều hành",3:"Tài khoản & an toàn",5:"Cấu hình & vận hành",9:"Nội dung",11:"Công cụ"} as Record<number,string>)[index] : undefined;
+        return <Fragment key={item.href}>
+          {group&&<div className="mb-2 mt-4 px-3 text-[10px] font-extrabold uppercase tracking-[.13em] text-slate-400">{group}</div>}
+          <Link href={item.href} onClick={() => setMenuOpen(false)}
           className={cn("flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-zinc-600 transition hover:bg-zinc-100 hover:text-ink", active && "bg-ink text-white hover:bg-ink hover:text-white")}>
           <Icon size={17} /><span>{item.label}</span>
-        </Link>;
+        </Link></Fragment>;
       })}
     </nav>
     <div className="mt-auto rounded-xl border border-zinc-200 bg-paper p-4">
@@ -37,7 +40,7 @@ export function AppShell({ role, children }: { role: "student" | "admin"; childr
   </div>;
 
   return <div className="xcn-ui min-h-screen bg-paper">
-    <aside className="fixed inset-y-0 left-0 z-30 hidden w-64 flex-col border-r border-zinc-200 bg-white p-5 lg:flex">{sidebar(false)}</aside>
+    <aside className="fixed inset-y-0 left-0 z-30 hidden w-64 flex-col overflow-y-auto border-r border-zinc-200 bg-white p-5 lg:flex">{sidebar(false)}</aside>
     {menuOpen && <div className="fixed inset-0 z-50 lg:hidden">
       <button type="button" aria-label="Đóng menu điều hướng" onClick={() => setMenuOpen(false)} className="absolute inset-0 bg-zinc-950/40" />
       <aside className="relative h-full w-72 max-w-[85vw] overflow-y-auto border-r border-zinc-200 bg-white p-5">{sidebar(true)}</aside>
