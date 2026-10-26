@@ -155,3 +155,16 @@
 .xcn-roadmap-edit-task{display:flex;align-items:center;gap:5px;flex:1;min-width:0}
 .xcn-roadmap-edit-task input{flex:1;min-width:0;border:1px solid #bad1ea;border-radius:7px;padding:7px 9px;font-size:12px}
 .xcn-roadmap-edit-task button{padding:5px;color:#286eac}
+
+/* Local draft conflict recovery, due dates, and note editing */
+.xcn-roadmap-alert.is-recovery{border-color:#c7d9f2;background:#f0f6fd;color:#17375f;padding:15px}
+.xcn-roadmap-alert.is-recovery strong{font-size:13px}
+.xcn-roadmap-alert.is-recovery p{margin-top:6px;line-height:1.7}
+.xcn-roadmap-recovery-actions{display:flex;flex-wrap:wrap;gap:9px;margin-top:12px}
+.xcn-roadmap-recovery-actions button{margin:0!important;padding:8px 13px!important;border:1px solid #a7c7e9;border-radius:7px;
+  font-size:12px;font-weight:700;text-decoration:none!important;background:#fff;color:#174f89}
+.xcn-roadmap-recovery-actions button:first-child{background:#005bfd;color:white;border-color:#005bfd}
+.xcn-roadmap-extra{display:inline-flex;align-items:center;gap:4px;font-size:11px;color:#4a678c}
+.xcn-roadmap-note .xcn-roadmap-edit-task{flex-basis:100%;padding-right:52px}
+.xcn-roadmap-note .xcn-roadmap-edit-note{position:absolute;right:39px;top:13px;color:#537ba7}
+.xcn-roadmap-note .xcn-roadmap-edit-note:hover{color:#005bfd}
