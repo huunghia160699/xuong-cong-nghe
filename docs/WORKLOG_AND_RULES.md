@@ -25,6 +25,13 @@
 
 ## III. Lịch sử
 
+### 2026-10-27 — Chuẩn bị kiểm thử RLS bằng JWT thật cho Admin và Student
+- **Preflight read-only production:** migration `20261026163500_admin_roadmap` đã áp; bảng `admin_roadmap` tồn tại, bật RLS, ba policy Admin đúng cấu trúc, bảng có 0 hàng; Auth có 0 user và profiles có 0 hàng; anon không SELECT; authenticated SELECT/INSERT/UPDATE nhưng không DELETE/TRUNCATE; tài khoản thông thường không thể UPDATE `profiles.role`.
+- **Công cụ kiểm thử:** `scripts/verify-roadmap-rls.mjs` dùng hai client độc lập, đăng nhập Supabase Auth bằng mật khẩu và xác nhận phiên JWT thật, kiểm tra role, anon và khả năng đọc của hai vai trò. Chế độ mặc định chỉ đọc. `--write` **chặn project production** và đòi hai cờ xác nhận trên DB thử nghiệm riêng.
+- **Tài liệu vận hành:** `docs/ADMIN_ROADMAP_REAL_JWT_TEST_PLAN.md` hướng dẫn tạo hai tài khoản qua Authentication, xác minh email, cấp quyền Admin chỉ qua SQL chủ dự án, chạy suite cục bộ mà không chia sẻ mật khẩu/token.
+- **Test:** `tests/admin-roadmap-real-jwt-harness.test.mjs` kiểm tra cấu hình, cấm service_role, guard production write, role-verified mock flow và fail-closed. Mock/CI test KHÔNG được xem là bằng chứng RLS JWT thật.
+- **Giới hạn công cụ:** Supabase connector trong phiên hiện hỗ trợ SQL/schema nhưng **không có action quản trị Auth user**; chưa tạo hai tài khoản, chưa chạy test JWT thật. Không chèn trực tiếp `auth.users`, không thay đổi quyền production, không cấu hình Vercel, không bật Live.
+
 ### 2026-10-27 — Rà soát migration Admin Roadmap trước production
 - **Mục tiêu:** Kiểm tra schema, quyền truy cập và RLS của `supabase/migrations/20261026163500_admin_roadmap.sql`, KHÔNG áp DB production.
 - **Đối chiếu PostgreSQL thực:** kết nối SQL ổn định, `public.profiles` đã bật RLS; `profiles.role` là enum có student/teacher/admin; `authenticated` đọc được profiles nhưng không có quyền UPDATE `profiles.role`; `admin_roadmap` chưa tồn tại; Supabase Auth chưa có tài khoản thật.
