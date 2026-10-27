@@ -25,6 +25,15 @@
 
 ## III. Lịch sử
 
+### 2026-10-27 — Roadmap tự lưu Supabase và nhật ký thay đổi thực
+- **Mục tiêu:** Roadmap là tài liệu nguồn trên PostgreSQL, mọi thao tác thêm/sửa/xóa và checklist tạo bản revision có thể tra cứu, không coi localStorage là dữ liệu chính.
+- **Code:** migration `20261027010815_admin_roadmap_change_events.sql` tạo `public.admin_roadmap_events` RLS chỉ Admin đọc, trigger `xcn_private.write_admin_roadmap_event()` tính khác biệt OLD/NEW, ghi một bản ghi bất biến trên mỗi lần tạo/cập nhật document. Client authenticated không được INSERT/UPDATE/DELETE sự kiện.
+- **Giao diện:** tự lưu khi có JWT Admin Live (debounce 850ms), tải phiên bản mới từ Supabase mỗi 12 giây khi không có thay đổi dở dang, hiển thị nhật ký hoạt động đã commit, thông báo và khóa tự ghi đè khi server trả 409. Mở bản nháp Demo trước đó bằng lựa chọn khôi phục có xác nhận, tránh làm mất dữ liệu.
+- **Giới hạn khi phát hành:** Production còn `NEXT_PUBLIC_USE_MOCK_DATA=true` và thiếu URL/key Supabase; Auth vẫn chưa có Admin đã xác minh. Những giới hạn này **ngăn đồng bộ trực tuyến ngay trên website**. Không đưa API sang anon, không dùng service role và không tự cấp Admin để vượt bước xác minh.
+- **Triển khai thực tế:** migration sự kiện đã được áp lên Supabase production với version `20261027010815`; file GitHub đã được đặt cùng version để tránh chạy trùng. Đã kiểm tra trực tiếp trigger, RLS, grant `authenticated SELECT` (không INSERT/UPDATE/DELETE), `anon SELECT=false`, function `xcn_private` không cấp EXECUTE cho anon/authenticated. Thử nghiệm SQL trong exception block đã kiểm tra sự kiện `roadmap.created` và `epic.added` rồi rollback; kiểm tra sau thử nghiệm bảng Roadmap và events vẫn có 0 hàng.
+- **Kiểm thử:** `tests/admin-roadmap-server-sync.test.mjs`, các test API và CI. Phải kiểm tra lại trạng thái CI sau từng commit; RLS JWT thật cần test riêng trước khi bật Live.
+- **GitHub:** PR #54, nhánh `feat/roadmap-server-sync-events-20261027`.
+
 ### 2026-10-27 — Xây hoàn thiện các màn Trung tâm quản trị, tạm dừng tài khoản Auth
 - **Phạm vi:** Người dùng yêu cầu tạm dừng xác minh email, cấp quyền Admin và RLS JWT, tiếp tục xây Admin toàn website.
 - **Đã triển khai trong PR #52:** `/admin/nguoi-dung` (tra cứu/lọc/phân trang/xuất CSV, Live đọc từ profiles và không đọc auth.users); `/admin/phan-quyen` (ma trận quyền dự kiến và chốt kiểm soát); `/admin/cau-hinh` (lưu bản nháp, xem trước, xuất/nhập JSON); `/admin/nhat-ky` (log trình duyệt, lọc/xuất/xóa); `/admin/he-thong` (đánh giá tình trạng module); `/admin/bao-cao` (đếm bản ghi phía server có quyền Admin, không làm giả dữ liệu Demo).

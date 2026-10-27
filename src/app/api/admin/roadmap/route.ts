@@ -19,10 +19,17 @@ const storageError=()=>fail("Chưa thể truy cập bảng Roadmap trong Supabas
 export async function GET(){
  try{
   const a=await auth();if(a.error)return a.error;
-  const {data,error}=await a.supabase!.from("admin_roadmap")
-   .select("items,version").eq("id",KEY).maybeSingle();
-  if(error)return storageError();
-  return NextResponse.json({items:data?.items??[],version:data?.version??0},{headers:{"Cache-Control":"no-store"}});
+  const [document,activity]=await Promise.all([
+   a.supabase!.from("admin_roadmap").select("items,version").eq("id",KEY).maybeSingle(),
+   a.supabase!.from("admin_roadmap_events")
+    .select("id,version,actor_id,occurred_at,changes")
+    .eq("document_id",KEY).order("id",{ascending:false}).limit(60)
+  ]);
+  if(document.error||activity.error)return storageError();
+  return NextResponse.json({
+   items:document.data?.items??[],version:document.data?.version??0,
+   events:activity.data??[]
+  },{headers:{"Cache-Control":"private, no-store"}});
  }catch{return fail("Không kết nối được dịch vụ Roadmap.",503);}
 }
 export async function PUT(request:Request){
