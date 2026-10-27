@@ -16,6 +16,7 @@ import {recordLocalAdminEvent} from "../admin-local";
 import {ROADMAP_STORAGE_KEY,ROADMAP_LEGACY_STORAGE_KEY,buildDraft,decodeDraft,shouldOfferRecovery,type RoadmapDraft} from "../roadmap-draft";
 import {ROADMAP_HISTORY_KEY,addRoadmapSnapshot,parseRoadmapHistory,removeRoadmapSnapshot,type RoadmapSnapshot} from "../roadmap-history";
 import {RoadmapHistoryButton,RoadmapHistoryPanel} from "./roadmap-history-panel";
+import {RoadmapServerActivity,validServerEvents,type RoadmapServerEvent} from "./roadmap-server-activity";
 
 type Props={mode:"demo"|"live"};
 type EditorState={id:string|null;title:string;summary:string;phase:string;area:string;priority:RoadmapPriority;status:RoadmapStatus;owner:string;targetDate:string};
@@ -78,6 +79,9 @@ export function RoadmapBoard({mode}:Props){
  const [lastSaved,setLastSaved]=useState("");
  const [recovery,setRecovery]=useState<RoadmapDraft|null>(null);
  const [syncIssue,setSyncIssue]=useState(false);
+ const [conflict,setConflict]=useState(false);
+ const [serverEvents,setServerEvents]=useState<RoadmapServerEvent[]>([]);
+ const [refreshing,setRefreshing]=useState(false);
  const [history,setHistory]=useState<RoadmapSnapshot[]>([]);
  const [historyOpen,setHistoryOpen]=useState(false);
  const fileRef=useRef<HTMLInputElement>(null);
@@ -94,15 +98,19 @@ export function RoadmapBoard({mode}:Props){
    }
    try{
     const response=await fetch("/api/admin/roadmap",{cache:"no-store"});
-    const result=await response.json() as {items?:unknown;version?:number;error?:string};
+    const result=await response.json() as {items?:unknown;version?:number;events?:unknown;error?:string};
     if(!response.ok)throw Error(result.error??"Không tải được Roadmap.");
     if(!mounted)return;
     const serverVersion=Number.isInteger(result.version)&&Number(result.version)>=0?Number(result.version):0;
     const serverItems=validateRoadmap(result.items)&&(serverVersion>0||result.items.length>0)?result.items:ROADMAP_INITIAL;
-    setItems(serverItems);setVersion(serverVersion);
+    setItems(serverItems);latestItems.current=serverItems;setVersion(serverVersion);
+    setServerEvents(validServerEvents(result.events)?result.events:[]);
     if(shouldOfferRecovery(draft,serverItems,serverVersion))setRecovery(draft);
-    else setRecovery(null);
-    setNotice(serverVersion?"Đã tải dữ liệu chính thức.":"Roadmap chưa được khởi tạo trong Supabase; có thể lưu lần đầu.");
+    else {
+     setRecovery(null);
+     if(!serverVersion)setDirty(true); // First authenticated Admin session seeds master plan in the DB.
+    }
+    setNotice(serverVersion?"Đã tải dữ liệu chính thức từ Supabase.":"Đang khởi tạo Roadmap trên Supabase…");
    }catch(reason){
     if(!mounted)return;
     setSyncIssue(true);
@@ -132,7 +140,7 @@ export function RoadmapBoard({mode}:Props){
    if(mode==="demo")return false;
   }
   setItems(next);latestItems.current=next;setNotice("");
-  recordLocalAdminEvent("roadmap","Chỉnh sửa roadmap hoặc checklist ("+next.length+" việc lớn)");
+  if(mode==="demo")recordLocalAdminEvent("roadmap","Chỉnh sửa roadmap hoặc checklist ("+next.length+" việc lớn)");
   if(mode==="demo")setLastSaved(new Date().toLocaleString("vi-VN"));
   if(mode==="live")setDirty(true);
   return true;
@@ -173,7 +181,7 @@ export function RoadmapBoard({mode}:Props){
  }
  async function save(){
   if(mode==="demo"){setNotice("Dữ liệu đã lưu trên trình duyệt này.");return;}
-  if(saving)return;
+  if(saving||conflict)return;
   setSaving(true);setFailure("");setNotice("");
   const snapshot=JSON.stringify(items);
   try{
@@ -182,9 +190,17 @@ export function RoadmapBoard({mode}:Props){
     body:JSON.stringify({items,version})
    });
    const result=await response.json() as {version?:number;error?:string};
-   if(!response.ok)throw Error(result.error??"Không thể lưu roadmap.");
+   if(!response.ok){
+    if(response.status===409)setConflict(true);
+    else setSyncIssue(true);
+    throw Error(result.error??"Không thể lưu roadmap.");
+   }
    const nextVersion=result.version??version+1;
-   setVersion(nextVersion);setSyncIssue(false);
+   setVersion(nextVersion);setSyncIssue(false);setConflict(false);
+   recordLocalAdminEvent("roadmap","Đã ghi phiên bản "+nextVersion+" lên Supabase.");
+   void fetch("/api/admin/roadmap",{cache:"no-store"}).then(r=>r.ok?r.json():null)
+    .then((body:unknown)=>{if(body&&typeof body==="object"&&"events" in body&&validServerEvents(body.events))setServerEvents(body.events);})
+    .catch(()=>{});
    const changedMeanwhile=JSON.stringify(latestItems.current)!==snapshot;
    setDirty(changedMeanwhile);
    try{storeDraft(latestItems.current,nextVersion,changedMeanwhile);}catch{setFailure("Đã đồng bộ máy chủ nhưng không lưu được bản sao cục bộ.");}
@@ -195,6 +211,42 @@ export function RoadmapBoard({mode}:Props){
   }catch(reason){setFailure(reason instanceof Error?reason.message:"Không thể lưu roadmap.");}
   finally{setSaving(false);}
  }
+ async function refreshFromServer(manual:boolean){
+  if(mode!=="live")return;
+  if(manual&&dirty&&!confirm("Bạn còn thay đổi chưa lưu. Tải dữ liệu trên máy chủ sẽ thay thế nội dung đang chỉnh. Hãy xuất JSON trước nếu cần. Tiếp tục?"))return;
+  setRefreshing(true);
+  try{
+   const response=await fetch("/api/admin/roadmap",{cache:"no-store"});
+   const result=await response.json() as {items?:unknown;version?:number;events?:unknown;error?:string};
+   if(!response.ok)throw Error(result.error??"Không thể đồng bộ Roadmap.");
+   if(!validateRoadmap(result.items)||!Number.isInteger(result.version))throw Error("Dữ liệu máy chủ không hợp lệ.");
+   const latest=result.version===0&&result.items.length===0?ROADMAP_INITIAL:result.items;
+   if(manual||(!dirty&&!saving)){
+    setItems(latest);latestItems.current=latest;
+    setVersion(Number(result.version));setDirty(Number(result.version)===0);
+    setConflict(false);setSyncIssue(false);setRecovery(null);setFailure("");
+    try{storeDraft(latest,Number(result.version),Number(result.version)===0);}catch{/* remote remains source of truth */}
+    if(manual)setNotice("Đã tải lại dữ liệu mới nhất từ Supabase.");
+    else if(Number(result.version)>version)setNotice("Roadmap vừa được đồng bộ từ một phiên chỉnh sửa khác.");
+   }
+   if(validServerEvents(result.events))setServerEvents(result.events);
+  }catch(e){if(manual)setFailure(e instanceof Error?e.message:"Không thể tải lại Roadmap.");}
+  finally{setRefreshing(false);}
+ }
+ useEffect(()=>{
+  if(mode!=="live"||!ready||!dirty||saving||conflict||syncIssue||recovery)return;
+  const timeout=setTimeout(()=>{void save();},850);
+  return()=>clearTimeout(timeout);
+ // save closes over the current validated document/version.
+ // eslint-disable-next-line react-hooks/exhaustive-deps
+ },[mode,ready,items,version,dirty,saving,conflict,syncIssue,recovery]);
+ useEffect(()=>{
+  if(mode!=="live"||!ready||dirty||saving||conflict||syncIssue||recovery||editor||editingTask||editingNote||notesFor||editingItem)return;
+  const interval=setInterval(()=>{void refreshFromServer(false);},12000);
+  return()=>clearInterval(interval);
+ // eslint-disable-next-line react-hooks/exhaustive-deps
+ },[mode,ready,dirty,saving,conflict,syncIssue,recovery,editor,editingTask,editingNote,notesFor,editingItem,version]);
+
  function commitEditor(){
   if(!editor||editor.title.trim().length<3)return;
   const existing=items.find(item=>item.id===editor.id);
@@ -266,7 +318,7 @@ export function RoadmapBoard({mode}:Props){
    <div>
     <div className="xcn-admin-kicker">TRUNG TÂM ĐIỀU HÀNH / TIẾN ĐỘ SẢN PHẨM</div>
     <h1>Roadmap phát triển</h1>
-    <p>Đường thời gian theo các việc lớn; mở mỗi mốc để xem checklist, ghi chú đã bổ sung và lỗi đã sửa.</p>
+    <p>Đường thời gian theo các việc lớn, tự lưu vào Supabase khi có quyền Admin; mọi thao tác đã đồng bộ đều xuất hiện trong nhật ký hệ thống.</p>
    </div>
    <button className="xcn-admin-primary" type="button" onClick={()=>setEditor(editorDefault())}>
     <Plus size={17}/> Thêm việc lớn
@@ -295,8 +347,9 @@ export function RoadmapBoard({mode}:Props){
   </div>
   <div className="xcn-roadmap-actions">
    <div className="xcn-roadmap-save-state">
-    {mode==="demo"?<Badge tone="orange">Chế độ thử — lưu trên thiết bị này</Badge>:
-      <Badge tone={dirty?"orange":"green"}>{dirty?"Có thay đổi chưa lưu":"Dữ liệu hệ thống"}</Badge>}
+    {mode==="demo"?<Badge tone="orange">Chế độ thử — chỉ lưu trên thiết bị này</Badge>:
+      <Badge tone={conflict||syncIssue?"orange":dirty?"orange":"green"}>{
+       conflict?"Xung đột phiên bản":syncIssue?"Không kết nối":saving?"Đang đồng bộ…":dirty?"Chờ tự lưu":"Đã đồng bộ Supabase"}</Badge>}
     {lastSaved&&<small>Gần nhất: {lastSaved}</small>}
    </div>
    <div className="xcn-roadmap-action-buttons">
@@ -309,8 +362,8 @@ export function RoadmapBoard({mode}:Props){
     </button>
     <input type="file" ref={fileRef} accept=".json,application/json" className="sr-only" aria-label="Nhập bản sao lưu" onChange={e=>void importFile(e)}/>
     <button type="button" onClick={()=>fileRef.current?.click()}>Nhập JSON</button>
-    <button type="button" disabled={saving||!ready||(mode==="live"&&!dirty&&version>0)}
-     className="xcn-admin-primary" onClick={()=>void save()}><Save size={15}/>{saving?"Đang lưu…":"Lưu thay đổi"}</button>
+    <button type="button" disabled={saving||conflict||!ready||(mode==="live"&&!dirty&&version>0)}
+     className="xcn-admin-primary" onClick={()=>void save()}><Save size={15}/>{saving?"Đang lưu…":mode==="live"?"Đồng bộ ngay":"Lưu thay đổi"}</button>
    </div>
   </div>
   <RoadmapHistoryPanel history={history} open={historyOpen}
@@ -318,6 +371,15 @@ export function RoadmapBoard({mode}:Props){
    onRestore={restoreSnapshot} onDelete={deleteSnapshot}
    onExport={snapshot=>downloadFile("roadmap-backup-"+snapshot.createdAt.slice(0,10)+".json",
       JSON.stringify({version:1,items:snapshot.items},null,2),"application/json")}/>
+  {mode==="live"&&(conflict||syncIssue)&&<div className="xcn-roadmap-alert is-error" role="alert">
+   {conflict?
+    "Roadmap đã được sửa ở phiên khác. Không ghi đè tự động. Hãy sao lưu JSON rồi tải bản mới nhất để tiếp tục.":
+    "Chưa thể lưu tập trung. Thay đổi đang được giữ trên trình duyệt; hãy kiểm tra kết nối hoặc đăng nhập."}
+   <div className="xcn-roadmap-recovery-actions">
+    <button type="button" onClick={()=>void refreshFromServer(true)}>Tải lại từ Supabase</button>
+    {syncIssue&&!conflict&&<button type="button" onClick={()=>{setSyncIssue(false);setFailure("");}}>Thử đồng bộ lại</button>}
+   </div>
+  </div>}
   {recovery&&<div role="alert" className="xcn-roadmap-alert is-recovery">
    <strong>Phát hiện bản nháp chưa đồng bộ.</strong>
    <p>Máy chủ đang ở phiên bản {version}; bản nháp thiết bị bắt đầu từ phiên bản {recovery.baseVersion}.
@@ -339,6 +401,8 @@ export function RoadmapBoard({mode}:Props){
   {syncIssue&&<div role="status" className="xcn-roadmap-alert is-error">
    Mất kết nối lưu tập trung: mọi thay đổi hiện chỉ được giữ ở thiết bị này. Hãy xuất JSON để dự phòng.
   </div>}
+  {mode==="live"&&<RoadmapServerActivity events={serverEvents} loading={refreshing}
+   onRefresh={()=>void refreshFromServer(true)}/>}
   {failure&&<div role="alert" className="xcn-roadmap-alert is-error">{failure}
     {mode==="live"&&<button onClick={()=>location.reload()} type="button">Tải lại dữ liệu</button>}
   </div>}
