@@ -17,6 +17,8 @@ import {ROADMAP_STORAGE_KEY,ROADMAP_LEGACY_STORAGE_KEY,buildDraft,decodeDraft,sh
 import {ROADMAP_HISTORY_KEY,addRoadmapSnapshot,parseRoadmapHistory,removeRoadmapSnapshot,type RoadmapSnapshot} from "../roadmap-history";
 import {RoadmapHistoryButton,RoadmapHistoryPanel} from "./roadmap-history-panel";
 import {RoadmapServerActivity,validServerEvents,type RoadmapServerEvent} from "./roadmap-server-activity";
+import {RoadmapReconcilePanel} from "./roadmap-reconcile-panel";
+import {mergeMissingRoadmap} from "../roadmap-reconcile";
 
 type Props={mode:"demo"|"live"};
 type EditorState={id:string|null;title:string;summary:string;phase:string;area:string;priority:RoadmapPriority;status:RoadmapStatus;owner:string;targetDate:string};
@@ -78,6 +80,7 @@ export function RoadmapBoard({mode}:Props){
  const [editingNote,setEditingNote]=useState<{id:string;text:string}|null>(null);
  const [lastSaved,setLastSaved]=useState("");
  const [recovery,setRecovery]=useState<RoadmapDraft|null>(null);
+ const [draftForComparison,setDraftForComparison]=useState<RoadmapDraft|null>(null);
  const [syncIssue,setSyncIssue]=useState(false);
  const [conflict,setConflict]=useState(false);
  const [serverEvents,setServerEvents]=useState<RoadmapServerEvent[]>([]);
@@ -91,7 +94,7 @@ export function RoadmapBoard({mode}:Props){
   let mounted=true;
   const load=async()=>{
    const draft=readDraft();
-   if(mounted)setHistory(readHistory());
+   if(mounted){setHistory(readHistory());setDraftForComparison(draft);}
    if(mode==="demo"){
     if(mounted){setItems(draft?.items??ROADMAP_INITIAL);setReady(true);}
     return;
@@ -147,9 +150,9 @@ export function RoadmapBoard({mode}:Props){
   if(mode==="live")setDirty(true);
   return true;
  }
- function checkpoint(label:string){
+ function checkpoint(label:string,content:RoadmapEpic[]=items){
   try{
-   const next=addRoadmapSnapshot(history,{items,baseVersion:version,label},newId(),new Date().toISOString());
+   const next=addRoadmapSnapshot(history,{items:content,baseVersion:version,label},newId(),new Date().toISOString());
    localStorage.setItem(ROADMAP_HISTORY_KEY,JSON.stringify(next));
    setHistory(next);setHistoryOpen(true);setFailure("");
    recordLocalAdminEvent("backup","Tạo điểm khôi phục Roadmap: "+label);
@@ -158,6 +161,21 @@ export function RoadmapBoard({mode}:Props){
    setFailure((reason instanceof Error?reason.message:"Không thể tạo bản sao lưu.")+
     " Hãy xuất JSON thủ công trước khi thay đổi dữ liệu.");
    return false;
+  }
+ }
+ function mergeMissingFrom(source:RoadmapEpic[],label:string){
+  if(mode==="live"&&(syncIssue||conflict)){
+   setFailure("Cần xử lý lỗi đồng bộ trước khi gộp dữ liệu.");return;
+  }
+  const merged=mergeMissingRoadmap(items,source);
+  if(JSON.stringify(merged)===JSON.stringify(items))return;
+  if(!confirm("Chỉ bổ sung việc lớn, việc nhỏ và ghi chú còn thiếu từ "+label+
+    ". KHÔNG thay dấu tích hoặc ghi đè các mục đang có. Tạo bản sao lưu và tiếp tục?"))return;
+  if(!checkpoint("Trước khi gộp Roadmap: "+label))return;
+  if(change(merged)){
+   setRecovery(null);
+   setNotice("Đã thêm các mục còn thiếu. "+(mode==="live"?
+    "Hệ thống sẽ tự đồng bộ; chỉ coi là hoàn thành khi Supabase báo đã lưu.":"Đã lưu tại thiết bị."));
   }
  }
  function restoreSnapshot(snapshot:RoadmapSnapshot){
@@ -368,6 +386,8 @@ export function RoadmapBoard({mode}:Props){
      className="xcn-admin-primary" onClick={()=>void save()}><Save size={15}/>{saving?"Đang lưu…":mode==="live"?"Đồng bộ ngay":"Lưu thay đổi"}</button>
    </div>
   </div>
+  <RoadmapReconcilePanel mode={mode} version={version} items={items}
+   sourceDraft={draftForComparison?.items??null} onImportMissing={mergeMissingFrom}/>
   <RoadmapHistoryPanel history={history} open={historyOpen}
    onCreate={()=>{if(checkpoint("Điểm khôi phục thủ công"))setNotice("Đã tạo điểm khôi phục trên thiết bị.");}}
    onRestore={restoreSnapshot} onDelete={deleteSnapshot}
@@ -393,10 +413,14 @@ export function RoadmapBoard({mode}:Props){
       if(change(recovery.items)){setRecovery(null);setNotice("Đã khôi phục bản nháp. Kiểm tra thay đổi và nhấn Lưu thay đổi.");}
     }}>Khôi phục bản nháp</button>
     <button type="button" onClick={()=>{
+      if(!checkpoint("Bảo quản bản nháp cũ trước khi giữ Supabase",recovery.items))return;
+      setDraftForComparison(recovery);
       setRecovery(null);
-      localStorage.removeItem(ROADMAP_STORAGE_KEY);
-      localStorage.removeItem(ROADMAP_LEGACY_STORAGE_KEY);
-      setNotice("Đã giữ nội dung máy chủ và bỏ bản nháp cũ.");
+      try{
+       localStorage.removeItem(ROADMAP_LEGACY_STORAGE_KEY);
+       storeDraft(items,version,false);
+      }catch{setFailure("Không ghi được bản sao cục bộ; hãy xuất JSON trước khi tiếp tục.");}
+      setNotice("Đã giữ bản Supabase. Bản nháp cũ vẫn nằm trong lịch sử sao lưu để đối chiếu.");
     }}>Giữ bản trên máy chủ</button>
    </div>
   </div>}
