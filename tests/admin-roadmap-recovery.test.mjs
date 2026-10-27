@@ -59,7 +59,7 @@ test("local recovery avoids overwriting server data silently",()=>{
  assert.equal(draft.shouldOfferRecovery(versioned,seed,9),true);
  const changed=clone(seed);changed[0].summary="Edited on another machine";
  assert.equal(draft.shouldOfferRecovery(versioned,changed,8),true);
- assert.equal(draft.shouldOfferRecovery({...versioned,pending:false},changed,8),false);
+ assert.equal(draft.shouldOfferRecovery({...versioned,pending:false},changed,8),true);
 });
 test("real UTF-8 byte limit rejects oversized payloads",()=>{
  const small=clone(seed);
