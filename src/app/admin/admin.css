@@ -265,3 +265,24 @@
  .xcn-admin-report-line{grid-template-columns:100px minmax(50px,1fr) 35px;gap:9px}
  .xcn-monitor-row{align-items:flex-start}.xcn-monitor-pill{white-space:nowrap}}
 @media(prefers-reduced-motion:reduce){.xcn-admin-report-track>span{transition:none}}
+
+
+/* Supabase-authoritative Roadmap history, not the browser-only scratch log. */
+.xcn-roadmap-events{margin:0 0 22px;padding:19px!important}
+.xcn-roadmap-activity-refresh{display:inline-flex;align-items:center;gap:7px;flex-shrink:0;
+ border:1px solid #d2dfef;background:#fff;border-radius:9px;padding:8px 11px;
+ color:#315a8e;font-size:12px;font-weight:700}
+.xcn-roadmap-activity-refresh:disabled{opacity:.4}
+.xcn-roadmap-events-list{max-height:380px;overflow-y:auto;padding-right:5px;display:grid;gap:12px}
+.xcn-roadmap-events-group{border:1px solid #e3eaf4;border-radius:12px;padding:12px 14px;background:#fafcfe}
+.xcn-roadmap-events-meta{display:flex;align-items:center;flex-wrap:wrap;gap:10px 15px;
+ color:#718197;font-size:11px;margin-bottom:8px}
+.xcn-roadmap-events-meta span{display:inline-flex;align-items:center;gap:4px}
+.xcn-roadmap-events-changes{display:grid;gap:7px}
+.xcn-roadmap-event{display:flex;align-items:start;gap:10px;font-size:12px;line-height:1.6}
+.xcn-roadmap-event-kind{flex-shrink:0;border-radius:6px;padding:3px 7px;
+ font-size:10px;font-weight:800;color:#155f9f;background:#e9f2ff}
+.xcn-roadmap-event-title{color:#284567;overflow-wrap:anywhere;min-width:0}
+@media(max-width:700px){.xcn-roadmap-events{padding:13px!important}
+ .xcn-roadmap-events-meta{gap:6px 12px}
+ .xcn-roadmap-event{flex-direction:column;gap:3px}}
