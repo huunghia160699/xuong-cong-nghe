@@ -105,7 +105,9 @@ export function RoadmapBoard({mode}:Props){
     const serverItems=validateRoadmap(result.items)&&(serverVersion>0||result.items.length>0)?result.items:ROADMAP_INITIAL;
     setItems(serverItems);latestItems.current=serverItems;setVersion(serverVersion);
     setServerEvents(validServerEvents(result.events)?result.events:[]);
-    if(shouldOfferRecovery(draft,serverItems,serverVersion))setRecovery(draft);
+    const unimportedDemoDraft=Boolean(draft&&!draft.pending&&serverVersion===0&&
+     JSON.stringify(draft.items)!==JSON.stringify(ROADMAP_INITIAL));
+    if((shouldOfferRecovery(draft,serverItems,serverVersion)||unimportedDemoDraft)&&draft)setRecovery(draft);
     else {
      setRecovery(null);
      if(!serverVersion)setDirty(true); // First authenticated Admin session seeds master plan in the DB.
