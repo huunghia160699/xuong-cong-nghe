@@ -4,9 +4,9 @@ import {GitCompareArrows,ShieldAlert,Plus,Info} from "lucide-react";
 import {ROADMAP_INITIAL,type RoadmapEpic} from "../roadmap-data";
 import {compareRoadmaps,compareTotals} from "../roadmap-reconcile";
 
-export function RoadmapReconcilePanel({items,version,sourceDraft,onImportMissing,mode}:{
+export function RoadmapReconcilePanel({items,version,sourceDraft,onImportMissing,mode,serverAvailable}:{
  items:RoadmapEpic[];version:number;sourceDraft:RoadmapEpic[]|null;
- onImportMissing:(source:RoadmapEpic[],label:string)=>void;mode:"demo"|"live";
+ onImportMissing:(source:RoadmapEpic[],label:string)=>void;mode:"demo"|"live";serverAvailable:boolean;
 }){
  const [open,setOpen]=useState(false);
  const baseline=compareRoadmaps(ROADMAP_INITIAL,items);
@@ -25,7 +25,7 @@ export function RoadmapReconcilePanel({items,version,sourceDraft,onImportMissing
     onClick={()=>setOpen(v=>!v)}>{open?"Thu gọn":"Xem khác biệt"}</button>
   </div>
   <div className="xcn-roadmap-reconcile-summary">
-   <span><strong>{mode==="live"?"Supabase phiên bản "+version:"Bản nháp Demo"}</strong></span>
+   <span><strong>{mode==="live"?(serverAvailable?"Supabase phiên bản "+version:"Bản cục bộ — chưa kết nối Supabase"):"Bản nháp Demo"}</strong></span>
    <span>{items.length} việc lớn</span>
    <span>{baselineTotals.differences} trạng thái khác checklist GitHub</span>
    {local&&localTotals&&<span>{localTotals.differences+localTotals.missing+localTotals.extra} điểm khác bản nháp</span>}
