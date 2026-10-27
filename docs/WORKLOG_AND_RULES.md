@@ -30,7 +30,8 @@
 - **Code:** migration `20261027010815_admin_roadmap_change_events.sql` tạo `public.admin_roadmap_events` RLS chỉ Admin đọc, trigger `xcn_private.write_admin_roadmap_event()` tính khác biệt OLD/NEW, ghi một bản ghi bất biến trên mỗi lần tạo/cập nhật document. Client authenticated không được INSERT/UPDATE/DELETE sự kiện.
 - **Giao diện:** tự lưu khi có JWT Admin Live (debounce 850ms), tải phiên bản mới từ Supabase mỗi 12 giây khi không có thay đổi dở dang, hiển thị nhật ký hoạt động đã commit, thông báo và khóa tự ghi đè khi server trả 409. Mở bản nháp Demo trước đó bằng lựa chọn khôi phục có xác nhận, tránh làm mất dữ liệu.
 - **Giới hạn khi phát hành:** Production còn `NEXT_PUBLIC_USE_MOCK_DATA=true` và thiếu URL/key Supabase; Auth vẫn chưa có Admin đã xác minh. Những giới hạn này **ngăn đồng bộ trực tuyến ngay trên website**. Không đưa API sang anon, không dùng service role và không tự cấp Admin để vượt bước xác minh.
-- **Kiểm thử:** `tests/admin-roadmap-server-sync.test.mjs`, API tests và CI. Migration chỉ được gọi áp lên DB production sau khi PR kiểm thử đạt. RLS JWT thật cần test riêng.
+- **Triển khai thực tế:** migration sự kiện đã được áp lên Supabase production với version `20261027010815`; file GitHub đã được đặt cùng version để tránh chạy trùng. Đã kiểm tra trực tiếp trigger, RLS, grant `authenticated SELECT` (không INSERT/UPDATE/DELETE), `anon SELECT=false`, function `xcn_private` không cấp EXECUTE cho anon/authenticated. Thử nghiệm SQL trong exception block đã kiểm tra sự kiện `roadmap.created` và `epic.added` rồi rollback; kiểm tra sau thử nghiệm bảng Roadmap và events vẫn có 0 hàng.
+- **Kiểm thử:** `tests/admin-roadmap-server-sync.test.mjs`, các test API và CI. Phải kiểm tra lại trạng thái CI sau từng commit; RLS JWT thật cần test riêng trước khi bật Live.
 - **GitHub:** PR #54, nhánh `feat/roadmap-server-sync-events-20261027`.
 
 ### 2026-10-27 — Xây hoàn thiện các màn Trung tâm quản trị, tạm dừng tài khoản Auth
