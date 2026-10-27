@@ -32,11 +32,14 @@ function harness({live=true,user=true,role="admin",record=null}={}){
     eq(name,v){filter[name]=v;return q;},
     insert(item){mode="insert";value=item;return q;},
     update(item){mode="update";value=item;return q;},
+    order(){return q;},
+    limit(){return Promise.resolve({data:[],error:null});},
     async single(){return result();},
     async maybeSingle(){return result();}
    };
    function result(){
     if(table==="profiles")return {data:{role},error:null};
+    if(table==="admin_roadmap_events")return {data:[],error:null};
     if(table!=="admin_roadmap")throw Error("Unknown table: "+table);
     reads++;
     if(mode==="read")return {data:stored,error:null};
