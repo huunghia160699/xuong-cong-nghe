@@ -2,7 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import {readFileSync} from "node:fs";
 
-const sql=readFileSync("supabase/migrations/20261027080000_admin_roadmap_change_events.sql","utf8");
+const sql=readFileSync("supabase/migrations/20261027010815_admin_roadmap_change_events.sql","utf8");
 const route=readFileSync("src/app/api/admin/roadmap/route.ts","utf8");
 const board=readFileSync("src/features/admin/components/roadmap-board.tsx","utf8");
 const feed=readFileSync("src/features/admin/components/roadmap-server-activity.tsx","utf8");
