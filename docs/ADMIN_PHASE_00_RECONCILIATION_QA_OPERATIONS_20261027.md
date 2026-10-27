@@ -9,7 +9,7 @@
 Kết quả truy vấn production trước đợt sửa (read-only):
 - Roadmap `global-master-roadmap`: **1 bản, version 4, 20 việc lớn**, lịch sử **4 lần lưu**.
 - Mốc `admin-center`: **12/13** việc được tích, 8 ghi chú. GitHub và dữ liệu mẫu chỉ tích **10/13**.
-- Hai dấu tích khác nhau: (11) lưu Roadmap và sao lưu; (12) xác minh quyền Admin/RLS/đa tài khoản.
+- Ở thời điểm khảo sát, hai dấu tích khác nhau: (11) lưu/sao lưu và (12) xác minh Admin/RLS/đa tài khoản. **Sau kiểm tra:** đánh dấu nguồn GitHub/seed mục (11) vì đã có lưu v4 và sao lưu được kiểm thử; còn **mục (12) chưa nghiệm thu** và vẫn khác với bản Supabase.
 - Tài khoản Admin đã xác minh và có role Admin; tài khoản Student **chưa xác minh** nên **không thể coi mục JWT kiểm thử đa tài khoản là hoàn thành**.
 - Trong `system-architecture` hiện còn **0/6**, `design-system` **0/5**. Chưa thay trạng thái chỉ nhờ đọc mã nguồn.
 - Không mất lịch sử: 4 bản thay đổi nằm trong `admin_roadmap_events`; 20 mốc và ghi chú giữ nguyên.
