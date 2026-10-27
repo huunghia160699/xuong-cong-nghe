@@ -1,12 +1,12 @@
 # Kiểm thử RLS Admin Roadmap bằng JWT thật
 
 **Ngày:** 2026-10-27  
-**Trạng thái:** Chuẩn bị công cụ; **CHƯA CÓ tài khoản thử nghiệm hoặc kết quả JWT thật**.  
+**Trạng thái cập nhật 27/10/2026:** Hai tài khoản thử nghiệm đã tồn tại. Admin đã xác minh email và có role `admin`; Student có role `student` nhưng **chưa xác minh**. Chưa có kết quả kiểm thử JWT hai vai trò thật.  
 **Dự án production:** `bpxwpfmjoojrgqlfkqgz`.
 
 > Mục tiêu: xác minh phân quyền qua đăng nhập Supabase Auth thật. Không giả mạo JWT bằng `set_config('request.jwt.claims')`, không chèn trực tiếp vào `auth.users`, không dùng `service_role` hay secret key để thực hiện truy vấn RLS.
 >
-> **Không cấu hình Vercel, không bật Live** trước khi có đủ bằng chứng cho phép/không cho phép.
+> Production đã có cấu hình Supabase và Live. **Không thay đổi thêm biến Vercel hoặc cấp quyền**, không gửi mật khẩu/token; chưa coi RLS đã nghiệm thu.
 
 ## 1. Các tiền điều kiện đã kiểm tra trực tiếp (read-only)
 
@@ -15,7 +15,7 @@
 - [x] Có 3 policy `SELECT`, `INSERT`, `UPDATE` dựa trên `profiles.role='admin'`.
 - [x] `anon` không có `SELECT`; `authenticated` có `SELECT,INSERT,UPDATE` nhưng không có `DELETE,TRUNCATE`.
 - [x] `authenticated` không có `UPDATE` trên `profiles.role`.
-- [x] `auth.users=0`, `public.profiles=0`, `admin_roadmap=0` ở thời điểm kiểm tra.
+- [x] *Lịch sử trước khi mời tài khoản:* cả ba bằng 0. Hiện production có hai Auth user/hồ sơ và một Roadmap phiên bản 4, 20 mốc; không tái khởi tạo.
 - [x] Trigger Auth `on_auth_user_created_profile` chạy `create_new_student_profile()`; người dùng mới mặc định là student.
 
 ## 2. Tạo tài khoản thử nghiệm đúng luồng Supabase Auth
@@ -106,11 +106,11 @@ Kết quả mong đợi (khi bảng `admin_roadmap` vẫn trống):
 - [ ] Admin đăng nhập thành công; `profiles.role=admin`.
 - [ ] Student đăng nhập thành công; `profiles.role=student`.
 - [ ] Client chưa đăng nhập không có quyền SELECT `admin_roadmap` (lỗi quyền).
-- [ ] Admin SELECT hợp lệ, nhận **0 dòng** vì bảng chưa có dữ liệu.
+- [ ] Admin SELECT hợp lệ, nhận đúng **1 dòng** từ Supabase production.
 - [ ] Student SELECT hợp lệ nhưng RLS lọc ra **0 dòng**.
 - [ ] Kết quả cuối `READ-ONLY PASS`, không thêm hoặc sửa Roadmap.
 
-**Lưu ý:** Vì bảng đang trống, chỉ đọc 0 dòng **không chứng minh đầy đủ** Student bị RLS chặn. Muốn chứng minh SELECT/UPDATE/INSERT với dữ liệu thực phải làm phần 5 trên DB thử nghiệm.
+**Lưu ý:** Bảng hiện đã có 1 Roadmap; Admin SELECT phải thấy đúng 1 row, Student SELECT không thấy row. Phần script read-only hiện cho phép tối đa 1 row và đòi JWT đã xác minh. Muốn chứng minh SELECT/UPDATE/INSERT với dữ liệu thực phải làm phần 5 trên DB thử nghiệm.
 
 ## 5. Bài kiểm tra ghi dữ liệu — CHỈ trên Supabase branch/project thử nghiệm
 
@@ -145,4 +145,4 @@ Thử DELETE/TRUNCATE bằng JWT không thực hiện trong script vì nếu có
 - [ ] Sau đó mới thẩm định cấu hình Vercel (publishable key, URL, Live flag) và E2E giao diện hai tài khoản.
 - [ ] Xóa tài khoản thử nghiệm khi hoàn tất và không còn phiên đăng nhập dùng cho kiểm thử; lưu ý JWT cũ có thể còn hiệu lực cho đến lúc hết hạn.
 
-**Kết luận hiện tại:** Bảng và policy đã triển khai, nhưng **không được đánh dấu "RLS bằng JWT thật: PASS"** cho đến khi hai tài khoản tồn tại và script chạy với token đăng nhập thật.
+**Kết luận hiện tại:** Tài khoản Admin đã sẵn sàng để test nhưng tài khoản Student còn thiếu xác minh email. **Không đánh dấu JWT/RLS đa vai trò PASS** trước khi chạy test bằng hai phiên đăng nhập thật; chưa nhờ người dùng cung cấp mật khẩu qua chat.

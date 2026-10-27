@@ -286,3 +286,31 @@
 @media(max-width:700px){.xcn-roadmap-events{padding:13px!important}
  .xcn-roadmap-events-meta{gap:6px 12px}
  .xcn-roadmap-event{flex-direction:column;gap:3px}}
+
+
+/* Non-destructive reconciliation: equal-width mobile actions and accessible statuses. */
+.xcn-roadmap-reconcile{margin:0 0 18px;padding:15px 18px;border:1px solid #cdddf3;border-radius:13px;background:#fff}
+.xcn-roadmap-reconcile-top{display:flex;justify-content:space-between;align-items:center;gap:15px;flex-wrap:wrap}
+.xcn-roadmap-reconcile-top h2{display:flex;align-items:center;gap:8px;font-weight:800;font-size:15px;color:#173c67}
+.xcn-roadmap-reconcile-top p{font-size:12px;line-height:1.7;margin-top:5px;color:#5f7490}
+.xcn-roadmap-reconcile-top>button,.xcn-roadmap-reconcile-import{display:inline-flex;align-items:center;gap:6px;border:1px solid #bcd2f3;border-radius:9px;
+ padding:9px 13px;font-size:12px;font-weight:750;color:#005bfd;background:#f5f9ff;cursor:pointer}
+.xcn-roadmap-reconcile-top>button:focus-visible,.xcn-roadmap-reconcile-import:focus-visible{outline:2px solid #005bfd;outline-offset:2px}
+.xcn-roadmap-reconcile-summary{display:flex;flex-wrap:wrap;gap:7px;margin-top:12px}
+.xcn-roadmap-reconcile-summary span{display:inline-flex;align-items:center;border:1px solid #dce6f3;
+ border-radius:30px;background:#f6f9fe;padding:5px 10px;font-size:11px;color:#37577e}
+.xcn-roadmap-reconcile-summary strong{font-weight:800}
+.xcn-roadmap-reconcile-alert{display:flex;align-items:flex-start;gap:8px;background:#fff6e9;border:1px solid #f2d9ab;
+ border-radius:9px;color:#87561a;font-size:12px;line-height:1.7;padding:12px;margin-top:15px}
+.xcn-roadmap-reconcile-alert svg{flex-shrink:0;margin-top:2px}
+.xcn-roadmap-reconcile-report{margin-top:12px;border-top:1px solid #e6edf5;padding-top:12px}
+.xcn-roadmap-reconcile-report h3{font-weight:800;font-size:13px;color:#1d3c60}
+.xcn-roadmap-reconcile-report>p{font-size:12px;line-height:1.8;color:#63748c}
+.xcn-roadmap-reconcile-differences{display:grid;gap:7px;margin:11px 0}
+.xcn-roadmap-reconcile-differences li{display:grid;gap:4px;padding:9px 12px;background:#f5f8fd;border-left:2px solid #005bfd;
+ border-radius:4px;font-size:12px;color:#304c72;overflow-wrap:anywhere}
+.xcn-roadmap-reconcile-differences small{color:#8a5217;font-size:11px}
+.xcn-roadmap-reconcile-missing{display:flex;align-items:center;gap:7px;font-size:12px;color:#445f7d;margin:9px 0}
+.xcn-roadmap-reconcile-ok{color:#327558!important}
+.xcn-roadmap-reconcile-footer{font-size:11px;color:#758aa1;margin-top:13px;line-height:1.7}
+@media(max-width:600px){.xcn-roadmap-reconcile{padding:12px}.xcn-roadmap-reconcile-top>button{width:100%;justify-content:center}}

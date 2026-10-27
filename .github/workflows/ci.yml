@@ -139,3 +139,15 @@ jobs:
             echo "Legacy range slider should not be rendered"
             exit 1
           fi
+          # Real headless Chrome checks (27 screenshots across desktop/tablet/mobile).
+          command -v google-chrome || command -v chromium
+          ADMIN_QA_OUTPUT=/tmp/xcn-admin-qa node scripts/admin-browser-qa.mjs
+
+      - name: Upload Admin visual QA screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: admin-browser-qa-screenshots
+          path: /tmp/xcn-admin-qa/*.png
+          if-no-files-found: ignore
+          retention-days: 7

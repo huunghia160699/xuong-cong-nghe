@@ -30,7 +30,7 @@ type Seed={id:string;title:string;summary:string;phase:number;priority:RoadmapPr
 const SEEDS:Seed[]=[
  {id:"admin-center",title:"Trung tâm quản trị toàn website",summary:"Dashboard điều hành, điều hướng module, báo cáo hệ thống và quyền admin.",phase:0,priority:"P0",area:"Quản trị",status:"building",
  tasks:["Dashboard tổng quan thực/được ghi nhãn demo","Sidebar quản trị phân nhóm đúng các trang đã có","Roadmap dọc có lọc, tìm kiếm, checklist và nhật ký","Tạo/sửa/xóa nhiệm vụ lớn, nhiệm vụ nhỏ và ghi chú","Danh sách người dùng với bộ lọc, phân trang và xuất CSV chỉ đọc khi Live","Ma trận quyền và điều kiện chặn cấp vai trò trái phép","Soạn, xem trước, nhập/xuất và lưu bản nháp cấu hình cục bộ","Nhật ký thao tác cục bộ và xuất dữ liệu","Trung tâm giám sát trạng thái module và quyền","Báo cáo tổng hợp dữ liệu server, không hiển thị số giả Demo","Lưu roadmap an toàn, xuất Markdown/JSON và nhập sao lưu","Xác minh quyền admin, RLS và kiểm thử đa tài khoản","Kiểm thử trực quan mobile/tablet/desktop và Production"],
- completed:[0,1,2,3,4,5,6,7,8,9],
+ completed:[0,1,2,3,4,5,6,7,8,9,10],
  notes:[{kind:"note",text:"Ưu tiên hoàn thành Admin + Roadmap trước các phân hệ giáo dục khác.",date:"2026-10-26"},
  {kind:"added",text:"Đã xây trung tâm quản trị, sơ đồ website và Roadmap dọc; có checklist, phân loại, nhật ký, xuất nhập dữ liệu và nút chỉnh sửa.",date:"2026-10-26"},
  {kind:"fixed",text:"Đã ngăn mất bản nháp khi đồng bộ bị lỗi, báo xung đột phiên bản và sửa phục hồi nhầm roadmap rỗng.",date:"2026-10-26"},

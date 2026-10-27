@@ -1,5 +1,12 @@
 # Changelog
 
+## 2026-10-27 — Đối chiếu Roadmap, QA responsive và kiểm kê bảo mật Admin
+- Trang Roadmap bổ sung đối chiếu Supabase so với GitHub checklist/dữ liệu gốc và bản nháp trình duyệt; chỉ gộp mốc, việc nhỏ, ghi chú thiếu theo ID, không tự sửa dấu tích.
+- Trước khi chọn giữ Supabase, bản nháp cũ được sao lưu thành checkpoint; không âm thầm làm mất lịch sử người dùng.
+- Thêm regression test kiểm tra độ khớp Markdown/seed và quy tắc gộp bảo toàn dữ liệu.
+- CI tự chạy Chrome tại 360/768/1280 cho 9 trang Admin, kiểm tra tràn ngang, keyboard focus, mở panel Roadmap, form cấu hình và lưu ảnh QA.
+- Tài liệu vận hành phân biệt Live production với Demo preview/dev, backup/restore và cổng nghiệm thu JWT. Việc thật đã xác minh được tách khỏi dấu tích chưa có bằng chứng.
+
 ## 2026-10-27 — Roadmap server-sync & audit events
 - Roadmap ở chế độ Live tự lưu Supabase sau mỗi thay đổi, kiểm tra revision khi tải từ phiên khác và chặn xung đột `409`.
 - Dùng bảng `admin_roadmap_events` với RLS chỉ-đọc cho Admin, trigger audit lưu nhật ký thay đổi ở database cùng giao dịch cập nhật Roadmap.
