@@ -25,6 +25,14 @@
 
 ## III. Lịch sử
 
+### 2026-10-27 — Đối chiếu Roadmap Live, chạy browser QA và tiếp tục kiểm tra tài khoản
+- **Preflight production:** 1 Roadmap server phiên bản 4, 20 việc lớn, 4 sự kiện; mốc Admin được đánh dấu 12/13, GitHub seed 10/13, mục xác minh JWT đa tài khoản bị tích trước khi Student đã xác minh. Không tự reset progress hoặc xóa ghi chú.
+- **Thay đổi:** `roadmap-reconcile.ts` và `roadmap-reconcile-panel.tsx` so sánh danh sách ID/checklist/note và báo trạng thái khác nhau giữa Supabase, GitHub seed và draft; gộp không phá huỷ chỉ thêm ID thiếu, checkpoint trước thay đổi. Chọn giữ bản máy chủ vẫn lưu draft cũ vào history.
+- **QA:** `scripts/admin-browser-qa.mjs` và CI chạy Chromium, chụp 27 màn hình (9 route × 3 độ rộng), kiểm tra horizontal overflow, click Roadmap compare, keyboard focus và form cấu hình. Kết quả CI phải xem theo commit mới nhất; chưa có quyền điều khiển browser production trong phiên chat.
+- **Kiến trúc/vận hành:** `docs/ADMIN_PHASE_00_RECONCILIATION_QA_OPERATIONS_20261027.md` lưu bảng kiểm route, môi trường, phương pháp backup/restore, RLS/chốt release. Preview/Dev là Demo; Production Live có URL/key Supabase.
+- **Tài khoản:** Admin đã xác minh, có role `admin` và đăng nhập; Student chưa xác minh, chưa chạy JWT hai vai trò. **Không nâng quyền hoặc sửa thông tin mời**.
+- **Đối soát:** `tests/admin-roadmap-reconcile.test.mjs` đảm bảo GitHub checklist khớp seed và gộp không đổi dấu tích của mục cũ. Mọi dữ liệu người dùng trên Supabase được giữ nguyên trong giai đoạn code review.
+
 ### 2026-10-27 — Roadmap tự lưu Supabase và nhật ký thay đổi thực
 - **Mục tiêu:** Roadmap là tài liệu nguồn trên PostgreSQL, mọi thao tác thêm/sửa/xóa và checklist tạo bản revision có thể tra cứu, không coi localStorage là dữ liệu chính.
 - **Code:** migration `20261027010815_admin_roadmap_change_events.sql` tạo `public.admin_roadmap_events` RLS chỉ Admin đọc, trigger `xcn_private.write_admin_roadmap_event()` tính khác biệt OLD/NEW, ghi một bản ghi bất biến trên mỗi lần tạo/cập nhật document. Client authenticated không được INSERT/UPDATE/DELETE sự kiện.
