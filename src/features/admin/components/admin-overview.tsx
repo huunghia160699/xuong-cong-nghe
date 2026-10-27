@@ -3,9 +3,9 @@ import {
   ArrowRight,BookOpen,ClipboardCheck,Code2,FileText,LayoutDashboard,Library,
   ListTodo,Map,MonitorPlay,School,ShieldCheck,Users,SlidersHorizontal,Activity,ScrollText,BarChart3
 } from "lucide-react";
-import {ROADMAP_INITIAL,roadmapTotals,roadmapProgress} from "../roadmap-data";
+import {ROADMAP_INITIAL,roadmapTotals,roadmapProgress,type RoadmapEpic} from "../roadmap-data";
 
-type Props={live:boolean;stats?:{users:number|null;courses:number|null;attempts:number|null}};
+type Props={live:boolean;stats?:{users:number|null;courses:number|null;attempts:number|null};roadmap?:RoadmapEpic[]|null};
 const modules=[
  {title:"Roadmap phát triển",description:"Mốc công việc, checklist, nhật ký đã thêm và đã sửa.",href:"/admin/roadmap",icon:ListTodo,detail:"Đang hoạt động"},
  {title:"Sitemap toàn hệ thống",description:"Sơ đồ vai trò, phân hệ và các đường dẫn đã có/dự kiến.",href:"/admin/sitemap",icon:Map,detail:"Đang hoạt động"},
@@ -26,8 +26,9 @@ const planned=[
  {title:"Learning Labs",description:"Word, Excel, PowerPoint, Python, SQL và Windows.",icon:Code2},
  {title:"School Manager",description:"Quản trị trường, tổ chuyên môn và báo cáo.",icon:School}
 ];
-export function AdminOverview({live,stats}:Props){
- const totals=roadmapTotals(ROADMAP_INITIAL);
+export function AdminOverview({live,stats,roadmap}:Props){
+ const source=live?(roadmap??[]):ROADMAP_INITIAL;
+ const totals=roadmapTotals(source);
  return <div className="xcn-admin">
   <section className="xcn-admin-hero">
    <div className="relative z-10">
@@ -50,7 +51,7 @@ export function AdminOverview({live,stats}:Props){
     {label:live?"Tài khoản Supabase":"Tài khoản",value:live?stats?.users??"—":"Chế độ Demo"},
     {label:"Khóa học",value:live?stats?.courses??"—":"Chưa đồng bộ"},
     {label:"Lượt làm bài",value:live?stats?.attempts??"—":"Chưa đồng bộ"},
-    {label:"Việc lớn trong Master Plan",value:totals.epics}
+    {label:live?"Việc lớn trên Supabase":"Việc lớn Master Plan (Demo)",value:live&&roadmap==null?"—":totals.epics}
    ].map(item=><div key={item.label} className="xcn-admin-stat">
     <span>{item.label}</span><strong className={typeof item.value==="string"?"!text-lg":""}>{item.value}</strong>
    </div>)}
@@ -66,8 +67,9 @@ export function AdminOverview({live,stats}:Props){
    </section>
    <section className="xcn-admin-panel">
     <div className="xcn-admin-panel-head"><h2>Ưu tiên phát triển</h2><Link href="/admin/roadmap">Xem timeline →</Link></div>
+    {live&&roadmap==null&&<div role="alert" className="xcn-admin-notice is-error">Không thể đọc Roadmap từ Supabase. Không dùng dữ liệu mẫu để thay thế.</div>}
     <div className="xcn-admin-upcoming">
-     {ROADMAP_INITIAL.filter(item=>item.priority==="P0").slice(0,5).map(item=>
+     {source.filter(item=>item.priority==="P0").slice(0,5).map(item=>
       <Link href="/admin/roadmap" key={item.id}>
        <span>{item.title}<small className="mt-1 block text-xs font-normal text-slate-500">{item.area}</small></span>
        <span className="shrink-0 text-blue-700">{roadmapProgress(item)}%</span>
@@ -75,7 +77,7 @@ export function AdminOverview({live,stats}:Props){
     </div>
     <div className="xcn-admin-note"><ShieldCheck size={18} className="mb-2 text-blue-700"/>
      <strong>Dữ liệu rõ ràng theo môi trường.</strong><br/>
-     {live?"Các số liệu tài khoản/khóa học/bài làm được đọc từ Supabase.": "Đây là giao diện Demo, không hiển thị các thống kê người dùng giả."}
+     {live?"Các số liệu tài khoản/khóa học/bài làm và Roadmap được đọc qua Supabase RLS khi khả dụng.": "Đây là giao diện Demo, không hiển thị các thống kê người dùng giả."}
      {" "}Roadmap có phần ghi nhận lịch sử, không tự động xác nhận tính năng đã kiểm thử.</div>
    </section>
   </div>

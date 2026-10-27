@@ -61,6 +61,7 @@ export function RoadmapBoard({mode}:Props){
  const [ready,setReady]=useState(false);
  const [dirty,setDirty]=useState(false);
  const [saving,setSaving]=useState(false);
+ const [serverBackupPending,setServerBackupPending]=useState(false);
  const [version,setVersion]=useState(0);
  const [notice,setNotice]=useState("");
  const [failure,setFailure]=useState("");
@@ -218,6 +219,24 @@ export function RoadmapBoard({mode}:Props){
  }
  function toggleExpand(id:string){
   setExpanded(prev=>prev.includes(id)?prev.filter(x=>x!==id):[...prev,id]);
+ }
+ async function downloadServerBackup(){
+  if(mode!=="live")return;
+  setServerBackupPending(true);setFailure("");
+  try{
+   const response=await fetch("/api/admin/roadmap/backup",{cache:"no-store"});
+   if(!response.ok){
+    const result=await response.json() as {error?:string};
+    throw Error(result.error??"Không thể tải bản sao lưu từ Supabase.");
+   }
+   const blob=await response.blob();
+   const url=URL.createObjectURL(blob),link=document.createElement("a");
+   link.href=url;link.download="xcn-roadmap-server-backup.json";
+   document.body.appendChild(link);link.click();link.remove();
+   setTimeout(()=>URL.revokeObjectURL(url),1000);
+   setNotice("Đã tải Roadmap chính thức từ Supabase, gồm phiên bản và lịch sử thay đổi.");
+  }catch(error){setFailure(error instanceof Error?error.message:"Không thể sao lưu Supabase.");}
+  finally{setServerBackupPending(false);}
  }
  async function save(){
   if(mode==="demo"){setNotice("Dữ liệu đã lưu trên trình duyệt này.");return;}
@@ -400,6 +419,10 @@ export function RoadmapBoard({mode}:Props){
     <button type="button" onClick={()=>downloadFile("xuong-cong-nghe-roadmap.json",JSON.stringify({version:1,items},null,2),"application/json")}>
       <Download size={15}/> Sao lưu JSON
     </button>
+    {mode==="live"&&<button type="button" disabled={serverBackupPending}
+     onClick={()=>void downloadServerBackup()} aria-busy={serverBackupPending}>
+      <Download size={15}/>{serverBackupPending?"Đang tải bản sao…":"Sao lưu từ Supabase"}
+    </button>}
     <input type="file" ref={fileRef} accept=".json,application/json" className="sr-only" aria-label="Nhập bản sao lưu" onChange={e=>void importFile(e)}/>
     <button type="button" onClick={()=>fileRef.current?.click()}>Nhập JSON</button>
     <button type="button" disabled={saving||conflict||!ready||(mode==="live"&&!dirty&&version>0)}

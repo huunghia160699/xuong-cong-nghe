@@ -6,7 +6,7 @@
 > Checklist đầy đủ: [XCN_FUNCTION_ROADMAP_CHECKLIST.md](XCN_FUNCTION_ROADMAP_CHECKLIST.md).
 > Sơ đồ toàn website: [XCN_SITEMAP_2026_2028.md](XCN_SITEMAP_2026_2028.md).
 > Trang quản trị: `/admin` · Timeline: `/admin/roadmap` · Sitemap: `/admin/sitemap`.
-> Tiến độ lưu cục bộ trong Demo; migration RLS `20261026163500_admin_roadmap.sql` **đã áp dụng** lên Supabase production (kiểm chứng trực tiếp 27/10/2026), nhưng **chưa bật Live** vì chưa có tài khoản và chưa kiểm thử bằng JWT thật.
+> Production đã bật Live với Supabase; Demo ở Preview/Dev. Roadmap đã có dữ liệu thật nhưng chưa nghiệm thu JWT hai vai trò. Các thay đổi nguồn phải được kiểm thử và deploy trước khi coi là hoàn thành.
 > **Rà soát bảo mật:** [ADMIN_ROADMAP_MIGRATION_SECURITY_REVIEW.md](ADMIN_ROADMAP_MIGRATION_SECURITY_REVIEW.md) — ghi nhận tại thời điểm review trước áp migration.
 > **Bước tiếp theo:** [ADMIN_ROADMAP_REAL_JWT_TEST_PLAN.md](ADMIN_ROADMAP_REAL_JWT_TEST_PLAN.md) — tạo tài khoản thử nghiệm đã xác minh và kiểm thử phân quyền thực tế; chưa ghi nhận PASS.
 

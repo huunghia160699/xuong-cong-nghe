@@ -25,6 +25,15 @@
 
 ## III. Lịch sử
 
+### 2026-10-27 — Tiếp tục P0: sao lưu Roadmap từ server, kiểm kê quyền và dữ liệu Dashboard
+- **Phạm vi:** hoãn phương án laptop-server theo yêu cầu, tiếp tục P0 kiến trúc/bảo mật/giám sát.
+- **DB đối soát read-only:** 14/14 bảng public bật RLS, nhưng nhiều bảng cũ còn cấp anon INSERT; policy phải được xét cùng grant. Kiểm tra `public.is_admin()` SECURITY DEFINER callable từ anon; chưa thay quyền khi thiếu test JWT hai vai trò. `user_role` thật gồm student/teacher/admin, vai trò trường là kế hoạch. Lưu truy vấn tại `scripts/sql/audit-supabase-permissions.sql`.
+- **Sao lưu Roadmap thật:** `GET /api/admin/roadmap/backup` sau Auth Admin Live, trả JSON với Roadmap, version, SHA-256 và lịch sử sự kiện phân trang, từ chối xuất không đầy đủ. Có nút tải riêng; không thay đổi DB.
+- **Dashboard dữ liệu thật:** trang `/admin` đọc Roadmap từ Supabase và hiển thị lỗi khi truy vấn thất bại; `/admin/he-thong` đọc version và số sự kiện thực, phân biệt bật Live với JWT đã nghiệm thu.
+- **Tài liệu:** `docs/PHASE_00_SECURITY_AND_RECOVERY_20261027.md` ghi rõ quyền chưa có, quy trình backup/restore, lỗ hổng cần đánh giá, không đánh dấu toàn bộ backup/audit DONE.
+- **Checklist:** đầu việc kiểm kê module/routes trong system-architecture được tích trong GitHub + seed sau khi đối chiếu sitemap/code; trạng thái Supabase không bị sửa ngầm. Những đầu việc security/recovery khác vẫn mở.
+- **Kiểm thử:** `tests/admin-roadmap-server-backup.test.mjs`, toàn bộ CI và smoke; ghi nhận kết quả theo commit cuối. Không tạo thêm Auth user, không đổi vai trò/mật khẩu, không áp migration hay tạo dữ liệu production.
+
 ### 2026-10-27 — Đối chiếu Roadmap Live, chạy browser QA và tiếp tục kiểm tra tài khoản
 - **Preflight production:** 1 Roadmap server phiên bản 4, 20 việc lớn, 4 sự kiện; mốc Admin được đánh dấu 12/13, GitHub seed 10/13, mục xác minh JWT đa tài khoản bị tích trước khi Student đã xác minh. Không tự reset progress hoặc xóa ghi chú.
 - **Thay đổi:** `roadmap-reconcile.ts` và `roadmap-reconcile-panel.tsx` so sánh danh sách ID/checklist/note và báo trạng thái khác nhau giữa Supabase, GitHub seed và draft; gộp không phá huỷ chỉ thêm ID thiếu, checkpoint trước thay đổi. Chọn giữ bản máy chủ vẫn lưu draft cũ vào history.

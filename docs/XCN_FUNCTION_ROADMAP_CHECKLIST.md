@@ -41,7 +41,7 @@
 - **ID:** `system-architecture` · **Ưu tiên:** P0 · **Phân hệ:** Hệ thống
 - **Mục tiêu:** Kiểm kê hệ thống, chuẩn schema, quyền, môi trường và vận hành.
 
-- [ ] Kiểm kê module/routes đã có và tình trạng vận hành
+- [x] Kiểm kê module/routes đã có và tình trạng vận hành
 - [ ] Khóa mô hình quyền khách/học sinh/giáo viên/trường/admin
 - [ ] Thiết lập Dev, Preview, Production và migration an toàn
 - [ ] Kiểm tra RLS chống đọc/sửa dữ liệu chéo
