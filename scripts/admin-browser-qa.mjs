@@ -104,13 +104,33 @@ try{
  assert.equal(button,true,"Reconciliation panel must expand");
  await sleep(180);
  assert.equal(await evaluate("!!document.getElementById('xcn-roadmap-reconcile-details')"),true);
+ const dialogOpened=await evaluate(`(()=>{
+  const btn=[...document.querySelectorAll('button')].find(b=>b.textContent.trim()==='Thêm việc lớn');
+  btn?.click();return !!btn;
+ })()`);
+ assert.equal(dialogOpened,true);
+ await sleep(120);
+ assert.equal(await evaluate("!!document.querySelector('[role=dialog][aria-modal=true]')"),true);
+ assert.equal(await evaluate("document.querySelector('[role=dialog]')?.contains(document.activeElement)"),true);
+ await call("Input.dispatchKeyEvent",{type:"keyDown",key:"Escape",code:"Escape"});
+ await call("Input.dispatchKeyEvent",{type:"keyUp",key:"Escape",code:"Escape"});
+ await sleep(150);
+ assert.equal(await evaluate("!!document.querySelector('[role=dialog]')"),false,"Escape should close editor");
+ await visit("/admin",360);
+ const menuOpened=await evaluate(`(()=>{
+  const button=document.querySelector('button[aria-label="Mở menu"]');
+  if(!button)return false;button.click();return true;
+ })()`);
+ assert.equal(menuOpened,true,"mobile sidebar toggle missing");
+ await sleep(90);
+ assert.equal(await evaluate("document.querySelector('button[aria-label=\"Mở menu\"]')?.getAttribute('aria-expanded')"),"true");
  await visit("/admin/cau-hinh",360);
  const form=await evaluate(`(()=>{
   const inputs=[...document.querySelectorAll('input')].filter(i=>i.getBoundingClientRect().width>0);
   return inputs.length>0 && !![...document.querySelectorAll('button')].find(b=>b.textContent.includes('Lưu bản nháp'));
  })()`);
  assert.equal(form,true,"Settings editor is interactive");
- console.log("PASS keyboard focus, compare panel, settings controls");
+ console.log("PASS keyboard focus, modal focus trap/Escape, mobile menu, compare panel and settings controls");
 }catch(error){console.error("ADMIN VISUAL QA FAILED:",error);process.exitCode=1;}
 finally{
  ws?.close();child.kill("SIGTERM");
