@@ -25,8 +25,10 @@ export function decodeDraft(value:unknown):RoadmapDraft|null{
  return raw as RoadmapDraft;
 }
 export function shouldOfferRecovery(draft:RoadmapDraft|null,serverItems:RoadmapEpic[],serverVersion:number){
- if(!draft?.pending)return false;
+ if(!draft)return false;
  if(!validateRoadmap(serverItems))return true;
+ // Even Demo-era drafts (pending=false) may contain edits not yet imported into Supabase.
+ // Always ask before discarding a divergent local copy; never silently overwrite either side.
  return JSON.stringify(draft.items)!==JSON.stringify(serverItems)||
-  draft.baseVersion!==serverVersion;
+  (draft.pending&&draft.baseVersion!==serverVersion);
 }
