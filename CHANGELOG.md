@@ -1,5 +1,11 @@
 # Changelog
 
+## 2026-10-27 — Roadmap server-sync & audit events
+- Roadmap ở chế độ Live tự lưu Supabase sau mỗi thay đổi, kiểm tra revision khi tải từ phiên khác và chặn xung đột `409`.
+- Dùng bảng `admin_roadmap_events` với RLS chỉ-đọc cho Admin, trigger audit lưu nhật ký thay đổi ở database cùng giao dịch cập nhật Roadmap.
+- Bản nháp Demo được đề nghị nhập lại khi bật Live thay vì âm thầm ghi đè. Chỉ những thay đổi lưu thành công mới xuất hiện trong lịch sử server.
+- Chế độ Demo vẫn lưu cục bộ trong thời gian chờ xác minh Auth và cấu hình Vercel.
+
 ## 2026-10-27 — Trung tâm Admin mở rộng, tạm dừng Auth/JWT
 - Thêm 6 trang Admin: `/admin/nguoi-dung`, `/admin/phan-quyen`, `/admin/cau-hinh`, `/admin/nhat-ky`, `/admin/he-thong`, `/admin/bao-cao`.
 - Người dùng: đọc danh sách hồ sơ chỉ trong Live đã xác thực Admin; tìm kiếm, lọc vai trò, phân trang và xuất CSV trung hòa công thức bảng tính.
