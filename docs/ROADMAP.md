@@ -1,7 +1,8 @@
 # Roadmap — Xưởng Công Nghệ
 
 > **Ưu tiên hiện tại (khóa phạm vi): Admin + Sitemap + Roadmap trước mọi module khác.**
-> **Roadmap đồng bộ thực:** Khi có Admin JWT hợp lệ và bật Live, mỗi chỉnh sửa được tự lưu lên Supabase và tạo sự kiện DB tại `admin_roadmap_events`; kiểm tra xung đột phiên bản trước khi ghi. PR #54. Auth JWT và cấu hình production còn chờ xác minh; Demo chưa đồng bộ đa thiết bị.
+> **Kiểm kê 27/10/2026:** Production đã bật Live, có 1 Roadmap Supabase phiên bản 4 (20 mốc) và 4 sự kiện; Admin đã xác minh, Student chưa. Hai dấu tích trên Supabase khác checklist GitHub; mục JWT đa tài khoản chưa được nghiệm thu. Báo cáo: [ADMIN_PHASE_00_RECONCILIATION_QA_OPERATIONS_20261027.md](ADMIN_PHASE_00_RECONCILIATION_QA_OPERATIONS_20261027.md).
+> **Roadmap đồng bộ thực:** Với Admin JWT hợp lệ và Live đang bật, mỗi chỉnh sửa được tự lưu lên Supabase và tạo sự kiện DB tại `admin_roadmap_events`; kiểm tra xung đột phiên bản trước khi ghi. PR #54. JWT hai vai trò còn chờ nghiệm thu; bản nháp Demo không phải dữ liệu chính.
 > Checklist đầy đủ: [XCN_FUNCTION_ROADMAP_CHECKLIST.md](XCN_FUNCTION_ROADMAP_CHECKLIST.md).
 > Sơ đồ toàn website: [XCN_SITEMAP_2026_2028.md](XCN_SITEMAP_2026_2028.md).
 > Trang quản trị: `/admin` · Timeline: `/admin/roadmap` · Sitemap: `/admin/sitemap`.
