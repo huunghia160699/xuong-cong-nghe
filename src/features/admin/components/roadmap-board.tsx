@@ -88,6 +88,26 @@ export function RoadmapBoard({mode}:Props){
  const [history,setHistory]=useState<RoadmapSnapshot[]>([]);
  const [historyOpen,setHistoryOpen]=useState(false);
  const fileRef=useRef<HTMLInputElement>(null);
+ const editorRef=useRef<HTMLFormElement>(null);
+ const editorOpen=Boolean(editor);
+ useEffect(()=>{
+  if(!editorOpen)return;
+  const previous=document.activeElement instanceof HTMLElement?document.activeElement:null;
+  const modal=editorRef.current;
+  const active=modal?.querySelector<HTMLElement>("input,select,textarea,button");
+  active?.focus();
+  const onKey=(event:KeyboardEvent)=>{
+   if(event.key==="Escape"){event.preventDefault();setEditor(null);return;}
+   if(event.key!=="Tab"||!modal)return;
+   const list=[...modal.querySelectorAll<HTMLElement>("button:not(:disabled),input:not(:disabled),select:not(:disabled),textarea:not(:disabled)")];
+   if(!list.length)return;
+   const first=list[0],last=list[list.length-1];
+   if(event.shiftKey&&document.activeElement===first){event.preventDefault();last.focus();}
+   else if(!event.shiftKey&&document.activeElement===last){event.preventDefault();first.focus();}
+  };
+  document.addEventListener("keydown",onKey);
+  return()=>{document.removeEventListener("keydown",onKey);previous?.focus();};
+ },[editorOpen]);
  useEffect(()=>{latestItems.current=items;},[items]);
 
  useEffect(()=>{
@@ -547,7 +567,7 @@ export function RoadmapBoard({mode}:Props){
     })}
    </div>}
   {editor&&<div className="xcn-admin-modal-backdrop" onPointerDown={event=>{if(event.target===event.currentTarget)setEditor(null);}}>
-   <form className="xcn-admin-modal" role="dialog" aria-modal="true" aria-label={editor.id?"Sửa việc lớn":"Thêm việc lớn"}
+   <form ref={editorRef} className="xcn-admin-modal" role="dialog" aria-modal="true" aria-label={editor.id?"Sửa việc lớn":"Thêm việc lớn"}
     onSubmit={event=>{event.preventDefault();commitEditor();}}>
     <div className="xcn-admin-modal-head"><h2>{editor.id?"Chỉnh sửa việc lớn":"Tạo mốc công việc"}</h2>
      <button aria-label="Đóng" type="button" onClick={()=>setEditor(null)}><X size={19}/></button></div>
