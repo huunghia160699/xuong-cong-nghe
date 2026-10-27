@@ -30,11 +30,11 @@
 - [x] Nhật ký thao tác cục bộ và xuất dữ liệu
 - [x] Trung tâm giám sát trạng thái module và quyền
 - [x] Báo cáo tổng hợp dữ liệu server, không hiển thị số giả Demo
-- [ ] Lưu roadmap an toàn, xuất Markdown/JSON và nhập sao lưu
+- [x] Lưu roadmap an toàn, xuất Markdown/JSON và nhập sao lưu
 - [ ] Xác minh quyền admin, RLS và kiểm thử đa tài khoản
 - [ ] Kiểm thử trực quan mobile/tablet/desktop và Production
 
-**Nhật ký / ghi chú:** xem các mục của node tương ứng trong `/admin/roadmap` (có loại Ghi chú / Đã thêm / Đã sửa) và `docs/WORKLOG_AND_RULES.md`.
+**Ghi nhận 27/10/2026:** Supabase đã có Roadmap v4 và 4 sự kiện lưu; mục sao lưu/khôi phục đã có kiểm thử mã. Mục JWT hai vai trò vẫn chưa nghiệm thu, dù hiện đang được tích trên Supabase.\n\n**Nhật ký / ghi chú:** xem các mục của node tương ứng trong `/admin/roadmap` (có loại Ghi chú / Đã thêm / Đã sửa) và `docs/WORKLOG_AND_RULES.md`.
 
 ### Kiến trúc, dữ liệu và bảo mật
 
