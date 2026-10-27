@@ -8,7 +8,7 @@ const copy=value=>structuredClone(value);
 const checklist=readFileSync("docs/XCN_FUNCTION_ROADMAP_CHECKLIST.md","utf8");
 const board=readFileSync("src/features/admin/components/roadmap-board.tsx","utf8");
 test("GitHub checklist and seeded roadmap contain matching tasks and checked states",()=>{
- const sections=checklist.split(/^### /m).slice(1);
+ const sections=checklist.split(/^(?=## |### )/m).filter(s=>s.startsWith("### "));
  for(const epic of ROADMAP_INITIAL){
   const part=sections.find(s=>s.includes("**ID:** `"+epic.id+"`"));
   assert.ok(part,"No matching GitHub milestone "+epic.id);
