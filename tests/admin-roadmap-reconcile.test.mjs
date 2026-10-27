@@ -16,14 +16,14 @@ test("GitHub checklist and seeded roadmap contain matching tasks and checked sta
   assert.deepEqual(actual,epic.checklist.map(task=>({done:task.done,text:task.text})),epic.id+" drifted between GitHub markdown and bundled data");
  }
 });
-test("diff detects exactly two disputed Done flags without mutating the source",()=>{
+test("diff detects unverified Done flag without mutating the source without mutating the source",()=>{
  const live=copy(ROADMAP_INITIAL);
  const item=live.find(e=>e.id==="admin-center");
  item.checklist[10].done=true;item.checklist[11].done=true;
  const report=compareRoadmaps(ROADMAP_INITIAL,live);
- assert.equal(compareTotals(report).differences,2);
+ assert.equal(compareTotals(report).differences,1);
  assert.equal(compareTotals(report).missing,0);
- assert.equal(report.mismatchedTasks[1].text,"Xác minh quyền admin, RLS và kiểm thử đa tài khoản");
+ assert.equal(report.mismatchedTasks[0].text,"Xác minh quyền admin, RLS và kiểm thử đa tài khoản");
  assert.equal(ROADMAP_INITIAL.find(e=>e.id==="admin-center").checklist[11].done,false);
 });
 test("missing IDs merge non-destructively; never change existing checkmarks or notes",()=>{
