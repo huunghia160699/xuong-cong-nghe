@@ -30,10 +30,10 @@ create policy "Only admins read committed Roadmap changes"
   );
 
 -- A trigger function in a non-exposed schema is not an HTTP endpoint.
-create schema if not exists private;
-revoke all on schema private from public, anon, authenticated;
+create schema if not exists xcn_private;
+revoke all on schema xcn_private from public, anon, authenticated;
 
-create function private.write_admin_roadmap_event()
+create function xcn_private.write_admin_roadmap_event()
 returns trigger
 language plpgsql
 security definer
@@ -156,11 +156,11 @@ begin
   return new;
 end;
 $$;
-revoke all on function private.write_admin_roadmap_event() from public, anon, authenticated;
+revoke all on function xcn_private.write_admin_roadmap_event() from public, anon, authenticated;
 
 create trigger admin_roadmap_change_audit
 after insert or update of items,version on public.admin_roadmap
-for each row execute function private.write_admin_roadmap_event();
+for each row execute function xcn_private.write_admin_roadmap_event();
 
 comment on table public.admin_roadmap_events is
  'Append-only server-side activity: one immutable event row for each saved roadmap version.';
