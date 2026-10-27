@@ -386,7 +386,7 @@ export function RoadmapBoard({mode}:Props){
      className="xcn-admin-primary" onClick={()=>void save()}><Save size={15}/>{saving?"Đang lưu…":mode==="live"?"Đồng bộ ngay":"Lưu thay đổi"}</button>
    </div>
   </div>
-  <RoadmapReconcilePanel mode={mode} version={version} items={items}
+  <RoadmapReconcilePanel mode={mode} version={version} items={items} serverAvailable={mode==="live"&&!syncIssue&&ready}
    sourceDraft={draftForComparison?.items??null} onImportMissing={mergeMissingFrom}/>
   <RoadmapHistoryPanel history={history} open={historyOpen}
    onCreate={()=>{if(checkpoint("Điểm khôi phục thủ công"))setNotice("Đã tạo điểm khôi phục trên thiết bị.");}}
