@@ -1,5 +1,10 @@
 # Changelog
 
+## 2026-10-29 — Chuẩn hóa tiêu đề 11 trang Admin
+- Bỏ các nhãn xanh kiểu “ADMIN / NGƯỜI DÙNG”, các kicker ở trên tiêu đề và dòng “Khu vực quản trị” tại sidebar.
+- Tất cả trang Admin dùng cùng cách trình bày h1, mô tả, khoảng cách, các nút thao tác và padding responsive; màn Tổng quan đổi sang heading chuẩn, Khóa học/Kho tài liệu bỏ nhãn và link dư thừa trên tiêu đề.
+- Giữ nguyên các nút chức năng, trạng thái, dữ liệu và Supabase/Auth; bổ sung hồi quy CSS/React và Chromium kiểm tra 11 route.
+
 ## 2026-10-29 — Roadmap tận dụng chiều ngang, tối giản tiêu đề
 - Bỏ giới hạn `max-width:1230px` cho trang Roadmap Admin; nội dung chiếm toàn bộ vùng có sẵn sau padding responsive chung.
 - Xóa breadcrumb `Admin / Roadmap` và dòng phụ `TRUNG TÂM ĐIỀU HÀNH / TIẾN ĐỘ SẢN PHẨM` phía trên tiêu đề, giữ h1 và mô tả.

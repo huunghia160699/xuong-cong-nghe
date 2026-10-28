@@ -46,7 +46,7 @@ export function AdminSettings(){
  }
  if(!loaded)return <div className="xcn-admin-panel">Đang tải bản nháp…</div>;
  return <div className="xcn-admin">
-  <div className="xcn-admin-heading"><div><div className="xcn-admin-kicker">ADMIN / CẤU HÌNH</div><h1>Cấu hình website</h1>
+  <div className="xcn-admin-heading"><div><h1>Cấu hình website</h1>
    <p>Soạn, xem trước, lưu và sao lưu cấu hình. Khi chưa có Admin Live, bản nháp không làm thay đổi trang công khai.</p></div>
    <button type="button" className="xcn-admin-primary" onClick={save}><Save size={16}/> Lưu bản nháp</button>
   </div>

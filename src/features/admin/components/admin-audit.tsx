@@ -17,7 +17,7 @@ export function AdminAudit(){
   const a=document.createElement("a");a.href=url;a.download="xcn-local-audit.json";a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);
  }
  return <div className="xcn-admin">
-  <div className="xcn-admin-heading"><div><div className="xcn-admin-kicker">ADMIN / NHẬT KÝ</div><h1>Nhật ký thao tác</h1>
+  <div className="xcn-admin-heading"><div><h1>Nhật ký thao tác</h1>
    <p>Ghi lại những thao tác cục bộ trong trình duyệt, phục vụ rà soát cấu hình và Roadmap. Không phải audit log bất biến trên máy chủ.</p></div>
    <button className="xcn-admin-primary" onClick={exportJson} disabled={!filtered.length}><Download size={16}/> Xuất nhật ký</button>
   </div>

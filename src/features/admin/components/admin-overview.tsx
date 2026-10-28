@@ -30,22 +30,17 @@ export function AdminOverview({live,stats,roadmap}:Props){
  const source=live?(roadmap??[]):ROADMAP_INITIAL;
  const totals=roadmapTotals(source);
  return <div className="xcn-admin">
-  <section className="xcn-admin-hero">
-   <div className="relative z-10">
-    <div className="xcn-admin-kicker">XƯỞNG CÔNG NGHỆ / TRUNG TÂM ĐIỀU HÀNH</div>
+  <div className="xcn-admin-heading">
+   <div>
     <h1>Quản trị toàn nền tảng</h1>
     <p>Định hướng một hệ sinh thái giáo dục số lấy Tin học thực hành làm trọng tâm.
      Theo dõi toàn bộ phân hệ, quản lý tài nguyên hiện có và phát triển dự án theo các mốc rõ ràng.</p>
-    <div className="xcn-admin-hero-actions">
-     <Link href="/admin/roadmap"><ListTodo size={16}/> Quản lý Roadmap</Link>
-     <Link href="/admin/sitemap"><Map size={16}/> Xem Sitemap <ArrowRight size={15}/></Link>
-    </div>
    </div>
-   <div className="xcn-admin-hero-aside">
-    <span>Ưu tiên hiện tại</span><strong>Admin + Roadmap</strong>
-    <p>Hoàn thiện công cụ quản trị, giữ riêng quyền Live chưa xác minh.</p>
+   <div className="xcn-admin-heading-actions">
+    <Link href="/admin/roadmap" className="xcn-admin-primary"><ListTodo size={16}/> Quản lý Roadmap</Link>
+    <Link href="/admin/sitemap" className="xcn-admin-secondary"><Map size={16}/> Xem Sitemap <ArrowRight size={15}/></Link>
    </div>
-  </section>
+  </div>
   <div className="xcn-admin-stat-grid">
    {[
     {label:live?"Tài khoản Supabase":"Tài khoản",value:live?stats?.users??"—":"Chế độ Demo"},
@@ -75,6 +70,7 @@ export function AdminOverview({live,stats,roadmap}:Props){
        <span className="shrink-0 text-blue-700">{roadmapProgress(item)}%</span>
       </Link>)}
     </div>
+    <div className="xcn-admin-note"><strong>Ưu tiên hiện tại: Admin + Roadmap.</strong> Hoàn thiện công cụ quản trị, giữ riêng quyền Live chưa xác minh.</div>
     <div className="xcn-admin-note"><ShieldCheck size={18} className="mb-2 text-blue-700"/>
      <strong>Dữ liệu rõ ràng theo môi trường.</strong><br/>
      {live?"Các số liệu tài khoản/khóa học/bài làm và Roadmap được đọc qua Supabase RLS khi khả dụng.": "Đây là giao diện Demo, không hiển thị các thống kê người dùng giả."}

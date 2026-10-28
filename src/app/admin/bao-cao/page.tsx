@@ -7,7 +7,7 @@ export default async function AdminReportsPage(){
  try{stats=await loadAdminStats();}catch{stats={live:true,values:{},error:true};}
  const max=Math.max(1,...Object.values(stats.values).filter((v):v is number=>typeof v==="number"));
  return <div className="xcn-admin">
-  <div className="xcn-admin-heading"><div><div className="xcn-admin-kicker">ADMIN / BÁO CÁO</div><h1>Báo cáo nền tảng</h1>
+  <div className="xcn-admin-heading"><div><h1>Báo cáo nền tảng</h1>
    <p>Tổng hợp số liệu cơ sở dữ liệu khi có quyền Admin Live. Không đưa ra số liệu giả trong Demo.</p></div>
    <Link className="xcn-admin-primary" href="/admin/he-thong"><BarChart3 size={16}/> Giám sát hệ thống</Link>
   </div>

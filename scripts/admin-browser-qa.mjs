@@ -16,19 +16,35 @@ mkdirSync(output,{recursive:true});
 const chrome=process.env.CHROME_BIN??(
  ["/usr/bin/google-chrome","/usr/bin/google-chrome-stable","/usr/bin/chromium"]
  .find(p=>existsSync(p))??"google-chrome");
-const profile=mkdtempSync(join(tmpdir(),"xcn-admin-chrome-"));
-const child=spawn(chrome,["--headless=new","--no-sandbox","--disable-gpu","--disable-dev-shm-usage",
- "--hide-scrollbars","--window-size=1440,900","--remote-debugging-port=0","--user-data-dir="+profile,"about:blank"],{stdio:"ignore"});
 const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+function launchChrome(){
+ const profile=mkdtempSync(join(tmpdir(),"xcn-admin-chrome-"));
+ const child=spawn(chrome,["--headless=new","--no-sandbox","--disable-gpu","--disable-dev-shm-usage",
+  "--no-first-run","--disable-extensions","--hide-scrollbars","--window-size=1440,900",
+  "--remote-debugging-port=0","--user-data-dir="+profile,"about:blank"],
+  {stdio:["ignore","ignore","pipe"]});
+ let stderr="";
+ child.stderr?.on("data",data=>{stderr=(stderr+data.toString()).slice(-2500);});
+ return {profile,child,diagnostics:()=>stderr};
+}
+let instance;
 let ws;let calls=new Map(),serial=0;
 try{
  let port;
- for(let i=0;i<90;i++){
-  if(child.exitCode!==null)throw Error("Chrome quit before remote debugging began");
-  try{port=Number(readFileSync(join(profile,"DevToolsActivePort"),"utf8").split("\n")[0]);if(port)break;}catch{}
-  await sleep(150);
+ for(let attempt=1;attempt<=3&&!port;attempt++){
+  instance=launchChrome();
+  for(let i=0;i<90;i++){
+   if(instance.child.exitCode!==null||instance.child.signalCode)break;
+   try{port=Number(readFileSync(join(instance.profile,"DevToolsActivePort"),"utf8").split("\n")[0]);if(port)break;}catch{}
+   await sleep(150);
+  }
+  if(port)break;
+  console.warn("Chrome launch attempt "+attempt+"/3 failed:",instance.diagnostics().slice(-1000));
+  instance.child.kill("SIGTERM");
+  await sleep(300);
+  rmSync(instance.profile,{recursive:true,force:true});
  }
- if(!port)throw Error("Chrome debugging port unavailable");
+ if(!port)throw Error("Chrome debugging port unavailable after three launch attempts");
  const target=await (await fetch("http://127.0.0.1:"+port+"/json/new?"+encodeURIComponent(base),{method:"PUT"})).json();
  ws=new WebSocket(target.webSocketDebuggerUrl);
  await new Promise((resolve,reject)=>{ws.addEventListener("open",resolve,{once:true});ws.addEventListener("error",reject,{once:true});});
@@ -73,7 +89,9 @@ try{
   if(!result.main)throw Error("Missing <main> "+route);
   if(result.scrollWidth>result.viewport+5)
     throw Error("Horizontal overflow "+route+" @ "+width+": "+result.scrollWidth+" > "+result.viewport);
-  if(result.visibleControls<3)throw Error("Missing interaction controls "+route);
+  // Demo-only informational screens may have no in-page actions beyond shell navigation.
+  const minControls=["/admin/khoa-hoc","/admin/kho-tai-lieu"].includes(route)?1:3;
+  if(result.visibleControls<minControls)throw Error("Missing interaction controls "+route);
   const name=route.replaceAll("/","-").replace(/^-+/,"")||"home";
   const shot=await call("Page.captureScreenshot",{format:"png",fromSurface:true,captureBeyondViewport:false});
   writeFileSync(join(output,name+"-"+width+".png"),Buffer.from(shot.data,"base64"));
@@ -82,11 +100,36 @@ try{
  }
  const routes=[
  "/admin","/admin/roadmap","/admin/sitemap","/admin/nguoi-dung","/admin/phan-quyen",
- "/admin/cau-hinh","/admin/nhat-ky","/admin/he-thong","/admin/bao-cao"
+ "/admin/cau-hinh","/admin/nhat-ky","/admin/he-thong","/admin/bao-cao",
+ "/admin/khoa-hoc","/admin/kho-tai-lieu"
  ];
  for(const width of [360,768,1280]){
   for(const route of routes)await visit(route,width);
  }
+ // Every Admin route must start with the same one-level heading; no blue eyebrow label.
+ for(const route of routes){
+  await visit(route,1280);
+  const layout=await evaluate(`(()=>{
+   const main=document.querySelector("main");
+   const heading=main?.querySelector(".xcn-admin-heading, .xcn-roadmap-heading");
+   const h1=heading?.querySelector("h1");
+   const sidebar=document.querySelector("aside.xcn-admin-sidebar-frame");
+   return {
+    heading:!!heading,h1:h1?.textContent?.trim()??"",
+    size:h1?parseFloat(getComputedStyle(h1).fontSize):0,
+    lineHeight:h1?getComputedStyle(h1).lineHeight:"",
+    kicker:!!main?.querySelector(".xcn-admin-kicker"),
+    areaLabel:sidebar?.textContent?.includes("Khu vực quản trị")??false,
+    pageWidth:main?.getBoundingClientRect().width??0,
+    headingWidth:heading?.getBoundingClientRect().width??0
+   };
+  })()`);
+  assert.ok(layout.heading&&layout.h1,"Missing shared page heading: "+route);
+  assert.ok(!layout.kicker&&!layout.areaLabel,"Decorative label visible: "+route);
+  assert.ok(layout.size>=28&&layout.size<=42,"Heading scale inconsistent: "+route+" "+layout.size);
+  assert.ok(layout.headingWidth>0&&layout.headingWidth<=layout.pageWidth+2,"Heading overflow: "+route);
+ }
+ console.log("PASS unified Admin headings, without eyebrow or sidebar area label, on all routes");
  // Roadmap should fill the Admin content pane at both narrow and large resolutions.
  for(const width of [360,1280,1920,2560]){
   await visit("/admin/roadmap",width,900);
@@ -188,6 +231,6 @@ try{
  console.log("PASS keyboard focus, modal focus trap/Escape, mobile menu, compare panel and settings controls");
 }catch(error){console.error("ADMIN VISUAL QA FAILED:",error);process.exitCode=1;}
 finally{
- ws?.close();child.kill("SIGTERM");
- await sleep(250);rmSync(profile,{recursive:true,force:true});
+ ws?.close();instance?.child.kill("SIGTERM");
+ await sleep(250);if(instance)rmSync(instance.profile,{recursive:true,force:true});
 }
