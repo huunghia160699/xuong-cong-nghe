@@ -9,7 +9,7 @@ export default function AdminSitemapPage(){
  const total=ADMIN_SITEMAP.reduce((sum,g)=>sum+g.links.length,0);
  return <div className="xcn-admin">
   <div className="xcn-admin-heading">
-   <div><div className="xcn-admin-kicker">KIẾN TRÚC SẢN PHẨM / SITEMAP</div><h1>Sơ đồ toàn website</h1>
+   <div><h1>Sơ đồ toàn website</h1>
     <p>Các đường dẫn có thật và mục tiêu tương lai được phân biệt rõ; không dẫn người dùng vào trang chưa lập trình.</p></div>
    <Link href="/admin/roadmap" className="xcn-admin-primary"><Map size={17}/> Xem Roadmap</Link>
   </div>
