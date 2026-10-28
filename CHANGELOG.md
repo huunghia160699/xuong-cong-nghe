@@ -1,5 +1,12 @@
 # Changelog
 
+## 2026-10-28 — Admin có loading và sidebar gọn hơn
+- Thêm `/admin/loading.tsx` để hiển thị skeleton và thanh tiến trình khi tải nội dung Server Component, có hỗ trợ giảm chuyển động.
+- Thanh điều hướng Admin hiển thị vòng chờ nhỏ tại liên kết đang chuyển trang; giữ nguyên cách điều hướng và quyền truy cập.
+- Thu khoảng cách của tiêu đề “Khu vực quản trị”, các nhóm menu và thay hộp “Đã kết nối Supabase” dài bằng trạng thái một dòng “Supabase · Live” hoặc “Chế độ Demo”, kèm nút đăng xuất khi Live.
+- Sidebar học viên không thay đổi; không đụng dữ liệu, quyền Supabase hoặc cấu hình Vercel.
+
+
 ## 2026-10-27 — Đối chiếu Roadmap, QA responsive và kiểm kê bảo mật Admin
 - Trang Roadmap bổ sung đối chiếu Supabase so với GitHub checklist/dữ liệu gốc và bản nháp trình duyệt; chỉ gộp mốc, việc nhỏ, ghi chú thiếu theo ID, không tự sửa dấu tích.
 - Trước khi chọn giữ Supabase, bản nháp cũ được sao lưu thành checkpoint; không âm thầm làm mất lịch sử người dùng.
