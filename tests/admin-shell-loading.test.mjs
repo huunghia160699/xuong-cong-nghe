@@ -27,9 +27,15 @@ test("Admin navigation shows a pending indicator without affecting student menu"
 });
 
 test("Admin sidebar is compact and Live label is explicitly a mode, not connectivity test", () => {
-  assert.match(shell, /isAdmin \? "mt-5 px-2 tracking-\[\.13em\]" : "mt-9 tracking-\[\.2em\]"/);
-  assert.match(shell, /isAdmin && "mt-2 space-y-0\.5"/);
-  assert.match(shell, /isAdmin && "gap-2\.5 px-2\.5 py-1\.5 text-\[13px\]"/);
+  assert.match(shell, /isAdmin \? "xcn-admin-sidebar-title" : "mt-9 text-\[10px\] tracking-\[\.2em\]"/);
+  assert.match(shell, /isAdmin \? "xcn-admin-sidebar-nav" : "mt-3 space-y-1"/);
+  assert.match(shell, /isAdmin \? "xcn-admin-sidebar-link" : "gap-3 px-3 py-2 text-sm"/);
+  assert.match(shell, /isAdmin \? "xcn-admin-sidebar-frame" : "overflow-y-auto p-5"/);
+  assert.match(shell, /xcn-admin-sidebar-footer/);
+  assert.match(adminCss, /\.xcn-admin-sidebar-link\{[^}]*font-size:clamp\(14px,1\.7dvh,16px\)/);
+  assert.match(adminCss, /\.xcn-admin-sidebar-nav\{[^}]*flex:1;min-height:0;overflow-y:auto/);
+  assert.match(adminCss, /\.xcn-admin-sidebar-footer\{flex-shrink:0/);
+  assert.match(adminCss, /--xcn-admin-nav-row:clamp\(38px,4\.85dvh,56px\)/);
   assert.match(shell, /"Supabase · Live"/);
   assert.match(shell, /"Chế độ Demo"/);
   assert.match(shell, /{isAdmin \? \(/);
