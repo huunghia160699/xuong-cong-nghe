@@ -1,5 +1,11 @@
 # Changelog
 
+## 2026-10-28 — Sidebar Admin co giãn theo chiều cao màn hình
+- Tăng cỡ chữ menu từ 13px lên 14–16px, icon 18–20px, hàng điều hướng co giãn bằng `clamp()` và `dvh` thay vì thu nhỏ cố định.
+- Bố trí thương hiệu, nhãn “Khu vực quản trị” và trạng thái Supabase ở vị trí cố định trong sidebar; chỉ vùng menu có thể cuộn khi màn hình thấp.
+- Áp dụng cho sidebar Admin ở cả desktop/mobile; sidebar học viên không đổi. Bổ sung QA chiều cao 680px/1080px, không thay đổi Supabase/Auth.
+
+
 ## 2026-10-28 — Admin có loading và sidebar gọn hơn
 - Thêm `/admin/loading.tsx` để hiển thị skeleton và thanh tiến trình khi tải nội dung Server Component, có hỗ trợ giảm chuyển động.
 - Thanh điều hướng Admin hiển thị vòng chờ nhỏ tại liên kết đang chuyển trang; giữ nguyên cách điều hướng và quyền truy cập.

@@ -87,6 +87,39 @@ try{
  for(const width of [360,768,1280]){
   for(const route of routes)await visit(route,width);
  }
+ // Viewport-height QA: on short desktops only nav scrolls, footer remains visible.
+ await visit("/admin",1280,680);
+ const shortSidebar=await evaluate(`(()=>{
+  const frame=document.querySelector('aside.xcn-admin-sidebar-frame');
+  const nav=frame?.querySelector('.xcn-admin-sidebar-nav');
+  const footer=frame?.querySelector('.xcn-admin-sidebar-footer');
+  const link=nav?.querySelector('a');
+  if(!frame||!nav||!footer||!link)return null;
+  return {font:parseFloat(getComputedStyle(link).fontSize),
+   footerBottom:footer.getBoundingClientRect().bottom,
+   navHeight:nav.clientHeight,navContent:nav.scrollHeight,
+   frameHeight:frame.getBoundingClientRect().height,viewport:innerHeight};
+ })()`);
+ assert.ok(shortSidebar,"Admin sidebar should be rendered on desktop");
+ assert.ok(shortSidebar.font>=14,"Admin links must remain readable on a short screen");
+ assert.ok(shortSidebar.navContent>shortSidebar.navHeight,"Short screen should scroll the nav instead of shrinking links");
+ assert.ok(shortSidebar.footerBottom<=shortSidebar.viewport+1,"Admin status must remain visible on short screens");
+ await visit("/admin",1280,1080);
+ const tallSidebar=await evaluate(`(()=>{
+  const frame=document.querySelector('aside.xcn-admin-sidebar-frame');
+  const nav=frame?.querySelector('.xcn-admin-sidebar-nav');
+  const footer=frame?.querySelector('.xcn-admin-sidebar-footer');
+  const link=nav?.querySelector('a');
+  if(!frame||!nav||!footer||!link)return null;
+  return {font:parseFloat(getComputedStyle(link).fontSize),
+   footerBottom:footer.getBoundingClientRect().bottom,
+   navHeight:nav.clientHeight,navContent:nav.scrollHeight,
+   viewport:innerHeight};
+ })()`);
+ assert.ok(tallSidebar?.font>shortSidebar.font,"Tall screens should display larger Admin navigation");
+ assert.ok(tallSidebar.navContent<=tallSidebar.navHeight+2,"Tall screen should fit the full Admin navigation");
+ assert.ok(tallSidebar.footerBottom<=tallSidebar.viewport+1,"Admin status must remain visible on tall screens");
+ console.log("PASS Admin sidebar height adaptive 680px/1080px",shortSidebar,tallSidebar);
  await visit("/admin/roadmap",360);
  const before=await evaluate("document.querySelector('[aria-label=\"Tìm trong roadmap\"]')?.value");
  assert.equal(before,"");

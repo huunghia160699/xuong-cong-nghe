@@ -322,3 +322,17 @@
 .xcn-admin-loading-progress span{display:block;width:35%;height:100%;border-radius:inherit;background:#005bfd;animation:xcn-admin-loading-slide 1.1s ease-in-out infinite}
 @keyframes xcn-admin-loading-slide{from{transform:translateX(-110%)}to{transform:translateX(310%)}}
 @media(prefers-reduced-motion:reduce){.xcn-admin-loading-progress span{width:100%;opacity:.45;transform:none;animation:none}}
+
+
+/* Admin sidebar: readable typography that expands with viewport height.
+   Keep branding and session controls visible; scroll only navigation on short screens. */
+.xcn-admin-sidebar-frame{overflow:hidden;padding:clamp(14px,1.9dvh,22px) 18px}
+.xcn-admin-sidebar{--xcn-admin-nav-row:clamp(38px,4.85dvh,56px)}
+.xcn-admin-sidebar-title{margin-top:clamp(13px,2.2dvh,24px);padding-inline:10px;letter-spacing:.12em;font-size:clamp(11px,1.3dvh,12px);line-height:1.5}
+.xcn-admin-sidebar-nav{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain;margin-top:clamp(8px,1.2dvh,14px);padding:0 2px clamp(6px,.9dvh,12px) 0;scrollbar-width:thin;scrollbar-color:#c5d3e5 transparent}
+.xcn-admin-sidebar-group{margin:clamp(12px,1.5dvh,18px) 0 clamp(3px,.4dvh,6px);padding-inline:10px;font-size:clamp(11px,1.2dvh,12px);line-height:1.4;letter-spacing:.1em}
+.xcn-admin-sidebar-group:first-child{margin-top:0}
+.xcn-admin-sidebar-link{min-height:var(--xcn-admin-nav-row);gap:11px;padding:clamp(8px,1.12dvh,13px) 10px;font-size:clamp(14px,1.7dvh,16px);line-height:1.25}
+.xcn-admin-sidebar-link>svg{width:clamp(18px,2dvh,20px);height:clamp(18px,2dvh,20px)}
+.xcn-admin-sidebar-footer{flex-shrink:0;padding-top:clamp(9px,1.3dvh,14px)}
+.xcn-admin-sidebar-status{font-size:12px;line-height:1.5}

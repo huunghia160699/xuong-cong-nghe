@@ -25,6 +25,14 @@
 
 ## III. Lịch sử
 
+### 2026-10-28 — Tăng kích thước sidebar Admin theo chiều cao màn hình
+- **Mục tiêu:** sửa việc menu bên trái quá nhỏ sau đợt tối ưu, cân đối hơn theo chiều cao màn hình thực tế.
+- **Thay đổi:** `src/components/app-shell.tsx` tách vùng menu Admin cuộn độc lập; `src/app/admin/admin.css` có kích thước hàng/icon/chữ theo `dvh` + `clamp()`, ghim trạng thái Supabase ở cuối; `tests/admin-shell-loading.test.mjs` và `scripts/admin-browser-qa.mjs` bổ sung kiểm tra responsive độ cao 680/1080px.
+- **Quyết định:** không ép thu chữ dưới 14px trên màn hình thấp; điều hướng cuộn khi chiều cao không đủ. Student shell giữ nguyên, không tác động DB/Auth.
+- **Kiểm thử:** cần kiểm tra CI đầy đủ và Chrome QA, nhất là footer không che menu.
+- **GitHub/Vercel:** chỉ cập nhật trạng thái phát hành sau khi CI và Production SHA được xác minh.
+
+
 ### 2026-10-28 — Loading Admin và tối ưu sidebar trái
 - **Mục tiêu:** Admin có trạng thái loading khi tải trang/chuyển trang; thu gọn nhãn khu vực quản trị và trạng thái Supabase trong sidebar.
 - **Thay đổi và file:** `src/app/admin/loading.tsx` (skeleton), `src/app/admin/admin.css` (progress + reduced motion), `src/components/app-shell.tsx` (sidebar Admin cô đọng, `useLinkStatus`), `tests/admin-shell-loading.test.mjs`.
