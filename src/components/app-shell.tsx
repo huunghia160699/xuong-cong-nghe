@@ -1,7 +1,7 @@
 "use client";
 
 import { Fragment, useState } from "react";
-import Link from "next/link";
+import Link, { useLinkStatus } from "next/link";
 import { Menu, X } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { Brand } from "@/components/brand";
@@ -10,33 +10,54 @@ import { cn } from "@/lib/utils";
 import { isLiveMode } from "@/lib/supabase/config";
 import { signOutAction } from "@/features/auth/actions";
 
+function AdminNavigationPending() {
+  const { pending } = useLinkStatus();
+  return pending ? (
+    <span role="status" aria-label="Đang chuyển trang" className="ml-auto h-3.5 w-3.5 shrink-0 animate-spin rounded-full border-2 border-current border-t-transparent motion-reduce:animate-none" />
+  ) : null;
+}
+
 export function AppShell({ role, children }: { role: "student" | "admin"; children: React.ReactNode }) {
   const pathname = usePathname();
   const [menuOpen, setMenuOpen] = useState(false);
-  const nav = role === "admin" ? adminNav : studentNav;
+  const isAdmin = role === "admin";
+  const nav = isAdmin ? adminNav : studentNav;
   const live = isLiveMode();
 
   const sidebar = (mobile: boolean) => <div className="flex h-full flex-col">
     <div className="flex items-center justify-between"><Brand />{mobile && <button type="button" onClick={() => setMenuOpen(false)} aria-label="Đóng menu" className="grid h-9 w-9 place-items-center rounded-lg border border-zinc-200"><X size={19} /></button>}</div>
-    <div className="mt-9 text-[10px] font-bold uppercase tracking-[.2em] text-zinc-400">{role === "admin" ? "Khu vực quản trị" : "Không gian học tập"}</div>
-    <nav className="mt-3 space-y-1" aria-label={role === "admin" ? "Menu quản trị" : "Menu học viên"}>
+    <div className={cn("text-[10px] font-bold uppercase text-zinc-400", isAdmin ? "mt-5 px-2 tracking-[.13em]" : "mt-9 tracking-[.2em]")}>{isAdmin ? "Khu vực quản trị" : "Không gian học tập"}</div>
+    <nav className={cn("mt-3 space-y-1", isAdmin && "mt-2 space-y-0.5")} aria-label={isAdmin ? "Menu quản trị" : "Menu học viên"}>
       {nav.map((item,index) => {
         const active = item.href.split("#")[0] === pathname && !item.href.includes("#");
         const Icon = item.icon;
-        const group = role==="admin" ? ({0:"Điều hành",3:"Tài khoản & an toàn",5:"Cấu hình & vận hành",9:"Nội dung",11:"Công cụ"} as Record<number,string>)[index] : undefined;
+        const group = isAdmin ? ({0:"Điều hành",3:"Tài khoản & an toàn",5:"Cấu hình & vận hành",9:"Nội dung",11:"Công cụ"} as Record<number,string>)[index] : undefined;
         return <Fragment key={item.href}>
-          {group&&<div className="mb-2 mt-4 px-3 text-[10px] font-extrabold uppercase tracking-[.13em] text-slate-400">{group}</div>}
+          {group&&<div className="mb-1 mt-3 px-2 text-[10px] font-extrabold uppercase tracking-[.1em] text-slate-400">{group}</div>}
           <Link href={item.href} onClick={() => setMenuOpen(false)}
-          className={cn("flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-zinc-600 transition hover:bg-zinc-100 hover:text-ink", active && "bg-ink text-white hover:bg-ink hover:text-white")}>
-          <Icon size={17} /><span>{item.label}</span>
+          className={cn("flex min-w-0 items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-zinc-600 transition hover:bg-zinc-100 hover:text-ink", isAdmin && "gap-2.5 px-2.5 py-1.5 text-[13px]", active && "bg-ink text-white hover:bg-ink hover:text-white")}>
+          <Icon size={17} className="shrink-0" /><span className="min-w-0 flex-1 truncate">{item.label}</span>
+          {isAdmin && <AdminNavigationPending />}
         </Link></Fragment>;
       })}
     </nav>
-    <div className="mt-auto rounded-xl border border-zinc-200 bg-paper p-4">
-      <div className="text-xs font-semibold">{live ? "Đã kết nối Supabase" : "Chế độ trình diễn"}</div>
-      <p className="mt-1 text-xs leading-5 text-zinc-500">{live ? "Tài khoản đã xác thực. Quyền được kiểm tra ở server." : "Bài học và kết quả lưu trên thiết bị; chưa đồng bộ."}</p>
-      {live && <form action={signOutAction} className="mt-3"><button type="submit" className="text-xs font-semibold underline">Đăng xuất</button></form>}
-    </div>
+    {isAdmin ? (
+      <div className="mt-auto border-t border-zinc-200 px-1 pt-3">
+        <div className="flex flex-wrap items-center justify-between gap-x-2 gap-y-1">
+          <span className="inline-flex min-w-0 items-center gap-1.5 text-[11px] font-semibold text-zinc-600" title={live ? "Đang sử dụng chế độ Supabase Live" : "Đang sử dụng dữ liệu trình diễn"}>
+            <span aria-hidden="true" className={cn("h-1.5 w-1.5 shrink-0 rounded-full", live ? "bg-emerald-500" : "bg-zinc-400")} />
+            {live ? "Supabase · Live" : "Chế độ Demo"}
+          </span>
+          {live && <form action={signOutAction}><button type="submit" className="text-[11px] font-semibold text-zinc-600 underline underline-offset-2 hover:text-ink">Đăng xuất</button></form>}
+        </div>
+      </div>
+    ) : (
+      <div className="mt-auto rounded-xl border border-zinc-200 bg-paper p-4">
+        <div className="text-xs font-semibold">{live ? "Đã kết nối Supabase" : "Chế độ trình diễn"}</div>
+        <p className="mt-1 text-xs leading-5 text-zinc-500">{live ? "Tài khoản đã xác thực. Quyền được kiểm tra ở server." : "Bài học và kết quả lưu trên thiết bị; chưa đồng bộ."}</p>
+        {live && <form action={signOutAction} className="mt-3"><button type="submit" className="text-xs font-semibold underline">Đăng xuất</button></form>}
+      </div>
+    )}
   </div>;
 
   return <div className="xcn-ui min-h-screen bg-paper">

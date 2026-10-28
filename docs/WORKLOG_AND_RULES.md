@@ -25,6 +25,14 @@
 
 ## III. Lịch sử
 
+### 2026-10-28 — Loading Admin và tối ưu sidebar trái
+- **Mục tiêu:** Admin có trạng thái loading khi tải trang/chuyển trang; thu gọn nhãn khu vực quản trị và trạng thái Supabase trong sidebar.
+- **Thay đổi và file:** `src/app/admin/loading.tsx` (skeleton), `src/app/admin/admin.css` (progress + reduced motion), `src/components/app-shell.tsx` (sidebar Admin cô đọng, `useLinkStatus`), `tests/admin-shell-loading.test.mjs`.
+- **Quyết định:** Nhãn “Supabase · Live” chỉ thể hiện chế độ ứng dụng, không khẳng định kết nối mạng đang khỏe; nhánh student giữ footer cũ. Không thay đổi Auth, DB, RLS hoặc biến môi trường.
+- **Kiểm thử:** Thêm regression test; cần xác minh CI trên PR và QA trình duyệt trước khi xem là phát hành.
+- **Vercel Production:** Chưa triển khai từ thay đổi này; chỉ phát hành khi có kiểm thử và kiểm tra SHA.
+
+
 ### 2026-10-27 — Tiếp tục P0: sao lưu Roadmap từ server, kiểm kê quyền và dữ liệu Dashboard
 - **Phạm vi:** hoãn phương án laptop-server theo yêu cầu, tiếp tục P0 kiến trúc/bảo mật/giám sát.
 - **DB đối soát read-only:** 14/14 bảng public bật RLS, nhưng nhiều bảng cũ còn cấp anon INSERT; policy phải được xét cùng grant. Kiểm tra `public.is_admin()` SECURITY DEFINER callable từ anon; chưa thay quyền khi thiếu test JWT hai vai trò. `user_role` thật gồm student/teacher/admin, vai trò trường là kế hoạch. Lưu truy vấn tại `scripts/sql/audit-supabase-permissions.sql`.
