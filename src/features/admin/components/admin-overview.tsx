@@ -70,6 +70,7 @@ export function AdminOverview({live,stats,roadmap}:Props){
        <span className="shrink-0 text-blue-700">{roadmapProgress(item)}%</span>
       </Link>)}
     </div>
+    <div className="xcn-admin-note"><strong>Ưu tiên hiện tại: Admin + Roadmap.</strong> Hoàn thiện công cụ quản trị, giữ riêng quyền Live chưa xác minh.</div>
     <div className="xcn-admin-note"><ShieldCheck size={18} className="mb-2 text-blue-700"/>
      <strong>Dữ liệu rõ ràng theo môi trường.</strong><br/>
      {live?"Các số liệu tài khoản/khóa học/bài làm và Roadmap được đọc qua Supabase RLS khi khả dụng.": "Đây là giao diện Demo, không hiển thị các thống kê người dùng giả."}
