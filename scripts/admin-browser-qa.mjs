@@ -82,11 +82,36 @@ try{
  }
  const routes=[
  "/admin","/admin/roadmap","/admin/sitemap","/admin/nguoi-dung","/admin/phan-quyen",
- "/admin/cau-hinh","/admin/nhat-ky","/admin/he-thong","/admin/bao-cao"
+ "/admin/cau-hinh","/admin/nhat-ky","/admin/he-thong","/admin/bao-cao",
+ "/admin/khoa-hoc","/admin/kho-tai-lieu"
  ];
  for(const width of [360,768,1280]){
   for(const route of routes)await visit(route,width);
  }
+ // Every Admin route must start with the same one-level heading; no blue eyebrow label.
+ for(const route of routes){
+  await visit(route,1280);
+  const layout=await evaluate(`(()=>{
+   const main=document.querySelector("main");
+   const heading=main?.querySelector(".xcn-admin-heading, .xcn-roadmap-heading");
+   const h1=heading?.querySelector("h1");
+   const sidebar=document.querySelector("aside.xcn-admin-sidebar-frame");
+   return {
+    heading:!!heading,h1:h1?.textContent?.trim()??"",
+    size:h1?parseFloat(getComputedStyle(h1).fontSize):0,
+    lineHeight:h1?getComputedStyle(h1).lineHeight:"",
+    kicker:!!main?.querySelector(".xcn-admin-kicker"),
+    areaLabel:sidebar?.textContent?.includes("Khu vực quản trị")??false,
+    pageWidth:main?.getBoundingClientRect().width??0,
+    headingWidth:heading?.getBoundingClientRect().width??0
+   };
+  })()`);
+  assert.ok(layout.heading&&layout.h1,"Missing shared page heading: "+route);
+  assert.ok(!layout.kicker&&!layout.areaLabel,"Decorative label visible: "+route);
+  assert.ok(layout.size>=28&&layout.size<=42,"Heading scale inconsistent: "+route+" "+layout.size);
+  assert.ok(layout.headingWidth>0&&layout.headingWidth<=layout.pageWidth+2,"Heading overflow: "+route);
+ }
+ console.log("PASS unified Admin headings, without eyebrow or sidebar area label, on all routes");
  // Roadmap should fill the Admin content pane at both narrow and large resolutions.
  for(const width of [360,1280,1920,2560]){
   await visit("/admin/roadmap",width,900);
