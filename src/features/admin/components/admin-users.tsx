@@ -13,7 +13,7 @@ export function AdminUsers({rows,live,error}:{rows:AdminProfile[];live:boolean;e
   a.href=url;a.download="xcn-admin-profiles.csv";a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);
  };
  return <div className="xcn-admin">
-  <div className="xcn-admin-heading"><div><div className="xcn-admin-kicker">ADMIN / NGƯỜI DÙNG</div><h1>Quản lý người dùng</h1>
+  <div className="xcn-admin-heading"><div><h1>Quản lý người dùng</h1>
    <p>Tra cứu, phân loại và xuất danh sách hồ sơ. Không hiển thị email hoặc mật khẩu; không cấp quyền Admin qua giao diện.</p></div>
    <button className="xcn-admin-primary" onClick={exportCsv} disabled={!live||filtered.length===0}><Download size={16}/> Xuất CSV</button>
   </div>
