@@ -26,7 +26,7 @@ export function AppShell({ role, children }: { role: "student" | "admin"; childr
 
   const sidebar = (mobile: boolean) => <div className={cn("flex h-full min-h-0 flex-col", isAdmin && "xcn-admin-sidebar")}>
     <div className="flex items-center justify-between"><Brand />{mobile && <button type="button" onClick={() => setMenuOpen(false)} aria-label="Đóng menu" className="grid h-9 w-9 place-items-center rounded-lg border border-zinc-200"><X size={19} /></button>}</div>
-    <div className={cn("font-bold uppercase text-zinc-400", isAdmin ? "xcn-admin-sidebar-title" : "mt-9 text-[10px] tracking-[.2em]")}>{isAdmin ? "Khu vực quản trị" : "Không gian học tập"}</div>
+    {!isAdmin && <div className="mt-9 text-[10px] font-bold uppercase tracking-[.2em] text-zinc-400">Không gian học tập</div>}
     <nav className={cn(isAdmin ? "xcn-admin-sidebar-nav" : "mt-3 space-y-1")} aria-label={isAdmin ? "Menu quản trị" : "Menu học viên"}>
       {nav.map((item,index) => {
         const active = item.href.split("#")[0] === pathname && !item.href.includes("#");
