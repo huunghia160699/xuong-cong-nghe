@@ -1,24 +1,16 @@
 /* Admin Command Center & vertical Roadmap — isolated to the admin namespace. */
-.xcn-admin{--admin-navy:#04122d;--admin-blue:#005bfd;--admin-ice:#f0f6fd;color:var(--admin-navy)}
-.xcn-admin-kicker{font:700 11px/1.5 var(--font-body),sans-serif;letter-spacing:.15em;color:#4276b9;text-transform:uppercase}
-.xcn-admin h1,.xcn-roadmap h1{font-size:clamp(26px,3vw,39px);font-weight:800;letter-spacing:-.045em;line-height:1.2;margin:7px 0}
-.xcn-admin-heading,.xcn-roadmap-heading{display:flex;justify-content:space-between;align-items:flex-start;gap:20px;flex-wrap:wrap;margin-bottom:22px}
-.xcn-admin-heading p,.xcn-roadmap-heading p{color:#60738b;line-height:1.7;font-size:14px;max-width:740px;margin:6px 0 0}
+.xcn-admin{--admin-navy:#04122d;--admin-blue:#005bfd;--admin-ice:#f0f6fd;width:100%;min-width:0;color:var(--admin-navy)}
+.xcn-admin h1,.xcn-roadmap h1{font-size:clamp(28px,2.65vw,42px);font-weight:800;letter-spacing:-.045em;line-height:1.2;margin:0}
+.xcn-admin-heading,.xcn-roadmap-heading{display:flex;justify-content:space-between;align-items:flex-start;gap:clamp(12px,1.6vw,22px);flex-wrap:wrap;margin-bottom:clamp(18px,2.3dvh,26px)}
+.xcn-admin-heading>div:first-child,.xcn-roadmap-heading>div:first-child{flex:1 1 380px;min-width:0}
+.xcn-admin-heading p,.xcn-roadmap-heading p{color:#60738b;line-height:1.65;font-size:14px;max-width:860px;margin:8px 0 0}
+.xcn-admin-heading-actions{display:flex;align-items:center;gap:9px;flex-wrap:wrap}
+.xcn-admin-secondary{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:1px solid #ccdced;border-radius:10px;background:#fff;color:#174b8a;padding:10px 14px;font:700 13px/1.3 var(--font-body),sans-serif;text-decoration:none;white-space:nowrap}
+.xcn-admin-secondary:hover{background:#f0f6fd}
 .xcn-admin-primary{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:1px solid var(--admin-blue)!important;border-radius:10px;background:var(--admin-blue)!important;color:#fff!important;padding:10px 15px;font:700 13px/1.3 var(--font-body),sans-serif;cursor:pointer;text-decoration:none;white-space:nowrap}
 .xcn-admin-primary:hover{background:#004ad0!important}
 .xcn-admin-primary:disabled{opacity:.5;cursor:not-allowed}
-.xcn-admin-hero{background:linear-gradient(110deg,#071c41,#10488e);color:#fff;border-radius:18px;padding:clamp(22px,3vw,38px);display:grid;grid-template-columns:1.6fr .7fr;gap:22px;overflow:hidden;position:relative}
-.xcn-admin-hero:after{content:"";position:absolute;right:-70px;top:-140px;width:350px;height:350px;border:1px solid #8edafb40;border-radius:50%;box-shadow:0 0 0 60px #8edafb0d,0 0 0 120px #8edafb0b;pointer-events:none}
-.xcn-admin-hero h1{font-size:clamp(27px,3vw,43px);margin:10px 0;color:#fff}
-.xcn-admin-hero p{font-size:14px;line-height:1.7;color:#d0e5ff;max-width:600px}
-.xcn-admin-hero .xcn-admin-kicker{color:#8de6fb}
-.xcn-admin-hero-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:22px}
-.xcn-admin-hero-actions a{display:inline-flex;align-items:center;gap:8px;padding:11px 15px;background:#fff;color:#0d3372;border-radius:10px;font-size:13px;font-weight:700}
-.xcn-admin-hero-actions a+ a{border:1px solid #fff7;background:#ffffff14;color:#fff}
-.xcn-admin-hero-aside{align-self:center;position:relative;z-index:1;border:1px solid #ffffff42;background:#ffffff14;border-radius:16px;padding:18px;backdrop-filter:blur(7px)}
-.xcn-admin-hero-aside strong{font-size:32px;letter-spacing:-.04em}
-.xcn-admin-hero-aside span{font-size:12px;display:block;color:#cbe3fd}
-.xcn-admin-stat-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin:20px 0 26px}
+.xcn-admin-stat-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin:0 0 24px}
 .xcn-admin-stat{background:#fff;border:1px solid #dfe7f0;border-radius:14px;padding:19px 20px}
 .xcn-admin-stat span{font-size:12px;color:#63758c}
 .xcn-admin-stat strong{display:block;margin-top:8px;font-size:27px;letter-spacing:-.05em}
@@ -40,7 +32,6 @@
 .xcn-admin-note{background:#f4f8fc;border-radius:12px;padding:14px;margin-top:12px;font-size:12px;line-height:1.7;color:#52677d}
 .xcn-roadmap{width:100%;min-width:0;max-width:none;margin:0}
 .xcn-roadmap-heading{margin-bottom:18px}
-.xcn-roadmap-heading h1{font-size:clamp(30px,3.6vw,42px)}
 .xcn-roadmap-metrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin:0 0 20px}
 .xcn-roadmap-metric{background:#fff;border:1px solid #e2e9f2;border-radius:13px;padding:15px 17px}
 .xcn-roadmap-metric span{color:#677b91;font-size:12px;display:block}
@@ -328,8 +319,7 @@
    Keep branding and session controls visible; scroll only navigation on short screens. */
 .xcn-admin-sidebar-frame{overflow:hidden;padding:clamp(14px,1.9dvh,22px) 18px}
 .xcn-admin-sidebar{--xcn-admin-nav-row:clamp(38px,4.85dvh,56px)}
-.xcn-admin-sidebar-title{margin-top:clamp(13px,2.2dvh,24px);padding-inline:10px;letter-spacing:.12em;font-size:clamp(11px,1.3dvh,12px);line-height:1.5}
-.xcn-admin-sidebar-nav{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain;margin-top:clamp(8px,1.2dvh,14px);padding:0 2px clamp(6px,.9dvh,12px) 0;scrollbar-width:thin;scrollbar-color:#c5d3e5 transparent}
+.xcn-admin-sidebar-nav{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain;margin-top:clamp(16px,2.4dvh,28px);padding:0 2px clamp(6px,.9dvh,12px) 0;scrollbar-width:thin;scrollbar-color:#c5d3e5 transparent}
 .xcn-admin-sidebar-group{margin:clamp(12px,1.5dvh,18px) 0 clamp(3px,.4dvh,6px);padding-inline:10px;font-size:clamp(11px,1.2dvh,12px);line-height:1.4;letter-spacing:.1em}
 .xcn-admin-sidebar-group:first-child{margin-top:0}
 .xcn-admin-sidebar-link{min-height:var(--xcn-admin-nav-row);gap:11px;padding:clamp(8px,1.12dvh,13px) 10px;font-size:clamp(14px,1.7dvh,16px);line-height:1.25}
