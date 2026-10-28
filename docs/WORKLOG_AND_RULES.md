@@ -25,6 +25,12 @@
 
 ## III. Lịch sử
 
+### 2026-10-29 — Roadmap full-width và tiêu đề một cấp
+- **Mục tiêu:** tận dụng bề rộng màn hình lớn, giảm khoảng trống hai bên; bỏ chữ trên h1 của Roadmap.
+- **Thay đổi:** bỏ trần 1230px ở `admin.css`; gỡ breadcrumb trong `admin/roadmap/page.tsx` và kicker của `roadmap-board.tsx`; kiểm tra lại bằng unit test và Chromium QA 360/1280/1920/2560.
+- **Quyết định:** giữ padding chuẩn từ `xcn-app-main`; không đổi các màn Admin khác, sidebar học viên, Supabase/Auth hoặc dữ liệu.
+- **Kiểm thử/Release:** xác minh GitHub CI, Vercel và SHA sau PR; không coi kết quả mô phỏng là QA đăng nhập Production.
+
 ### 2026-10-28 — Tăng kích thước sidebar Admin theo chiều cao màn hình
 - **Mục tiêu:** sửa việc menu bên trái quá nhỏ sau đợt tối ưu, cân đối hơn theo chiều cao màn hình thực tế.
 - **Thay đổi:** `src/components/app-shell.tsx` tách vùng menu Admin cuộn độc lập; `src/app/admin/admin.css` có kích thước hàng/icon/chữ theo `dvh` + `clamp()`, ghim trạng thái Supabase ở cuối; `tests/admin-shell-loading.test.mjs` và `scripts/admin-browser-qa.mjs` bổ sung kiểm tra responsive độ cao 680/1080px.
