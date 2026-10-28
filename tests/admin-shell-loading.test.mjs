@@ -27,7 +27,8 @@ test("Admin navigation shows a pending indicator without affecting student menu"
 });
 
 test("Admin sidebar is compact and Live label is explicitly a mode, not connectivity test", () => {
-  assert.match(shell, /isAdmin \? "xcn-admin-sidebar-title" : "mt-9 text-\[10px\] tracking-\[\.2em\]"/);
+  assert.match(shell, /!isAdmin && <div className="mt-9 text-\[10px\] font-bold uppercase/);
+  assert.doesNotMatch(shell, /Khu vực quản trị/);
   assert.match(shell, /isAdmin \? "xcn-admin-sidebar-nav" : "mt-3 space-y-1"/);
   assert.match(shell, /isAdmin \? "xcn-admin-sidebar-link" : "gap-3 px-3 py-2 text-sm"/);
   assert.match(shell, /isAdmin \? "xcn-admin-sidebar-frame" : "overflow-y-auto p-5"/);
