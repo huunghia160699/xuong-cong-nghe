@@ -87,6 +87,28 @@ try{
  for(const width of [360,768,1280]){
   for(const route of routes)await visit(route,width);
  }
+ // Roadmap should fill the Admin content pane at both narrow and large resolutions.
+ for(const width of [360,1280,1920,2560]){
+  await visit("/admin/roadmap",width,900);
+  const layout=await evaluate(`(()=>{
+   const parent=document.querySelector("main .xcn-admin");
+   const roadmap=document.querySelector("main .xcn-roadmap");
+   const title=roadmap?.querySelector("h1");
+   if(!parent||!roadmap||!title)return null;
+   return {parentWidth:parent.getBoundingClientRect().width,
+    roadmapWidth:roadmap.getBoundingClientRect().width,
+    title:title.textContent.trim(),
+    topLevelChildren:parent.children.length,
+    hasKicker:!!roadmap.querySelector(".xcn-admin-kicker")};
+  })()`);
+  assert.ok(layout,"Roadmap must render @ "+width);
+  assert.ok(Math.abs(layout.parentWidth-layout.roadmapWidth)<2,
+   "Roadmap must use available pane width @ "+width+": "+JSON.stringify(layout));
+  assert.equal(layout.title,"Roadmap phát triển");
+  assert.equal(layout.topLevelChildren,1,"No breadcrumb above Roadmap @ "+width);
+  assert.equal(layout.hasKicker,false,"No eyebrow above Roadmap title @ "+width);
+ }
+ console.log("PASS Roadmap fluid width / concise heading at 360, 1280, 1920, 2560");
  // Viewport-height QA: on short desktops only nav scrolls, footer remains visible.
  await visit("/admin",1280,680);
  const shortSidebar=await evaluate(`(()=>{
