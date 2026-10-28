@@ -25,6 +25,13 @@
 
 ## III. Lịch sử
 
+### 2026-10-29 — Đồng bộ heading và loại bỏ kicker trên toàn Admin
+- **Mục tiêu:** 11 trang Admin có một hệ tiêu đề rõ ràng, không nhãn chữ xanh trước h1 hay chữ “Khu vực quản trị” trong sidebar.
+- **Thay đổi:** xóa kicker các page/components; chuyển Tổng quan, Khóa học và Kho tài liệu sang `xcn-admin-heading`; đồng nhất CSS với `xcn-roadmap-heading`; giữ navigation nhóm và nút Supabase · Live/Đăng xuất.
+- **Thiết kế:** h1 và mô tả có cùng kích thước/khoảng cách, phân bổ chiều ngang theo viewport; nút action vẫn nổi bật, text trạng thái vẫn giữ.
+- **Kiểm thử:** unit regression và Chromium QA trên 11 route ở 360/768/1280, xác minh CI, Vercel SHA sau release.
+- **Phạm vi:** không sửa API, DB, Auth, cấu hình Supabase hoặc dữ liệu đang lưu.
+
 ### 2026-10-29 — Roadmap full-width và tiêu đề một cấp
 - **Mục tiêu:** tận dụng bề rộng màn hình lớn, giảm khoảng trống hai bên; bỏ chữ trên h1 của Roadmap.
 - **Thay đổi:** bỏ trần 1230px ở `admin.css`; gỡ breadcrumb trong `admin/roadmap/page.tsx` và kicker của `roadmap-board.tsx`; kiểm tra lại bằng unit test và Chromium QA 360/1280/1920/2560.
