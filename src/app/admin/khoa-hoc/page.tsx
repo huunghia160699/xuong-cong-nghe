@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { redirect } from "next/navigation";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
@@ -9,9 +8,13 @@ import { createSupabaseServerClient } from "@/lib/supabase/server";
 const labels: Record<string,string> = { draft:"Bản nháp", published:"Đã xuất bản", archived:"Lưu trữ" };
 
 export default async function AdminCourses({ searchParams }: { searchParams: Promise<{error?:string; notice?:string}> }) {
-  if (!isLiveMode()) return <main className="mx-auto max-w-3xl p-5"><h1 className="text-2xl font-bold">Quản lý khóa học</h1>
-    <p className="mt-4 text-sm text-zinc-600">Chức năng tạo và xuất bản khóa học yêu cầu cấu hình Supabase. Chế độ hiện tại chỉ trình diễn giao diện.</p>
-    <Link href="/admin" className="mt-5 inline-block text-sm underline">Về tổng quan</Link></main>;
+  if (!isLiveMode()) return <div className="xcn-admin">
+    <div className="xcn-admin-heading"><div>
+      <h1>Quản lý khóa học</h1>
+      <p>Tạo và thay đổi trạng thái xuất bản của khóa học.</p>
+    </div></div>
+    <div className="xcn-admin-notice">Chức năng tạo và xuất bản khóa học yêu cầu cấu hình Supabase. Chế độ hiện tại chỉ trình diễn giao diện.</div>
+  </div>;
   const params = await searchParams;
   const supabase = await createSupabaseServerClient();
   const { data: { user } } = await supabase.auth.getUser();
@@ -19,12 +22,11 @@ export default async function AdminCourses({ searchParams }: { searchParams: Pro
   const { data: courses, error } = await supabase.from("courses")
     .select("id,slug,title,category,status,created_at").order("created_at", { ascending:false });
   if (error) throw new Error("Không thể tải khóa học. Kiểm tra chính sách RLS.");
-  return <div className="w-full">
-    <div className="flex items-center justify-between gap-4"><div><Badge>Quản trị nội dung</Badge>
-      <h1 className="mt-3 text-4xl font-bold">Khóa học</h1>
-      <p className="mt-2 text-sm text-zinc-600">Tạo và thay đổi trạng thái xuất bản của khóa học.</p></div>
-      <Link href="/admin" className="text-sm font-medium underline">Tổng quan</Link>
-    </div>
+  return <div className="xcn-admin">
+    <div className="xcn-admin-heading"><div>
+      <h1>Quản lý khóa học</h1>
+      <p>Tạo và thay đổi trạng thái xuất bản của khóa học.</p>
+    </div></div>
     {params.error && <p role="alert" className="mt-5 rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-700">Không thể thực hiện yêu cầu. Kiểm tra thông tin, slug trùng hoặc quyền quản trị.</p>}
     {params.notice && <p role="status" className="mt-5 rounded-lg border border-zinc-200 bg-white p-4 text-sm">Thay đổi đã được lưu.</p>}
     <Card className="mt-6 p-5"><h2 className="text-lg font-semibold">Tạo khóa học mới</h2>
