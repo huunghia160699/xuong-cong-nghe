@@ -17,11 +17,11 @@ const diagram=read("docs/XCN_SITEMAP_2026_2028.md");
 const roadmapPage=read("src/app/admin/roadmap/page.tsx");
 
 test("Roadmap fills the Admin content width without redundant labels above its title",()=>{
- assert.match(css,/\\.xcn-roadmap\\{width:100%;min-width:0;max-width:none;margin:0\\}/);
- assert.doesNotMatch(css,/\\.xcn-roadmap\\{max-width:1230px/);
- assert.doesNotMatch(roadmapPage, /<Link href="\\/admin"/);
- assert.doesNotMatch(board, /TRUNG TÂM ĐIỀU HÀNH \\/ TIẾN ĐỘ SẢN PHẨM/);
- assert.match(board, /<h1>Roadmap phát triển<\\/h1>/);
+ assert.ok(css.includes(".xcn-roadmap{width:100%;min-width:0;max-width:none;margin:0}"));
+ assert.ok(!css.includes(".xcn-roadmap{max-width:1230px"));
+ assert.ok(!roadmapPage.includes('<Link href="/admin"'));
+ assert.ok(!board.includes("TRUNG TÂM ĐIỀU HÀNH / TIẾN ĐỘ SẢN PHẨM"));
+ assert.ok(board.includes("<h1>Roadmap phát triển</h1>"));
 });
 
 test("Roadmap contains detailed ICT-first milestones and computable checklists",async()=>{
