@@ -16,19 +16,35 @@ mkdirSync(output,{recursive:true});
 const chrome=process.env.CHROME_BIN??(
  ["/usr/bin/google-chrome","/usr/bin/google-chrome-stable","/usr/bin/chromium"]
  .find(p=>existsSync(p))??"google-chrome");
-const profile=mkdtempSync(join(tmpdir(),"xcn-admin-chrome-"));
-const child=spawn(chrome,["--headless=new","--no-sandbox","--disable-gpu","--disable-dev-shm-usage",
- "--hide-scrollbars","--window-size=1440,900","--remote-debugging-port=0","--user-data-dir="+profile,"about:blank"],{stdio:"ignore"});
 const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+function launchChrome(){
+ const profile=mkdtempSync(join(tmpdir(),"xcn-admin-chrome-"));
+ const child=spawn(chrome,["--headless=new","--no-sandbox","--disable-gpu","--disable-dev-shm-usage",
+  "--no-first-run","--disable-extensions","--hide-scrollbars","--window-size=1440,900",
+  "--remote-debugging-port=0","--user-data-dir="+profile,"about:blank"],
+  {stdio:["ignore","ignore","pipe"]});
+ let stderr="";
+ child.stderr?.on("data",data=>{stderr=(stderr+data.toString()).slice(-2500);});
+ return {profile,child,diagnostics:()=>stderr};
+}
+let instance;
 let ws;let calls=new Map(),serial=0;
 try{
  let port;
- for(let i=0;i<90;i++){
-  if(child.exitCode!==null)throw Error("Chrome quit before remote debugging began");
-  try{port=Number(readFileSync(join(profile,"DevToolsActivePort"),"utf8").split("\n")[0]);if(port)break;}catch{}
-  await sleep(150);
+ for(let attempt=1;attempt<=3&&!port;attempt++){
+  instance=launchChrome();
+  for(let i=0;i<90;i++){
+   if(instance.child.exitCode!==null||instance.child.signalCode)break;
+   try{port=Number(readFileSync(join(instance.profile,"DevToolsActivePort"),"utf8").split("\n")[0]);if(port)break;}catch{}
+   await sleep(150);
+  }
+  if(port)break;
+  console.warn("Chrome launch attempt "+attempt+"/3 failed:",instance.diagnostics().slice(-1000));
+  instance.child.kill("SIGTERM");
+  await sleep(300);
+  rmSync(instance.profile,{recursive:true,force:true});
  }
- if(!port)throw Error("Chrome debugging port unavailable");
+ if(!port)throw Error("Chrome debugging port unavailable after three launch attempts");
  const target=await (await fetch("http://127.0.0.1:"+port+"/json/new?"+encodeURIComponent(base),{method:"PUT"})).json();
  ws=new WebSocket(target.webSocketDebuggerUrl);
  await new Promise((resolve,reject)=>{ws.addEventListener("open",resolve,{once:true});ws.addEventListener("error",reject,{once:true});});
@@ -215,6 +231,6 @@ try{
  console.log("PASS keyboard focus, modal focus trap/Escape, mobile menu, compare panel and settings controls");
 }catch(error){console.error("ADMIN VISUAL QA FAILED:",error);process.exitCode=1;}
 finally{
- ws?.close();child.kill("SIGTERM");
- await sleep(250);rmSync(profile,{recursive:true,force:true});
+ ws?.close();instance?.child.kill("SIGTERM");
+ await sleep(250);if(instance)rmSync(instance.profile,{recursive:true,force:true});
 }
