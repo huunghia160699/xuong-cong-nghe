@@ -5,7 +5,7 @@ import {isLiveMode} from "@/lib/supabase/config";
 export default function AdminPermissionsPage(){
  const live=isLiveMode();
  return <div className="xcn-admin">
-  <div className="xcn-admin-heading"><div><div className="xcn-admin-kicker">ADMIN / BẢO MẬT</div><h1>Phân quyền hệ thống</h1>
+  <div className="xcn-admin-heading"><div><h1>Phân quyền hệ thống</h1>
    <p>Ma trận quyền dự kiến theo mã nguồn và các chốt bảo vệ hiện có. Đây không phải kết quả kiểm thử JWT production.</p></div>
    <Link href="/admin/he-thong" className="xcn-admin-primary"><ShieldCheck size={16}/> Kiểm tra hệ thống</Link>
   </div>
