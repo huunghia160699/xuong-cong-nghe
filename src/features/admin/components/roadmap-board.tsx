@@ -375,7 +375,6 @@ export function RoadmapBoard({mode}:Props){
  return <div className="xcn-roadmap" aria-busy={!ready}>
   <div className="xcn-roadmap-heading">
    <div>
-    <div className="xcn-admin-kicker">TRUNG TÂM ĐIỀU HÀNH / TIẾN ĐỘ SẢN PHẨM</div>
     <h1>Roadmap phát triển</h1>
     <p>Đường thời gian theo các việc lớn, tự lưu vào Supabase khi có quyền Admin; mọi thao tác đã đồng bộ đều xuất hiện trong nhật ký hệ thống.</p>
    </div>

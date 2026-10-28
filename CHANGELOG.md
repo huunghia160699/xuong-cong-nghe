@@ -1,5 +1,10 @@
 # Changelog
 
+## 2026-10-29 — Roadmap tận dụng chiều ngang, tối giản tiêu đề
+- Bỏ giới hạn `max-width:1230px` cho trang Roadmap Admin; nội dung chiếm toàn bộ vùng có sẵn sau padding responsive chung.
+- Xóa breadcrumb `Admin / Roadmap` và dòng phụ `TRUNG TÂM ĐIỀU HÀNH / TIẾN ĐỘ SẢN PHẨM` phía trên tiêu đề, giữ h1 và mô tả.
+- Bổ sung hồi quy CSS và Chromium QA ở độ rộng 360/1280/1920/2560, không thay đổi Supabase hay dữ liệu.
+
 ## 2026-10-28 — Sidebar Admin co giãn theo chiều cao màn hình
 - Tăng cỡ chữ menu từ 13px lên 14–16px, icon 18–20px, hàng điều hướng co giãn bằng `clamp()` và `dvh` thay vì thu nhỏ cố định.
 - Bố trí thương hiệu, nhãn “Khu vực quản trị” và trạng thái Supabase ở vị trí cố định trong sidebar; chỉ vùng menu có thể cuộn khi màn hình thấp.
