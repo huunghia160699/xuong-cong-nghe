@@ -38,7 +38,7 @@
 .xcn-admin-upcoming a{display:flex;justify-content:space-between;gap:12px;border:1px solid #e5ebf2;border-radius:12px;padding:13px;font-size:13px;font-weight:700}
 .xcn-admin-upcoming a:hover{background:#f0f6fd}
 .xcn-admin-note{background:#f4f8fc;border-radius:12px;padding:14px;margin-top:12px;font-size:12px;line-height:1.7;color:#52677d}
-.xcn-roadmap{max-width:1230px;margin-inline:auto}
+.xcn-roadmap{width:100%;min-width:0;max-width:none;margin:0}
 .xcn-roadmap-heading{margin-bottom:18px}
 .xcn-roadmap-heading h1{font-size:clamp(30px,3.6vw,42px)}
 .xcn-roadmap-metrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin:0 0 20px}
