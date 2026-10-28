@@ -25,7 +25,7 @@ export function AdminMonitor({counts,error,roadmapVersion,roadmapEvents}:{
   {name:"Giám sát và vận hành",status:"ready",description:"Có trang kiểm kê và thống kê DB; chưa tích hợp cảnh báo tự động"}
  ];
  return <div className="xcn-admin">
-  <div className="xcn-admin-heading"><div><div className="xcn-admin-kicker">ADMIN / VẬN HÀNH</div>
+  <div className="xcn-admin-heading"><div>
    <h1>Giám sát hệ thống</h1><p>Phân biệt các module đã có trong mã nguồn và các bước chỉ hoàn thành sau khi kiểm thử Live. Không giả lập kết quả kết nối mạng.</p></div>
    <Link href="/admin/roadmap" className="xcn-admin-primary"><Workflow size={16}/> Roadmap vận hành</Link>
   </div>
