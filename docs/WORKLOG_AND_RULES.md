@@ -25,6 +25,14 @@
 
 ## III. Lịch sử
 
+### 2026-10-29 — Gia cố Roadmap sync, kiểm kê RLS và chuẩn bị nghiệm thu
+- **Mục tiêu:** không báo lưu thành công khi chưa đọc lại bản ghi; bảo vệ bản nháp cũ và không ghi đè dữ liệu Production.
+- **Thay đổi:** `roadmap-sync.ts` chuẩn hóa so sánh; `roadmap-draft.ts` không hiển thị cảnh báo sai; `roadmap-board.tsx` xác minh GET sau PUT và checkpoint trước reload; `verify-roadmap-rls.mjs` siết ref staging; bổ sung regression test, tài liệu QA.
+- **Supabase production:** chỉ đọc, một tài liệu version 4/20 việc lớn/4 sự kiện, 2 tài khoản đã xác minh, 1 admin + 1 student, toàn bộ public tables bật RLS; chưa chạy JWT thật hoặc thử ghi trên staging.
+- **Security:** Advisor còn cảnh báo RPC SECURITY DEFINER và leaked-password protection; không sửa Production khi chưa rà soát phụ thuộc.
+- **Kiểm thử/release:** xác minh CI, Vercel, SHA sau PR; 11 trang Admin sau login và Teacher Studio chưa nghiệm thu.
+- **Tồn đọng:** chạy E2E trên branch Supabase thử nghiệm, lưu file backup Admin Live, kiểm tra CRUD/reload và phục hồi.
+
 ### 2026-10-29 — Đồng bộ heading và loại bỏ kicker trên toàn Admin
 - **Mục tiêu:** 11 trang Admin có một hệ tiêu đề rõ ràng, không nhãn chữ xanh trước h1 hay chữ “Khu vực quản trị” trong sidebar.
 - **Thay đổi:** xóa kicker các page/components; chuyển Tổng quan, Khóa học và Kho tài liệu sang `xcn-admin-heading`; đồng nhất CSS với `xcn-roadmap-heading`; giữ navigation nhóm và nút Supabase · Live/Đăng xuất.
