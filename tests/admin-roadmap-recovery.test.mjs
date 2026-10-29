@@ -12,13 +12,14 @@ function load(path,dependencies){
  const module={exports:{}};
  runInNewContext(js,{module,exports:module.exports,require:(name)=>{
   if(name==="./roadmap-data")return data;
-  if(name==="./roadmap-validation")return dependencies;
+  if(name==="./roadmap-validation"||name==="./roadmap-sync")return dependencies;
   throw Error("unrecognized dependency "+name);
  },TextEncoder,Date,JSON,Number,Object,Array,Set,String,Error},{timeout:3000});
  return module.exports;
 }
 const validation=load("roadmap-validation",{});
-const draft=load("roadmap-draft",validation);
+const sync=load("roadmap-sync",validation);
+const draft=load("roadmap-draft",{...validation,...sync});
 const seed=data.ROADMAP_INITIAL;
 const clone=value=>JSON.parse(JSON.stringify(value));
 
@@ -56,7 +57,7 @@ test("draft migration from v2 and v3 is lossless",()=>{
 test("local recovery avoids overwriting server data silently",()=>{
  const versioned=draft.buildDraft(clone(seed),8,true);
  assert.equal(draft.shouldOfferRecovery(versioned,seed,8),false);
- assert.equal(draft.shouldOfferRecovery(versioned,seed,9),true);
+ assert.equal(draft.shouldOfferRecovery(versioned,seed,9),false,"stale version without content changes is not a conflict");
  const changed=clone(seed);changed[0].summary="Edited on another machine";
  assert.equal(draft.shouldOfferRecovery(versioned,changed,8),true);
  assert.equal(draft.shouldOfferRecovery({...versioned,pending:false},changed,8),true);
