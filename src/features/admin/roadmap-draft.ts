@@ -1,5 +1,6 @@
 import {type RoadmapEpic} from "./roadmap-data";
 import {validateRoadmap,roadmapBytes,ROADMAP_MAX_BYTES} from "./roadmap-validation";
+import {sameRoadmapContent} from "./roadmap-sync";
 
 export const ROADMAP_STORAGE_KEY="xcn-admin-roadmap-v3";
 export const ROADMAP_LEGACY_STORAGE_KEY="xcn-admin-roadmap-v2";
@@ -27,8 +28,7 @@ export function decodeDraft(value:unknown):RoadmapDraft|null{
 export function shouldOfferRecovery(draft:RoadmapDraft|null,serverItems:RoadmapEpic[],serverVersion:number){
  if(!draft)return false;
  if(!validateRoadmap(serverItems))return true;
- // Even Demo-era drafts (pending=false) may contain edits not yet imported into Supabase.
- // Always ask before discarding a divergent local copy; never silently overwrite either side.
- return JSON.stringify(draft.items)!==JSON.stringify(serverItems)||
-  (draft.pending&&draft.baseVersion!==serverVersion);
+ // A stale version alone is not an unsynced edit. PostgreSQL jsonb may
+ // reorder object keys, so compare content semantically before offering recovery.
+ return !sameRoadmapContent(draft.items,serverItems);
 }
