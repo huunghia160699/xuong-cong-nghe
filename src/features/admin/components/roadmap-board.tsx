@@ -19,6 +19,7 @@ import {RoadmapHistoryButton,RoadmapHistoryPanel} from "./roadmap-history-panel"
 import {RoadmapServerActivity,validServerEvents,type RoadmapServerEvent} from "./roadmap-server-activity";
 import {RoadmapReconcilePanel} from "./roadmap-reconcile-panel";
 import {mergeMissingRoadmap} from "../roadmap-reconcile";
+import {isVerifiedRoadmapReadback} from "../roadmap-sync";
 
 type Props={mode:"demo"|"live"};
 type EditorState={id:string|null;title:string;summary:string;phase:string;area:string;priority:RoadmapPriority;status:RoadmapStatus;owner:string;targetDate:string};
@@ -135,6 +136,7 @@ export function RoadmapBoard({mode}:Props){
     else {
      setRecovery(null);
      if(!serverVersion)setDirty(true); // First authenticated Admin session seeds master plan in the DB.
+     else try{storeDraft(serverItems,serverVersion,false);}catch{/* server stays authoritative */}
     }
     setNotice(serverVersion?"Đã tải dữ liệu chính thức từ Supabase.":"Đang khởi tạo Roadmap trên Supabase…");
    }catch(reason){
@@ -240,35 +242,57 @@ export function RoadmapBoard({mode}:Props){
  }
  async function save(){
   if(mode==="demo"){setNotice("Dữ liệu đã lưu trên trình duyệt này.");return;}
-  if(saving||conflict)return;
+  if(saving||conflict||syncIssue)return;
   setSaving(true);setFailure("");setNotice("");
-  const snapshot=JSON.stringify(items);
+  const sent=structuredClone(items);
+  let acceptedVersion:number|null=null;
   try{
    const response=await fetch("/api/admin/roadmap",{
     method:"PUT",headers:{"Content-Type":"application/json"},
-    body:JSON.stringify({items,version})
+    body:JSON.stringify({items:sent,version})
    });
    const result=await response.json() as {version?:number;error?:string};
    if(!response.ok){
     if(response.status===409)setConflict(true);
     else setSyncIssue(true);
-    throw Error(result.error??"Không thể lưu roadmap.");
+    throw Error(result.error??"Không thể lưu Roadmap.");
    }
-   const nextVersion=result.version??version+1;
+   if(!Number.isInteger(result.version)||Number(result.version)<=version)
+    throw Error("Máy chủ trả về phiên bản lưu không hợp lệ.");
+   const nextVersion=Number(result.version);
+   acceptedVersion=nextVersion;
+   // Only mark as synced after read-after-write confirms both document and version.
+   const readback=await fetch("/api/admin/roadmap",{cache:"no-store"});
+   if(!readback.ok)throw Error("Đã gửi bản lưu nhưng không thể xác minh đọc lại từ Supabase.");
+   const body:unknown=await readback.json();
+   if(!isVerifiedRoadmapReadback(body,nextVersion,sent)){
+    setConflict(true);
+    throw Error("Roadmap trên máy chủ khác bản vừa lưu. Không tự ghi đè; hãy sao lưu bản nháp rồi đối chiếu.");
+   }
    setVersion(nextVersion);setSyncIssue(false);setConflict(false);
-   recordLocalAdminEvent("roadmap","Đã ghi phiên bản "+nextVersion+" lên Supabase.");
-   void fetch("/api/admin/roadmap",{cache:"no-store"}).then(r=>r.ok?r.json():null)
-    .then((body:unknown)=>{if(body&&typeof body==="object"&&"events" in body&&validServerEvents(body.events))setServerEvents(body.events);})
-    .catch(()=>{});
-   const changedMeanwhile=JSON.stringify(latestItems.current)!==snapshot;
+   if(body&&typeof body==="object"&&"events" in body&&validServerEvents(body.events))
+    setServerEvents(body.events);
+   recordLocalAdminEvent("roadmap","Đã xác minh phiên bản "+nextVersion+" trên Supabase.");
+   const changedMeanwhile=JSON.stringify(latestItems.current)!==JSON.stringify(sent);
    setDirty(changedMeanwhile);
-   try{storeDraft(latestItems.current,nextVersion,changedMeanwhile);}catch{setFailure("Đã đồng bộ máy chủ nhưng không lưu được bản sao cục bộ.");}
+   try{storeDraft(latestItems.current,nextVersion,changedMeanwhile);}
+   catch{setFailure("Đã xác minh đồng bộ máy chủ nhưng không lưu được bản sao cục bộ.");}
    setNotice(changedMeanwhile?
-    "Đã lưu phiên trước. Có thay đổi mới chưa đồng bộ, hãy nhấn Lưu thay đổi lần nữa.":
-    "Đã lưu lên hệ thống.");
+    "Đã xác minh bản lưu trước. Còn thay đổi mới chưa đồng bộ; hệ thống sẽ lưu tiếp.":
+    "Đã lưu và đọc lại thành công từ Supabase.");
    setLastSaved(new Date().toLocaleString("vi-VN"));
-  }catch(reason){setFailure(reason instanceof Error?reason.message:"Không thể lưu roadmap.");}
-  finally{setSaving(false);}
+  }catch(reason){
+   // A PUT can commit even if the subsequent GET fails. Never retry blindly.
+   if(acceptedVersion!==null){
+    setVersion(acceptedVersion);
+    setDirty(true);
+    if(!conflict)setSyncIssue(true);
+    try{storeDraft(latestItems.current,acceptedVersion,true);}
+    catch{setFailure("Không giữ được bản nháp cục bộ. Hãy xuất JSON ngay.");}
+   }
+   setFailure((reason instanceof Error?reason.message:"Không thể xác minh lưu Roadmap.")+
+    " Bản hiện tại vẫn được giữ để đối chiếu; không tự gửi lại bản ghi.");
+  }finally{setSaving(false);}
  }
  async function refreshFromServer(manual:boolean){
   if(mode!=="live")return;
@@ -281,6 +305,8 @@ export function RoadmapBoard({mode}:Props){
    if(!validateRoadmap(result.items)||!Number.isInteger(result.version))throw Error("Dữ liệu máy chủ không hợp lệ.");
    const latest=result.version===0&&result.items.length===0?ROADMAP_INITIAL:result.items;
    if(manual||(!dirty&&!saving)){
+    // Always preserve an unsynced draft before replacing it with server data.
+    if(manual&&dirty&&!checkpoint("Trước khi tải lại Supabase",latestItems.current))return;
     setItems(latest);latestItems.current=latest;
     setVersion(Number(result.version));setDirty(Number(result.version)===0);
     setConflict(false);setSyncIssue(false);setRecovery(null);setFailure("");
