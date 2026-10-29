@@ -58,9 +58,15 @@ test("rejects secret and service_role keys regardless of JWT presence",()=>{
 test("write tests cannot run against production or without two explicit safety gates",()=>{
  const e=env();
  assert.throws(()=>readRlsConfig({...e,RLS_TEST_ISOLATED:"YES",RLS_WRITE_ACK:"I_UNDERSTAND"},true),/production/);
- const isolated={...e,RLS_SUPABASE_URL:"https://separatetesting.supabase.co"};
- assert.throws(()=>readRlsConfig(isolated,true),/RLS_TEST_ISOLATED/);
- assert.ok(readRlsConfig({...isolated,RLS_TEST_ISOLATED:"YES",RLS_WRITE_ACK:"I_UNDERSTAND"},true));
+ const ref="z".repeat(20);
+ const isolated={...e,RLS_SUPABASE_URL:"https://"+ref+".supabase.co"};
+ assert.throws(()=>readRlsConfig(isolated,true),/RLS_TEST_PROJECT_REF/);
+ assert.throws(()=>readRlsConfig({...isolated,RLS_TEST_PROJECT_REF:PRODUCTION_PROJECT_REF,
+  RLS_TEST_ISOLATED:"YES",RLS_WRITE_ACK:"I_UNDERSTAND"},true),/production/);
+ assert.throws(()=>readRlsConfig({...isolated,RLS_SUPABASE_URL:"https://staging.example.com",
+  RLS_TEST_PROJECT_REF:ref,RLS_TEST_ISOLATED:"YES",RLS_WRITE_ACK:"I_UNDERSTAND"},true),/RLS_TEST_PROJECT_REF/);
+ assert.ok(readRlsConfig({...isolated,RLS_TEST_PROJECT_REF:ref,
+  RLS_TEST_ISOLATED:"YES",RLS_WRITE_ACK:"I_UNDERSTAND"},true));
 });
 test("real-session orchestration requires admin/student roles and guest denied",async()=>{
  const lines=[];
