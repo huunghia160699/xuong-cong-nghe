@@ -1,5 +1,12 @@
 # Changelog
 
+## 2026-10-29 — Xác minh lưu Roadmap và bảo vệ bản nháp
+- Đối chiếu read-only Roadmap Supabase Production (version 4, 20 việc lớn, 4 sự kiện); không ghi DB hoặc thay đổi tài khoản.
+- So sánh nội dung Roadmap không phụ thuộc thứ tự thuộc tính JSON; bản nháp cùng nội dung không còn cảnh báo phục hồi giả.
+- Sau khi lưu, bắt buộc GET và đối chiếu version/nội dung; nếu không chứng minh được thì giữ bản nháp, không tự PUT lại.
+- Sao lưu checkpoint trước khi người dùng tải server đè lên bản đang sửa; tăng bảo vệ script kiểm thử JWT ghi trên môi trường thử nghiệm.
+- Bổ sung test readback/restore; ghi nhận phần JWT thật và QA sau đăng nhập chưa đủ điều kiện tại `docs/ROADMAP_SYNC_SECURITY_QA_20261029.md`.
+
 ## 2026-10-29 — Chuẩn hóa tiêu đề 11 trang Admin
 - Bỏ các nhãn xanh kiểu “ADMIN / NGƯỜI DÙNG”, các kicker ở trên tiêu đề và dòng “Khu vực quản trị” tại sidebar.
 - Tất cả trang Admin dùng cùng cách trình bày h1, mô tả, khoảng cách, các nút thao tác và padding responsive; màn Tổng quan đổi sang heading chuẩn, Khóa học/Kho tài liệu bỏ nhãn và link dư thừa trên tiêu đề.

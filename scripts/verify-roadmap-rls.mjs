@@ -41,8 +41,13 @@ export function readRlsConfig(env,write=false){
  const studentEmail=env.RLS_STUDENT_EMAIL.trim();
  assert.notEqual(adminEmail.toLowerCase(),studentEmail.toLowerCase(),"Hai tài khoản kiểm thử phải khác nhau.");
  if(write){
-  if(url.hostname===PRODUCTION_PROJECT_REF+".supabase.co")
+  const ref=env.RLS_TEST_PROJECT_REF?.trim()??"";
+  // No custom domain or production alias may bypass the explicit ref check.
+  if(url.hostname===PRODUCTION_PROJECT_REF+".supabase.co"||ref===PRODUCTION_PROJECT_REF)
    throw new Error("Cấm --write trên Supabase production. Dùng nhánh/test project riêng.");
+  if(!/^[a-z0-9]{20}$/.test(ref)||url.hostname!==ref+".supabase.co"||
+   url.pathname!=="/"||url.search||url.hash||url.port)
+   throw new Error("Thiếu hoặc sai RLS_TEST_PROJECT_REF. --write chỉ dùng URL chuẩn của project thử nghiệm đã xác minh.");
   if(env.RLS_TEST_ISOLATED!=="YES"||env.RLS_WRITE_ACK!=="I_UNDERSTAND")
    throw new Error("--write chỉ chạy trên DB thử nghiệm với RLS_TEST_ISOLATED=YES và RLS_WRITE_ACK=I_UNDERSTAND.");
  }
