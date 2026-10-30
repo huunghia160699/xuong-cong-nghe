@@ -33,8 +33,8 @@ Không viết lại cả nhật ký cũ. Một task nhiều commit có thể th�
 
 ### 2026-10-31 — [PUBLIC-WEB D1 / ADMIN ROADMAP] Phần việc đang triển khai
 - **DONE (Production Roadmap có chốt CAS):** trước ghi `version=4`, 20 epics, MD5 snapshot `c3442d7b1c2659caa87bd097ce090ce4`; đã **nối thêm** epic `public-website-redesign-d0-d7` gồm checklist D0–D7, chỉ D0 DONE, D1 đang phát triển. SQL kiểm tra phiên bản/hash và không trùng ID, không ghi đè 20 mục trước. Readback: `version=5`, 21 epics, 20 cũ, audit events 5. **Dữ liệu Admin Supabase Production đã đổi theo yêu cầu**, không thay Auth/RLS.
-- **DONE (D1 code, pending QA):** `src/app/(public)/public.css` màu Calm Slate Blue scoped, `src/components/public-navigation.tsx` Navbar/mega-menu/mobile, Header có đọc vai trò server, Footer links thật và 4 route marketing placeholder trung thực để không 404; kiểm thử tĩnh tại `tests/public-foundation-d1.test.mjs`. **Chưa tick D1 DONE trên Admin khi chưa CI/Chromium/READY.**
-- **NEXT:** tests/Chromium đa viewport, PR/CI PASS, merge, Vercel READY + SHA, chỉ sau đó mới đánh dấu checklist D1 hoàn thành trong Admin với phiên bản CAS mới. Nếu test không đạt giữ D1 chưa xong.
+- **DONE (D1 đã RELEASE, PR #71):** public CSS Calm Slate Blue scoped không gradient, Navbar/mega-menu/mobile, Header kiểm vai trò server, Footer và 4 route placeholder không 404; tests tĩnh + Chromium 5 route × 360/768/1280/1920 PASS, Vercel Production READY commit `001bbfc`, đúng alias. **D1 có thể tick DONE trong Admin sau khi kiểm CAS và đọc lại phiên bản.**
+- **NEXT:** cập nhật checklist D1 trong Supabase Admin bằng CAS version 5→6 và kiểm audit/readback; sau đó thực hiện D2 Product Atlas. D3–D6 vẫn là placeholder và được ghi rõ trạng thái.
 - **Tài liệu:** [PUBLIC_WEBSITE_DESIGN_SPEC.md](PUBLIC_WEBSITE_DESIGN_SPEC.md), [ROADMAP.md](ROADMAP.md), [UI_DESIGN_SYSTEM.md](UI_DESIGN_SYSTEM.md). `/admin/roadmap` dùng dữ liệu Supabase khác file Markdown và đã được đồng bộ riêng một lần theo yêu cầu.
 
 ### 2026-10-31 — [PUBLIC-WEB] Đặc tả redesign 5 trang
