@@ -59,6 +59,30 @@
 - Teacher Workspace, AI Tutor, thương mại ở giai đoạn sau
 
 
+## Backlog — Điều hướng sản phẩm và quản lý phòng máy (chỉ ý tưởng, 31/10/2026)
+
+> **TRẠNG THÁI: ĐÃ GHI Ý TƯỞNG, CHƯA THỰC HIỆN.** Không sửa Navbar hiện tại, không đăng ký DNS, không tạo agent, API/DB/role/quyền trên Production hoặc staging. Nguồn chuẩn chi tiết: [PRODUCT_AND_MODULES.md](PRODUCT_AND_MODULES.md) mục 2A; nguồn so sánh: [WEBSITE_REFERENCES.md](WEBSITE_REFERENCES.md).
+
+### Hướng tổ chức trang chủ (chưa duyệt UI)
+
+- [ ] Cân nhắc Navbar **Khóa học · Thực hành · Kiểm tra · Công cụ · Tài nguyên · Dự án · Giáo viên**, logo dẫn về Trang chủ; nút phải `Đăng nhập` / `Không gian của tôi` theo role.
+- [ ] Gắn submenu rõ ràng theo chức năng, phân biệt link đang có với ứng dụng sắp phát triển, không đặt link chết/đăng sai nhãn hoạt động. Mobile dùng menu thu gọn theo nhóm; desktop không quá dày.
+- [ ] Giữ route đang hoạt động `/khoa-hoc`, `/student/quiz`, `/cong-cu`, `/cong-cu/trinh-chieu`, `/cong-cu/mo-phong-word` và các anchor đã tồn tại cho đến khi có UI/SEO migration.
+- [ ] Khi thiết kế UI thật, đọc [UI_DESIGN_SYSTEM.md](UI_DESIGN_SYSTEM.md), rà độ rộng/chiều cao 360/768/1280 và phân quyền trước khi sửa `src/config/navigation.ts`.
+
+### Công cụ quản lý phòng máy Tin học (LAB-MANAGER) — P3, chưa phát triển
+
+- [ ] Nghiên cứu nhu cầu của phòng Tin học 30–50 máy; tạm hiểu “NetSP” là **NetSupport School**, xác minh lại tên tham khảo trước giai đoạn thiết kế sâu.
+- [ ] Thiết kế sơ đồ phòng, vị trí/chỗ ngồi, trạng thái máy online/offline, ca học và gắn với lớp của Teacher Studio.
+- [ ] Nghiên cứu phát màn hình giáo viên, hiển thị thumbnail máy học sinh, gửi URL/file bài tập, thu bài, nhắn tin và hỗ trợ từng máy.
+- [ ] Nghiên cứu giới hạn truy cập web/app, khóa màn hình và điều hành thiết bị **chỉ trong môi trường học được phép**, có thông báo/chính sách rõ.
+- [ ] Đánh giá mô hình agent cài ở thiết bị (LAN/Windows), đăng ký chứng chỉ thiết bị, phân quyền theo giáo viên-phòng-ca, audit, consent, chống điều khiển trái phép và rủi ro riêng tư học sinh.
+- [ ] Khi có yêu cầu phát triển: thí điểm **chỉ sơ đồ phòng và trạng thái máy**, staging riêng; chức năng remote monitoring/control phải qua đánh giá bảo mật/pháp lý và phê duyệt tách biệt. Không tự triển khai chỉ vì ý tưởng đã được ghi.
+
+**Vị trí sản phẩm tương lai:** người khám phá tại `Công cụ → Quản lý phòng máy` (chỉ hiện khi có chức năng thật); giáo viên sử dụng từ `Teacher Studio → Phòng máy`. Tên miền `lab.xuongcongnghe.net` chỉ là ví dụ quy hoạch, chưa xác minh DNS/sở hữu. Không thay thế hay sao chép NetSupport School.
+
+---
+
 ## Backlog — Phòng trắc nghiệm tương tác trực tiếp (chờ triển khai)
 
 **Ghi nhận:** 2026-10-26. **Trạng thái:** CHƯA TRIỂN KHAI, chỉ lưu yêu cầu để làm sau.
