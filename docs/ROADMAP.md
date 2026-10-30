@@ -8,15 +8,23 @@
 
 ## Ưu tiên hiện hành (bám theo kiểm toán, chưa đánh dấu hoàn tất)
 
-> **Cập nhật 30/10/2026 (sau khi xác minh QA):** staging `ordiksbvpewwgrnvzrud` có 7 migration nền tảng, 1 hardening riêng, seed giả lập, 14/14 bảng RLS ON và **hai tài khoản QA đã confirmed, role Admin/Student đúng theo SQL**. **JWT thật và CRUD/restore thật chưa được chạy trên máy chứa mật khẩu.** Playbook tại [SUPABASE_SETUP.md](SUPABASE_SETUP.md). P0 chưa hoàn thành.
+### Quyết định 31/10/2026 — mở cổng Teacher Studio ở mức thiết kế
 
-> **30/10/2026 — P0 staging:** đã chuẩn bị mã kiểm thử JWT/CRUD/backup/restore và ghi hướng dẫn tại [SUPABASE_SETUP.md](SUPABASE_SETUP.md). **Chưa tạo staging, chưa chạy bài test Live** vì cần xác nhận chi phí/quota/tổ chức. Không chuyển trạng thái P0 sang hoàn thành khi chưa có kết quả.
+- **PASS `P0_STAGING_AUTH_ROADMAP`:** người dùng chạy local `READ-ONLY PASS` và `STAGING ACCEPTANCE PASS` với hai JWT Admin/Student thực; quyền trên Roadmap, CRUD, conflict, backup/restore và audit đạt. Đối chiếu SQL riêng xác nhận **singleton version 8, 0 items, 8 events (1–8)**. Không thu thập mật khẩu/JWT.
+- **ĐƯỢC PHÉP:** phân tích yêu cầu, thiết kế hợp đồng lớp–thành viên–bài giao, tạo migration và RLS **trên staging**, viết test bằng user thử nghiệm và PR riêng, không sửa dữ liệu Production.
+- **CHƯA ĐƯỢC PHÉP:** coi hệ thống đã nghiệm thu toàn diện, bật Teacher Studio Production, mở quyền lớp/bài nộp khi chưa có E2E và RLS ownership riêng của Teacher/Student.
+- **CÒN CHẶN PRODUCTION:** nghiệm thu 11 trang Admin trên browser login thật/Preview, API 401/403/409, mạng yếu, quyền teacher test account + ownership/cross-class isolation, xử lý cảnh báo SECURITY DEFINER và bảo vệ mật khẩu phù hợp trước release.
+- **Chi tiết bằng chứng và runbook:** [WORKLOG_AND_RULES.md](WORKLOG_AND_RULES.md) và [SUPABASE_SETUP.md](SUPABASE_SETUP.md). Không tự đồng bộ checklist Roadmap Production từ Markdown.
 
-1. **P0 — Auth/Admin/Roadmap:** staging Supabase riêng, hai JWT thật, thử CRUD + reload + conflict, sao lưu/khôi phục.
+> *Lịch sử 30/10/2026:* staging đã được tạo và tài khoản QA xác minh bằng SQL; bài test JWT trên máy local lúc đó còn chờ. **Trạng thái 31/10 được cập nhật ở quyết định phía trên.**
+
+> *Lịch sử đầu giai đoạn 30/10/2026:* bản kiểm thử đã được chuẩn bị trước khi khởi tạo staging. **Không áp dụng nội dung 'chưa tạo staging' cho hiện tại.**
+
+1. **P0 — Auth/Admin/Roadmap:** **đã nghiệm thu JWT + Data API CRUD/conflict/backup/restore trên staging**. **Chưa nghiệm thu Next.js browser refresh/API/11 trang Admin trong Preview thực**.
 2. **P0 — Security:** đánh giá SECURITY DEFINER, password protection, quyền RLS/GRANT trên staging trước khi áp Production.
 3. **P1 — Nghiệm thu Admin:** 11 trang sau đăng nhập Live, màn hình 360/768/1280, error/loading, keyboard và mạng yếu.
 4. **P1 — Contracts:** một luồng dùng chung nội dung/câu hỏi/bài học cho Quiz/Slides/Teacher/Labs, schema và quyền rõ.
-5. **P2 — Teacher Studio:** quản lý lớp, học sinh, giao bài; chỉ mở sau P0 và kiểm thử quyền sở hữu.
+5. **P2 — Teacher Studio:** **mở thiết kế và phát triển staging** cho quản lý lớp, thành viên, giao bài; chỉ bật Production sau test role `teacher` và RLS ownership/cross-class, E2E và phê duyệt phát hành.
 6. **P2–P3 — Live Quiz, Excel/Coding Labs, AI/trò chơi:** triển khai từng module, không mở nhiều công cụ khi data model chưa ổn.
 
 ## Những mục cũ bên dưới là backlog / lịch sử đã xuất hiện
