@@ -12,7 +12,7 @@ const sitemapPage=read("src/app/admin/sitemap/page.tsx");
 const migration=read("supabase/migrations/20261026163500_admin_roadmap.sql");
 const css=read("src/app/admin/admin.css");
 const checklist=read("docs/XCN_FUNCTION_ROADMAP_CHECKLIST.md");
-const diagram=read("docs/XCN_SITEMAP_2026_2028.md");
+const diagram=read("docs/PRODUCT_AND_MODULES.md");
 
 const roadmapPage=read("src/app/admin/roadmap/page.tsx");
 
