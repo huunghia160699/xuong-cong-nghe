@@ -46,6 +46,9 @@ where id = (select id from auth.users where email = 'admin@example.com');
 Đây là thao tác vận hành riêng của chủ dự án. Không tạo endpoint cấp vai trò, không cho người dùng tự truyền `role` khi đăng ký.
 
 
-## Trạng thái triển khai 13/10/2026
+## Lịch sử 13/10/2026 và yêu cầu hiện hành
 
-Dự án đã khôi phục và nạp schema + seed, có thêm migration thu hồi quyền trigger. Đọc `docs/SUPABASE_STATUS_20261013.md` trước khi tiếp tục. **Không chạy lại** toàn bộ SQL/migrations trên project này; Supabase API đã ghi nhận các migration với phiên bản runtime khác timestamp trong tên file. Cần đối chiếu lịch sử trước khi dùng CLI. Chưa có tài khoản kiểm thử hoặc deploy live.
+- Các migration trước đây đã áp qua Supabase Management API với version runtime khác tên file; **không chạy lại** toàn bộ migration bằng CLI nếu chưa reconcile lịch sử.
+- Snapshot 13/10/2026 đã được giữ nguyên trong [archive/PHASE_00_SECURITY_AND_SYNC_REPORTS_2026-10.md](archive/PHASE_00_SECURITY_AND_SYNC_REPORTS_2026-10.md).
+- **Cập nhật kiểm toán 30/10/2026:** Supabase Production đã chạy Live, có 14 bảng public bật RLS; Auth Admin/Student có dữ liệu thực, nhưng chưa có Supabase staging branch để kiểm JWT và CRUD được cách ly.
+- Đừng suy ra trạng thái mới chỉ từ các hướng dẫn dated cũ. Đọc [ARCHITECTURE_AND_SECURITY.md](ARCHITECTURE_AND_SECURITY.md) và [SYSTEM_AUDIT_2026-10-30.md](SYSTEM_AUDIT_2026-10-30.md) trước khi thay đổi DB.
