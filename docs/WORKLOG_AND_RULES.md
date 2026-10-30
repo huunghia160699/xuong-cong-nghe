@@ -31,6 +31,14 @@ Không viết lại cả nhật ký cũ. Một task nhiều commit có thể th�
 
 ## III. Nhật ký mới (từ 30/10/2026)
 
+### 2026-10-30 — [AUTH/ROADMAP] Chuẩn bị staging, kiểm thử JWT thật và khôi phục
+- **Yêu cầu:** tạo staging Supabase, chạy hai JWT Admin/Student và nghiệm thu CRUD/backup/restore Roadmap, sau đó mới phát triển Teacher Studio.
+- **DONE:** đã đọc tài liệu theo đúng module; xác minh org Free hiện có 2 project, không có branch; chi phí Supabase báo branch **$0,01344/giờ**, project mới **$0/tháng** nhưng quota Free cần kiểm tra. Không sử dụng project không liên quan.
+- **DONE (mã kiểm thử):** `scripts/verify-roadmap-staging.mjs` chạy real JWT Data API trên **staging rỗng** khi có cờ an toàn; thử add/edit/delete/restore, version CAS, student denied, audit và lưu backup tạm không đưa lên Git. `scripts/verify-roadmap-rls.mjs` được sửa để tạo thay đổi nội dung thật do trigger từ chối update no-op. `tests/staging-roadmap-acceptance.test.mjs` xác minh fail-closed Production.
+- **CHƯA THỰC HIỆN:** chưa tạo staging vì cần chủ dự án chọn tổ chức/xác nhận chi phí hoặc quota; chưa có 2 tài khoản staging đã xác minh; chưa chạy JWT hay CRUD thật; chưa nghiệm thu browser Next.js Preview.
+- **An toàn:** Production DB/Auth/RLS/DNS/Vercel env không thay đổi; không dùng mật khẩu/tokens của tài khoản thật.
+- **Hướng dẫn chi tiết:** [SUPABASE_SETUP.md](SUPABASE_SETUP.md) mục “Quy trình staging RLS & Roadmap”. PR/CI/commit cập nhật khi đã có kết quả kiểm thử; Teacher Studio vẫn ở trạng thái chờ.
+
 ### 2026-10-30 — [DOCS/ARCH] Kiểm toán hệ thống và chuẩn hóa Markdown
 - **Yêu cầu:** bổ sung https://duaedu.net/ và https://montinhoc.vn/ vào website tham khảo; thống nhất đọc tài liệu đúng module, ghi tới đâu lưu tới đó; kiểm toán một lần và tinh gọn tài liệu nền tảng.
 - **Đã làm:** khảo sát trang công khai của DUA Edu và Môn Tin học; viết [WEBSITE_REFERENCES.md](WEBSITE_REFERENCES.md); tổng kiểm kê cấu trúc repository, Supabase Advisor/CI/Live status; tạo [SYSTEM_AUDIT_2026-10-30.md](SYSTEM_AUDIT_2026-10-30.md). Gộp product/route/role vào [PRODUCT_AND_MODULES.md](PRODUCT_AND_MODULES.md); kiến trúc/RLS vào [ARCHITECTURE_AND_SECURITY.md](ARCHITECTURE_AND_SECURITY.md); brand/layout vào [UI_DESIGN_SYSTEM.md](UI_DESIGN_SYSTEM.md).
