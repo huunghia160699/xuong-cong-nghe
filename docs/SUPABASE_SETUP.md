@@ -55,7 +55,19 @@ where id = (select id from auth.users where email = 'admin@example.com');
 
 ## Quy trình staging RLS & Roadmap (bổ sung 30/10/2026)
 
-> **STAGING VÀ HAI TÀI KHOẢN QA ĐÃ ĐƯỢC XÁC NHẬN QUA SQL — JWT/CRUD THẬT CHƯA CHẠY.** Project staging `ordiksbvpewwgrnvzrud` tách Production. Hai user đã được tạo trực tiếp trên staging, không clone từ Production. Không gửi mật khẩu, JWT hay API secret vào chat/Git.
+### Kết quả nghiệm thu đã chốt — 31/10/2026
+
+**Trạng thái hiện tại: `STAGING ACCEPTANCE PASS` đối với JWT Admin/Student và Roadmap.** Chủ dự án đã chạy hai script từ máy local với bí mật không đưa lên Git/chat; `READ-ONLY PASS` và `STAGING ACCEPTANCE PASS`. Admin được đọc/ghi Roadmap, Student bị RLS chặn, version conflict, backup/restore và audit trail PASS.
+
+**Đối chiếu độc lập bằng SQL read-only:** tại ref `ordiksbvpewwgrnvzrud`, `global-master-roadmap.version=8`, `jsonb_array_length(items)=0`, và 8 sự kiện đúng chuỗi phiên bản `1,2,3,4,5,6,7,8`. Version 8 là thao tác dọn dữ liệu thử cuối cùng. Không có bằng chứng từ test này cho RLS của bảng lớp/giáo viên chưa được xây.
+
+**KHÔNG chạy lại `verify-roadmap-staging.mjs` trên project này:** hiện đã có singleton version 8 nên script từ chối kiểm thử ghi khởi tạo từ rỗng; không xóa singleton/audit events chỉ để test lại. Nếu cần nghiệm thu mới, lập kịch bản non-destructive/fixture riêng trên staging với checkpoint trước.
+
+**Quyết định cổng:** `P0_STAGING_AUTH_ROADMAP=PASS`; cho phép **thiết kế + phát triển Teacher Studio trên staging qua PR riêng**. Chưa cấp phép deploy chức năng Teacher ra Production. Còn thiếu Next.js Preview/E2E 11 trang Admin và đánh giá quyền `teacher`, bảng lớp/assignment, RLS ownership, Security Advisor trước khi phát hành.
+
+> Các hướng dẫn chạy lần đầu bên dưới được giữ làm **runbook lịch sử cho môi trường staging mới, trống**; không hiểu câu “Roadmap phải chưa có” như trạng thái hiện tại của project ref trên.
+
+> **Lưu ý lịch sử 30/10/2026:** thời điểm viết phần hướng dẫn bên dưới, tài khoản QA mới được xác minh qua SQL và JWT chưa chạy. **Trạng thái 31/10/2026 là PASS**, được ghi ở mục trên. Không đưa mật khẩu/JWT hay API secret vào chat/Git.
 
 ### Trạng thái staging đã cấp (30/10/2026)
 
@@ -64,7 +76,7 @@ where id = (select id from auth.users where email = 'admin@example.com');
 - Supabase báo phí **branch $0,01344 mỗi giờ**, tương đương khoảng $9,68/30 ngày chạy liên tục (30 × 24 giờ), và **project mới $0/tháng** theo báo giá tài khoản hiện tại. Cả hai giá phụ thuộc hạn mức/gói, cần kiểm tra lại khi tạo.
 - **Đã tạo mới** `Xuong-Cong-Nghe Staging QA` tại [Supabase Dashboard](https://supabase.com/dashboard/project/ordiksbvpewwgrnvzrud), ref `ordiksbvpewwgrnvzrud`, vùng `ap-southeast-1`, trạng thái `ACTIVE_HEALTHY`. Chủ dự án đã xác nhận org và báo giá **$0/tháng**. Hai project cũ được giữ nguyên.
 - **7 migration gốc đã áp** theo thứ tự: `initial_schema`, `secure_quiz_grants`, `auth_and_secure_quiz_rpc`, `harden_internal_trigger_grants`, `private_document_storage`, `admin_roadmap`, `admin_roadmap_change_events`. Lưu ý migration harden được điều chỉnh **chỉ trên staging**: bỏ một lệnh REVOKE đối với `public.rls_auto_enable()` vì hàm tùy chọn này không tồn tại trên project mới; KHÔNG sửa file migration gốc đã áp trên Production.
-- **Dữ liệu seed giả lập:** 3 courses, 9 lessons, 1 quiz, 6 questions, 24 options. Không sao chép `auth.users` hoặc dữ liệu Production; `auth.users` staging = 0, `admin_roadmap` = 0.
+- **Dữ liệu seed giả lập thời điểm khởi tạo:** 3 courses, 9 lessons, 1 quiz, 6 questions, 24 options. Không sao chép dữ liệu Production. *Lịch sử 30/10*: Auth và Roadmap ban đầu đều rỗng; **hiện có hai QA users và Roadmap singleton version 8, items=[]**.
 - **8th staging-only hardening migration:** `deny_public_truncate_staging_qa` thu hồi quyền `TRUNCATE` với role `anon`/`authenticated` trên bảng public. Kiểm tra sau: **14/14 bảng RLS ON, 0/14 bảng còn cấp TRUNCATE hai role**. Production chưa thay đổi và chưa tự áp migration này lên Production.
 - **SQL hardening staging-only đã áp (không tự chạy trên Production):**
   ```sql
@@ -82,7 +94,7 @@ where id = (select id from auth.users where email = 'admin@example.com');
 - **Security linter:** `public.is_admin()` vẫn là SECURITY DEFINER có cảnh báo EXECUTE với `anon` và `authenticated`; `submit_quiz`/`get_quiz_result` cũng được cảnh báo. Chưa thay đổi RPC khi chưa kiểm JWT end-to-end.
 - **Đã xác nhận giá $0 và tạo đúng project được chọn.** Không thay đổi, tạm dừng hoặc xóa hai project cũ. Nếu cần đổi gói/branch có phí, phải lấy chấp thuận mới.
 
-### Những bước còn lại để nghiệm thu trên staging
+### Quy trình đã thực hiện (giữ lại để truy vết, không chạy lại trên singleton v8)
 
 1. Xác minh ref staging **khác Production**, môi trường Active/Healthy. Kiểm tra migrations trên staging với `list_migrations` và schema/RLS; chỉ thêm migration bị thiếu trên staging sau khi đối chiếu lịch sử (không chạy lại cả SQL nếu khác version runtime).
 2. **ĐÃ ĐẠT — tài khoản QA:** Trên staging có hai Auth user riêng biệt, đã xác nhận email, không bị khóa, có password hash và `profiles.role` lần lượt là `admin` / `student`; email/UUID khớp với thông tin chủ dự án cung cấp. Kiểm tra này thực hiện bằng SQL **read-only**, không phải đăng nhập bằng JWT thật. Chỉ staging có các tài khoản này, không cần tạo hoặc đổi quyền lần nữa. Không đưa email/UUID/mật khẩu vào báo cáo Git công khai.
@@ -145,14 +157,14 @@ Với **PowerShell**, chạy cùng lệnh `node --env-file=...` trong terminal c
 
 ### Bài nghiệm thu tối thiểu trước Teacher Studio
 
-| Test | Điều kiện đạt | Hiện trạng 30/10 |
+| Test | Điều kiện đạt | Trạng thái 31/10/2026 |
 | --- | --- | --- |
 | Tách môi trường | Ref staging khác Production, chi phí được phê duyệt, migrations đối chiếu | **ĐÃ ĐẠT**: project ref mới, 7 migration gốc, 1 hardening staging-only, 14/14 RLS |
-| JWT thật | Hai user khác nhau, email xác minh, role chính xác, 403/401 đúng | **SQL QA ACCOUNT PASS**: 2 user đã xác nhận, role đúng. **JWT LOGIN/RLS NOT RUN** — cần chạy trên máy có mật khẩu local. |
-| RLS dữ liệu | Anon/Student không đọc/ghi roadmap, Admin đọc/ghi, mạo danh bị chặn | GRANT/RLS metadata đạt; **JWT thật chưa chạy** |
-| CRUD/Roadmap | Thêm/sửa/xóa/khôi phục nội dung, GET readback, stale 409, sự kiện version | MỚI CÓ SCRIPT, CHƯA CHẠY STAGING |
-| Backup | Lưu bản trước test, restore không ghi đè thay đổi khác phiên | MỚI CÓ SCRIPT, CHƯA CHẠY STAGING |
+| JWT thật | Hai user khác nhau, email xác minh, role chính xác, Roadmap chặn đúng | **PASS (người dùng chạy local)**: hai JWT thật được xác minh; Admin truy cập được, Student bị chặn. Chưa kiểm nghiệm mọi route 401/403. |
+| RLS dữ liệu | Anon/Student không đọc/ghi Roadmap, Admin đọc/ghi, mạo danh bị chặn | **PASS (người dùng chạy local)** đối với Roadmap, không bao gồm Teacher Studio/RPC khác. |
+| CRUD/Roadmap | Thêm/sửa/xóa/khôi phục nội dung, GET readback, stale conflict, audit version | **PASS**: script local hoàn tất; SQL độc lập xác nhận tài liệu version 8, items rỗng và 8 audit events liên tục. |
+| Backup | Lưu bản trước test, restore không ghi đè thay đổi khác phiên | **PASS theo kết quả local của người dùng**. File backup giữ tại máy, không đưa lên Git. |
 | Next.js Preview E2E | 11 route Admin + Student, tải lại, UI lỗi/empty, responsive, mất mạng | CHƯA CHẠY |
-| Teacher Studio | Chỉ bắt đầu sau khi các mục P0 được nghiệm thu | CHƯA BẮT ĐẦU |
+| Teacher Studio | Gate JWT/Roadmap đạt trước khi thiết kế; release phải có RLS riêng của Teacher/lớp | **MỞ THIẾT KẾ / STAGING DEVELOPMENT; CHƯA BẬT PRODUCTION**. |
 
-**Quan trọng:** `verify-roadmap-staging.mjs` đã được **khóa cứng ref `ordiksbvpewwgrnvzrud`**, từ chối mọi project khác trước thao tác ghi. Bộ kiểm thử này kiểm đường Data API/Supabase JWT thật sau khi có tài khoản QA; nó **không thay thế** kiểm thử browser Next.js Preview, backup download route riêng hay xác nhận email thật.
+**Quan trọng:** script đã chạy thành công và **không được chạy lại trên singleton v8**. `verify-roadmap-staging.mjs` đã được **khóa cứng ref `ordiksbvpewwgrnvzrud`**, từ chối mọi project khác trước thao tác ghi. Bộ kiểm thử này kiểm đường Data API/Supabase JWT thật sau khi có tài khoản QA; nó **không thay thế** kiểm thử browser Next.js Preview, backup download route riêng hay xác nhận email thật.
