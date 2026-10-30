@@ -67,6 +67,20 @@ flowchart LR
 
 **Đề xuất dài hạn, chưa có route hoàn chỉnh:** `/giao-vien/*`, `/hoc-sinh/*`, `/tham-gia`, `/play/[code]`, `/truong/*`, Excel Lab, Coding/SQL Lab. Không đổi route hiện tại trước khi thiết kế chuyển hướng và SEO.
 
+### Teacher Studio — quyết định cổng phát triển 31/10/2026
+
+**P0 JWT/Roadmap trên staging PASS, mở giai đoạn phân tích và phát triển trên staging; chưa mở Production.** Chưa có tài khoản `teacher` để kiểm thử quyền giáo viên và chưa có schema lớp/bài giao; không suy từ quyền Admin trên Roadmap sang quyền Teacher.
+
+**Phạm vi MVP đề xuất, theo đúng thứ tự phụ thuộc:**
+
+1. **Lớp học:** một giáo viên sở hữu lớp; năm học/môn, mã lớp, trạng thái, phân quyền và audit. Tạo schema `classes` có owner UUID, chỉ thay qua migration staging; chưa sửa `courses` hay `enrollments` để dùng tạm thay lớp.
+2. **Thành viên lớp:** quan hệ `class_memberships` phân biệt người phụ trách và học sinh, ràng buộc một người vào đúng lớp; Student chỉ xem lớp/bản ghi của mình, Teacher chỉ quản lý lớp mình phụ trách; kiểm cross-class IDOR và thu hồi thành viên.
+3. **Bài được giao:** `assignments` tham chiếu bài học/câu hỏi qua ID/phiên bản hiện có, không nhân đôi ngân hàng câu hỏi; bài làm/điểm và lịch sử được quản lý ở module Learning, không cho Student tự sửa kết quả.
+4. **UI Teacher và Student:** tạo lớp, mời/vào bằng mã, giao bài, xem tiến độ; loading/empty/error/permission/mobile theo [UI_DESIGN_SYSTEM.md](UI_DESIGN_SYSTEM.md).
+5. **Chốt release:** cần ít nhất tài khoản `teacher` staging và Student ở 2 lớp khác nhau để kiểm RLS `USING/WITH CHECK`, server authorization, mất kết nối, refresh, API 401/403, test 11 trang Admin sau login thật, kiểm security advisor và PR có rollback. **Không chỉnh Production RLS trước khi kiểm thử đạt.**
+
+**Ranh giới module:** `src/features/teacher` (mới) sở hữu lớp/thành viên/giao bài; `src/features/learning` tiếp tục sở hữu bài làm và tiến độ; `src/features/courses` sở hữu nội dung học, `src/features/auth` sở hữu session/role. Không tạo shared service khi chỉ một module dùng.
+
 ### Bốn workspace sản phẩm
 
 - **Admin:** quản trị nền tảng, người dùng, phân quyền, hệ thống, nội dung và Roadmap; không dùng như trang giáo viên.
@@ -90,7 +104,7 @@ flowchart LR
 
 ## 5. Ưu tiên Roadmap
 
-1. P0: ổn định Admin/Auth/Roadmap Sync; backup, test JWT Admin/Student + staging, kiểm toán RLS.
+1. P0: **JWT Admin/Student và Roadmap CRUD/backup/restore đã PASS trên staging** (31/10); kiểm toán RLS ngoài Roadmap, bảo mật RPC và E2E Next.js vẫn là gate chưa đạt.
 2. P1: nghiệm thu 11 route Admin sau login thật; hợp nhất tri thức sản phẩm/kho câu hỏi dùng chung.
 3. P2: Teacher Studio (lớp, học sinh, giao bài) có migration và quyền; sau đó Live Quiz.
 4. P2–P3: cải tiến Word/Slides, Excel/Coding Labs, AI giáo dục có kiểm soát, trò chơi dùng chung câu hỏi.
