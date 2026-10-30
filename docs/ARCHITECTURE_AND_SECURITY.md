@@ -58,6 +58,8 @@ Các module Teacher/class, assignment, content bank, Lab rubric, school manager 
 
 ## 6. Local, Preview, Production và kiểm thử
 
+**Staging riêng (30/10/2026):** Supabase ref `ordiksbvpewwgrnvzrud`, vùng Singapore, có 7 migration và dữ liệu seed giả; 1 migration hardening quyền TRUNCATE **chỉ trên staging**. 14/14 public tables bật RLS. Không có Auth QA user nên JWT E2E và CRUD/restore chưa chạy; hướng dẫn [SUPABASE_SETUP.md](SUPABASE_SETUP.md). Production ref `bpxwpfmjoojrgqlfkqgz` không đổi. Không đồng nhất môi trường staging với Production và không tự đẩy hardening SQL khi chưa kiểm thử xong.
+
 **Local Demo:** `pnpm install` → `pnpm dev` → http://localhost:3000. `NEXT_PUBLIC_USE_MOCK_DATA` khác `false` là Demo, dữ liệu nháp trong localStorage không đồng bộ.
 
 **Live Dev:** dùng Supabase project riêng; `.env.local` lấy template `.env.example`, không đưa keys vào tài liệu; migrations reconcile trước khi chạy. Chi tiết: [SUPABASE_SETUP.md](SUPABASE_SETUP.md).
