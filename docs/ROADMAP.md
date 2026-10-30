@@ -8,7 +8,7 @@
 
 ## Ưu tiên hiện hành (bám theo kiểm toán, chưa đánh dấu hoàn tất)
 
-> **Cập nhật 30/10/2026 (sau khi tạo staging):** project `ordiksbvpewwgrnvzrud` ACTIVE_HEALTHY đã có 7 migration, seed giả lập và hardening quyền TRUNCATE riêng trên staging, 14/14 bảng RLS ON. **Chưa có hai tài khoản Auth QA; chưa chạy JWT thật và CRUD/restore thật**. Playbook tại [SUPABASE_SETUP.md](SUPABASE_SETUP.md). P0 vẫn chưa hoàn thành.
+> **Cập nhật 30/10/2026 (sau khi xác minh QA):** staging `ordiksbvpewwgrnvzrud` có 7 migration nền tảng, 1 hardening riêng, seed giả lập, 14/14 bảng RLS ON và **hai tài khoản QA đã confirmed, role Admin/Student đúng theo SQL**. **JWT thật và CRUD/restore thật chưa được chạy trên máy chứa mật khẩu.** Playbook tại [SUPABASE_SETUP.md](SUPABASE_SETUP.md). P0 chưa hoàn thành.
 
 > **30/10/2026 — P0 staging:** đã chuẩn bị mã kiểm thử JWT/CRUD/backup/restore và ghi hướng dẫn tại [SUPABASE_SETUP.md](SUPABASE_SETUP.md). **Chưa tạo staging, chưa chạy bài test Live** vì cần xác nhận chi phí/quota/tổ chức. Không chuyển trạng thái P0 sang hoàn thành khi chưa có kết quả.
 
