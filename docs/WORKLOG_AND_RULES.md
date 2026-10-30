@@ -37,4 +37,4 @@ Không viết lại cả nhật ký cũ. Một task nhiều commit có thể th�
 - **Bảo toàn:** lưu nguyên văn 11 tài liệu nền tảng + 6 kiểm toán cũ + 1 worklog lịch sử trong `docs/archive/`; không chạm dữ liệu Supabase, DNS, Auth, UI.
 - **Kiểm tra:** read-only DB (14/14 bảng RLS), security/performance advisor; GitHub PR và CI cần xác minh trước merge.
 - **Tồn đọng Product P0:** staging, kiểm JWT Admin/Student, Roadmap CRUD/backup/reload, audit hàm `SECURITY DEFINER`; chỉ sau đó bắt đầu Teacher Studio.
-- **Phát hành:** tài liệu trên branch; cập nhật số PR/CI/SHA/READY sau khi đã xác minh, không khẳng định trước.
+- **PR và bằng chứng:** [PR #64](https://github.com/huunghia160699/xuong-cong-nghe/pull/64); CI kiểm tra unit/typecheck/build/Chromium và tài liệu trên đúng SHA của PR. Trạng thái phát hành phải xem tại PR/Vercel theo commit hiện hành, không suy ra từ snapshot.
