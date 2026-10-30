@@ -20,6 +20,7 @@
 | Thay đổi sản phẩm, chức năng hoặc menu | [PRODUCT_AND_MODULES.md](PRODUCT_AND_MODULES.md) | [ROADMAP.md](ROADMAP.md) / [XCN_FUNCTION_ROADMAP_CHECKLIST.md](XCN_FUNCTION_ROADMAP_CHECKLIST.md) | `src/features`, `src/config` |
 | API, DB, RLS, Supabase, Auth, deploy | [ARCHITECTURE_AND_SECURITY.md](ARCHITECTURE_AND_SECURITY.md) | [SUPABASE_SETUP.md](SUPABASE_SETUP.md), [SUPABASE_STORAGE.md](SUPABASE_STORAGE.md) | `src/lib`, `src/middleware.ts`, `supabase/migrations` |
 | UI toàn site, Admin header/sidebar | [UI_DESIGN_SYSTEM.md](UI_DESIGN_SYSTEM.md) | [PRODUCT_AND_MODULES.md](PRODUCT_AND_MODULES.md) khi cần luồng | `src/app`, `src/components`, `src/app/admin/admin.css` |
+| Student/Quiz/learning progress | [PRODUCT_AND_MODULES.md](PRODUCT_AND_MODULES.md) | [ARCHITECTURE_AND_SECURITY.md](ARCHITECTURE_AND_SECURITY.md) | `src/features/learning`, `src/app/student`, `src/app/api/quiz` |
 | Roadmap/backup/conflict | [ROADMAP.md](ROADMAP.md) + [ARCHITECTURE_AND_SECURITY.md](ARCHITECTURE_AND_SECURITY.md) | [SYSTEM_AUDIT_2026-10-30.md](SYSTEM_AUDIT_2026-10-30.md) | `src/features/admin/roadmap-*` |
 | Word Lab | [WORD_SIMULATOR_STANDARD.md](WORD_SIMULATOR_STANDARD.md) | [WORD_SIMULATOR_CONTROL_AUDIT.md](WORD_SIMULATOR_CONTROL_AUDIT.md), [WORD_HOME_QA_REPORT.md](WORD_HOME_QA_REPORT.md) | `src/features/word-simulator` |
 | Slide/lesson presentation | [SLIDE_STANDARD.md](SLIDE_STANDARD.md) | [PRESENTATION_DESIGN_STANDARD.md](PRESENTATION_DESIGN_STANDARD.md), [PPT_INTEGRATION.md](PPT_INTEGRATION.md) | `src/features/presentations` |
