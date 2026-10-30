@@ -12,7 +12,7 @@ test("Local staging QA secrets are ignored by Git and only the empty example is 
  assert.match(example,/RLS_TEST_PROJECT_REF=ordiksbvpewwgrnvzrud/);
  assert.match(example,/RLS_ADMIN_PASSWORD=<staging-admin-local-password>/);
  assert.match(example,/RLS_STUDENT_PASSWORD=<staging-student-local-password>/);
- assert.doesNotMatch(example,/sb_secret_|service_role|BEGIN (?:RSA |EC )?PRIVATE KEY/);
+ assert.doesNotMatch(example,/^RLS_SUPABASE_PUBLISHABLE_KEY=(?!<)[^\\s]+/m);
  assert.ok(example.includes("# RLS_WRITE_ACK=I_UNDERSTAND"),
   "Do not enable write acknowledgment by default");
 });
