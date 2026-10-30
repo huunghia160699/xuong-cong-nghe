@@ -27,7 +27,10 @@ test("primary button is legible and home keeps natural scrolling", () => {
 test("change tracking is part of the permanent development rules", () => {
   const log = read("docs/WORKLOG_AND_RULES.md");
   const agent = read("AGENTS.md");
-  assert.match(log, /Nhật ký sau mỗi nhiệm vụ/);
-  assert.match(log, /2026-10-14/);
+  const archive = read("docs/archive/WORKLOG_HISTORY_TO_2026-10-30.md");
+  assert.match(log, /Ghi tới đâu lưu tới đó/);
+  assert.match(log, /2026-10-30/);
+  assert.match(archive, /Nhật ký sau mỗi nhiệm vụ/);
+  assert.match(archive, /2026-10-14/);
   assert.match(agent, /docs\/WORKLOG_AND_RULES\.md/);
 });
