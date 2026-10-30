@@ -23,5 +23,5 @@ test("Staging QA documentation requires an actual JWT read pass before any write
  assert.match(doc,/node --env-file=\.env\.staging\.qa\.local scripts\/verify-roadmap-staging\.mjs/);
  assert.ok(doc.indexOf("verify-roadmap-rls.mjs") < doc.lastIndexOf("verify-roadmap-staging.mjs"));
  assert.ok(doc.includes("không phải đăng nhập bằng JWT thật"));
- assert.ok(doc.includes("STAGING ĐÃ TẠO")||doc.includes("STAGING VÀ HAI TÀI KHOẢN QA"));
+ assert.ok(doc.includes("STAGING ACCEPTANCE PASS") || doc.includes("STAGING ĐÃ TẠO") || doc.includes("STAGING VÀ HAI TÀI KHOẢN QA"),"Documentation must state the staging lifecycle status");
 });
