@@ -31,6 +31,12 @@ Không viết lại cả nhật ký cũ. Một task nhiều commit có thể th�
 
 ## III. Nhật ký mới (từ 30/10/2026)
 
+### 2026-10-31 — [PUBLIC-WEB D1 / ADMIN ROADMAP] Phần việc đang triển khai
+- **DONE (Production Roadmap có chốt CAS):** trước ghi `version=4`, 20 epics, MD5 snapshot `c3442d7b1c2659caa87bd097ce090ce4`; đã **nối thêm** epic `public-website-redesign-d0-d7` gồm checklist D0–D7, chỉ D0 DONE, D1 đang phát triển. SQL kiểm tra phiên bản/hash và không trùng ID, không ghi đè 20 mục trước. Readback: `version=5`, 21 epics, 20 cũ, audit events 5. **Dữ liệu Admin Supabase Production đã đổi theo yêu cầu**, không thay Auth/RLS.
+- **DONE (D1 code, pending QA):** `src/app/(public)/public.css` màu Calm Slate Blue scoped, `src/components/public-navigation.tsx` Navbar/mega-menu/mobile, Header có đọc vai trò server, Footer links thật và 4 route marketing placeholder trung thực để không 404; kiểm thử tĩnh tại `tests/public-foundation-d1.test.mjs`. **Chưa tick D1 DONE trên Admin khi chưa CI/Chromium/READY.**
+- **NEXT:** tests/Chromium đa viewport, PR/CI PASS, merge, Vercel READY + SHA, chỉ sau đó mới đánh dấu checklist D1 hoàn thành trong Admin với phiên bản CAS mới. Nếu test không đạt giữ D1 chưa xong.
+- **Tài liệu:** [PUBLIC_WEBSITE_DESIGN_SPEC.md](PUBLIC_WEBSITE_DESIGN_SPEC.md), [ROADMAP.md](ROADMAP.md), [UI_DESIGN_SYSTEM.md](UI_DESIGN_SYSTEM.md). `/admin/roadmap` dùng dữ liệu Supabase khác file Markdown và đã được đồng bộ riêng một lần theo yêu cầu.
+
 ### 2026-10-31 — [PUBLIC-WEB] Đặc tả redesign 5 trang
 - **DONE (D0):** [PUBLIC_WEBSITE_DESIGN_SPEC.md](PUBLIC_WEBSITE_DESIGN_SPEC.md) có wireframe, copy và hành vi Trang chủ/Giới thiệu/Bảng giá/Tin tức/Liên hệ; header/footer, 7 nhóm catalog, palette public scoped #365F80/#223044/#F6F8FB **không gradient**, responsive, auth gate, WCAG, SEO và kế hoạch D1–D7.
 - **LINKED:** [UI_DESIGN_SYSTEM.md](UI_DESIGN_SYSTEM.md), [INDEX.md](INDEX.md), [ROADMAP.md](ROADMAP.md). Trạng thái available/building/planned phải đúng thực tế.
@@ -66,18 +72,7 @@ Không viết lại cả nhật ký cũ. Một task nhiều commit có thể th�
 - **BLOCKED:** staging chưa có Auth users; connector không có chức năng Auth Admin tạo user. Cần người quản lý tạo hai QA user riêng, xác nhận email và cấp role Admin trong staging (không nhập passwords vào Chat) rồi mới chạy JWT thật, CRUD/backup/restore và E2E Next.js Preview.
 - **KHÔNG LÀM:** không đổi Production DB, Auth, RLS, Vercel env; Teacher Studio vẫn chờ nghiệm thu P0.
 
-### 2026-10-30 — [AUTH/ROADMAP] Chuẩn bị staging, kiểm thử JWT thật và khôi phục
-- **Yêu cầu:** tạo staging Supabase, chạy hai JWT Admin/Student và nghiệm thu CRUD/backup/restore Roadmap, sau đó mới phát triển Teacher Studio.
-- **DONE:** đã đọc tài liệu theo đúng module; xác minh org Free hiện có 2 project, không có branch; chi phí Supabase báo branch **$0,01344/giờ**, project mới **$0/tháng** nhưng quota Free cần kiểm tra. Không sử dụng project không liên quan.
-- **DONE (mã kiểm thử):** `scripts/verify-roadmap-staging.mjs` chạy real JWT Data API trên **staging rỗng** khi có cờ an toàn; thử add/edit/delete/restore, version CAS, student denied, audit và lưu backup tạm không đưa lên Git. `scripts/verify-roadmap-rls.mjs` được sửa để tạo thay đổi nội dung thật do trigger từ chối update no-op. `tests/staging-roadmap-acceptance.test.mjs` xác minh fail-closed Production.
-- **CHƯA THỰC HIỆN:** chưa tạo staging vì cần chủ dự án chọn tổ chức/xác nhận chi phí hoặc quota; chưa có 2 tài khoản staging đã xác minh; chưa chạy JWT hay CRUD thật; chưa nghiệm thu browser Next.js Preview.
-- **An toàn:** Production DB/Auth/RLS/DNS/Vercel env không thay đổi; không dùng mật khẩu/tokens của tài khoản thật.
-- **Hướng dẫn chi tiết:** [SUPABASE_SETUP.md](SUPABASE_SETUP.md) mục “Quy trình staging RLS & Roadmap”. PR/CI/commit cập nhật khi đã có kết quả kiểm thử; Teacher Studio vẫn ở trạng thái chờ.
-
-### 2026-10-30 — [DOCS/ARCH] Kiểm toán hệ thống và chuẩn hóa Markdown
-- **Yêu cầu:** bổ sung https://duaedu.net/ và https://montinhoc.vn/ vào website tham khảo; thống nhất đọc tài liệu đúng module, ghi tới đâu lưu tới đó; kiểm toán một lần và tinh gọn tài liệu nền tảng.
-- **Đã làm:** khảo sát trang công khai của DUA Edu và Môn Tin học; viết [WEBSITE_REFERENCES.md](WEBSITE_REFERENCES.md); tổng kiểm kê cấu trúc repository, Supabase Advisor/CI/Live status; tạo [SYSTEM_AUDIT_2026-10-30.md](SYSTEM_AUDIT_2026-10-30.md). Gộp product/route/role vào [PRODUCT_AND_MODULES.md](PRODUCT_AND_MODULES.md); kiến trúc/RLS vào [ARCHITECTURE_AND_SECURITY.md](ARCHITECTURE_AND_SECURITY.md); brand/layout vào [UI_DESIGN_SYSTEM.md](UI_DESIGN_SYSTEM.md).
-- **Bảo toàn:** lưu nguyên văn 11 tài liệu nền tảng + 6 kiểm toán cũ + 1 worklog lịch sử trong `docs/archive/`; không chạm dữ liệu Supabase, DNS, Auth, UI.
-- **Kiểm tra:** read-only DB (14/14 bảng RLS), security/performance advisor; GitHub PR và CI cần xác minh trước merge.
-- **Tồn đọng Product P0:** staging, kiểm JWT Admin/Student, Roadmap CRUD/backup/reload, audit hàm `SECURITY DEFINER`; chỉ sau đó bắt đầu Teacher Studio.
-- **PR và bằng chứng:** [PR #64](https://github.com/huunghia160699/xuong-cong-nghe/pull/64); CI kiểm tra unit/typecheck/build/Chromium và tài liệu trên đúng SHA của PR. Trạng thái phát hành phải xem tại PR/Vercel theo commit hiện hành, không suy ra từ snapshot.
+### 2026-10-30 — [AUTH/ROADMAP] Chuẩn bị staging
+- Đã viết script JWT và CRUD/backup/restore + chốt chống chạy nhầm Production. Sau đó tạo staging và nghiệm thu thành công ngày 31/10. Quy trình đầy đủ: [SUPABASE_SETUP.md](SUPABASE_SETUP.md); lịch sử chi tiết giữ trong Git.
+### 2026-10-30 — [DOCS/ARCH] Chuẩn hóa tài liệu
+- Đã kiểm toán hệ thống và gộp tài liệu theo module, lưu lịch sử ở docs/archive. Quy tắc đọc đúng file, checkpoint đúng công việc; xem [INDEX.md](INDEX.md) và [SYSTEM_AUDIT_2026-10-30.md](SYSTEM_AUDIT_2026-10-30.md).
