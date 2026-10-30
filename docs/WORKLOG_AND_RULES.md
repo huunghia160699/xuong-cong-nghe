@@ -31,6 +31,14 @@ Không viết lại cả nhật ký cũ. Một task nhiều commit có thể th�
 
 ## III. Nhật ký mới (từ 30/10/2026)
 
+### 2026-10-31 — [PUBLIC-WEB D2–D4 / ROADMAP 21] Triển khai trên GitHub, không deploy Vercel
+- **DONE — Admin Production:** chuyển epic `public-website-redesign-d0-d7` từ vị trí cuối (order 20) về **order 4**, ngay sau `public-landing` thuộc phase `01 · Website & Tài khoản`; cập nhật CAS version `7→8`, vẫn đủ 21 epics, không xóa nội dung khác, sự kiện audit được trigger ghi nhận. Không tự tick D2–D4 qua SQL trước khi có QA code.
+- **CODE DONE (nhánh `feat/public-website-d2-d4-20261031`):** D2 Product Atlas sử dụng registry trạng thái, filter chạy thực, sơ đồ kiến trúc/role/showcase/phương pháp/preview giá & tin tức không bịa dữ liệu. D3 Giới thiệu có 7 khối và metadata/canonical. D4 Bảng giá có 3 nhóm nhu cầu, bảng so sánh trạng thái quyền, FAQ native keyboard và cảnh báo chưa có billing. Các chức năng chỉ thật sự protected (Student/Quiz) mới có nút Sử dụng kèm login `next` an toàn; đường dẫn Word/Slides hiện là xem thử/thư viện công khai, **chưa áp server gate mới ngoài phạm vi**.
+- **CODE DONE:** CSS public scoped, responsive 360/768/1280; cập nhật nav ecosystem và regression tests; D5 Tin tức và D6 Liên hệ vẫn placeholder trung thực.
+- **NOT TESTED / BLOCKED:** chưa chạy được `pnpm test/typecheck/build` trên máy local hoặc Chromium trong phiên connector; cần CI GitHub xác minh. Chưa merge `main`; **không gọi Vercel/không xác nhận Production**. Khi CI PASS có thể nghiệm thu giao diện với screenshot browser; không ngụ ý giá/entitlement đã duyệt.
+- **Ghi nhận:** source commit/PR và trạng thái CI bổ sung khi có bằng chứng từ GitHub, không đồng bộ checklist từ Markdown vào Production Roadmap.
+
+
 ### 2026-10-31 — [PUBLIC-WEB D1 / ADMIN ROADMAP] Phần việc đang triển khai
 - **DONE (Production Roadmap có chốt CAS):** trước ghi `version=4`, 20 epics, MD5 snapshot `c3442d7b1c2659caa87bd097ce090ce4`; đã **nối thêm** epic `public-website-redesign-d0-d7` gồm checklist D0–D7, chỉ D0 DONE, D1 đang phát triển. SQL kiểm tra phiên bản/hash và không trùng ID, không ghi đè 20 mục trước. Readback: `version=5`, 21 epics, 20 cũ, audit events 5. **Dữ liệu Admin Supabase Production đã đổi theo yêu cầu**, không thay Auth/RLS.
 - **DONE (D1 đã RELEASE, PR #71):** public CSS Calm Slate Blue scoped không gradient, Navbar/mega-menu/mobile, Header kiểm vai trò server, Footer và 4 route placeholder không 404; tests tĩnh + Chromium 5 route × 360/768/1280/1920 PASS, Vercel Production READY commit `001bbfc`, đúng alias. **D1 có thể tick DONE trong Admin sau khi kiểm CAS và đọc lại phiên bản.**

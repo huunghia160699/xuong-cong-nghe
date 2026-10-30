@@ -29,13 +29,13 @@
 
 ## Public Website — kế hoạch thiết kế lại 5 trang (31/10/2026)
 
-> **D0 ĐÃ VIẾT SPEC, D1–D7 CHƯA TRIỂN KHAI.** Nguồn chi tiết duy nhất: [PUBLIC_WEBSITE_DESIGN_SPEC.md](PUBLIC_WEBSITE_DESIGN_SPEC.md). Đây là kế hoạch trong Git, **không tự tick hoặc ghi đè Roadmap Supabase Production**.
+> **D0/D1 đã thực hiện; D2–D4 có mã nguồn trên nhánh GitHub chờ nghiệm thu. D5–D7 chưa hoàn thành.** Nguồn chi tiết duy nhất: [PUBLIC_WEBSITE_DESIGN_SPEC.md](PUBLIC_WEBSITE_DESIGN_SPEC.md). Đây là kế hoạch trong Git, **không tự tick hoặc ghi đè Roadmap Supabase Production**.
 
 - [x] **D0 — Bản đặc tả:** wireframe/copy 5 trang, 6 link nav marketing, catalog 7 nhóm tính năng, palette “Calm Slate Blue” không gradient, responsive, auth gate và QA criteria. Có nguồn Dribbble/ảnh VniTeach làm cảm hứng, không sao chép.
 - [x] **D1 — Public foundation: DONE (PR #71, main `001bbfc`)**. Có palette `xcn-public` không gradient, Navbar role-aware, mega-menu 7 nhóm, Footer, 4 route placeholder trung thực, QA Chromium 360/768/1280/1920; PR CI PASS, Vercel Production READY đúng SHA và alias. Nội dung 4 trang chưa hoàn thiện, để D3–D6. Admin/Word/Slides không đổi.
-- [ ] **D2 — Trang chủ:** hero hệ sinh thái, catalog có trạng thái available/building/planned, kiến trúc liên kết module, vai trò, showcase, bảng giá và tin tức preview, CTA auth chỉ khi dùng thật.
-- [ ] **D3 — Giới thiệu:** xây route /gioi-thieu và 7 section minh bạch về sản phẩm, đối tượng, hệ sinh thái và lộ trình.
-- [ ] **D4 — Bảng giá:** route /bang-gia, ba nhóm Khám phá/Giáo viên/Trường học; so sánh/FAQ/CTA. **Không công bố giá giả hay bật billing khi chưa phê duyệt chính sách.**
+- [ ] **D2 — Trang chủ (CODE DONE trên nhánh, chờ CI/QA):** hero hệ sinh thái, catalog có trạng thái available/building/planned, kiến trúc liên kết module, vai trò, showcase, bảng giá và tin tức preview, CTA auth chỉ khi dùng thật.
+- [ ] **D3 — Giới thiệu (CODE DONE trên nhánh, chờ CI/QA):** xây route /gioi-thieu và 7 section minh bạch về sản phẩm, đối tượng, hệ sinh thái và lộ trình.
+- [ ] **D4 — Bảng giá (CODE DONE trên nhánh, chờ CI/QA):** route /bang-gia, ba nhóm Khám phá/Giáo viên/Trường học; so sánh/FAQ/CTA. **Không công bố giá giả hay bật billing khi chưa phê duyệt chính sách.**
 - [ ] **D5 — Tin tức:** route /tin-tuc, topic filter/search, article cards/empty-state, published-only content; không có bài/dữ liệu giả.
 - [ ] **D6 — Liên hệ:** route /lien-he, kênh thực đã xác minh; form chỉ khi có backend/anti-spam/privacy đúng và đầu nhận đã được phê duyệt.
 - [ ] **D7 — QA / release:** Chrome responsive, keyboard, WCAG AA, auth/permission deep-link, SEO, CI/build, Vercel READY và SHA khớp.

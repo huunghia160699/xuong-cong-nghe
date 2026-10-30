@@ -37,10 +37,15 @@ test("Scoped public theme uses the approved palette without gradient and preserv
  assert.match(current,/blue: "#005BFD"/);
 });
 
-test("All D1 marketing placeholders disclose unfinished content, avoid fake forms and price claims",()=>{
- for(const path of ["gioi-thieu","bang-gia","tin-tuc","lien-he"]){
+test("Unfinished D5-D6 marketing placeholders disclose status, and D3-D4 have substantive pages",()=>{
+ for(const path of ["tin-tuc","lien-he"]){
   const page=read("src/app/(public)/"+path+"/page.tsx");
   assert.match(page,/PublicPendingPage/);
+  assert.match(page,/export const metadata/);
+ }
+ for(const path of ["gioi-thieu","bang-gia"]){
+  const page=read("src/app/(public)/"+path+"/page.tsx");
+  assert.doesNotMatch(page,/PublicPendingPage/);
   assert.match(page,/export const metadata/);
  }
  const component=read("src/components/public-pending-page.tsx");
