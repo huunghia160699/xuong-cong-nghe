@@ -8,6 +8,8 @@
 
 ## Ưu tiên hiện hành (bám theo kiểm toán, chưa đánh dấu hoàn tất)
 
+> **30/10/2026 — P0 staging:** đã chuẩn bị mã kiểm thử JWT/CRUD/backup/restore và ghi hướng dẫn tại [SUPABASE_SETUP.md](SUPABASE_SETUP.md). **Chưa tạo staging, chưa chạy bài test Live** vì cần xác nhận chi phí/quota/tổ chức. Không chuyển trạng thái P0 sang hoàn thành khi chưa có kết quả.
+
 1. **P0 — Auth/Admin/Roadmap:** staging Supabase riêng, hai JWT thật, thử CRUD + reload + conflict, sao lưu/khôi phục.
 2. **P0 — Security:** đánh giá SECURITY DEFINER, password protection, quyền RLS/GRANT trên staging trước khi áp Production.
 3. **P1 — Nghiệm thu Admin:** 11 trang sau đăng nhập Live, màn hình 360/768/1280, error/loading, keyboard và mạng yếu.
