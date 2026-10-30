@@ -59,6 +59,40 @@ flowchart LR
 
 Đây là *bản đồ nghiệp vụ hướng tới*, không phải đồ thị import đã được kiểm chứng; CORE, AUTH, ADMIN, LEARNING, SLIDES và WORD có mã nguồn đang tồn tại.
 
+## 2A. Đề xuất điều hướng công khai theo 4 nguồn tham khảo — 31/10/2026
+
+> **Ý TƯỞNG / CHƯA TRIỂN KHAI NAVBAR.** Chỉ là cấu trúc IA (Information Architecture) để tham khảo trong thiết kế tương lai; không đổi `src/config/navigation.ts`, header, route, API hay DB theo phần này. Nguồn được phân tích tại [WEBSITE_REFERENCES.md](WEBSITE_REFERENCES.md). Cấu trúc hiện tại còn 5 mục `Khóa học · Luyện tập · Tài nguyên · Công cụ · Dự án`; không tuyên bố 7 mục dưới đã xuất hiện trên website.
+>
+> **Nguyên tắc:** logo là link Trang chủ; menu tối đa 7 nhóm, ưu tiên mục ngắn và đưa mục chi tiết vào dropdown/mega menu hoặc cổng Apps. Trên mobile gộp bằng accordion; những mục chỉ có ý tưởng thì không tạo link chết. Nav góc phải có Đăng nhập / Không gian của tôi tùy session và vai trò, không làm lộ quyền chưa được cấp.
+
+| Nav cấp 1 | Các submenu/chức năng đề xuất | Nguồn cảm hứng chính | Trạng thái và đường dẫn hiện có |
+| --- | --- | --- | --- |
+| **Khóa học** | Tin học theo lớp/môn; Word/Excel/PowerPoint; Scratch; Python/SQL/Power BI; học theo chủ đề; lộ trình và học tiếp; tiến độ | DUA Edu (course path), Môn Tin học (Tin học 3–12) | **Có nền tảng:** `/khoa-hoc`, Student lessons; khóa/lộ trình bổ sung là kế hoạch |
+| **Thực hành** | Word Lab; Excel Lab; PowerPoint Lab; Scratch; Coding Lab Python/HTML/CSS; SQL playground; dataset; bài thực hành, nộp file và rubric | DUA Edu, Môn Tin học | **Có:** `/cong-cu/mo-phong-word`; **đề xuất:** các Lab khác và chấm thực hành |
+| **Kiểm tra** | Trắc nghiệm; ngân hàng câu hỏi; tạo đề từ Word/PDF; ma trận; giao bài và đảo đề; thi online; chấm và phân tích; Live Quiz; đấu trường; ô chữ/ghép hình; kiểm tra nhanh | Đề Thi Số, VniTeach | **Có nền tảng:** `/student/quiz`; **đề xuất:** đề thi nâng cao, game, Live Quiz và OMR |
+| **Công cụ** | Trình chiếu; bảng viết; đồng hồ; vòng quay/gọi tên; mã QR; lịch/thời khóa biểu; biểu mẫu; PDF; bookmark; danh bạ công cụ; **Quản lý phòng máy** (sắp phát triển ở một giai đoạn sau) | VniTeach và ý tưởng mới về NetSupport School | **Có:** `/cong-cu`, `/cong-cu/trinh-chieu`; **đề xuất:** công cụ nhanh và phòng máy |
+| **Tài nguyên** | Giáo án; bài giảng; video/ebook; file mẫu; dataset Excel/CSV; cheatsheet; ngân hàng đề; thư viện tìm kiếm/lọc theo môn, lớp, chủ đề | DUA Edu, Môn Tin học, Đề Thi Số | **Có nền tảng:** section tài nguyên; thư viện hoàn chỉnh là kế hoạch |
+| **Dự án** | Dự án môn học; bài cuối khóa; sản phẩm học sinh; nhóm/đồ án phân tích dữ liệu; bộ sưu tập sản phẩm; portfolio và showcase | DUA Edu, Môn Tin học | **Có section:** `/#du-an`; tính năng dự án nộp bài là kế hoạch |
+| **Giáo viên** | Teacher Studio; lớp học/danh sách học sinh; mã mời; giáo án; câu hỏi/đề; giao bài/chấm bài; trình chiếu; báo cáo kết quả; điều hành phòng máy | Môn Tin học, VniTeach, Đề Thi Số | **Chỉ mới mở phát triển trên staging:** Teacher Studio; chưa có quyền/route Giáo viên nghiệm thu Production |
+
+**Điều hướng theo vai trò:** public top-nav chỉ giúp khám phá sản phẩm; các thao tác quản lý lớp và phòng máy cần đăng nhập vào Teacher Studio; Student thấy chỉ khóa học/bài tập/kết quả của mình; Admin giữ workspace riêng để quản trị nền tảng, không gộp vào menu Giáo viên. Từng phần mềm sau này có thể mở bằng subdomain riêng `word.`/`studio.`/`tools.` nhưng đó là kế hoạch DNS, không phải chức năng hiện có.
+
+**Mối liên kết dữ liệu để tránh trùng module:** `CONTENT` sở hữu học liệu/câu hỏi; `LEARNING` sở hữu lượt làm/tiến độ; `TEACHER` sở hữu lớp/giao bài; `PRESENTATIONS` và `WORD` tiêu thụ nội dung theo ID; `TOOLS` tập hợp công cụ nhỏ; ý tưởng `LAB-MANAGER` sở hữu phòng/thiết bị/phiên giám sát và gắn lớp theo định danh, nhưng không trực tiếp ghi bài làm, điểm hoặc điều khiển máy chỉ vì giáo viên đã đăng nhập.
+
+### Ý tưởng tương lai: Quản lý phòng máy Tin học (LAB-MANAGER)
+
+> **BACKLOG / CHƯA TRIỂN KHAI**. Cảm hứng người dùng nói “giống NetSP”, tạm hiểu là [NetSupport School](https://www.netsupportschool.com/feature-focus/); cần xác nhận tên phần mềm tham khảo khi thiết kế chi tiết. Không coi đây là một sản phẩm đã có, không tạo nav item thực tế, DNS, agent, quyền hệ điều hành, API hay schema tại thời điểm này.
+
+- **Mục đích:** giáo viên điều hành phòng Tin học 30–50 máy, ghép sơ đồ chỗ ngồi với lớp đang học và giao bài thực hành nhanh; quản trị thiết bị tách khỏi điểm số/hồ sơ học sinh.
+- **Bộ chức năng dự kiến:** sơ đồ phòng/máy và trạng thái online-offline; màn hình thumbnail theo thời gian thực nếu người dùng cho phép; phát màn hình giáo viên cho tất cả/nhóm máy; mở URL hoặc học liệu đồng loạt; gửi/thu file bài tập; tin nhắn/yêu cầu hỗ trợ; khóa màn hình trong giờ học có thông báo; quản lý danh sách ứng dụng/website được phép theo tiết; thông báo lỗi thiết bị và nhật ký kỹ thuật.
+- **Giai đoạn nghiên cứu (P3):** xác minh nhu cầu, hạ tầng LAN, Windows client, bảo mật thiết bị, quyền giáo viên/nhân viên IT, mức phù hợp với phòng máy và chi phí vận hành.
+- **Prototype (chưa được phê duyệt triển khai):** chỉ có sơ đồ phòng, ghép lớp–máy, trạng thái online/offline và gửi link học liệu bằng kết nối agent **có xác thực/đồng ý**. Không giả định trình duyệt Next.js có thể xem màn hình hoặc khóa máy từ xa khi chưa có phần mềm cài ở máy trạm.
+- **Chức năng rủi ro cao/để sau:** xem/điều khiển từ xa, khoá input, mở/tắt máy, hạn chế website, ghi hình, phát tán file. Yêu cầu user consent/notice, quyền phân tách theo phòng/ca học, RBAC, đăng ký thiết bị, mutual auth, network segmentation, audit, kill switch và kiểm định pháp lý/quyền riêng tư học sinh.
+- **Tích hợp:** danh mục công khai ở **Công cụ → Quản lý phòng máy** (khi đã thực sự có sản phẩm); thao tác vận hành trong **Giáo viên → Phòng máy** hoặc console kỹ thuật viên; liên kết `teacher_class_id`, `student_id` khi có sự đồng ý/đúng quyền. Không nhập máy trạm vào `auth.users` như người dùng bình thường.
+- **Chốt bảo mật:** không xem màn hình, ghi hình, truy cập file hoặc điều khiển thiết bị nếu thiếu consent, chính sách trường và quyền truy cập. Không mở dịch vụ điều khiển máy qua Internet công khai hoặc sử dụng service-role ở agent.
+
+**Tình trạng phê duyệt:** chỉ **ghi ý tưởng** vào docs/PRODUCT_AND_MODULES.md + docs/ROADMAP.md và nguồn tham khảo; không phát triển LAB-MANAGER trong đợt này. Khi được yêu cầu triển khai, lập PR/module/kiểm thử riêng sau cổng Teacher Studio.
+
 ## 3. Route hiện có so với dự định
 
 **Đã có file route trong repository:** website công khai `/`, `/khoa-hoc`, `/cong-cu`, `/cong-cu/trinh-chieu`; mô phỏng `/cong-cu/mo-phong-word`; Student `/student`, `/student/quiz`, `/student/khoa-hoc/[courseSlug]/[lessonSlug]`; Admin `/admin`, `/admin/roadmap`, `/admin/sitemap`, `/admin/nguoi-dung`, `/admin/phan-quyen`, `/admin/cau-hinh`, `/admin/nhat-ky`, `/admin/he-thong`, `/admin/bao-cao`, `/admin/khoa-hoc`, `/admin/kho-tai-lieu`; Auth `/dang-nhap`, `/dang-ky`, `/quen-mat-khau`, `/doi-mat-khau`, `/auth/callback`.
