@@ -73,11 +73,25 @@ try{
    const shot=await call("Page.captureScreenshot",{format:"png",fromSurface:true});
    writeFileSync(join(output,(route.slice(1)||"home")+"-"+width+".png"),Buffer.from(shot.data,"base64"));
    if(route==="/"){
+    const clicked=await evalJs(`(()=>{
+      const toggle=innerWidth<1181
+       ? document.querySelector('.xcn-public-mobile-toggle')
+       : document.querySelector('.xcn-public-nav-toggle');
+      if(!toggle)return false;
+      toggle.click();return true;
+    })()`);
+    assert.equal(clicked,true,"Navigation toggle missing @"+width);
+    // React state updates after the click handler, not synchronously inside DOM.evaluate.
+    await wait(300);
     const interactive=await evalJs(`(()=>{
-      const menu=document.querySelector('.xcn-public-mobile-toggle');
-      const desktop=document.querySelector('.xcn-public-nav-toggle');
-      if(innerWidth<1181){if(!menu)return false;menu.click();return menu.getAttribute('aria-expanded')==='true' && !!document.querySelector('.xcn-public-mobile-panel');}
-      if(!desktop)return false;desktop.click();return desktop.getAttribute('aria-expanded')==='true' && document.querySelectorAll('.xcn-public-mega-item').length===7;
+      if(innerWidth<1181){
+       const toggle=document.querySelector('.xcn-public-mobile-toggle');
+       return toggle?.getAttribute('aria-expanded')==='true'
+         && !!document.querySelector('.xcn-public-mobile-panel');
+      }
+      const toggle=document.querySelector('.xcn-public-nav-toggle');
+      return toggle?.getAttribute('aria-expanded')==='true'
+        && document.querySelectorAll('.xcn-public-mega-item').length===7;
     })()`);
     assert.equal(interactive,true,"Menu interaction failed @"+width);
     await call("Input.dispatchKeyEvent",{type:"keyDown",key:"Escape",code:"Escape"});
