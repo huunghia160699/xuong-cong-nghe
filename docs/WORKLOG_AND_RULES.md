@@ -25,6 +25,13 @@
 
 ## III. Lịch sử
 
+### 2026-10-30 — Ghi nguồn tham khảo website và chiến lược subdomain ứng dụng
+- **Mục tiêu:** lưu sổ tay website tham khảo trong dự án và ý tưởng mỗi phần mềm có một hostname tenungdung.xuongcongnghe.net.
+- **Tài liệu:** docs/NGUON_THAM_KHAO_WEBSITE_VA_TEN_MIEN_UNG_DUNG_2026-10-30.md; ghi VniTeach (link người dùng cung cấp), Đề Thi Số (đã ghi trong tài liệu dự án) và một website Tin học chưa tìm thấy URL nên không đoán.
+- **Định hướng:** ứng dụng có subdomain riêng (word, slides, quiz, studio, excel, tools); thí điểm CNAME tường minh trước, chỉ cân nhắc wildcard sau khi kiểm soát DNS/NS; Supabase Auth SSO nhiều hostname cần thiết kế/kiểm thử riêng.
+- **Phạm vi:** chỉ cập nhật tài liệu, không mua tên miền, thay DNS, Supabase, Auth hay mã ứng dụng; tất cả hostname là đề xuất.
+- **Kiểm thử/phát hành:** rà soát URL nguồn và chính sách Vercel wildcard; PR tài liệu, không coi hostname là đã được triển khai.
+
 ### 2026-10-30 — Sửa đăng nhập chuyển nhầm sang Student
 - **Mục tiêu:** tài khoản có `profiles.role=admin` vào Admin sau khi đăng nhập thường, không bị mặc định chuyển sang Student.
 - **Điều tra:** SQL read-only xác nhận tài khoản Gmail báo lỗi vẫn có role `admin` và email verified. Mã nguồn có default `safeNextPath(...)` là `/student` ở form/action/callback.
