@@ -13,13 +13,15 @@ test("approved palette is defined in Tailwind", () => {
   assert.doesNotMatch(source, /lime:|#c8f13b/i);
 });
 
-test("primary button is legible and home keeps natural scrolling", () => {
+test("public primary button is legible and homepage keeps natural scrolling", () => {
   const button = read("src/components/ui/button.tsx");
   const home = read("src/app/(public)/page.tsx");
   const css = read("src/app/globals.css");
   assert.match(button, /bg-blue text-white/);
-  assert.match(home, /bg-blue text-white/);
-  assert.match(home, /text-cyan/);
+  const publicCss = read("src/app/(public)/public.css");
+  assert.match(home, /xcn-marketing-btn primary/);
+  assert.match(publicCss, /\.xcn-public \.xcn-marketing-btn\.primary\{background:var\(--public-primary\);color:white/);
+  assert.match(home, /xcn-marketing-hero/);
   assert.doesNotMatch(home, /lime|xcn-home-snap|HomeSectionSnap/);
   assert.doesNotMatch(css, /scroll-snap-type|#c8f13b/i);
 });
