@@ -31,13 +31,11 @@ Không viết lại cả nhật ký cũ. Một task nhiều commit có thể th�
 
 ## III. Nhật ký mới (từ 30/10/2026)
 
-### 2026-10-31 — [PUBLIC-WEB / DESIGN] Đặc tả redesign năm trang marketing
-- **Yêu cầu:** thiết kế lại Trang chủ → Giới thiệu → Bảng giá → Tin tức → Liên hệ theo 4 website tham khảo và ảnh VniTeach, tìm thêm cảm hứng Dribbble; public show toàn bộ hệ sinh thái, đăng nhập mới dùng công cụ; palette nhẹ, **không gradient**.
-- **DONE — SPEC:** soạn [PUBLIC_WEBSITE_DESIGN_SPEC.md](PUBLIC_WEBSITE_DESIGN_SPEC.md) với 5 trang, 40+ section/logic, wireframe ASCII, copy mẫu, token màu, component/header/footer, route/auth-gate/SEO, responsive 360–2560px và các phase D0–D7. Chọn public-primary #365F80 (6.76:1 với chữ trắng), text #223044, nền #F6F8FB/#EAF1F7.
-- **Sợi dây liên module:** PUBLIC-WEB → AUTH/session/role → catalog modules CONTENT/LEARNING/TOOLS/TEACHER. Dùng docs/INDEX.md để vào đúng đặc tả; trạng thái sản phẩm có available/building/planned, không mở link giả.
-- **NOT IMPLEMENTED:** chưa thay navbar/homepage/css, chưa tạo 4 route marketing, bài viết/CMS, liên hệ backend, gói thanh toán hoặc chặn công cụ public hiện có; chưa đổi theme Admin/Word/Slides. Không sửa Supabase DB/Auth/RLS/Production.
-- **NEXT:** cập nhật UI_DESIGN_SYSTEM (đánh dấu palette tương lai, scoped public), INDEX và ROADMAP phase; kiểm tra link Markdown/CI rồi PR. Mỗi PR D1–D7 sau đó tạo checkpoint riêng theo quy tắc.
-- **Lưu ý:** giá, bài báo và email/địa chỉ hiện chưa có nguồn xác minh nên **không đặt số liệu giả**; CTA tool chỉ auth-gated sau khi code/test thật.
+### 2026-10-31 — [PUBLIC-WEB] Đặc tả redesign 5 trang
+- **DONE (D0):** [PUBLIC_WEBSITE_DESIGN_SPEC.md](PUBLIC_WEBSITE_DESIGN_SPEC.md) có wireframe, copy và hành vi Trang chủ/Giới thiệu/Bảng giá/Tin tức/Liên hệ; header/footer, 7 nhóm catalog, palette public scoped #365F80/#223044/#F6F8FB **không gradient**, responsive, auth gate, WCAG, SEO và kế hoạch D1–D7.
+- **LINKED:** [UI_DESIGN_SYSTEM.md](UI_DESIGN_SYSTEM.md), [INDEX.md](INDEX.md), [ROADMAP.md](ROADMAP.md). Trạng thái available/building/planned phải đúng thực tế.
+- **NOT IMPLEMENTED:** chưa có 4 route marketing mới, chưa đổi UI/Auth/RLS/Admin/Word/Slides, chưa có billing/CMS/contact thật. Giá, bài viết, liên hệ không được bịa.
+- **NEXT:** PR docs CI PASS; D1 public shell/nav/footer, D2 homepage, D3–D6 từng trang, D7 QA/release. Mỗi đợt phải có checkpoint riêng.
 
 ### 2026-10-31 — [PRODUCT/NAV + LAB-MANAGER] Tổng hợp 4 website, lưu ý tưởng quản lý phòng máy
 - **Yêu cầu:** đề xuất mục Navbar trang chủ và liệt kê nhóm chức năng dựa trên VniTeach, Đề Thi Số, DUA Edu, Môn Tin học; bổ sung ý tưởng quản lý phòng máy “giống net sp” để làm sau.
