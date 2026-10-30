@@ -66,6 +66,19 @@ where id = (select id from auth.users where email = 'admin@example.com');
 - **7 migration gốc đã áp** theo thứ tự: `initial_schema`, `secure_quiz_grants`, `auth_and_secure_quiz_rpc`, `harden_internal_trigger_grants`, `private_document_storage`, `admin_roadmap`, `admin_roadmap_change_events`. Lưu ý migration harden được điều chỉnh **chỉ trên staging**: bỏ một lệnh REVOKE đối với `public.rls_auto_enable()` vì hàm tùy chọn này không tồn tại trên project mới; KHÔNG sửa file migration gốc đã áp trên Production.
 - **Dữ liệu seed giả lập:** 3 courses, 9 lessons, 1 quiz, 6 questions, 24 options. Không sao chép `auth.users` hoặc dữ liệu Production; `auth.users` staging = 0, `admin_roadmap` = 0.
 - **8th staging-only hardening migration:** `deny_public_truncate_staging_qa` thu hồi quyền `TRUNCATE` với role `anon`/`authenticated` trên bảng public. Kiểm tra sau: **14/14 bảng RLS ON, 0/14 bảng còn cấp TRUNCATE hai role**. Production chưa thay đổi và chưa tự áp migration này lên Production.
+- **SQL hardening staging-only đã áp (không tự chạy trên Production):**
+  ```sql
+  revoke truncate on all tables in schema public from public, anon, authenticated;
+  ```
+  **Trước khi áp Production:** tạo migration chính thức theo quy trình, kiểm thử hai JWT Auth và các thao tác đăng nhập, hồ sơ, quiz/tiến độ, chỉ sau đó mới xét release riêng. Test preflight:
+  ```sql
+  select count(*) filter (where c.relrowsecurity) as rls_on,
+         count(*) filter (where has_table_privilege('anon',c.oid,'TRUNCATE')
+                        or has_table_privilege('authenticated',c.oid,'TRUNCATE'))
+                as unsafe_truncate
+  from pg_class c join pg_namespace n on n.oid=c.relnamespace
+  where n.nspname='public' and c.relkind='r';
+  ```
 - **Security linter:** `public.is_admin()` vẫn là SECURITY DEFINER có cảnh báo EXECUTE với `anon` và `authenticated`; `submit_quiz`/`get_quiz_result` cũng được cảnh báo. Chưa thay đổi RPC khi chưa kiểm JWT end-to-end.
 - **Đã xác nhận giá $0 và tạo đúng project được chọn.** Không thay đổi, tạm dừng hoặc xóa hai project cũ. Nếu cần đổi gói/branch có phí, phải lấy chấp thuận mới.
 
