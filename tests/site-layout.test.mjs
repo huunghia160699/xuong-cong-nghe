@@ -31,7 +31,7 @@ test("the font scale and dashboard header share the same design tokens",()=>{
  assert.match(css,/\.xcn-ui \.text-xs\s*\{\s*font-size:\s*\.8125rem/);
  const publicLayout=read("src/app/(public)/layout.tsx");
  const appShell=read("src/components/app-shell.tsx");
- assert.match(publicLayout,/className="xcn-ui"/);
+ assert.match(publicLayout,/className="xcn-ui xcn-public/);
  assert.match(appShell,/className="xcn-ui min-h-screen/);
  assert.match(appShell,/className="xcn-app-header/);
  assert.match(appShell,/className="xcn-app-main"/);
@@ -55,7 +55,7 @@ test("public library and tool cards follow content height with fluid vertical sp
  assert.match(css,/--xcn-block-gap:\s*clamp\(20px,\s*3\.4dvh,\s*40px\)/);
  assert.match(css,/\.xcn-header-nav\s*\{/);
  assert.match(header,/xcn-header-inner/);
- assert.match(header,/xcn-header-nav/);
+ assert.match(header,/PublicNavigation/);\n assert.match(read("src/components/public-navigation.tsx"),/xcn-public-desktop-nav/);
  assert.doesNotMatch(library,/min-h-screen|min-h-56|grid-cols-3 border border-zinc-200 bg-white|Đã có nội dung/);
  assert.doesNotMatch(tools,/min-h-\[75vh\]|min-h-\[275px\]|min-h-\[320px\]/);
  assert.match(library,/xcn-page-pad/);
