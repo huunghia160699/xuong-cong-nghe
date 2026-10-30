@@ -1,54 +1,23 @@
-# Xưởng Công Nghệ — HuuNghia Lab
+# Xưởng Công Nghệ — HuuNghia Studio
 
-Nền tảng học và thực hành năng lực số: Next.js 15, TypeScript, Tailwind CSS và Supabase.
+Nền tảng học và thực hành năng lực số: **Học → Luyện → Ứng dụng**. Stack: Next.js 15, React 19, TypeScript, Tailwind CSS 3, Supabase Auth/Postgres/RLS/Storage, Vercel.
 
-## Chạy chế độ Demo
+**Điểm vào tài liệu dự án:** [docs/INDEX.md](docs/INDEX.md). Quy tắc làm theo module và checkpoint: [AGENTS.md](AGENTS.md) / [docs/WORKLOG_AND_RULES.md](docs/WORKLOG_AND_RULES.md). **Không đọc toàn bộ repository cho mỗi thay đổi nhỏ.**
 
-Yêu cầu Node.js 22 trở lên.
+## Chạy local
+
+Node.js 22+ và pnpm:
 
 ```bash
 pnpm install
 pnpm dev
 ```
 
-Mở `http://localhost:3000`. Mặc định dùng chế độ **Demo**, không cần Supabase.
-Bài học, lựa chọn quiz và kết quả lưu trong `localStorage` của thiết bị.
+Mở http://localhost:3000. Mặc định ở chế độ Demo nếu `NEXT_PUBLIC_USE_MOCK_DATA` không bằng `false`. Bản Demo có localStorage và không đồng bộ giữa thiết bị.
 
-## Chạy với Supabase Auth và dữ liệu thật
+Nếu cần Supabase **development riêng**: tạo `.env.local` theo `.env.example`, dùng cấu hình public dev, reconciled migrations và redirect URLs; xem [docs/SUPABASE_SETUP.md](docs/SUPABASE_SETUP.md). Không dùng Production để thử ghi/role.
 
-Xem `docs/SUPABASE_SETUP.md` để cấu hình từng bước. Tóm tắt:
-1. Tạo / khôi phục Supabase Dev, chạy `supabase/migrations` theo thứ tự và `supabase/seed.sql`.
-2. Tạo `.env.local` từ `.env.example`, điền URL và anon key.
-3. Đặt `NEXT_PUBLIC_USE_MOCK_DATA=false` và restart server.
-4. Đăng ký hoặc đăng nhập qua `/dang-nhap`.
-
-**Live mode không tự lùi về Demo khi thiếu biến môi trường.** Middleware và Server Layout kiểm tra session/role; quiz chấm ở PostgreSQL qua RPC, không chấm trên trình duyệt.
-
-## Admin & Roadmap phát triển
-
-Trung tâm Admin: `/admin` · Roadmap timeline dọc: `/admin/roadmap` · Sitemap: `/admin/sitemap`.
-
-- Demo: roadmap có thể thêm/sửa/xóa mốc, checklist, nhật ký đã thêm/đã sửa và lưu trong `localStorage` của trình duyệt; xuất/nhập JSON và xuất Markdown.
-- Live: API `/api/admin/roadmap` bảo vệ bằng Auth + role admin, lưu vào `admin_roadmap` với RLS và kiểm soát phiên bản; cần áp migration `supabase/migrations/20261026163500_admin_roadmap.sql`. **Đã rà soát nhưng chưa áp dụng lên DB production.** Xem [báo cáo bảo mật và điều kiện triển khai](docs/ADMIN_ROADMAP_MIGRATION_SECURITY_REVIEW.md).
-- Dự án chưa tự động đồng bộ nội dung đã chỉnh trên giao diện với GitHub. Dùng **Xuất Markdown** từ Admin rồi commit lại khi cần lưu bản tài liệu chính thức.
-- Quy hoạch: `docs/XCN_SITEMAP_2026_2028.md` và `docs/XCN_FUNCTION_ROADMAP_CHECKLIST.md`.
-- **Ưu tiên:** hoàn tất Admin/Roadmap và xác minh Supabase trước khi xây Teacher Studio/Live Quiz/Labs.
-
-## Routes
-
-| Route | Mô tả |
-| --- | --- |
-| `/` | Trang chủ |
-| `/khoa-hoc/excel-can-ban` | Lộ trình Excel |
-| `/student` | Dashboard học viên |
-| `/student/khoa-hoc/excel-can-ban/[lessonSlug]` | Bài học / tiến độ |
-| `/student/quiz` | Làm bài |
-| `/student/quiz/ket-qua/[attemptId]` | Xem kết quả |
-| `/dang-nhap`, `/dang-ky`, `/quen-mat-khau` | Xác thực |
-| `/admin`, `/admin/khoa-hoc` | Quản trị (cần quyền admin ở live mode) |
-| `/admin/kho-tai-lieu` | Kho tài liệu riêng tư Supabase Storage (Admin trong live mode) |
-
-## Kiểm thử
+## Chạy test và release
 
 ```bash
 pnpm test
@@ -56,14 +25,31 @@ pnpm typecheck
 pnpm build
 ```
 
-GitHub Actions kiểm tra tự động. Không đưa service role key, mật khẩu hoặc dữ liệu học viên thực vào repo.
+GitHub Actions còn chạy smoke/Chromium. Không coi CI Demo bằng E2E Auth/RLS thật. Chỉ xác nhận Production khi SHA Vercel READY trùng GitHub `main` và domain đã được gán. Không đưa service-role key, mật khẩu, token hoặc backup của người dùng lên repository.
 
-## Kho tài liệu
+## Các không gian chính
 
-Dùng Supabase Storage, chưa cần Cloudflare R2. Xem `docs/SUPABASE_STORAGE.md` về thiết lập và quyền truy cập.
+| Không gian | Route ví dụ | Mã sở hữu |
+| --- | --- | --- |
+| Public | `/`, `/khoa-hoc`, `/cong-cu` | `src/app/(public)` |
+| Student | `/student`, `/student/quiz` | `src/features/learning` |
+| Admin | `/admin`, `/admin/roadmap`, `/admin/sitemap`, `/admin/kho-tai-lieu` | `src/features/admin` |
+| Word Lab | `/cong-cu/mo-phong-word` | `src/features/word-simulator` |
+| Trình chiếu | `/cong-cu/trinh-chieu`, `/cong-cu/trinh-chieu/[lessonId]` | `src/features/presentations` |
+| Teacher Studio | **Theo kế hoạch, chưa hoàn chỉnh** | Chưa có module độc lập được nghiệm thu |
 
-## Trình chiếu bài giảng (React + Next.js)
+Xem bản đồ route, module và hợp đồng dữ liệu: [docs/PRODUCT_AND_MODULES.md](docs/PRODUCT_AND_MODULES.md). Định hướng dài hạn: [docs/XUONG_CONG_NGHE_MASTER_PLAN_2026_2028.md](docs/XUONG_CONG_NGHE_MASTER_PLAN_2026_2028.md).
 
-Mở tại `/cong-cu/trinh-chieu`. Dữ liệu 29 slide và 15 mẫu được hiển thị bằng renderer React của Xưởng Công Nghệ, không còn HTML/CSS từ dự án PPT độc lập. Xem `docs/PPT_INTEGRATION.md` để thêm môn/bài, layout và component. Chưa có editor hoặc xuất .pptx.
+## Tình trạng và hạn chế quan trọng
 
-**Tổ chức trình chiếu Tin học:** Môn học → các **Phần** theo chủ đề → slide tương tác. Phần hiện có: **Phần 1 – Quản lý tệp và thư mục (File Explorer)** tại `/cong-cu/trinh-chieu/quan-ly-tep-va-thu-muc`; URL `buoi-01-file-explorer` cũ chuyển hướng để giữ tương thích. Không thay đổi mô hình bài học/tiến độ của các khóa học khác.
+- Production đã có Supabase Live, Admin/Student Auth và Roadmap lưu có phiên bản; **chưa có xác nhận E2E bằng hai JWT thật trên staging**.
+- 14 bảng public đang bật RLS, nhưng security advisor còn warning và quyền chức năng phải tiếp tục được kiểm chứng. Không thay đổi RLS Production từ tài liệu này.
+- Kho tài liệu dùng private Supabase Storage; Cloudflare R2 là hướng phụ, chưa cấu hình Live.
+- Công cụ Word và Slide có mã nguồn; Word simulator **không bảo đảm xuất DOCX chuẩn** nếu chưa tích hợp engine OOXML.
+- File dạng kế hoạch/đề xuất không phải là route hoặc tính năng đã vận hành.
+
+Chi tiết kiểm toán tại thời điểm 30/10/2026: [docs/SYSTEM_AUDIT_2026-10-30.md](docs/SYSTEM_AUDIT_2026-10-30.md). Mỗi lần phát triển sau chỉ đọc module liên quan qua [docs/INDEX.md](docs/INDEX.md).
+
+## Website tham khảo và tên miền ứng dụng
+
+[docs/WEBSITE_REFERENCES.md](docs/WEBSITE_REFERENCES.md) ghi VniTeach, Đề Thi Số, DUA Edu, Môn Tin học cùng ý tưởng `word.xuongcongnghe.net`, `quiz.xuongcongnghe.net`, `studio.xuongcongnghe.net`. **Chưa đăng ký/cấu hình các subdomain này**.
