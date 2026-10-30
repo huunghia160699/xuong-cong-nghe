@@ -31,6 +31,13 @@ Không viết lại cả nhật ký cũ. Một task nhiều commit có thể th�
 
 ## III. Nhật ký mới (từ 30/10/2026)
 
+### 2026-10-31 — [PRODUCT/NAV + LAB-MANAGER] Tổng hợp 4 website, lưu ý tưởng quản lý phòng máy
+- **Yêu cầu:** đề xuất mục Navbar trang chủ và liệt kê nhóm chức năng dựa trên VniTeach, Đề Thi Số, DUA Edu, Môn Tin học; bổ sung ý tưởng quản lý phòng máy “giống net sp” để làm sau.
+- **DONE (nghiên cứu/đề xuất):** nhóm nav tương lai `Khóa học · Thực hành · Kiểm tra · Công cụ · Tài nguyên · Dự án · Giáo viên`; liệt kê submenu, nguồn gốc ý tưởng và phân biệt route đã tồn tại với tính năng dự kiến tại [PRODUCT_AND_MODULES.md](PRODUCT_AND_MODULES.md) mục 2A.
+- **DONE (backlog):** LAB-MANAGER tương lai, tạm tham khảo NetSupport School: sơ đồ máy/phòng, trạng thái, phát màn hình, gửi/thu bài, hỗ trợ và giới hạn web/app theo buổi. Ghi rõ yêu cầu agent/thiết bị, consent, phân quyền lớp/phòng, audit và kiểm thử an toàn; ưu tiên **P3** ở [ROADMAP.md](ROADMAP.md), nguồn ghi tại [WEBSITE_REFERENCES.md](WEBSITE_REFERENCES.md).
+- **NOT IMPLEMENTED:** không thay `src/config/navigation.ts`, header, route, API, Supabase, Vercel env/DNS hay triển khai agent điều khiển; mọi menu và công cụ nêu trong bản đề xuất vẫn là ý tưởng cho tới khi có PR xây dựng riêng.
+- **Test/PR:** chỉ tài liệu; ghi thông tin CI/merge tại PR khi được xác minh.
+
 ### 2026-10-31 — [AUTH/ROADMAP → TEACHER] Nghiệm thu JWT/RLS/khôi phục staging thành công
 - **DONE — QA trên máy của chủ dự án (báo cáo kết quả đã lọc secrets):** `READ-ONLY PASS` với JWT đăng nhập thật riêng của Admin và Student; Admin được SELECT Roadmap, Student bị RLS từ chối; bộ `verify-roadmap-staging.mjs` trả `STAGING ACCEPTANCE PASS` cho thêm/sửa/xóa, khóa phiên bản, sao lưu và khôi phục.
 - **DONE — đối chiếu SQL read-only độc lập:** project staging `ordiksbvpewwgrnvzrud` có đúng một tài liệu `global-master-roadmap`, `version=8`, `items=[]`, 8 events đầy đủ các version `1..8`. Sự kiện thứ 8 ghi nhận bước dọn dữ liệu thử; kết quả báo cáo 1–7 là các sự kiện trước cleanup. Không dùng Supabase Production để thử ghi.
