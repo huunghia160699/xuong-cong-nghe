@@ -25,6 +25,13 @@
 
 ## III. Lịch sử
 
+### 2026-10-30 — Sửa đăng nhập chuyển nhầm sang Student
+- **Mục tiêu:** tài khoản có `profiles.role=admin` vào Admin sau khi đăng nhập thường, không bị mặc định chuyển sang Student.
+- **Điều tra:** SQL read-only xác nhận tài khoản Gmail báo lỗi vẫn có role `admin` và email verified. Mã nguồn có default `safeNextPath(...)` là `/student` ở form/action/callback.
+- **Thay đổi:** helper `post-login.ts` quyết định đích theo vai trò đã xác minh và giữ `next` nội bộ nếu được chỉ định; `actions.ts` xác thực người dùng + đọc profile trước redirect, `dang-nhap/page.tsx` bỏ next mặc định, `auth/callback/route.ts` và đổi mật khẩu xử lý tương ứng.
+- **Bảo mật:** profile không đọc được thì báo lỗi rõ, không tự gán Admin; không đổi Supabase Auth/role/RLS, không tiết lộ JWT.
+- **Kiểm thử:** `tests/auth-role-redirect.test.mjs`; PR CI unit/typecheck/build/Chromium; sau merge xác minh SHA Vercel Production. Không tuyên bố đã đăng nhập bằng mật khẩu người dùng trong CI.
+
 ### 2026-10-29 — Gia cố Roadmap sync, kiểm kê RLS và chuẩn bị nghiệm thu
 - **Mục tiêu:** không báo lưu thành công khi chưa đọc lại bản ghi; bảo vệ bản nháp cũ và không ghi đè dữ liệu Production.
 - **Thay đổi:** `roadmap-sync.ts` chuẩn hóa so sánh; `roadmap-draft.ts` không hiển thị cảnh báo sai; `roadmap-board.tsx` xác minh GET sau PUT và checkpoint trước reload; `verify-roadmap-rls.mjs` siết ref staging; bổ sung regression test, tài liệu QA.
