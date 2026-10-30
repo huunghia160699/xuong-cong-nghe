@@ -1,18 +1,23 @@
-# Roadmap — Xưởng Công Nghệ
+# Roadmap triển khai — Xưởng Công Nghệ
 
-> **Ưu tiên hiện tại (khóa phạm vi): Admin + Sitemap + Roadmap trước mọi module khác.**
-> **Kiểm kê 27/10/2026:** Production đã bật Live, có 1 Roadmap Supabase phiên bản 4 (20 mốc) và 4 sự kiện; Admin đã xác minh, Student chưa. Checklist GitHub đã được đối chiếu phần lưu/sao lưu thành 11/13; Supabase hiện 12/13, còn 1 dấu tích JWT đa tài khoản chưa có bằng chứng nghiệm thu. Báo cáo: [ADMIN_PHASE_00_RECONCILIATION_QA_OPERATIONS_20261027.md](ADMIN_PHASE_00_RECONCILIATION_QA_OPERATIONS_20261027.md).
-> **Roadmap đồng bộ thực:** Với Admin JWT hợp lệ và Live đang bật, mỗi chỉnh sửa được tự lưu lên Supabase và tạo sự kiện DB tại `admin_roadmap_events`; kiểm tra xung đột phiên bản trước khi ghi. PR #54. JWT hai vai trò còn chờ nghiệm thu; bản nháp Demo không phải dữ liệu chính.
-> Checklist đầy đủ: [XCN_FUNCTION_ROADMAP_CHECKLIST.md](XCN_FUNCTION_ROADMAP_CHECKLIST.md).
-> Sơ đồ toàn website: [XCN_SITEMAP_2026_2028.md](XCN_SITEMAP_2026_2028.md).
-> Trang quản trị: `/admin` · Timeline: `/admin/roadmap` · Sitemap: `/admin/sitemap`.
-> Production đã bật Live với Supabase; Demo ở Preview/Dev. Roadmap đã có dữ liệu thật nhưng chưa nghiệm thu JWT hai vai trò. Các thay đổi nguồn phải được kiểm thử và deploy trước khi coi là hoàn thành.
-> **Rà soát bảo mật:** [ADMIN_ROADMAP_MIGRATION_SECURITY_REVIEW.md](ADMIN_ROADMAP_MIGRATION_SECURITY_REVIEW.md) — ghi nhận tại thời điểm review trước áp migration.
-> **Bước tiếp theo:** [ADMIN_ROADMAP_REAL_JWT_TEST_PLAN.md](ADMIN_ROADMAP_REAL_JWT_TEST_PLAN.md) — tạo tài khoản thử nghiệm đã xác minh và kiểm thử phân quyền thực tế; chưa ghi nhận PASS.
+> **Bản công việc ở repository, cập nhật nguồn tra cứu ngày 30/10/2026.**
+> Điểm vào: [INDEX.md](INDEX.md). Mối quan hệ code: [PRODUCT_AND_MODULES.md](PRODUCT_AND_MODULES.md).
+> **Dữ liệu Roadmap chính thức trong Admin Production là Supabase**; checklist này không tự đồng bộ với Supabase hoặc ngược lại. Không tick các mục chỉ vì tài liệu nêu dự kiến.
+> Chi tiết từng việc: [XCN_FUNCTION_ROADMAP_CHECKLIST.md](XCN_FUNCTION_ROADMAP_CHECKLIST.md); Master Plan: [XUONG_CONG_NGHE_MASTER_PLAN_2026_2028.md](XUONG_CONG_NGHE_MASTER_PLAN_2026_2028.md).
+> Kiểm toán 30/10/2026: [SYSTEM_AUDIT_2026-10-30.md](SYSTEM_AUDIT_2026-10-30.md). Các báo cáo bảo mật/sync cũ giữ nguyên tại [archive/PHASE_00_SECURITY_AND_SYNC_REPORTS_2026-10.md](archive/PHASE_00_SECURITY_AND_SYNC_REPORTS_2026-10.md).
 
+## Ưu tiên hiện hành (bám theo kiểm toán, chưa đánh dấu hoàn tất)
 
-> **Kế hoạch tái cấu trúc tổng thể (đề xuất 2026–2028):** [XƯỞNG CÔNG NGHỆ — MASTER PLAN](XUONG_CONG_NGHE_MASTER_PLAN_2026_2028.md).  
-> Các mục MVP bên dưới là ghi nhận theo những giai đoạn trước; một số ghi chú triển khai có thể không còn phản ánh môi trường production hiện tại. Phải audit môi trường thật và đối chiếu code trước khi cập nhật trạng thái. Tính năng trong Master Plan chưa được xem là đã triển khai.
+1. **P0 — Auth/Admin/Roadmap:** staging Supabase riêng, hai JWT thật, thử CRUD + reload + conflict, sao lưu/khôi phục.
+2. **P0 — Security:** đánh giá SECURITY DEFINER, password protection, quyền RLS/GRANT trên staging trước khi áp Production.
+3. **P1 — Nghiệm thu Admin:** 11 trang sau đăng nhập Live, màn hình 360/768/1280, error/loading, keyboard và mạng yếu.
+4. **P1 — Contracts:** một luồng dùng chung nội dung/câu hỏi/bài học cho Quiz/Slides/Teacher/Labs, schema và quyền rõ.
+5. **P2 — Teacher Studio:** quản lý lớp, học sinh, giao bài; chỉ mở sau P0 và kiểm thử quyền sở hữu.
+6. **P2–P3 — Live Quiz, Excel/Coding Labs, AI/trò chơi:** triển khai từng module, không mở nhiều công cụ khi data model chưa ổn.
+
+## Những mục cũ bên dưới là backlog / lịch sử đã xuất hiện
+
+**Quan trọng:** các checkbox trong phần MVP 0.1/0.2 và ghi chú dated trước 30/10/2026 phản ánh thời điểm viết, không phải trạng thái Production ngày hôm nay. Đặc biệt những câu “chưa áp migrations”, “chưa deploy” có thể đã lỗi thời; luôn kiểm GitHub/Supabase/Vercel thực tế trước khi hành động. Mục chưa có bằng chứng E2E vẫn là chưa nghiệm thu.
 
 ## MVP 0.1 — Nền và vòng học thử
 - [x] Homepage, Course Detail, Student Dashboard, Lesson, Quiz, Result
@@ -31,9 +36,9 @@
 - [x] Live Student Dashboard hiển thị tiến độ và bài nộp theo tài khoản
 - [x] Live Admin Dashboard dữ liệu thật + tạo/đổi trạng thái khóa học
 - [x] Seed Supabase 9 lessons + 6 quiz questions
-- [ ] **Chưa áp migrations/seed vào Supabase project thực**
+- [x] **Migrations/seed đã từng được áp trên Supabase theo kiểm toán sau đó; cần đối chiếu migration history hiện tại trước mọi DB push**
 - [ ] **Chưa kiểm thử Auth, RLS, RPC với nhiều tài khoản trong môi trường thật**
-- [ ] **Chưa có deploy chính thức**
+- [x] **Đã có Vercel Production Live theo kiểm toán sau đó; xác nhận lại SHA trước từng lần phát hành**
 - [ ] Editor CRUD chương/bài/câu hỏi và autosave quiz đang làm dở
 
 ## MVP 0.3 — Thực hành chuyên sâu
