@@ -31,6 +31,14 @@ Không viết lại cả nhật ký cũ. Một task nhiều commit có thể th�
 
 ## III. Nhật ký mới (từ 30/10/2026)
 
+### 2026-10-31 — [AUTH/ROADMAP → TEACHER] Nghiệm thu JWT/RLS/khôi phục staging thành công
+- **DONE — QA trên máy của chủ dự án (báo cáo kết quả đã lọc secrets):** `READ-ONLY PASS` với JWT đăng nhập thật riêng của Admin và Student; Admin được SELECT Roadmap, Student bị RLS từ chối; bộ `verify-roadmap-staging.mjs` trả `STAGING ACCEPTANCE PASS` cho thêm/sửa/xóa, khóa phiên bản, sao lưu và khôi phục.
+- **DONE — đối chiếu SQL read-only độc lập:** project staging `ordiksbvpewwgrnvzrud` có đúng một tài liệu `global-master-roadmap`, `version=8`, `items=[]`, 8 events đầy đủ các version `1..8`. Sự kiện thứ 8 ghi nhận bước dọn dữ liệu thử; kết quả báo cáo 1–7 là các sự kiện trước cleanup. Không dùng Supabase Production để thử ghi.
+- **GATE:** `P0_STAGING_AUTH_ROADMAP=PASS` (quyền trên **Roadmap** với hai user đã test; không suy rộng thành tất cả RLS của Teacher/Quiz). **Teacher Studio được mở giai đoạn phân tích, thiết kế, viết migration/RLS và phát triển trên staging qua PR riêng; không bật Production lúc này.**
+- **NOT TESTED:** Next.js Preview/E2E đăng nhập thật qua 11 màn Admin, lỗi 401/403/409 ở route API, cookie/logout/refresh, mobile/mất mạng; quyền `teacher` và RLS sở hữu lớp/bài giao chưa có schema/account riêng. Security Advisor về `SECURITY DEFINER` và bảo vệ mật khẩu vẫn cần xử lý theo đánh giá riêng.
+- **NEXT:** thiết kế hợp đồng Teacher Studio (lớp → thành viên → bài giao → bài nộp), ma trận Admin/Teacher/Student, migration + RLS `USING/WITH CHECK`, kiểm dữ liệu của người khác, E2E staging/preview trước khi cân nhắc bật Production. Không sửa Production DB/Auth/RLS trong checkpoint này.
+- **Bảo mật:** không thu thập hoặc ghi mật khẩu/JWT, không sao chép backup QA vào repo; máy local được người dùng xác nhận Git sạch và secrets vẫn ignored.
+
 ### 2026-10-30 — [AUTH/ROADMAP] Xác nhận QA users; chuyển sang kiểm thử JWT tại máy local
 - **DONE (read-only):** xác minh trên staging ref `ordiksbvpewwgrnvzrud` hai tài khoản Auth có UUID/email trùng người dùng cung cấp, email confirmed, có password hash, không bị khóa, hồ sơ và vai trò `admin`/`student` khớp; không ghi dữ liệu, không đổi quyền.
 - **DONE (local tooling):** thêm mẫu `.env.staging.qa.example` không chứa secret, bỏ qua `.env.staging.qa.local` trong Git, hướng dẫn `node --env-file=...` chạy read-only trước rồi mới bật ba cờ write để chạy nghiệm thu Roadmap staging. Mật khẩu/JWT vẫn nằm trên máy của người dùng; không lưu vào Git/chat.
