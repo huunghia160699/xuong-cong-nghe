@@ -4,21 +4,28 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { isLiveMode, safeNextPath } from "@/lib/supabase/config";
+import { postLoginDestination } from "@/features/auth/post-login";
 
-const loginError = (reason: string, next = "/student") =>
-  `/dang-nhap?error=${reason}&next=${encodeURIComponent(safeNextPath(next))}`;
+const loginError = (reason: string, next: string) =>
+  `/dang-nhap?error=${reason}${next ? "&next=" + encodeURIComponent(next) : ""}`;
 
 export async function signInAction(formData: FormData) {
   if (!isLiveMode()) redirect("/student");
   const email = String(formData.get("email") ?? "").trim();
   const password = String(formData.get("password") ?? "");
-  const next = safeNextPath(formData.get("next"));
+  const next = safeNextPath(formData.get("next"), "");
   if (!email.includes("@") || !password) redirect(loginError("invalid", next));
   const supabase = await createSupabaseServerClient();
   const { error } = await supabase.auth.signInWithPassword({ email, password });
   if (error) redirect(loginError("invalid", next));
+  const { data: { user }, error: sessionError } = await supabase.auth.getUser();
+  if (sessionError || !user) redirect(loginError("session", next));
+  const { data: profile, error: profileError } = await supabase.from("profiles")
+    .select("role").eq("id", user.id).single();
+  const destination = profileError ? null : postLoginDestination(profile?.role, next);
+  if (!destination) redirect(loginError("profile", next));
   revalidatePath("/", "layout");
-  redirect(next);
+  redirect(destination);
 }
 
 export async function signUpAction(formData: FormData) {
@@ -67,7 +74,12 @@ export async function changePasswordAction(formData: FormData) {
   if (!user) redirect("/dang-nhap?error=session");
   const { error } = await supabase.auth.updateUser({ password });
   if (error) redirect("/doi-mat-khau?error=failed");
-  redirect("/student");
+  const { data: profile, error: profileError } = await supabase.from("profiles")
+    .select("role").eq("id", user.id).single();
+  const destination = profileError ? null : postLoginDestination(profile?.role, null);
+  if (!destination) redirect("/dang-nhap?error=profile");
+  revalidatePath("/", "layout");
+  redirect(destination);
 }
 
 export async function signOutAction() {
