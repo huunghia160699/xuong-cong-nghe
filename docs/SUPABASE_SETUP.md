@@ -61,7 +61,7 @@ where id = (select id from auth.users where email = 'admin@example.com');
 
 - Supabase Production ref: `bpxwpfmjoojrgqlfkqgz` — không dùng làm staging hoặc chạy `--write`.
 - Tổ chức đang kết nối: `huunghia160699's Org` (ID `dgqktlsjiuaeyhkbcdtx`), tại thời điểm kiểm tra thuộc gói Free.
-- Supabase báo phí **branch $0,01344 mỗi giờ**, tương đương khoảng $9,81/30 ngày chạy liên tục (30 × 24 giờ), và **project mới $0/tháng** theo báo giá tài khoản hiện tại. Cả hai giá phụ thuộc hạn mức/gói, cần kiểm tra lại khi tạo.
+- Supabase báo phí **branch $0,01344 mỗi giờ**, tương đương khoảng $9,68/30 ngày chạy liên tục (30 × 24 giờ), và **project mới $0/tháng** theo báo giá tài khoản hiện tại. Cả hai giá phụ thuộc hạn mức/gói, cần kiểm tra lại khi tạo.
 - Tổ chức đã có 2 project (1 Production Xưởng Công Nghệ, 1 project của ứng dụng khác). Không tự dừng/xóa hoặc chuyển đổi project khác để mở chỗ.
 - **Phải có lựa chọn tổ chức của chủ dự án và xác nhận chi phí nếu phát sinh** trước khi khởi tạo resource. Không tạo nhánh có phí bằng việc suy đoán đồng ý.
 
