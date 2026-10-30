@@ -73,6 +73,27 @@ try{
    const shot=await call("Page.captureScreenshot",{format:"png",fromSurface:true});
    writeFileSync(join(output,(route.slice(1)||"home")+"-"+width+".png"),Buffer.from(shot.data,"base64"));
    if(route==="/"){
+    // D2 acceptance: filters update visible cards and announce counts, then reset.
+    const initial=await evalJs("document.querySelectorAll('.xcn-atlas-card').length");
+    assert.equal(initial,15,"Product Atlas must present all 15 catalog entries");
+    const filteredClick=await evalJs(`(()=>{
+     const button=[...document.querySelectorAll('.xcn-atlas-filter')].find(b=>b.textContent?.trim()==='Kiểm tra');
+     if(!button)return false;
+     button.click();return true;
+    })()`);
+    assert.equal(filteredClick,true,"Missing interactive Atlas filter");
+    await wait(300);
+    const filtered=await evalJs(`(()=>({
+      count:document.querySelectorAll('.xcn-atlas-card').length,
+      active:document.querySelector('.xcn-atlas-filter[aria-pressed="true"]')?.textContent?.trim(),
+      announcement:document.querySelector('.xcn-atlas-count')?.textContent?.trim()
+    }))()`);
+    assert.equal(filtered.count,3,"Atlas filter should only show three testing tools");
+    assert.equal(filtered.active,"Kiểm tra");
+    assert.match(filtered.announcement,/Đang hiển thị 3 trong 15/);
+    await evalJs("([...document.querySelectorAll('.xcn-atlas-filter')].find(b=>b.textContent?.trim()==='Tất cả'))?.click()");
+    await wait(300);
+    assert.equal(await evalJs("document.querySelectorAll('.xcn-atlas-card').length"),15,"Atlas reset must show all entries");
     const clicked=await evalJs(`(()=>{
       const toggle=innerWidth<1181
        ? document.querySelector('.xcn-public-mobile-toggle')
@@ -103,7 +124,7 @@ try{
    console.log("PASS PUBLIC",route,width,"h1",info.title);
   }
  }
- console.log("PASS D1 public shell 5 routes x 4 viewports + responsive menu/ESC");
+ console.log("PASS PUBLIC D1-D4: 5 routes x 4 viewports, Atlas filter/reset, responsive menu/ESC");
 }catch(error){console.error("PUBLIC VISUAL QA FAILED:",error);process.exitCode=1;}
 finally{
  ws?.close();child?.kill("SIGTERM");await wait(150);if(profile)rmSync(profile,{recursive:true,force:true});
