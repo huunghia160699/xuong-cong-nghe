@@ -1,11 +1,42 @@
-import { Brand } from "@/components/brand";
+import Link from "next/link";
+import {ArrowUpRight} from "lucide-react";
+import {Brand} from "@/components/brand";
 
-const columns = [
-  { title: "Học", links: ["Khóa học", "Lộ trình", "Luyện tập"] },
-  { title: "Khám phá", links: ["Tài nguyên", "Công cụ", "Dự án", "Bài viết"] },
-  { title: "Thông tin", links: ["Giới thiệu", "Liên hệ", "Điều khoản", "Bảo mật"] },
+const columns=[
+ {title:"Hệ sinh thái",links:[
+  {label:"Khóa học",href:"/khoa-hoc"},
+  {label:"Thực hành & công cụ",href:"/cong-cu"},
+  {label:"Dự án",href:"/#du-an"}]},
+ {title:"Khám phá",links:[
+  {label:"Giới thiệu",href:"/gioi-thieu"},
+  {label:"Bảng giá",href:"/bang-gia"},
+  {label:"Tin tức & tri thức",href:"/tin-tuc"}]},
+ {title:"Hỗ trợ",links:[
+  {label:"Liên hệ",href:"/lien-he"},
+  {label:"Đăng nhập",href:"/dang-nhap"},
+  {label:"Trang chủ",href:"/"}]}
 ];
 
-export function Footer() {
-  return <footer className="bg-ink text-white"><div className="xcn-container xcn-section-pad grid gap-8 lg:grid-cols-[1.5fr_2fr]"><div><Brand light /><p className="mt-4 max-w-md text-sm leading-7 text-zinc-400">Học kiến thức, luyện kỹ năng và ứng dụng công nghệ vào những dự án thật.</p></div><div className="grid grid-cols-2 gap-8 sm:grid-cols-3">{columns.map((column) => <div key={column.title}><h3 className="text-xs font-bold uppercase tracking-[0.2em] text-zinc-500">{column.title}</h3><ul className="mt-3 space-y-2 text-sm text-zinc-300">{column.links.map((link) => <li key={link}><a href="#" className="hover:text-white">{link}</a></li>)}</ul></div>)}</div></div><div className="xcn-container flex flex-col gap-2 border-t border-white/10 py-5 text-xs text-zinc-500 sm:flex-row sm:justify-between"><span>© 2026 Xưởng Công Nghệ</span><span>Học • Luyện • Ứng dụng</span></div></footer>;
+export function Footer(){
+ return <footer className="xcn-public-footer">
+  <div className="xcn-container xcn-public-footer-inner">
+   <div className="xcn-public-footer-brand">
+    <Brand/>
+    <p>Một nơi để học, thực hành và phát triển năng lực số bằng những công cụ có mục đích rõ ràng.</p>
+    <span>Học để hiểu. Làm để thành thạo.</span>
+   </div>
+   <nav className="xcn-public-footer-links" aria-label="Liên kết cuối trang">
+    {columns.map(column=><div key={column.title}>
+     <h2>{column.title}</h2>
+     <ul>{column.links.map(link=><li key={link.href}>
+      <Link href={link.href}>{link.label}<ArrowUpRight size={13} aria-hidden="true"/></Link>
+     </li>)}</ul>
+    </div>)}
+   </nav>
+  </div>
+  <div className="xcn-container xcn-public-footer-bottom">
+   <span>© {new Date().getFullYear()} Xưởng Công Nghệ</span>
+   <span>Khám phá công khai · Sử dụng theo quyền tài khoản</span>
+  </div>
+ </footer>;
 }
