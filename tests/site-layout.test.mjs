@@ -55,7 +55,8 @@ test("public library and tool cards follow content height with fluid vertical sp
  assert.match(css,/--xcn-block-gap:\s*clamp\(20px,\s*3\.4dvh,\s*40px\)/);
  assert.match(css,/\.xcn-header-nav\s*\{/);
  assert.match(header,/xcn-header-inner/);
- assert.match(header,/PublicNavigation/);\n assert.match(read("src/components/public-navigation.tsx"),/xcn-public-desktop-nav/);
+ assert.match(header,/PublicNavigation/);
+ assert.match(read("src/components/public-navigation.tsx"),/xcn-public-desktop-nav/);
  assert.doesNotMatch(library,/min-h-screen|min-h-56|grid-cols-3 border border-zinc-200 bg-white|Đã có nội dung/);
  assert.doesNotMatch(tools,/min-h-\[75vh\]|min-h-\[275px\]|min-h-\[320px\]/);
  assert.match(library,/xcn-page-pad/);
