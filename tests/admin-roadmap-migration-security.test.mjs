@@ -5,7 +5,7 @@ import {readFileSync} from "node:fs";
 const sql=readFileSync("supabase/migrations/20261026163500_admin_roadmap.sql","utf8");
 const api=readFileSync("src/app/api/admin/roadmap/route.ts","utf8");
 const layout=readFileSync("src/app/admin/layout.tsx","utf8");
-const doc=readFileSync("docs/ADMIN_ROADMAP_MIGRATION_SECURITY_REVIEW.md","utf8");
+const doc=readFileSync("docs/archive/PHASE_00_SECURITY_AND_SYNC_REPORTS_2026-10.md","utf8");
 const normalized=sql.replace(/--[^\n]*/g,"").replace(/\s+/g," ").trim().toLowerCase();
 const policy=(name)=>{
   const parts=sql.split('create policy "'+name+'"');

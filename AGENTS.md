@@ -1,40 +1,45 @@
-# AGENTS.md — Xưởng Công Nghệ
+# AGENTS.md — Quy tắc triển khai Xưởng Công Nghệ
 
-## Product
+> **Đọc duy nhất tài liệu theo module.** Entry point: [docs/INDEX.md](docs/INDEX.md); quy tắc + checkpoint: [docs/WORKLOG_AND_RULES.md](docs/WORKLOG_AND_RULES.md). Không đọc lại toàn bộ repository hay 30+ Markdown cho mỗi yêu cầu. Chỉ kiểm kê toàn bộ khi người dùng yêu cầu audit toàn hệ thống hoặc vấn đề liên module bắt buộc.
 
-Xưởng Công Nghệ is a Vietnamese learning and practice platform for digital skills. Its core loop is **Học → Luyện → Ứng dụng**. The five public pillars are Khóa học, Luyện tập, Tài nguyên, Công cụ, and Dự án.
+## Sản phẩm, công nghệ và phạm vi
 
-## Stack
+Xưởng Công Nghệ là nền tảng **Học → Luyện → Ứng dụng**, xây bằng Next.js 15, TypeScript, Tailwind CSS, Supabase Auth/Postgres/RLS/Storage, Vercel. Code identifiers tiếng Anh, UI tiếng Việt.
 
-- Next.js App Router, TypeScript, Tailwind CSS
-- shadcn-style local primitives in `src/components/ui`
-- Supabase Auth, Postgres, Storage, and RLS
-- Mock data is the default until Supabase environment variables are configured
+Cấu trúc:
+- `src/app` route/layout/HTTP/action
+- `src/features/<domain>` nghiệp vụ / state / validation / feature UI
+- `src/components/ui` phần tử dùng chung thuần trình bày
+- `src/lib` infra Supabase/Storage, `src/config` constants/nav
+- `supabase/migrations` schema/RLS versioned, `tests` regression, `scripts` QA
 
-## Non-negotiable rules
+**Tra cứu đúng tài liệu qua docs/INDEX.md.** Module Word → `docs/WORD_SIMULATOR_STANDARD.md`; slide → `docs/SLIDE_STANDARD.md` và tài liệu trình chiếu liên quan. Không đọc module không liên quan.
 
-1. Keep UI copy in Vietnamese and code identifiers in English.
-2. Preserve the Minimal Education SaaS visual system: navy #04122D, royal blue #005BFD, cyan #00E9FD, ice #F0F6FD; whitespace, thin borders, small radii and minimal shadows. Blue is primary CTA; cyan contrasts on navy. Never use lime branding.
-3. Do not copy layouts, assets, or code from montinhoc.vn. It is mood-level inspiration only.
-4. Put route composition in `src/app`, domain logic in `src/features`, reusable UI in `src/components`, infrastructure in `src/lib`, and constants in `src/config`.
-5. Do not call Supabase directly from presentation components. Use a feature repository/service layer.
-6. Every new table must ship as a migration with RLS policies. Never edit an applied migration.
-7. Every new screen must have loading, empty, error, and mobile behavior before it is considered complete.
-8. Keep teacher workspace, payments, AI tutor, and Word Lab behind feature flags until their roadmap phase.
-9. For EVERY user-requested code, UI, configuration, or release change: **read and append** a dated record to `docs/WORKLOG_AND_RULES.md` (request, exact files, decisions, tests, commit, deployment status, caveats). Do not overwrite prior entries. Update `CHANGELOG.md` for visible changes.
-10. Only claim GitHub and Vercel are synchronized after confirming the production deployment commit SHA matches the GitHub `main` head, READY state, and production domain alias.
-11. For all slide creation or edits, read `docs/SLIDE_STANDARD.md`; do not render generic slide-type eyebrow labels above headings. Preserve meaningful labels within teaching simulations.
-12. Slides are **teacher-led teaching materials**, not student-facing software instructions. Never add generic prompts to click/watch/follow along, repeated explanations, or implementation disclaimers (CSS/React/mock) to slide surfaces. Keep them in presenter notes/documentation. Preserve meaningful course content, real steps, answer feedback and interactive controls.
-13. For the independent Word simulator, read `docs/WORD_SIMULATOR_STANDARD.md`; keep full Word Lab gated until roadmap release. Do not claim DOCX compatibility without a real OOXML engine or mislabel HTML as DOCX.
+## Quy tắc bắt buộc
+
+1. Xác định module sở hữu, route, dữ liệu vào/ra và ảnh hưởng liên module trước khi thay đổi; cập nhật `docs/PRODUCT_AND_MODULES.md` hoặc `docs/ARCHITECTURE_AND_SECURITY.md` khi contract thay đổi.
+2. Làm trong phạm vi user yêu cầu. Không xây Teacher Studio/AI/payments, dịch chuyển storage hay bật tính năng chưa có trong roadmap nếu chưa được yêu cầu.
+3. Không gọi Supabase từ presentational components. Quyền Auth/role kiểm ở server và RLS; không sử dụng user_metadata để cấp quyền; không đưa service_role key vào client, GitHub hoặc log.
+4. Bất kỳ bảng mới nào đều cần migration + RLS + test trên staging. Không sửa migration đã áp; không ghi đè hoặc xóa dữ liệu Production để test.
+5. Giao diện dùng [UI_DESIGN_SYSTEM.md](docs/UI_DESIGN_SYSTEM.md): navy `#04122D`, royal blue `#005BFD`, cyan `#00E9FD`, ice `#F0F6FD`, không lime. Tối ưu responsive, nhất quán, không sao chép UI hay assets website tham khảo.
+6. Slide là **teacher-led teaching materials** (học liệu giáo viên dẫn dắt), không hiện mô tả kỹ thuật/CSS/React hay eyebrow chung. Trình Word không được tự nhận có tương thích DOCX nếu chưa có OOXML engine thực.
+7. Mỗi screen có loading, empty, error, permission-denied và mobile behavior. UI cần keyboard focus và nhãn dễ hiểu.
+8. **Ghi tới đâu lưu tới đó:** sau mỗi bước xác minh được, cập nhật checkpoint trong `docs/WORKLOG_AND_RULES.md` trên branch của nhiệm vụ; cập nhật đúng module doc khi có thay đổi contract. Không dồn tới cuối, không viết lại lịch sử cũ.
+9. Đọc GitHub/Vercel/Supabase thông qua công cụ trực tiếp chỉ khi tác vụ cần, không giả định trạng thái từ báo cáo cũ. Chỉ thông báo release khi CI PASS, Vercel READY, alias Production đúng và SHA deployment = GitHub main.
+10. Nếu thay đổi tác động Auth/DB/role, xác minh với JWT thật trên staging trước Production. CI Demo không thay thế E2E Live. Tài liệu lịch sử trong `docs/archive/` chỉ đọc khi truy vết.
 
 ## Definition of done
 
-- `npm run typecheck` and `npm run build` pass.
-- Main flows work at 360px, 768px, and 1280px widths.
-- Interactive controls have keyboard focus and accessible labels.
-- No secrets or real user data are committed.
-- Related docs and mock data are updated with behavior changes.
+- `pnpm test`, `pnpm typecheck`, `pnpm build` PASS; smoke/Chromium trên route ảnh hưởng.
+- Responsive 360px/768px/1280px, màn hình cao/thấp; a11y cơ bản.
+- Không có secret, nội dung cá nhân hoặc bản sao dữ liệu Live trong Git.
+- Cập nhật **chỉ** tài liệu module liên quan và checkpoint.
+- PR/commit và Production SHA được xác minh thật; nếu còn blocker, ghi rõ thay vì đánh dấu xong.
 
-## Key references
+## Tài liệu tra nhanh
 
-Read `docs/WORKLOG_AND_RULES.md` first; for presentation work also read `docs/SLIDE_STANDARD.md`, then `docs/PRODUCT.md`, `docs/ARCHITECTURE.md`, `docs/DESIGN_SYSTEM.md`, and `docs/DECISIONS.md` before large changes.
+- [docs/INDEX.md](docs/INDEX.md) — task → tài liệu → module (ưu tiên số 1).
+- [docs/PRODUCT_AND_MODULES.md](docs/PRODUCT_AND_MODULES.md) — module ownership/contract.
+- [docs/ARCHITECTURE_AND_SECURITY.md](docs/ARCHITECTURE_AND_SECURITY.md) — Auth/RLS/DB/CI.
+- [docs/WEBSITE_REFERENCES.md](docs/WEBSITE_REFERENCES.md) — VniTeach, Đề Thi Số, DUA Edu, Môn Tin học.
+- [docs/SYSTEM_AUDIT_2026-10-30.md](docs/SYSTEM_AUDIT_2026-10-30.md) — chỉ khi cần kiểm toán lớn.

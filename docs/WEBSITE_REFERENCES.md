@@ -1,6 +1,6 @@
-# Sổ tay website tham khảo & quy hoạch tên miền ứng dụng — Xưởng Công Nghệ
+# Website tham khảo, ý tưởng sản phẩm và tên miền ứng dụng — Xưởng Công Nghệ
 
-> Ngày ghi nhận: 30/10/2026  
+> Ngày ghi nhận: 30/10/2026 · cập nhật sau bổ sung DUA Edu & Môn Tin học  
 > Trạng thái: **TÀI LIỆU THAM KHẢO / Ý TƯỞNG — CHƯA PHÊ DUYỆT TRIỂN KHAI DNS**  
 > Dự án: HuuNghia Studio / Xưởng Công Nghệ  
 > Mục tiêu: lưu lại các trang đã được đưa vào cuộc trao đổi hoặc đã ghi rõ trong tài liệu dự án; có thể đối chiếu lại mà không phải nghiên cứu từ đầu.
@@ -15,7 +15,8 @@
 | REF-02 | [VniTeach — trang giới thiệu](https://www.vniteach.net/) | Nguồn công khai dùng để đối chiếu REF-01 | Tên và nhóm ứng dụng, cổng tập trung | Đã khảo sát dữ liệu công khai; từng tính năng chưa kiểm thử sau đăng nhập |
 | REF-03 | [VniTest — giới thiệu](https://www.vniteach.com/vnitest/) | Nguồn bổ sung để phân tích VniTeach | Nhập Word/PDF, trộn đề, ngân hàng câu hỏi, AI hỗ trợ soạn | Mô tả từ nhà cung cấp, chưa kiểm thử phần mềm |
 | REF-04 | [Đề Thi Số](https://dethiso.vn/) | Đã được dùng và lưu làm tham khảo trong docs/ROADMAP.md và docs/XUONG_CONG_NGHE_MASTER_PLAN_2026_2028.md | Thi trực tuyến, giao bài, đánh giá, trò chơi Live Quiz | Xác nhận có trong tài liệu dự án; không có bằng chứng độc lập về mọi chức năng đã quảng bá |
-| REF-05 | Website Tin học từng được nhắc tới | Có câu hỏi trong lịch sử dự án “trước đây tôi gửi một trang web tinhoc gì đó phải ko” nhưng không có URL khôi phục được | Nguồn học Tin học/mô phỏng cần nhận diện lại | **Chưa xác định địa chỉ — không tự gán là tinhoc123.net hoặc website khác** |
+| REF-05 | [DUA Edu / DataLab](https://duaedu.net/) | **Người dùng gửi trực tiếp 30/10/2026**, link có fbclid đã chuẩn hóa về URL gốc | Học dữ liệu theo lộ trình, lab Python/SQL trên web, tài nguyên và ghi danh khóa | Đã đọc trang công khai; chưa thử sau đăng nhập |
+| REF-06 | [Môn Tin học](https://montinhoc.vn/) | **Người dùng gửi trực tiếp 30/10/2026**; trước đó AGENTS.md từng nhắc là trang mood tham khảo | Hệ thống dạy Tin học lớp 3–12: giao bài, chấm code, Scratch, HTML/CSS, phân quyền | Đã đọc trang công khai; chưa thử chấm code, AI/RLS sau đăng nhập |
 
 **Không tính là website người dùng đã gửi:** GitHub, Vercel, Supabase, tài liệu Microsoft và những trang chỉ xuất hiện do tab trình duyệt đang mở hoặc kết quả tìm kiếm. Chúng thuộc nguồn kỹ thuật hoặc nguồn duyệt web, không phải bằng chứng người dùng chủ động gửi link tham khảo.
 
@@ -44,11 +45,28 @@
 - Giới hạn: không sao chép giao diện, nội dung, game art, mã nguồn hay khẳng định năng lực chịu tải/độ chính xác AI nếu chưa có kiểm thử.
 - Tài liệu dự án có liên quan: docs/ROADMAP.md; docs/XUONG_CONG_NGHE_MASTER_PLAN_2026_2028.md.
 
-### REF-05 — Website Tin học còn thiếu link
+### REF-05 — DUA Edu / DataLab
 
-- Trong lịch sử dự án có nhắc về “một trang web tinhoc” từng gửi trước đó, nhưng **không có đường dẫn cụ thể trong những nguồn truy vết được ở lượt này**.
-- Không chọn ngẫu nhiên một tên miền chỉ vì có chữ “tinhoc” hoặc do công cụ tìm kiếm trả về.
-- Khi tìm lại được link hoặc ảnh/chụp màn hình từ cuộc trò chuyện cũ: cập nhật mục này thành REF-05 chính thức, ghi ngày, chức năng, ảnh hưởng đến Word/Excel Lab và nguồn xác minh.
+- **Người dùng cung cấp:** https://duaedu.net/ (link được gửi có tham số theo dõi fbclid; chỉ lưu URL chuẩn, không lưu tracking).
+- Các trang công khai đã khảo sát: https://duaedu.net/ · https://duaedu.net/resources · https://duaedu.net/courses · https://duaedu.net/theory/da101.
+- **Quan sát trên website:** lộ trình kiến thức SQL/Python/thống kê; thực hành code/dataset trong trình duyệt; tài nguyên sách, cheatsheet, dataset có tìm kiếm và phân loại; khóa học theo đợt và khả năng ghi danh; phân tầng miễn phí hoặc cần xét duyệt; tiếp tục bài đang học.
+- **Ý tưởng cho Xưởng Công Nghệ:** một lesson có tab `Học` / `Thử ngay` / `Tự kiểm tra`; dataset mẫu và kết quả có thể tái sử dụng ở Python/SQL/Excel Lab; danh mục tài liệu gắn với bài học; tracking tiến độ theo công việc thay vì chỉ số buổi.
+- **Cần kiểm thử:** hành vi chạy code thật, môi trường sandbox, giới hạn tài nguyên, session, quyền lớp, trạng thái autosave, thanh toán sau login. Không suy ra từ giao diện giới thiệu.
+- Nguồn kiểm tra 30/10/2026: https://duaedu.net/ · https://duaedu.net/resources · https://duaedu.net/courses.
+
+### REF-06 — Môn Tin học
+
+- **Người dùng cung cấp:** https://montinhoc.vn/ (ngày 30/10/2026).
+- **Quan sát công khai:** phạm vi GDPT lớp 3–12; giáo viên đăng nhập Google, học sinh dùng mã lớp; chấm code nhiều ngôn ngữ theo test cases; bài Scratch .sb3 chạy web; HTML/CSS preview; chấm/ghi chú trực tiếp Word/Excel/PDF; kiểm tra ba phần; thư viện ebook/video; các kịch bản AI học tập có rubric và giáo viên duyệt.
+- **Ý tưởng cho Xưởng Công Nghệ:** Teacher Studio quản lý lớp mã mời; Coding Lab Python/SQL và preview HTML/CSS có runner cách ly; Word/Excel Lab gắn rubric và bài nộp; chấm file có chú thích; AI gợi mở không làm hộ; bảng điều khiển của giáo viên theo câu/lớp.
+- **Hạn chế triển khai:** chạy mã người học chỉ trong sandbox được cách ly, tài nguyên/timeout chặt, không bao giờ chạy trực tiếp trong Next.js server/DB; quyền bài làm chỉ qua RLS; AI cần bảo vệ dữ liệu học sinh và giới hạn chi phí.
+- **Trạng thái:** thông tin mô tả trên trang chủ, **không phải xác nhận kỹ thuật chấm bài, chống gian lận hoặc chất lượng AI trong điều kiện thực tế**.
+- Nguồn kiểm tra 30/10/2026: https://montinhoc.vn/.
+
+### Liên hệ mô hình Tin học được nhắc trước đây
+
+- Người dùng từng hỏi “trước đây tôi gửi một trang web tinhoc gì đó phải ko”; ở thời điểm đó chưa phục hồi được URL.
+- Ngày 30/10/2026 người dùng **đã cung cấp trực tiếp montinhoc.vn**, vì vậy website này được ghi là nguồn tham khảo đã xác thực. Không khẳng định chắc đó là cùng đường dẫn trong cuộc trò chuyện xa hơn nếu thiếu log.
 
 ## 2. Định hướng đặt tên phần mềm: tenungdung.xuongcongnghe.net
 
@@ -147,4 +165,4 @@ Mỗi lần có URL mới, thêm một REF mới với:
 
 ## 8. Kết luận
 
-Tài liệu hiện chắc chắn ghi lại link VniTeach do người dùng gửi và Đề Thi Số đã thành nguồn tham khảo chính thức trong các tài liệu Xưởng Công Nghệ. Một trang Tin học được nhắc tới ở hội thoại trước chưa đủ dữ liệu xác định. Định hướng **tenungdung.xuongcongnghe.net** đã được lưu như nguyên tắc thiết kế đề xuất, chưa triển khai DNS/Vercel/Auth; sử dụng chính sổ tay này làm danh sách tham khảo cập nhật cho các đợt nghiên cứu kế tiếp.
+Tài liệu đã ghi bốn website chính: VniTeach, Đề Thi Số, DUA Edu/DataLab và Môn Tin học. DUA Edu và Môn Tin học là hai liên kết người dùng cung cấp thêm ngày 30/10/2026; chức năng sau đăng nhập chỉ được xem là chưa xác minh. Định hướng **tenungdung.xuongcongnghe.net** đã được lưu như nguyên tắc thiết kế đề xuất, chưa triển khai DNS/Vercel/Auth; sử dụng chính sổ tay này làm danh sách tham khảo cập nhật cho các đợt nghiên cứu kế tiếp.
