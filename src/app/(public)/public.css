@@ -7,6 +7,8 @@
  --public-sand:#EEE7DD;--public-lavender:#E7E2F1;--public-peach:#F2E3DA;
  color:var(--public-ink);background:var(--public-page);
 }
+/* No decorative gradients in the public scope; D2 replaces the legacy hero. */
+.xcn-public .grid-paper,.xcn-public .dot-paper{background-image:none}
 .xcn-public :focus-visible{outline:2px solid var(--public-primary);outline-offset:3px}
 .xcn-public a,.xcn-public button{ -webkit-tap-highlight-color:transparent }
 .xcn-public .xcn-brand{color:var(--public-ink);text-decoration:none}
