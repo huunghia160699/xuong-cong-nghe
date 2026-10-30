@@ -16,7 +16,7 @@
 | REF-03 | [VniTest — giới thiệu](https://www.vniteach.com/vnitest/) | Nguồn bổ sung để phân tích VniTeach | Nhập Word/PDF, trộn đề, ngân hàng câu hỏi, AI hỗ trợ soạn | Mô tả từ nhà cung cấp, chưa kiểm thử phần mềm |
 | REF-04 | [Đề Thi Số](https://dethiso.vn/) | Đã được dùng và lưu làm tham khảo trong docs/ROADMAP.md và docs/XUONG_CONG_NGHE_MASTER_PLAN_2026_2028.md | Thi trực tuyến, giao bài, đánh giá, trò chơi Live Quiz | Xác nhận có trong tài liệu dự án; không có bằng chứng độc lập về mọi chức năng đã quảng bá |
 | REF-05 | [DUA Edu / DataLab](https://duaedu.net/) | **Người dùng gửi trực tiếp 30/10/2026**, link có fbclid đã chuẩn hóa về URL gốc | Học dữ liệu theo lộ trình, lab Python/SQL trên web, tài nguyên và ghi danh khóa | Đã đọc trang công khai; chưa thử sau đăng nhập |
-| REF-06 | [Môn Tin học](https://montinhoc.vn/) | **Người dùng gửi trực tiếp 30/10/2026**; trước đó AGENTS.md từng nhắc là trang mood tham khảo | Hệ thống dạy Tin học lớp 3–12: giao bài, chấm code, Scratch, HTML/CSS, phân quyền | Đã đọc trang công khai; chưa thử chấm code, AI/RLS sau đăng nhập | |
+| REF-06 | [Môn Tin học](https://montinhoc.vn/) | **Người dùng gửi trực tiếp 30/10/2026**; trước đó AGENTS.md từng nhắc là trang mood tham khảo | Hệ thống dạy Tin học lớp 3–12: giao bài, chấm code, Scratch, HTML/CSS, phân quyền | Đã đọc trang công khai; chưa thử chấm code, AI/RLS sau đăng nhập |
 
 **Không tính là website người dùng đã gửi:** GitHub, Vercel, Supabase, tài liệu Microsoft và những trang chỉ xuất hiện do tab trình duyệt đang mở hoặc kết quả tìm kiếm. Chúng thuộc nguồn kỹ thuật hoặc nguồn duyệt web, không phải bằng chứng người dùng chủ động gửi link tham khảo.
 
