@@ -15,6 +15,12 @@ import {resolve} from "node:path";
 import {fileURLToPath} from "node:url";
 
 export const ROADMAP_ID="global-master-roadmap";
+/** Test-only valid epic; the trigger rejects updates without changed items. */
+export const ROADMAP_TEST_PROBE=[{
+ id:"rls-test-probe",title:"Kiểm tra RLS trên staging",summary:"Dữ liệu giả, chỉ dùng thử nghiệm",
+ phase:"00 · Nền tảng & Admin",area:"QA",priority:"P0",status:"testing",order:0,
+ checklist:[],entries:[]
+}];
 export const PRODUCTION_PROJECT_REF="bpxwpfmjoojrgqlfkqgz";
 
 export function readRlsConfig(env,write=false){
@@ -113,7 +119,7 @@ export async function runRlsCheck({env=process.env,buildClient=createClient,writ
   throw new Error("Bản ghi bất ngờ xuất hiện sau khi Student bị từ chối.");
 
  const adminCreate=await admin.from("admin_roadmap")
-  .insert({id:ROADMAP_ID,items:[],version:1,updated_by:adminUser.id})
+  .insert({id:ROADMAP_ID,items:ROADMAP_TEST_PROBE,version:1,updated_by:adminUser.id})
   .select("version,updated_by").single();
  if(adminCreate.error||adminCreate.data?.version!==1||
    adminCreate.data?.updated_by!==adminUser.id)
@@ -150,6 +156,8 @@ export async function runRlsCheck({env=process.env,buildClient=createClient,writ
    finalRead.data?.updated_by!==adminUser.id||
    (finalRead.data?.items??[]).length!==0)
   throw new Error("Kiểm tra cuối không đạt: bảng Roadmap đã bị thay đổi ngoài dự kiến.");
+ // Version 2 clears the test epic: an actual content delta is required by
+ // the admin_roadmap_change_audit trigger, even when only verifying RLS.
  logger("WRITE PASS: Admin INSERT/UPDATE; Student INSERT/UPDATE bị chặn; chống mạo danh người ghi.");
  logger("LƯU Ý: Bảng thử nghiệm còn 1 bản Roadmap rỗng, version=2. Không chạy quy trình này trên production.");
  return {mode:"isolated-write",adminRows:1,version:2,adminRole:"admin",studentRole:"student"};
