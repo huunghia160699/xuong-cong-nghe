@@ -35,7 +35,8 @@
 - **[WORKLOG_AND_RULES.md](WORKLOG_AND_RULES.md)** — quy tắc thao tác, checkpoint và nhật ký mới ngắn.
 - **[PRODUCT_AND_MODULES.md](PRODUCT_AND_MODULES.md)** — nghiệp vụ, module ownership, dependency, route thực/dự kiến.
 - **[ARCHITECTURE_AND_SECURITY.md](ARCHITECTURE_AND_SECURITY.md)** — stack, Auth/RLS, dữ liệu, release gate.
-- **[UI_DESIGN_SYSTEM.md](UI_DESIGN_SYSTEM.md)** — màu, bố cục, responsive, accessibility.
+- **[UI_DESIGN_SYSTEM.md](UI_DESIGN_SYSTEM.md)** — quy chuẩn UI hiện tại, palette Public đề xuất và các ràng buộc khác module.
+- **[PUBLIC_WEBSITE_DESIGN_SPEC.md](PUBLIC_WEBSITE_DESIGN_SPEC.md)** — đặc tả 5 trang Marketing, wireframe, copy, auth-gated catalog và các phase D0–D7 (chưa code).
 - **[ROADMAP.md](ROADMAP.md)** — backlog/mốc, link checklist chi tiết và giới hạn hiện hành.
 - **[WEBSITE_REFERENCES.md](WEBSITE_REFERENCES.md)** — VniTeach, Đề Thi Số, DUA Edu, Môn Tin học, quy hoạch subdomain.
 - **[SYSTEM_AUDIT_2026-10-30.md](SYSTEM_AUDIT_2026-10-30.md)** — snapshot kiểm toán có ngày, không đọc cho task UI nhỏ.
