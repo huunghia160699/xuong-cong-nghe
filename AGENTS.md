@@ -22,7 +22,7 @@ Cấu trúc:
 3. Không gọi Supabase từ presentational components. Quyền Auth/role kiểm ở server và RLS; không sử dụng user_metadata để cấp quyền; không đưa service_role key vào client, GitHub hoặc log.
 4. Bất kỳ bảng mới nào đều cần migration + RLS + test trên staging. Không sửa migration đã áp; không ghi đè hoặc xóa dữ liệu Production để test.
 5. Giao diện dùng [UI_DESIGN_SYSTEM.md](docs/UI_DESIGN_SYSTEM.md): navy `#04122D`, royal blue `#005BFD`, cyan `#00E9FD`, ice `#F0F6FD`, không lime. Tối ưu responsive, nhất quán, không sao chép UI hay assets website tham khảo.
-6. Slide là học liệu giáo viên dẫn dắt, không hiện mô tả kỹ thuật/CSS/React hay eyebrow chung. Trình Word không được tự nhận có tương thích DOCX nếu chưa có OOXML engine thực.
+6. Slide là **teacher-led teaching materials** (học liệu giáo viên dẫn dắt), không hiện mô tả kỹ thuật/CSS/React hay eyebrow chung. Trình Word không được tự nhận có tương thích DOCX nếu chưa có OOXML engine thực.
 7. Mỗi screen có loading, empty, error, permission-denied và mobile behavior. UI cần keyboard focus và nhãn dễ hiểu.
 8. **Ghi tới đâu lưu tới đó:** sau mỗi bước xác minh được, cập nhật checkpoint trong `docs/WORKLOG_AND_RULES.md` trên branch của nhiệm vụ; cập nhật đúng module doc khi có thay đổi contract. Không dồn tới cuối, không viết lại lịch sử cũ.
 9. Đọc GitHub/Vercel/Supabase thông qua công cụ trực tiếp chỉ khi tác vụ cần, không giả định trạng thái từ báo cáo cũ. Chỉ thông báo release khi CI PASS, Vercel READY, alias Production đúng và SHA deployment = GitHub main.
