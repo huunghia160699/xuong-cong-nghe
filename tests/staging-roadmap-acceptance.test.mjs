@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import {readFileSync} from "node:fs";
-import {runStagingAcceptance} from "../scripts/verify-roadmap-staging.mjs";
+import {runStagingAcceptance,STAGING_PROJECT_REF} from "../scripts/verify-roadmap-staging.mjs";
 import {PRODUCTION_PROJECT_REF} from "../scripts/verify-roadmap-rls.mjs";
 
 const source=readFileSync("scripts/verify-roadmap-staging.mjs","utf8");
@@ -25,7 +25,11 @@ test("staging scenario refuses production project before network, even if all fl
 test("staging scenario refuses an alias, a mismatched ref and missing explicit scope",async()=>{
  const e={...env(),RLS_TEST_PROJECT_REF:"s".repeat(20)};
  await assert.rejects(runStagingAcceptance({env:e}),/production|RLS_TEST_PROJECT_REF/);
- const staging={...e,RLS_SUPABASE_URL:"https://"+"s".repeat(20)+".supabase.co"};
+ const otherProject={...e,RLS_SUPABASE_URL:"https://"+"s".repeat(20)+".supabase.co"};
+ await assert.rejects(runStagingAcceptance({env:otherProject}),
+  /Sai project staging/);
+ const staging={...e,RLS_SUPABASE_URL:"https://"+STAGING_PROJECT_REF+".supabase.co",
+  RLS_TEST_PROJECT_REF:STAGING_PROJECT_REF};
  await assert.rejects(runStagingAcceptance({env:{...staging,RLS_STAGING_PURPOSE:""}}),
   /RLS_STAGING_PURPOSE/);
 });

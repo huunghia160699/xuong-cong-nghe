@@ -20,6 +20,9 @@ import {join} from "node:path";
 import {createClient} from "@supabase/supabase-js";
 import {readRlsConfig,runRlsCheck,ROADMAP_ID} from "./verify-roadmap-rls.mjs";
 
+// This QA acceptance runner must never operate on another application\'s project.
+export const STAGING_PROJECT_REF="ordiksbvpewwgrnvzrud";
+
 const options={auth:{persistSession:false,autoRefreshToken:false,detectSessionInUrl:false}};
 const normalized=value=>JSON.stringify(value,(key,v)=>
  v && typeof v==="object" && !Array.isArray(v)
@@ -55,6 +58,8 @@ export async function runStagingAcceptance({env=process.env,logger=console.log,m
  // Defense in depth: full staging URL/ref and explicit write gates checked
  // BEFORE making any network connections or filesystem backup.
  const config=readRlsConfig(env,true);
+ if(env.RLS_TEST_PROJECT_REF!==STAGING_PROJECT_REF)
+  throw new Error("Sai project staging cho Xưởng Công Nghệ: dừng trước khi ghi.");
  if(env.RLS_STAGING_PURPOSE!=="ACCEPTANCE_ONLY")
   throw new Error("Thiếu RLS_STAGING_PURPOSE=ACCEPTANCE_ONLY (chỉ DB staging riêng).");
  // runRlsCheck uses its own independently authenticated Admin + Student.
