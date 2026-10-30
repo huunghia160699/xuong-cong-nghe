@@ -31,6 +31,14 @@ Không viết lại cả nhật ký cũ. Một task nhiều commit có thể th�
 
 ## III. Nhật ký mới (từ 30/10/2026)
 
+### 2026-10-30 — [SUPABASE/STAGING] Project staging được tạo và xác minh schema
+- **DONE:** với xác nhận chủ dự án, tạo `Xuong-Cong-Nghe Staging QA`, ref `ordiksbvpewwgrnvzrud` trong org `dgqktlsjiuaeyhkbcdtx` (`ap-southeast-1`, $0/tháng, ACTIVE_HEALTHY); hai project hiện có không bị sửa/tạm dừng/xóa.
+- **DONE:** áp 7 migration từ repo trên project mới. Khi áp migration `harden_internal_trigger_grants` đã bỏ riêng lệnh REVOKE `rls_auto_enable()` không tồn tại trong staging, không đổi file migration gốc. Chạy `supabase/seed.sql` bằng dữ liệu giả: 3 khóa, 9 bài, 1 quiz, 6 câu, 24 đáp án.
+- **DONE:** migration staging-only `deny_public_truncate_staging_qa` thu hồi TRUNCATE `anon`/`authenticated` trên public tables; kiểm lại **14/14 RLS ON**, 0 bảng có quyền TRUNCATE của hai role. Production không đổi.
+- **DONE (code):** `scripts/verify-roadmap-staging.mjs` được khóa project ref cụ thể, tests bổ sung guard, hướng dẫn onboarding Auth cập nhật ở [SUPABASE_SETUP.md](SUPABASE_SETUP.md).
+- **BLOCKED:** staging chưa có Auth users; connector không có chức năng Auth Admin tạo user. Cần người quản lý tạo hai QA user riêng, xác nhận email và cấp role Admin trong staging (không nhập passwords vào Chat) rồi mới chạy JWT thật, CRUD/backup/restore và E2E Next.js Preview.
+- **KHÔNG LÀM:** không đổi Production DB, Auth, RLS, Vercel env; Teacher Studio vẫn chờ nghiệm thu P0.
+
 ### 2026-10-30 — [AUTH/ROADMAP] Chuẩn bị staging, kiểm thử JWT thật và khôi phục
 - **Yêu cầu:** tạo staging Supabase, chạy hai JWT Admin/Student và nghiệm thu CRUD/backup/restore Roadmap, sau đó mới phát triển Teacher Studio.
 - **DONE:** đã đọc tài liệu theo đúng module; xác minh org Free hiện có 2 project, không có branch; chi phí Supabase báo branch **$0,01344/giờ**, project mới **$0/tháng** nhưng quota Free cần kiểm tra. Không sử dụng project không liên quan.
