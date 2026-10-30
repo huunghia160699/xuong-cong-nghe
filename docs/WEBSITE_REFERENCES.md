@@ -166,3 +166,24 @@ Mỗi lần có URL mới, thêm một REF mới với:
 ## 8. Kết luận
 
 Tài liệu đã ghi bốn website chính: VniTeach, Đề Thi Số, DUA Edu/DataLab và Môn Tin học. DUA Edu và Môn Tin học là hai liên kết người dùng cung cấp thêm ngày 30/10/2026; chức năng sau đăng nhập chỉ được xem là chưa xác minh. Định hướng **tenungdung.xuongcongnghe.net** đã được lưu như nguyên tắc thiết kế đề xuất, chưa triển khai DNS/Vercel/Auth; sử dụng chính sổ tay này làm danh sách tham khảo cập nhật cho các đợt nghiên cứu kế tiếp.
+
+## 9. Bản tổng hợp chức năng đưa vào Navbar — 31/10/2026
+
+**Bốn nguồn sản phẩm chính** được gom vào một hệ sinh thái Xưởng Công Nghệ theo mục đích người dùng, không sao chép y nguyên navigation/menu của nguồn:
+
+| Trang đã tham khảo | Nhóm tính năng tham khảo | Nhóm Navbar Xưởng Công Nghệ đề xuất |
+| --- | --- | --- |
+| [VniTeach](https://vniteach.net/apps) | Nhiều tiện ích giáo viên, bảng viết, đồng hồ, bốc chọn, thời khóa biểu, lớp học, thi và trò chơi | Công cụ, Kiểm tra, Giáo viên |
+| [Đề Thi Số](https://dethiso.vn/) | Soạn đề/ma trận, nhập Word, ngân hàng câu hỏi, giao đề, tự chấm, quiz trực tiếp, game ôn tập | Kiểm tra, Giáo viên, Tài nguyên |
+| [DUA Edu / DataLab](https://duaedu.net/) | Khóa học và lộ trình SQL/Python/data, thực hành, dataset, sách/cheatsheet, đồ án | Khóa học, Thực hành, Tài nguyên, Dự án |
+| [Môn Tin học](https://montinhoc.vn/) | Tin học theo lớp/môn, Scratch, Python/HTML/CSS, chấm bài thực hành, lớp học, học liệu và hỗ trợ giáo viên | Khóa học, Thực hành, Giáo viên, Tài nguyên |
+
+**Đề xuất 7 mục cấp một:** `Khóa học · Thực hành · Kiểm tra · Công cụ · Tài nguyên · Dự án · Giáo viên`; logo là Trang chủ, tài khoản bên phải. Danh sách submenu, đường dẫn hiện có và trạng thái tương lai: [PRODUCT_AND_MODULES.md](PRODUCT_AND_MODULES.md#2a-đề-xuất-điều-hướng-công-khai-theo-4-nguồn-tham-khảo--31102026).
+
+### Nguồn bổ sung của ý tưởng quản lý phòng máy: NetSupport School
+
+- **Người dùng đề xuất:** “công cụ quản lý phòng máy giống net sp”, ngày 31/10/2026. Cụm “net sp” **chưa được xác nhận chính tả/tên sản phẩm**; tạm tham chiếu [NetSupport School](https://www.netsupportschool.com/feature-focus/) (nhà sản xuất) như một ví dụ gần đúng, không đồng nhất với bốn website nghiên cứu sản phẩm phía trên.
+- **Chức năng nêu trên nguồn chính thức:** kết nối lớp theo phòng/danh sách máy, sắp xếp thumbnail máy theo bàn học, bảng trắng chia sẻ, chia sẻ màn hình giáo viên, chọn máy xem/hỗ trợ, kiểm soát trang web được phép, phát/thu tài liệu, khảo sát và phản hồi học sinh. Tài liệu nguồn: https://www.netsupportschool.com/feature-focus/ và https://www.netsupportschool.com/.
+- **Đề xuất độc lập cho Xưởng Công Nghệ:** công cụ LAB-MANAGER thuộc nhóm **Công cụ**, nhưng console điều hành thuộc workspace **Giáo viên** hoặc kỹ thuật viên; trước mắt nghiên cứu sơ đồ phòng, gắn danh sách máy và trạng thái, chưa tạo UI hay remote agent. Backlog: [ROADMAP.md](ROADMAP.md#backlog--điều-hướng-sản-phẩm-và-quản-lý-phòng-máy-chỉ-ý-tưởng-31102026).
+- **Hạn chế cốt lõi:** website Next.js không tự điều khiển màn hình hay hệ điều hành của máy trạm; phần remote viewing/control cần agent cài trên thiết bị, xác thực chặt, mạng phù hợp, thông báo/đồng ý và chính sách bảo vệ trẻ em, audit và quyền theo phòng. Không thử truy cập camera/microphone hoặc màn hình âm thầm; không công khai agent/API điều khiển Internet khi chưa thẩm định.
+- **Trạng thái:** **CHỈ Ý TƯỞNG, P3**; không phải module đã có hoặc tính năng đã được duyệt triển khai. Không thay đổi menu, URL, DNS hay Supabase.
