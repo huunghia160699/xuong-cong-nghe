@@ -12,12 +12,12 @@
 
 ---
 
-### D1 thực hiện từ 31/10/2026 — chỉ public layout (chờ CI/release)
+### D1 triển khai 31/10/2026 — Public layout (PR #71, DONE)
 
 - Đã tạo `src/app/(public)/public.css` chứa token `--public-*` và scoped selectors `.xcn-public`, không gradient; chủ ý không đụng `tailwind.config.ts` hay bảng màu của Admin/Student/Word/Slides.
 - Header có menu 6 mục, bộ chọn Hệ sinh thái 7 nhóm, nút tài khoản theo vai trò server; footer links thật không có `href="#"`.
 - Bốn trang marketing chưa có nội dung D3–D6 nên sử dụng placeholder trung thực “Đang hoàn thiện”; khi làm các phase sau phải thay placeholder bằng nội dung thật, không khai báo “đã có” sớm.
-- Trạng thái lúc ghi: **IN PROGRESS**; test/CI/QA cần xác minh trước khi tuyên bố D1 hoàn tất. [PUBLIC_WEBSITE_DESIGN_SPEC.md](PUBLIC_WEBSITE_DESIGN_SPEC.md).
+- **DONE D1:** PR #71 CI Chromium PASS 5 route × 360/768/1280/1920, Vercel READY main `001bbfc`. D2 tiếp tục thiết kế trang chủ Product Atlas; D3–D6 thay trang placeholder bằng nội dung thật. [PUBLIC_WEBSITE_DESIGN_SPEC.md](PUBLIC_WEBSITE_DESIGN_SPEC.md).
 
 ## 1. Thương hiệu và nguyên tắc
 
