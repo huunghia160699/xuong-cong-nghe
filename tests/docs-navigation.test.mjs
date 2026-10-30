@@ -8,7 +8,7 @@ const core=[
  "docs/INDEX.md","docs/WORKLOG_AND_RULES.md",
  "docs/PRODUCT_AND_MODULES.md","docs/ARCHITECTURE_AND_SECURITY.md",
  "docs/UI_DESIGN_SYSTEM.md","docs/WEBSITE_REFERENCES.md",
- "docs/ROADMAP.md","docs/SYSTEM_AUDIT_2026-10-30.md"
+ "docs/ROADMAP.md","docs/PUBLIC_WEBSITE_DESIGN_SPEC.md","docs/SYSTEM_AUDIT_2026-10-30.md"
 ];
 const read=p=>readFileSync(p,"utf8");
 test("Documentation entrypoint maps work to modules without reading all source files",()=>{

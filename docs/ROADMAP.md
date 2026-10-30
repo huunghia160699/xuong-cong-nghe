@@ -27,6 +27,24 @@
 5. **P2 — Teacher Studio:** **mở thiết kế và phát triển staging** cho quản lý lớp, thành viên, giao bài; chỉ bật Production sau test role `teacher` và RLS ownership/cross-class, E2E và phê duyệt phát hành.
 6. **P2–P3 — Live Quiz, Excel/Coding Labs, AI/trò chơi:** triển khai từng module, không mở nhiều công cụ khi data model chưa ổn.
 
+## Public Website — kế hoạch thiết kế lại 5 trang (31/10/2026)
+
+> **D0 ĐÃ VIẾT SPEC, D1–D7 CHƯA TRIỂN KHAI.** Nguồn chi tiết duy nhất: [PUBLIC_WEBSITE_DESIGN_SPEC.md](PUBLIC_WEBSITE_DESIGN_SPEC.md). Đây là kế hoạch trong Git, **không tự tick hoặc ghi đè Roadmap Supabase Production**.
+
+- [x] **D0 — Bản đặc tả:** wireframe/copy 5 trang, 6 link nav marketing, catalog 7 nhóm tính năng, palette “Calm Slate Blue” không gradient, responsive, auth gate và QA criteria. Có nguồn Dribbble/ảnh VniTeach làm cảm hứng, không sao chép.
+- [ ] **D1 — Public foundation:** scoped tokens/layout, header + mega-menu, footer, shared components; phải kiểm 360/768/1280/1920 và screen height thấp, không thay palette Word/Slides/Admin.
+- [ ] **D2 — Trang chủ:** hero hệ sinh thái, catalog có trạng thái available/building/planned, kiến trúc liên kết module, vai trò, showcase, bảng giá và tin tức preview, CTA auth chỉ khi dùng thật.
+- [ ] **D3 — Giới thiệu:** xây route /gioi-thieu và 7 section minh bạch về sản phẩm, đối tượng, hệ sinh thái và lộ trình.
+- [ ] **D4 — Bảng giá:** route /bang-gia, ba nhóm Khám phá/Giáo viên/Trường học; so sánh/FAQ/CTA. **Không công bố giá giả hay bật billing khi chưa phê duyệt chính sách.**
+- [ ] **D5 — Tin tức:** route /tin-tuc, topic filter/search, article cards/empty-state, published-only content; không có bài/dữ liệu giả.
+- [ ] **D6 — Liên hệ:** route /lien-he, kênh thực đã xác minh; form chỉ khi có backend/anti-spam/privacy đúng và đầu nhận đã được phê duyệt.
+- [ ] **D7 — QA / release:** Chrome responsive, keyboard, WCAG AA, auth/permission deep-link, SEO, CI/build, Vercel READY và SHA khớp.
+- [ ] **Gates thông tin thực:** trước D4 phê duyệt bảng giá/feature entitlement; trước D5 duyệt nguồn tin; trước D6 xác minh email/social/cơ chế nhận form. Không biến các ý tưởng thành tính năng công bố.
+
+**Quy tắc làm việc:** chỉ đọc [INDEX.md](INDEX.md) → đặc tả PUBLIC-WEB và file code liên quan; ghi DONE/IN PROGRESS/BLOCKED trong [WORKLOG_AND_RULES.md](WORKLOG_AND_RULES.md) sau từng phase.
+
+---
+
 ## Những mục cũ bên dưới là backlog / lịch sử đã xuất hiện
 
 **Quan trọng:** các checkbox trong phần MVP 0.1/0.2 và ghi chú dated trước 30/10/2026 phản ánh thời điểm viết, không phải trạng thái Production ngày hôm nay. Đặc biệt những câu “chưa áp migrations”, “chưa deploy” có thể đã lỗi thời; luôn kiểm GitHub/Supabase/Vercel thực tế trước khi hành động. Mục chưa có bằng chứng E2E vẫn là chưa nghiệm thu.

@@ -31,6 +31,12 @@ Không viết lại cả nhật ký cũ. Một task nhiều commit có thể th�
 
 ## III. Nhật ký mới (từ 30/10/2026)
 
+### 2026-10-31 — [PUBLIC-WEB] Đặc tả redesign 5 trang
+- **DONE (D0):** [PUBLIC_WEBSITE_DESIGN_SPEC.md](PUBLIC_WEBSITE_DESIGN_SPEC.md) có wireframe, copy và hành vi Trang chủ/Giới thiệu/Bảng giá/Tin tức/Liên hệ; header/footer, 7 nhóm catalog, palette public scoped #365F80/#223044/#F6F8FB **không gradient**, responsive, auth gate, WCAG, SEO và kế hoạch D1–D7.
+- **LINKED:** [UI_DESIGN_SYSTEM.md](UI_DESIGN_SYSTEM.md), [INDEX.md](INDEX.md), [ROADMAP.md](ROADMAP.md). Trạng thái available/building/planned phải đúng thực tế.
+- **NOT IMPLEMENTED:** chưa có 4 route marketing mới, chưa đổi UI/Auth/RLS/Admin/Word/Slides, chưa có billing/CMS/contact thật. Giá, bài viết, liên hệ không được bịa.
+- **NEXT:** PR docs CI PASS; D1 public shell/nav/footer, D2 homepage, D3–D6 từng trang, D7 QA/release. Mỗi đợt phải có checkpoint riêng.
+
 ### 2026-10-31 — [PRODUCT/NAV + LAB-MANAGER] Tổng hợp 4 website, lưu ý tưởng quản lý phòng máy
 - **Yêu cầu:** đề xuất mục Navbar trang chủ và liệt kê nhóm chức năng dựa trên VniTeach, Đề Thi Số, DUA Edu, Môn Tin học; bổ sung ý tưởng quản lý phòng máy “giống net sp” để làm sau.
 - **DONE (nghiên cứu/đề xuất):** nhóm nav tương lai `Khóa học · Thực hành · Kiểm tra · Công cụ · Tài nguyên · Dự án · Giáo viên`; liệt kê submenu, nguồn gốc ý tưởng và phân biệt route đã tồn tại với tính năng dự kiến tại [PRODUCT_AND_MODULES.md](PRODUCT_AND_MODULES.md) mục 2A.

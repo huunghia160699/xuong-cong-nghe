@@ -2,6 +2,16 @@
 
 > **Nguồn chuẩn cho màu, typography, spacing, responsive, accessibility và nhận diện.** Cập nhật 30/10/2026. Đọc trước khi sửa CSS nhiều trang, Header, Sidebar hoặc một module UI. Slide/Word Lab có tiêu chuẩn tương tác chuyên biệt, đọc thêm tài liệu của chúng.
 
+## Hướng thiết kế Public Website mới — 31/10/2026 (ĐỀ XUẤT, CHƯA ÁP DỤNG)
+
+**Đặc tả thiết kế chi tiết 5 trang:** [PUBLIC_WEBSITE_DESIGN_SPEC.md](PUBLIC_WEBSITE_DESIGN_SPEC.md). Trang chủ làm bản đồ hệ sinh thái, người chưa login xem thông tin tính năng và người đã login dùng công cụ có phân quyền; 4 route Giới thiệu/Bảng giá/Tin tức/Liên hệ cần xây mới.
+
+**Palette Public mới theo yêu cầu (chưa đổi token Production):** text ink \`#223044\`, primary \`#365F80\`, primary-hover \`#294D6C\`, background \`#F6F8FB\`, soft-blue \`#EAF1F7\`, muted \`#52687B\`, border \`#D8E1EA\`, card \`#FFFFFF\`, accents sage \`#DCE8DF\`, sand \`#EEE7DD\`, lavender \`#E7E2F1\`, peach \`#F2E3DA\`. **Không gradient, không neon**. Primary với chữ trắng đạt khoảng 6.76:1; kiểm theo WCAG 2.2 AA khi code. Chỉ scope \`xcn-public\` / public layout; **Admin/Word/Slides đang dùng palette Navy/Blue/Cyan cũ và chưa đổi**.
+
+**Các mốc triển khai:** D0 đặc tả → D1 public shell/header/footer/tokens → D2 homepage catalog → D3 Giới thiệu → D4 Bảng giá → D5 Tin tức → D6 Liên hệ → D7 QA/release. Khi chưa có giá/tin tức/đầu nhận liên hệ chính thức, giao diện không bịa dữ liệu. Checklist [ROADMAP.md](ROADMAP.md). Mọi PR cần cập nhật Worklog từng bước.
+
+---
+
 ## 1. Thương hiệu và nguyên tắc
 
 - Tên sản phẩm: **Xưởng Công Nghệ**.

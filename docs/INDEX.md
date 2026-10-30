@@ -19,6 +19,7 @@
 | Mọi yêu cầu | [WORKLOG_AND_RULES.md](WORKLOG_AND_RULES.md) | [SYSTEM_AUDIT_2026-10-30.md](SYSTEM_AUDIT_2026-10-30.md) **chỉ khi cần đánh giá rủi ro** | File đang được yêu cầu |
 | Thay đổi sản phẩm, chức năng hoặc menu | [PRODUCT_AND_MODULES.md](PRODUCT_AND_MODULES.md) | [ROADMAP.md](ROADMAP.md) / [XCN_FUNCTION_ROADMAP_CHECKLIST.md](XCN_FUNCTION_ROADMAP_CHECKLIST.md) | `src/features`, `src/config` |
 | API, DB, RLS, Supabase, Auth, deploy | [ARCHITECTURE_AND_SECURITY.md](ARCHITECTURE_AND_SECURITY.md) | [SUPABASE_SETUP.md](SUPABASE_SETUP.md), [SUPABASE_STORAGE.md](SUPABASE_STORAGE.md) | `src/lib`, `src/middleware.ts`, `supabase/migrations` |
+| Public Website 5 trang: Trang chủ / Giới thiệu / Bảng giá / Tin tức / Liên hệ | [PUBLIC_WEBSITE_DESIGN_SPEC.md](PUBLIC_WEBSITE_DESIGN_SPEC.md) | [UI_DESIGN_SYSTEM.md](UI_DESIGN_SYSTEM.md), [PRODUCT_AND_MODULES.md](PRODUCT_AND_MODULES.md) | `src/app/(public)`, `src/components/public-*`, `src/config/navigation.ts` |
 | UI toàn site, Admin header/sidebar | [UI_DESIGN_SYSTEM.md](UI_DESIGN_SYSTEM.md) | [PRODUCT_AND_MODULES.md](PRODUCT_AND_MODULES.md) khi cần luồng | `src/app`, `src/components`, `src/app/admin/admin.css` |
 | Student/Quiz/learning progress | [PRODUCT_AND_MODULES.md](PRODUCT_AND_MODULES.md) | [ARCHITECTURE_AND_SECURITY.md](ARCHITECTURE_AND_SECURITY.md) | `src/features/learning`, `src/app/student`, `src/app/api/quiz` |
 | Roadmap/backup/conflict | [ROADMAP.md](ROADMAP.md) + [ARCHITECTURE_AND_SECURITY.md](ARCHITECTURE_AND_SECURITY.md) | [SYSTEM_AUDIT_2026-10-30.md](SYSTEM_AUDIT_2026-10-30.md) | `src/features/admin/roadmap-*` |
@@ -34,7 +35,8 @@
 - **[WORKLOG_AND_RULES.md](WORKLOG_AND_RULES.md)** — quy tắc thao tác, checkpoint và nhật ký mới ngắn.
 - **[PRODUCT_AND_MODULES.md](PRODUCT_AND_MODULES.md)** — nghiệp vụ, module ownership, dependency, route thực/dự kiến.
 - **[ARCHITECTURE_AND_SECURITY.md](ARCHITECTURE_AND_SECURITY.md)** — stack, Auth/RLS, dữ liệu, release gate.
-- **[UI_DESIGN_SYSTEM.md](UI_DESIGN_SYSTEM.md)** — màu, bố cục, responsive, accessibility.
+- **[UI_DESIGN_SYSTEM.md](UI_DESIGN_SYSTEM.md)** — quy chuẩn UI hiện tại, palette Public đề xuất và các ràng buộc khác module.
+- **[PUBLIC_WEBSITE_DESIGN_SPEC.md](PUBLIC_WEBSITE_DESIGN_SPEC.md)** — đặc tả 5 trang Marketing, wireframe, copy, auth-gated catalog và các phase D0–D7 (chưa code).
 - **[ROADMAP.md](ROADMAP.md)** — backlog/mốc, link checklist chi tiết và giới hạn hiện hành.
 - **[WEBSITE_REFERENCES.md](WEBSITE_REFERENCES.md)** — VniTeach, Đề Thi Số, DUA Edu, Môn Tin học, quy hoạch subdomain.
 - **[SYSTEM_AUDIT_2026-10-30.md](SYSTEM_AUDIT_2026-10-30.md)** — snapshot kiểm toán có ngày, không đọc cho task UI nhỏ.
