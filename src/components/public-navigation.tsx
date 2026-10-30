@@ -61,7 +61,7 @@ export function PublicNavigation({accountHref,accountLabel}:Props){
    {ecosystemOpen&&<div className="xcn-public-mega" id={ecosystemId}>
      <div className="xcn-public-mega-header">
        <div><strong>Khám phá hệ sinh thái</strong><p>Học tập, thực hành và các công cụ kết nối với nhau.</p></div>
-       <Link href="/cong-cu" onClick={()=>setEcosystemOpen(false)}>Xem công cụ <ArrowUpRight size={15} aria-hidden="true"/></Link>
+       <Link href="/#he-sinh-thai" onClick={()=>setEcosystemOpen(false)}>Xem hệ sinh thái <ArrowUpRight size={15} aria-hidden="true"/></Link>
      </div>
      <div className="xcn-public-mega-grid">
        {publicEcosystemNav.map(item=><Link key={item.label} href={item.href}
