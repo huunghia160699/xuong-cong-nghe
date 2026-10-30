@@ -330,4 +330,4 @@ Acceptance chung:
 - [Dianoia Educational Platform](https://portal.e-dianoia.com/) — định vị nền tảng nhiều công cụ, không copy branding/claims.
 - [WCAG 2.2 — W3C](https://www.w3.org/TR/WCAG22/) — chuẩn tương phản, bàn phím và nội dung.
 
-**Trạng thái sau khi lưu tài liệu này:** D0 có bản đặc tả; D1–D7 chưa code. Khi đổi hướng thiết kế, cập nhật đúng file và Worklog thay vì tạo tài liệu v2/final trùng.
+**Trạng thái 31/10/2026:** D0 đặc tả đã hoàn thành; **D1 đã được triển khai** (Public scoped palette, header/nav/mega-menu/footer, 4 route placeholder) qua PR #71, CI Chromium 5 trang × 4 độ rộng PASS, Vercel READY commit `001bbfc`. D2–D7 chưa hoàn thành. Khi đổi hướng thiết kế, cập nhật đúng file và Worklog thay vì tạo tài liệu v2/final trùng.
