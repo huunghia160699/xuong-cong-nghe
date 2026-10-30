@@ -1,5 +1,12 @@
 # Changelog
 
+## 2026-10-30 — Sửa chuyển hướng đăng nhập Admin
+- Xác minh read-only Supabase: tài khoản Gmail được báo vẫn có `profiles.role=admin`, email verified; không thay đổi role, Auth, DB hay RLS.
+- Khắc phục biểu mẫu đăng nhập ngầm chèn `next=/student` và Server Action luôn chuyển đến Student khi không có trang yêu cầu.
+- Đọc `auth.getUser()` và `profiles.role` sau đăng nhập; chuyển Admin mặc định đến `/admin`, Student đến `/student`. Đường dẫn nội bộ được yêu cầu rõ ràng vẫn được ưu tiên, không cấp quyền vượt role.
+- Đồng bộ xử lý callback xác thực không có đích và đường dẫn sau thay đổi mật khẩu; bổ sung lỗi riêng khi không xác minh được profile.
+- Thêm regression tests cho role/callback/next, không log token/mật khẩu.
+
 ## 2026-10-29 — Xác minh lưu Roadmap và bảo vệ bản nháp
 - Đối chiếu read-only Roadmap Supabase Production (version 4, 20 việc lớn, 4 sự kiện); không ghi DB hoặc thay đổi tài khoản.
 - So sánh nội dung Roadmap không phụ thuộc thứ tự thuộc tính JSON; bản nháp cùng nội dung không còn cảnh báo phục hồi giả.
