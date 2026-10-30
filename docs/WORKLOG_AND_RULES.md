@@ -31,6 +31,12 @@ Không viết lại cả nhật ký cũ. Một task nhiều commit có thể th�
 
 ## III. Nhật ký mới (từ 30/10/2026)
 
+### 2026-10-31 — [PUBLIC-WEB D1 / ADMIN ROADMAP] Phần việc đang triển khai
+- **DONE (Production Roadmap có chốt CAS):** trước ghi `version=4`, 20 epics, MD5 snapshot `c3442d7b1c2659caa87bd097ce090ce4`; đã **nối thêm** epic `public-website-redesign-d0-d7` gồm checklist D0–D7, chỉ D0 DONE, D1 đang phát triển. SQL kiểm tra phiên bản/hash và không trùng ID, không ghi đè 20 mục trước. Readback: `version=5`, 21 epics, 20 cũ, audit events 5. **Dữ liệu Admin Supabase Production đã đổi theo yêu cầu**, không thay Auth/RLS.
+- **IN PROGRESS (D1):** chỉ sửa Public shell/theme scoped, Navbar, Hệ sinh thái menu, Footer, responsive và placeholder route cho 4 trang marketing (không xây nội dung D3–D6). Giữ theme riêng Admin/Word/Slides, không tạo gradient mới hoặc thông tin giá/liên hệ giả.
+- **NEXT:** tests/Chromium đa viewport, PR/CI PASS, merge, Vercel READY + SHA, chỉ sau đó mới đánh dấu checklist D1 hoàn thành trong Admin với phiên bản CAS mới. Nếu test không đạt giữ D1 chưa xong.
+- **Tài liệu:** [PUBLIC_WEBSITE_DESIGN_SPEC.md](PUBLIC_WEBSITE_DESIGN_SPEC.md), [ROADMAP.md](ROADMAP.md), [UI_DESIGN_SYSTEM.md](UI_DESIGN_SYSTEM.md). `/admin/roadmap` dùng dữ liệu Supabase khác file Markdown và đã được đồng bộ riêng một lần theo yêu cầu.
+
 ### 2026-10-31 — [PUBLIC-WEB] Đặc tả redesign 5 trang
 - **DONE (D0):** [PUBLIC_WEBSITE_DESIGN_SPEC.md](PUBLIC_WEBSITE_DESIGN_SPEC.md) có wireframe, copy và hành vi Trang chủ/Giới thiệu/Bảng giá/Tin tức/Liên hệ; header/footer, 7 nhóm catalog, palette public scoped #365F80/#223044/#F6F8FB **không gradient**, responsive, auth gate, WCAG, SEO và kế hoạch D1–D7.
 - **LINKED:** [UI_DESIGN_SYSTEM.md](UI_DESIGN_SYSTEM.md), [INDEX.md](INDEX.md), [ROADMAP.md](ROADMAP.md). Trạng thái available/building/planned phải đúng thực tế.
