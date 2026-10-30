@@ -55,7 +55,7 @@ where id = (select id from auth.users where email = 'admin@example.com');
 
 ## Quy trình staging RLS & Roadmap (bổ sung 30/10/2026)
 
-> **STAGING ĐÃ TẠO — JWT/CRUD THẬT CHƯA NGHIỆM THU.** Project staging `ordiksbvpewwgrnvzrud` tách Production; mọi thao tác và migration dưới đây chỉ áp vào staging. Chưa có tài khoản Auth QA; không có dữ liệu cá nhân thật.
+> **STAGING VÀ HAI TÀI KHOẢN QA ĐÃ ĐƯỢC XÁC NHẬN QUA SQL — JWT/CRUD THẬT CHƯA CHẠY.** Project staging `ordiksbvpewwgrnvzrud` tách Production. Hai user đã được tạo trực tiếp trên staging, không clone từ Production. Không gửi mật khẩu, JWT hay API secret vào chat/Git.
 
 ### Trạng thái staging đã cấp (30/10/2026)
 
@@ -85,7 +85,7 @@ where id = (select id from auth.users where email = 'admin@example.com');
 ### Những bước còn lại để nghiệm thu trên staging
 
 1. Xác minh ref staging **khác Production**, môi trường Active/Healthy. Kiểm tra migrations trên staging với `list_migrations` và schema/RLS; chỉ thêm migration bị thiếu trên staging sau khi đối chiếu lịch sử (không chạy lại cả SQL nếu khác version runtime).
-2. **CHƯA THỰC HIỆN — tạo hai tài khoản QA Auth:** Trên [Authentication → Users của staging](https://supabase.com/dashboard/project/ordiksbvpewwgrnvzrud/auth/users), dùng **Add user → Create new user** bằng hai địa chỉ kiểm thử do chủ dự án kiểm soát. Có thể xác minh qua email thật hoặc dùng chức năng xác nhận của Dashboard **chỉ trong staging**; ghi rõ nếu do quản trị tự xác nhận thay vì xác minh hộp thư. Không tạo trực tiếp hàng trong `auth.users` bằng SQL. Trigger mới tạo `profiles.role=student` cho cả hai; sau đó trên **SQL Editor staging** mới nâng riêng tài khoản QA Admin thành `admin` (dùng UUID của đúng Auth user trên staging), Student giữ `student`. Không dùng tài khoản Production; không gửi mật khẩu, JWT, secret keys qua Chat/GitHub. Công cụ kết nối hiện tại không hỗ trợ Auth Admin API tạo user nên bước này cần thao tác trên Dashboard.
+2. **ĐÃ ĐẠT — tài khoản QA:** Trên staging có hai Auth user riêng biệt, đã xác nhận email, không bị khóa, có password hash và `profiles.role` lần lượt là `admin` / `student`; email/UUID khớp với thông tin chủ dự án cung cấp. Kiểm tra này thực hiện bằng SQL **read-only**, không phải đăng nhập bằng JWT thật. Chỉ staging có các tài khoản này, không cần tạo hoặc đổi quyền lần nữa. Không đưa email/UUID/mật khẩu vào báo cáo Git công khai.
 3. Lưu biến kiểm thử **chỉ trong máy local/runner được kiểm soát**, không commit `.env`, token, key secret, JWT, password hay file backup. Chỉ dùng **publishable/anon key**, không dùng `service_role`:
    ```bash
    export RLS_SUPABASE_URL="https://ordiksbvpewwgrnvzrud.supabase.co"
@@ -113,12 +113,42 @@ where id = (select id from auth.users where email = 'admin@example.com');
 6. Sau test thành công, **nội dung Roadmap trở về `[]`**, nhưng singleton được giữ lại với version tăng và các events không bị xóa (phục vụ truy vết). Nếu test lỗi, script chỉ tự restore khi version vẫn khớp; nó sẽ in đường dẫn backup. **Không tự reset nhánh hoặc chạy lại trên DB đã có Roadmap**. Kiểm tra thủ công.
 7. Nghiệm thu ứng dụng **Next.js staging/Preview riêng** (không phải Production) với `NEXT_PUBLIC_USE_MOCK_DATA=false`, `NEXT_PUBLIC_SUPABASE_URL`/anon key của staging và `NEXT_PUBLIC_APP_URL` là URL preview. Thêm callback vào Auth Redirect URLs của staging. Đăng nhập hai user để thử `/admin`, `/student`, `/api/admin/roadmap` GET/PUT, `/api/admin/roadmap/backup`, lỗi 401/403/409, refresh và mất kết nối. **Bước này chưa có bằng chứng hoàn thành**.
 
+### Chạy JWT thật bằng mật khẩu lưu riêng trên máy tính
+
+**Không gửi mật khẩu/JWT/token cho ChatGPT hoặc GitHub.** Các phép thử JWT chỉ có thể thực hiện từ máy đã lưu mật khẩu staging. Bộ công cụ hiện kết nối với database ở quyền quản trị, không có quyền truy cập file bí mật trên máy bạn và không thể xác nhận JWT thay bạn.
+
+1. Cập nhật mã nguồn `main` và cài dependencies nếu chưa có. Tại thư mục root dự án, tạo file bí mật **không theo dõi bởi Git**:
+   ```bash
+   git pull --ff-only
+   cp .env.staging.qa.example .env.staging.qa.local
+   git check-ignore .env.staging.qa.local
+   ```
+   Trên **PowerShell**, thay `cp` bằng `Copy-Item` và lệnh `git check-ignore` giữ nguyên. Lệnh cuối phải in `.env.staging.qa.local`; nếu không, **dừng và không điền mật khẩu**.
+
+2. Mở riêng `.env.staging.qa.local` tại máy, điền **publishable/anon key của staging** trong Supabase Dashboard → Project Settings → API Keys và thông tin hai QA account đã tạo. Không dùng service-role/secret key. Không dùng URL/key Production. Trường password có ký tự `#`/khoảng trắng nên đặt trong dấu nháy kép theo cú pháp env file.
+
+3. Chạy phép thử **read-only trước** (Node.js 22+):
+   ```bash
+   node --env-file=.env.staging.qa.local scripts/verify-roadmap-rls.mjs
+   ```
+   Chỉ coi là PASS khi script xác minh JWT thực qua `auth.getUser()`, hai vai trò `profiles.role` khớp, anon bị từ chối SELECT, Admin đọc được và Student không đọc được Roadmap. Nếu lỗi đăng nhập, xác nhận password/key/URL **trên máy**, không gửi nội dung file cho bất kỳ ai.
+
+4. Chỉ khi bước 3 PASS **và Roadmap staging vẫn chưa có bản ghi**, bật các dòng `RLS_TEST_ISOLATED=YES`, `RLS_WRITE_ACK=I_UNDERSTAND`, `RLS_STAGING_PURPOSE=ACCEPTANCE_ONLY` trong file local và chạy:
+   ```bash
+   node --env-file=.env.staging.qa.local scripts/verify-roadmap-staging.mjs
+   ```
+   Kịch bản này **CÓ GHI** vào staging: thêm/sửa/xóa/khôi phục Roadmap, thử Student bị chặn, conflict version, lưu bản backup cục bộ quyền `0600`, tạo audit events, sau đó đưa nội dung Roadmap về mảng rỗng; **không xóa singleton hoặc lịch sử**. Script dừng nếu URL/ref không đúng staging hoặc đã có Roadmap.
+
+5. Chỉ chia sẻ **kết quả đã lọc thông tin nhạy cảm**, chẳng hạn `READ-ONLY PASS`, `STAGING ACCEPTANCE PASS`, tên bước lỗi hoặc mã lỗi (không copy password/token/env, request header, full logs hoặc đường dẫn file cá nhân). Nếu bài ghi thất bại, **không chạy lại mù**; đọc backup và các phiên bản Roadmap trước, ghi blocker vào [WORKLOG_AND_RULES.md](WORKLOG_AND_RULES.md).
+
+Với **PowerShell**, chạy cùng lệnh `node --env-file=...` trong terminal của dự án; không dùng lệnh `setx` hay đưa mật khẩu vào command line. Nếu `node --env-file` không hỗ trợ, kiểm tra `node --version` và nâng Node trước khi kiểm thử. 
+
 ### Bài nghiệm thu tối thiểu trước Teacher Studio
 
 | Test | Điều kiện đạt | Hiện trạng 30/10 |
 | --- | --- | --- |
 | Tách môi trường | Ref staging khác Production, chi phí được phê duyệt, migrations đối chiếu | **ĐÃ ĐẠT**: project ref mới, 7 migration gốc, 1 hardening staging-only, 14/14 RLS |
-| JWT thật | Hai user khác nhau, email xác minh, role chính xác, 403/401 đúng | **BLOCKED**: 0 Auth users, cần 2 user QA trên staging |
+| JWT thật | Hai user khác nhau, email xác minh, role chính xác, 403/401 đúng | **SQL QA ACCOUNT PASS**: 2 user đã xác nhận, role đúng. **JWT LOGIN/RLS NOT RUN** — cần chạy trên máy có mật khẩu local. |
 | RLS dữ liệu | Anon/Student không đọc/ghi roadmap, Admin đọc/ghi, mạo danh bị chặn | GRANT/RLS metadata đạt; **JWT thật chưa chạy** |
 | CRUD/Roadmap | Thêm/sửa/xóa/khôi phục nội dung, GET readback, stale 409, sự kiện version | MỚI CÓ SCRIPT, CHƯA CHẠY STAGING |
 | Backup | Lưu bản trước test, restore không ghi đè thay đổi khác phiên | MỚI CÓ SCRIPT, CHƯA CHẠY STAGING |
