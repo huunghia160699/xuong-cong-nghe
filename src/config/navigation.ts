@@ -1,12 +1,25 @@
 import { BarChart3, BookOpen, ClipboardCheck, FileText, FolderKanban, Gauge, GraduationCap, Library, Presentation, Settings, Sparkles, Users, ShieldCheck, SlidersHorizontal, ScrollText, Activity } from "lucide-react";
 
+/** Public marketing links are distinct from Admin/Student navigation. All targets resolve. */
 export const publicNav = [
-  { label: "Khóa học", href: "/khoa-hoc" },
-  { label: "Luyện tập", href: "/student/quiz" },
-  { label: "Tài nguyên", href: "/#tai-nguyen" },
-  { label: "Công cụ", href: "/cong-cu" },
-  { label: "Dự án", href: "/#du-an" },
-];
+  { label: "Trang chủ", href: "/" },
+  { label: "Hệ sinh thái", href: "/cong-cu" },
+  { label: "Giới thiệu", href: "/gioi-thieu" },
+  { label: "Bảng giá", href: "/bang-gia" },
+  { label: "Tin tức", href: "/tin-tuc" },
+  { label: "Liên hệ", href: "/lien-he" },
+] as const;
+
+/** The homepage product atlas is D2; meanwhile these lead to real public destinations. */
+export const publicEcosystemNav = [
+  { label: "Khóa học", description: "Bài học và lộ trình", href: "/khoa-hoc", icon: "01" },
+  { label: "Thực hành", description: "Word, trình chiếu và công cụ", href: "/cong-cu", icon: "02" },
+  { label: "Kiểm tra", description: "Trắc nghiệm theo tài khoản", href: "/dang-nhap?next=%2Fstudent%2Fquiz", icon: "03" },
+  { label: "Công cụ", description: "Không gian công cụ số", href: "/cong-cu", icon: "04" },
+  { label: "Tài nguyên", description: "Nội dung học và tư liệu", href: "/khoa-hoc", icon: "05" },
+  { label: "Dự án", description: "Học qua sản phẩm thực tế", href: "/#du-an", icon: "06" },
+  { label: "Giáo viên", description: "Không gian đang phát triển", href: "/gioi-thieu", icon: "07" },
+] as const;
 
 export const studentNav = [
   { label: "Tổng quan", href: "/student", icon: Gauge },
