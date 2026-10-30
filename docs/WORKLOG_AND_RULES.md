@@ -31,6 +31,12 @@ Không viết lại cả nhật ký cũ. Một task nhiều commit có thể th�
 
 ## III. Nhật ký mới (từ 30/10/2026)
 
+### 2026-10-30 — [AUTH/ROADMAP] Xác nhận QA users; chuyển sang kiểm thử JWT tại máy local
+- **DONE (read-only):** xác minh trên staging ref `ordiksbvpewwgrnvzrud` hai tài khoản Auth có UUID/email trùng người dùng cung cấp, email confirmed, có password hash, không bị khóa, hồ sơ và vai trò `admin`/`student` khớp; không ghi dữ liệu, không đổi quyền.
+- **DONE (local tooling):** thêm mẫu `.env.staging.qa.example` không chứa secret, bỏ qua `.env.staging.qa.local` trong Git, hướng dẫn `node --env-file=...` chạy read-only trước rồi mới bật ba cờ write để chạy nghiệm thu Roadmap staging. Mật khẩu/JWT vẫn nằm trên máy của người dùng; không lưu vào Git/chat.
+- **NOT TESTED:** chưa chạy `auth.signInWithPassword`/`auth.getUser` bằng JWT thật từ môi trường có mật khẩu; chưa thử ghi/restore. Không coi xác nhận metadata bằng SQL là RLS E2E PASS.
+- **Bước còn lại:** chủ dự án chạy hai lệnh local theo [SUPABASE_SETUP.md](SUPABASE_SETUP.md), chỉ báo trạng thái đã lọc secret; đối chiếu version/events trên staging sau chạy rồi mới chốt P0. Production không đổi.
+
 ### 2026-10-30 — [SUPABASE/STAGING] Project staging được tạo và xác minh schema
 - **DONE:** với xác nhận chủ dự án, tạo `Xuong-Cong-Nghe Staging QA`, ref `ordiksbvpewwgrnvzrud` trong org `dgqktlsjiuaeyhkbcdtx` (`ap-southeast-1`, $0/tháng, ACTIVE_HEALTHY); hai project hiện có không bị sửa/tạm dừng/xóa.
 - **DONE:** áp 7 migration từ repo trên project mới. Khi áp migration `harden_internal_trigger_grants` đã bỏ riêng lệnh REVOKE `rls_auto_enable()` không tồn tại trong staging, không đổi file migration gốc. Chạy `supabase/seed.sql` bằng dữ liệu giả: 3 khóa, 9 bài, 1 quiz, 6 câu, 24 đáp án.
