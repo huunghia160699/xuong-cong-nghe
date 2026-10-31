@@ -20,7 +20,7 @@
 
 > *Lịch sử đầu giai đoạn 30/10/2026:* bản kiểm thử đã được chuẩn bị trước khi khởi tạo staging. **Không áp dụng nội dung 'chưa tạo staging' cho hiện tại.**
 
-1. **P0 — Auth Gate PR #73:** Word Lab/Slide player/Student/Admin có middleware + Server Auth/role; Vercel Preview nhánh dùng Supabase staging, không Demo. Preview guest redirect PASS; JWT role thật còn chờ trước release.
+1. **P0 — Auth Gate PR #73:** Word Lab/Slide player/Student/Admin có middleware + Server Auth/role; Vercel Preview nhánh dùng Supabase staging, không Demo. Preview guest redirect PASS; JWT thật ba vai trò còn chờ: staging có Admin=1, Student=1, Teacher=0. SQL mô phỏng RLS PASS; script `verify-auth-staging.mjs` chỉ đọc đã thêm, chưa chạy vì credentials lưu local.
 2. **P0 — Auth/Admin/Roadmap:** **đã nghiệm thu JWT + Data API CRUD/conflict/backup/restore trên staging**. **Chưa nghiệm thu Next.js browser refresh/API/11 trang Admin trong Preview thực**.
 2. **P0 — Security:** đánh giá SECURITY DEFINER, password protection, quyền RLS/GRANT trên staging trước khi áp Production.
 3. **P1 — Nghiệm thu Admin:** 11 trang sau đăng nhập Live, màn hình 360/768/1280, error/loading, keyboard và mạng yếu.

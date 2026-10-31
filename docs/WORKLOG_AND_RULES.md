@@ -31,6 +31,11 @@ Không viết lại cả nhật ký cũ. Một task nhiều commit có thể th�
 
 ## III. Nhật ký mới (từ 30/10/2026)
 
+### 2026-10-31 — [AUTH STAGING] Ba vai trò
+- **READ-ONLY PASS:** staging có Admin/Student, chưa có Teacher; 14/14 RLS; SQL impersonation Admin thấy Roadmap, Student không, anon bị 42501. Preview guest redirect về login.
+- **CODE QA:** `verify-auth-staging.mjs` chỉ GET/SELECT với JWT thật từ local, fail-closed nếu sai dự án. Chưa có credentials trong công cụ này nên **không kết luận JWT E2E PASS**.
+- **BLOCKED:** Teacher chưa có, browser JWT/session/logout chưa thử; security advisor còn cảnh báo. Không đổi Production.
+
 ### 2026-10-31 — [AUTH + D5 + D6] PR #73
 - **CODE:** Word/Slide SSR + middleware Auth/role; Student/Admin role; Vercel fail-closed. Nhánh Preview dùng Supabase staging.
 - **D5:** Ba bài gốc, trang chi tiết, SEO, sitemap, trang chủ hiển thị bài thật.
@@ -44,11 +49,8 @@ Không viết lại cả nhật ký cũ. Một task nhiều commit có thể th�
 ### 2026-10-31 — [PUBLIC D2–D4 / ROADMAP 21] GitHub-only
 - Admin epic 21 order 20→4; CAS v7→v9, giữ 21 epics. PR #73 D2 Atlas/D3 Giới thiệu/D4 Bảng giá, CI #41114499566 PASS; chưa release.
 
-### 2026-10-31 — [PUBLIC-WEB D1 / ADMIN ROADMAP] Phần việc đang triển khai
-- **DONE (Production Roadmap có chốt CAS):** trước ghi `version=4`, 20 epics, MD5 snapshot `c3442d7b1c2659caa87bd097ce090ce4`; đã **nối thêm** epic `public-website-redesign-d0-d7` gồm checklist D0–D7, chỉ D0 DONE, D1 đang phát triển. SQL kiểm tra phiên bản/hash và không trùng ID, không ghi đè 20 mục trước. Readback: `version=5`, 21 epics, 20 cũ, audit events 5. **Dữ liệu Admin Supabase Production đã đổi theo yêu cầu**, không thay Auth/RLS.
-- **DONE (D1 đã RELEASE, PR #71):** public CSS Calm Slate Blue scoped không gradient, Navbar/mega-menu/mobile, Header kiểm vai trò server, Footer và 4 route placeholder không 404; tests tĩnh + Chromium 5 route × 360/768/1280/1920 PASS, Vercel Production READY commit `001bbfc`, đúng alias. **D1 có thể tick DONE trong Admin sau khi kiểm CAS và đọc lại phiên bản.**
-- **DONE (Admin Roadmap đồng bộ):** CAS `v5→v6` tick D1, event `task.completed` + note; CAS `v6→v7` sửa tiêu đề D1 thành “hoàn thành” để không trái checkbox. Readback: 21 epics (20 cũ giữ nguyên), D0/D1 done, D2–D7 chưa làm, 7 audit events. **NEXT:** D2 Product Atlas; D3–D6 vẫn là placeholder.
-- **Tài liệu:** [PUBLIC_WEBSITE_DESIGN_SPEC.md](PUBLIC_WEBSITE_DESIGN_SPEC.md), [ROADMAP.md](ROADMAP.md), [UI_DESIGN_SYSTEM.md](UI_DESIGN_SYSTEM.md). `/admin/roadmap` dùng dữ liệu Supabase khác file Markdown và đã được đồng bộ riêng một lần theo yêu cầu.
+### 2026-10-31 — [PUBLIC-WEB D1 / ADMIN ROADMAP]
+- D1 shell/nav/footer Production READY SHA `001bbfc`, CI Chromium 5 route × 4 width PASS. Admin Roadmap CAS v4→v7, 21 epics, giữ 20 mục gốc và audit; xem lịch sử trong archive.
 
 ### 2026-10-31 — [PUBLIC-WEB] Đặc tả redesign 5 trang
 - **DONE (D0):** [PUBLIC_WEBSITE_DESIGN_SPEC.md](PUBLIC_WEBSITE_DESIGN_SPEC.md) có wireframe, copy và hành vi Trang chủ/Giới thiệu/Bảng giá/Tin tức/Liên hệ; header/footer, 7 nhóm catalog, palette public scoped #365F80/#223044/#F6F8FB **không gradient**, responsive, auth gate, WCAG, SEO và kế hoạch D1–D7.
