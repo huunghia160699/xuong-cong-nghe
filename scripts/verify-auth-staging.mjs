@@ -54,6 +54,8 @@ function makeSession(url,key){
 
 async function readRoute(origin,path,jar,fetchImpl){
  const headers={Accept:"text/html"};
+ // Vercel Deployment Protection: optional QA-only bypass header in local secret env.
+ if(process.env.AUTH_QA_VERCEL_BYPASS)headers["x-vercel-protection-bypass"]=process.env.AUTH_QA_VERCEL_BYPASS;
  if(jar?.size)headers.Cookie=[...jar].map(([name,value])=>name+"="+encodeURIComponent(value)).join("; ");
  const response=await fetchImpl(origin+path,{method:"GET",redirect:"manual",headers,cache:"no-store"});
  if(response.status===401&&response.headers.get("content-type")?.includes("text/html"))

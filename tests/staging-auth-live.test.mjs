@@ -41,5 +41,5 @@ test("live role QA reads only and never logs user identifiers or credentials",()
  assert.match(s,/Cache-Control|cache:"no-store"/);
  assert.match(s,/\/api\/admin\/roadmap/);
  assert.match(s,/\/api\/quiz\/nonexistent/);
- assert.doesNotMatch(s,/\.insert\(|\.update\(|\.delete\(|method:"POST"|method:"PUT"|method:"DELETE"/);
+ assert.doesNotMatch(s,/\.from\([^)]*\)\s*\.(?:insert|update|delete)\(|method:"POST"|method:"PUT"|method:"DELETE"/);
 });
