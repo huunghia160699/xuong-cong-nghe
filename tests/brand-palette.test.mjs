@@ -13,14 +13,20 @@ test("approved palette is defined in Tailwind", () => {
   assert.doesNotMatch(source, /lime:|#c8f13b/i);
 });
 
-test("primary button is legible and home keeps natural scrolling", () => {
+test("primary button stays accessible and editorial homepage uses scoped slate colors", () => {
   const button = read("src/components/ui/button.tsx");
   const home = read("src/app/(public)/page.tsx");
   const css = read("src/app/globals.css");
-  assert.match(button, /bg-blue text-white/);
-  assert.match(home, /bg-blue text-white/);
-  assert.match(home, /text-cyan/);
-  assert.doesNotMatch(home, /lime|xcn-home-snap|HomeSectionSnap/);
+  const publicCss = read("src/app/(public)/public.css");
+  assert.match(button, /bg-blue text-white/); // legacy app button is unchanged
+  assert.match(publicCss, /--public-primary:#365F80/);
+  assert.match(publicCss, /\.xcn-home-primary\{background:var\(--public-primary\);color:white\}/);
+  assert.match(publicCss, /\.xcn-home-primary:hover\{background:var\(--public-primary-hover\)\}/);
+  assert.match(home, /className="xcn-home-primary"/);
+  assert.match(home, /id="he-sinh-thai"/);
+  assert.match(home, /id="du-an"/);
+  assert.doesNotMatch(home, /lime|xcn-home-snap|HomeSectionSnap|text-cyan/);
+  assert.doesNotMatch(publicCss, /linear-gradient\(|radial-gradient\(|#c8f13b/i);
   assert.doesNotMatch(css, /scroll-snap-type|#c8f13b/i);
 });
 
