@@ -297,7 +297,9 @@ test("Clipboard and Font correctly map each visible control and respect selectio
  assert.match(editor,/const success=document\.execCommand\(name,false\)/);
  assert.match(editor,/if\(name==="cut"\)\{/);
  assert.match(editor,/stagedClipboard\.current=selected;/);
- assert.match(editor,/setClipboardMode\(name\)/);
+ assert.match(editor,/setClipboardMode\("cut"\)/);
+ assert.match(editor,/setClipboardMode\("copy"\)/);
+ assert.doesNotMatch(editor,/if\(!success\)document\.execCommand\("delete"\)/);
  assert.match(editor,/navigator\.clipboard\.readText\(\)/);
  assert.match(editor,/range=savedSelection\.current\?\.cloneRange\(\)/);
  assert.match(editor,/setHasSelection/);
@@ -751,7 +753,9 @@ test("Word Clipboard stages Copy or Cut until Paste and cancels with Escape",()=
  assert.match(home,/active=\{clipboardMode==="cut"\}/);
  assert.match(home,/\(!clipboardMode\|\|paintArmed\)/);
  assert.match(editor,/const stagedClipboard=useRef<string\|null>\(null\)/);
- assert.match(editor,/setClipboardMode\(name\)/);
+ assert.match(editor,/setClipboardMode\("cut"\)/);
+ assert.match(editor,/setClipboardMode\("copy"\)/);
+ assert.doesNotMatch(editor,/if\(!success\)document\.execCommand\("delete"\)/);
  assert.match(editor,/if\(clipboardMode&&stagedClipboard\.current!==null\)/);
  assert.match(editor,/event\.key!=="Escape"/);
  assert.match(editor,/setClipboardMode\(null\);stagedClipboard\.current=null;/);
@@ -1405,7 +1409,7 @@ test("Vietnamese Telex: after turning x² off, next a cannot compose the last su
    removeAllRanges(){this.rangeCount=0},
    addRange(r){this.rangeCount=1;this.anchorNode=r.startContainer}};
  const button={subscript:false,superscript:true};
- const ctx={
+ const ctx={beginHistory(){},
    editor:{current:root},window:{getSelection:()=>selection},
    TYPING_SCRIPT_PLACEHOLDER:"\u200B",SCRIPT_EXIT_ANCHOR:"\u00A0",
    typingScriptRef:{current:"superscript"},
@@ -1480,7 +1484,7 @@ test("Selected text always applies/removes/swaps Sup/Sub before any caret-exit p
      getRangeAt:()=>selected,removeAllRanges(){},addRange(){}};
    const state={subscript:existing==="subscript",superscript:existing==="superscript"};
    const typingScriptRef={current:null},typingScriptNodeRef={current:null};
-   const ctx={
+   const ctx={beginHistory(){},
      editor:{current:root},window:{getSelection:()=>selection},
      formatActive:state,typingScriptRef,typingScriptNodeRef,
      document:{createRange(){return{
@@ -1770,7 +1774,7 @@ test("Word x2 status ignores unselected text nodes that merely touch range bound
  const root={};
  const ancestor={nodeType:1};
  const script=new Map([[before,null],[selected,{tagName:"SUB"}]]);
- const ctx={
+ const ctx={beginHistory(){},
    editor:{current:root},
    Node:{TEXT_NODE:3},
    NodeFilter:{SHOW_TEXT:4},
@@ -1823,7 +1827,7 @@ test("Word Sup/Sub toolbar active-state matches actual highlighted DOM markup",(
  const all=[normalBefore,upper,lower,normalAfter];
  const formats=new Map([[normalBefore,null],[upper,{tagName:"SUP"}],[lower,{tagName:"SUB"}],[normalAfter,null]]);
  let nodes=all;
- const ctx={editor:{current:root},
+ const ctx={beginHistory(){},editor:{current:root},
    Node:{TEXT_NODE:3},NodeFilter:{SHOW_TEXT:4},
    Range:{START_TO_END:1,END_TO_START:3},
    scriptAncestor:node=>formats.get(node),
@@ -1879,7 +1883,7 @@ test("Word script selection restoration selects next text node when start equals
  const saved={};
  let i=0,range=null;
  const selection={removeAllRanges(){},addRange(r){range=r;}};
- const restore=runInNewContext("("+executable+")",{
+ const restore=runInNewContext("("+executable+")",{beginHistory(){},
   editor:{current:{}},window:{getSelection:()=>selection},
   NodeFilter:{SHOW_TEXT:4},
   document:{
@@ -1916,7 +1920,7 @@ test("Superscript x² selected at element boundaries is detected active and togg
  const marks=new Map([[before,null],[raised,{tagName:"SUP"}],[after,null]]);
  const parent={nodeType:1};
  let cursor=0;
- const ctx={
+ const ctx={beginHistory(){},
   editor:{current:parent},Node:{TEXT_NODE:3},NodeFilter:{SHOW_TEXT:4},
   Range:{START_TO_END:1,END_TO_START:3},
   scriptAncestor:node=>marks.get(node),
@@ -2033,7 +2037,7 @@ test("Caret script x₂/x² second click toggles off even when browser relocates
   removeAllRanges(){range=null;},
   addRange(value){range=value;this.anchorNode=value.startContainer;}
  };
- const ctx={
+ const ctx={beginHistory(){},
   window:{getSelection:()=>selection},
   editor:{current:root},
   formatActive:button,
@@ -2136,7 +2140,7 @@ test("Change Case preserves mixed formatting nodes instead of replacing selectio
    insertNode(){result="<b>"+bold.data+"</b>"+normal.data;}
   };
   const selection={rangeCount:1,isCollapsed:false,anchorNode,getRangeAt:()=>range};
-  const ctx={
+  const ctx={beginHistory(){},
    editor:{current:root},window:{getSelection:()=>selection},
    restoreSelection(){},
    document:{
@@ -2231,7 +2235,7 @@ test("Word font without highlighted text stays selected and applies to the next 
      insertNode(node){state.range.insertNode(node)}
    }}
  };
- const ctx={
+ const ctx={beginHistory(){},
    editor:{current:root},window:{getSelection:()=>selection},
    pendingFontNodeRef:pendingRef,TYPING_SCRIPT_PLACEHOLDER:placeholder,
    Node:{TEXT_NODE:3},document:dom,
@@ -2293,7 +2297,7 @@ test("Word Change Case supports all five Word modes with punctuation, Vietnamese
      insertNode(f){inserted=f;}
    };
    const selection={rangeCount:1,isCollapsed:false,anchorNode,getRangeAt:()=>range};
-   const ctx={
+   const ctx={beginHistory(){},
      editor:{current:root},window:{getSelection:()=>selection},
      restoreSelection(){},
      document:{
@@ -2342,7 +2346,7 @@ test("Word Change Case capitalizes sentence starts across formatting boundaries 
  const range={toString:()=>fragment.textContent,startContainer:{},startOffset:0,
   extractContents:()=>fragment,insertNode:()=>{}};
  let i=0;
- const change=runInNewContext("("+executable+")",{
+ const change=runInNewContext("("+executable+")",{beginHistory(){},
   editor:{current:root},window:{getSelection:()=>({rangeCount:1,isCollapsed:false,anchorNode:{},getRangeAt:()=>range})},
   restoreSelection(){},document:{
    createRange(){return{selectNodeContents(){},setEnd(){},cloneContents(){return{textContent:""}}}},
@@ -2434,7 +2438,7 @@ test("Caret-only sub/sup routes typed keys into active element and removes place
  let current={startContainer:node,endContainer:node,startOffset:1,endOffset:1};
  const selection={rangeCount:1,getRangeAt:()=>current,removeAllRanges(){},addRange(r){current=r;}};
  let changes=0;
- const ctx={
+ const ctx={beginHistory(){},
   typingScriptRef:{current:"subscript"},typingScriptNodeRef:{current:node},
   editor:{current:root},window:{getSelection:()=>selection},
   TYPING_SCRIPT_PLACEHOLDER:"\u200B",

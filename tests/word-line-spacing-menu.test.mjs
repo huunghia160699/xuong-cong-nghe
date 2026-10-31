@@ -41,7 +41,7 @@ test("Line spacing actions apply to every selected paragraph and survive seriali
   const one={style:{lineHeight:"",marginTop:"",marginBottom:""}};
   const two={style:{lineHeight:"",marginTop:"",marginBottom:""}};
   let saves=0;
-  const ctx={
+  const ctx={beginHistory(){},
     editor:{current:{contains:()=>true}},
     restoreSelection(){},currentBlock:()=>one,
     selectedParagraphBlocks:()=>[one,two],
