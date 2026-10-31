@@ -71,7 +71,7 @@ try{
    assert.equal(info.style,"none","Header gradient/background image is prohibited");
    assert.equal(info.footerStyle,"none","Footer gradient/background image is prohibited");
    const shot=await call("Page.captureScreenshot",{format:"png",fromSurface:true});
-   writeFileSync(join(output,(route.slice(1)||"home")+"-"+width+".png"),Buffer.from(shot.data,"base64"));
+   writeFileSync(join(output,(route.slice(1).replaceAll("/","-")||"home")+"-"+width+".png"),Buffer.from(shot.data,"base64"));
    const semantics=await evalJs(`(()=>({
     headingCount:document.querySelectorAll('main h1').length,
     hasMain:!!document.querySelector('main'),
