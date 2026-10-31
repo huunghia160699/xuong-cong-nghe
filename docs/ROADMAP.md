@@ -20,7 +20,7 @@
 
 > *Lịch sử đầu giai đoạn 30/10/2026:* bản kiểm thử đã được chuẩn bị trước khi khởi tạo staging. **Không áp dụng nội dung 'chưa tạo staging' cho hiện tại.**
 
-1. **P0 — Auth Gate PR #73:** Word Lab/Slide player/Student/Admin có middleware + Server Auth/role; Vercel Preview nhánh dùng Supabase staging, không Demo. Còn test guest/JWT thật trước release.
+1. **P0 — Auth Gate PR #73:** Word Lab/Slide player/Student/Admin có middleware + Server Auth/role; Vercel Preview nhánh dùng Supabase staging, không Demo. Preview guest redirect PASS; JWT role thật còn chờ trước release.
 2. **P0 — Auth/Admin/Roadmap:** **đã nghiệm thu JWT + Data API CRUD/conflict/backup/restore trên staging**. **Chưa nghiệm thu Next.js browser refresh/API/11 trang Admin trong Preview thực**.
 2. **P0 — Security:** đánh giá SECURITY DEFINER, password protection, quyền RLS/GRANT trên staging trước khi áp Production.
 3. **P1 — Nghiệm thu Admin:** 11 trang sau đăng nhập Live, màn hình 360/768/1280, error/loading, keyboard và mạng yếu.
@@ -39,7 +39,7 @@
 - [x] **D4 — Bảng giá (CODE + CI/Chromium PASS, PR #73, chưa deploy):** route /bang-gia, ba nhóm Khám phá/Giáo viên/Trường học; so sánh/FAQ/CTA. **Không công bố giá giả hay bật billing khi chưa phê duyệt chính sách.**
 - [x] **D5 — Tin tức (3 bài gốc, trang đọc/SEO/sitemap trên PR #73):** route /tin-tuc, topic filter/search, article cards/empty-state, published-only content; không có bài/dữ liệu giả.
 - [ ] **D6 — Liên hệ (cấu hình email xác minh, BLOCKED chưa có địa chỉ/đầu nhận):** route /lien-he, kênh thực đã xác minh; form chỉ khi có backend/anti-spam/privacy đúng và đầu nhận đã được phê duyệt.
-- [ ] **D7 — QA / release (CI/Chromium 5×6 PASS, chưa merge/release Production và JWT Live):** Chrome responsive, keyboard, WCAG AA, auth/permission deep-link, SEO, CI/build, Vercel READY và SHA khớp.
+- [ ] **D7 — QA / release (CI #41174182232: 239 unit + Chromium 8×6 PASS, còn JWT role và Production):** Chrome responsive, keyboard, WCAG AA, auth/permission deep-link, SEO, CI/build, Vercel READY và SHA khớp.
 - [ ] **Gates thông tin thực:** trước D4 phê duyệt bảng giá/feature entitlement; trước D5 duyệt nguồn tin; trước D6 xác minh email/social/cơ chế nhận form. Không biến các ý tưởng thành tính năng công bố.
 
 **Quy tắc làm việc:** chỉ đọc [INDEX.md](INDEX.md) → đặc tả PUBLIC-WEB và file code liên quan; ghi DONE/IN PROGRESS/BLOCKED trong [WORKLOG_AND_RULES.md](WORKLOG_AND_RULES.md) sau từng phase.

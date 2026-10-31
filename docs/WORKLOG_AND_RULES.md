@@ -35,7 +35,7 @@ Không viết lại cả nhật ký cũ. Một task nhiều commit có thể th�
 - **CODE:** Word/Slide SSR + middleware Auth/role; Student/Admin role; Vercel fail-closed. Nhánh Preview dùng Supabase staging.
 - **D5:** Ba bài gốc, trang chi tiết, SEO, sitemap, trang chủ hiển thị bài thật.
 - **D6:** Email chỉ công bố sau xác minh owner + bật env; chưa có inbox/form/Admin pipeline.
-- **QA:** CI/Chromium đang chạy; chờ kiểm URL guest và JWT thật. Chưa merge/release.
+- **QA PASS:** CI #41174182232: 239 unit, type/build, Chromium 8×6. Preview guest Word/Slide/Student/Admin → login PASS. Admin Roadmap v11, 21 mục; JWT role còn chờ. Chưa release.
 
 ### 2026-10-31 — [D5–D7] PR #73
 - **QA PASS:** D5 lọc/URL/empty; D6 topic/verified-only; D7 237 unit, typecheck/build, Chromium 5×6 + SEO; Vercel Preview READY. **BLOCKED:** CMS, kênh/backend, JWT Live, Production.

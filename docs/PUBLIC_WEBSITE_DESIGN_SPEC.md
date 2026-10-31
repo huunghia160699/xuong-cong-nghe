@@ -350,3 +350,5 @@ Acceptance chung:
 - D5: 3 bài viết gốc do XCN biên soạn, trạng thái published, route bài, canonical/Article JSON-LD, sitemap và card trên Trang chủ. Nội dung cập nhật theo code, không sao chép nguồn bên ngoài.
 - D6: hiển thị duy nhất email khi chủ dự án xác minh hộp thư, bật hai biến server `XCN_CONTACT_EMAIL`, `XCN_CONTACT_EMAIL_APPROVED=true`. Chưa được cung cấp email chính thức nên chưa mở inbox, form, lưu Supabase hay Admin contact; quy trình triển khai sau: staging migration, owner-only RLS, kiểm server, rate-limit/honeypot/consent/retention, nghiệm thu trước Production.
 - **Chưa release:** PR còn draft; cần kiểm guest HTTP redirect 302, student/admin JWT thật, truy cập trực tiếp, hồi quy và Production SHA/alias.
+
+**Kết quả QA chốt mã PR #73 ngày 31/10/2026:** GitHub Actions #41174182232 commit `67f1d313` PASS: 239 unit, typecheck/build, Chromium 8 route × 6 viewport, 3 bài thật, lọc/reset tin tức, contact topic, SEO, menu. Vercel Preview READY, guest không vào được Word/Slide Player/Student/Admin. **Chưa có JWT signed-in E2E và chưa merge/release Production.** Admin Roadmap v11, giữ 21 epics; Auth gate done-level code/guest, D6 chưa done.
