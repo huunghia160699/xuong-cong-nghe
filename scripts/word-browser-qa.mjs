@@ -313,15 +313,15 @@ try{
  await shortcut("z");
  const undo=await until(`(()=>{
   const parts=[...document.querySelectorAll(".wsl-editor .wsl-document-page > p")];
-  return parts.length===2&&parts[0].textContent.includes("Zulu")&&
-   parts[0].querySelector("b")&&parts[1].querySelector("i");
+  return Boolean(parts.length===2&&parts[0].textContent.includes("Zulu")&&
+   parts[0].querySelector("b")&&parts[1].querySelector("i"));
  })()`);
  assert.equal(undo,true,"Ctrl+Z failed to undo rich Sort");
  await shortcut("y");
  const redo=await until(`(()=>{
   const parts=[...document.querySelectorAll(".wsl-editor .wsl-document-page > p")];
-  return parts.length===2&&parts[0].textContent.includes("Alpha")&&
-   parts[0].querySelector("i")&&parts[1].querySelector("b");
+  return Boolean(parts.length===2&&parts[0].textContent.includes("Alpha")&&
+   parts[0].querySelector("i")&&parts[1].querySelector("b"));
  })()`);
  assert.equal(redo,true,"Ctrl+Y failed to redo rich Sort");
  result("Ctrl+Z / Ctrl+Y preserve rich sort",{undo:true,redo:true});
