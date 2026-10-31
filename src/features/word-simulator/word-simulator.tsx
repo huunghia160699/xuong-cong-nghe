@@ -21,6 +21,10 @@ type Tab="File"|"Home"|"Insert"|"Design"|"Layout"|"References"|"Mailings"|"Revie
 type Orientation="portrait"|"landscape";
 type Margins="normal"|"narrow";
 type Stats={words:number;characters:number};
+type HistoryCursor={block:number;offset:number};
+type WordHistoryEntry={html:string;start:HistoryCursor|null;end:HistoryCursor|null};
+type WordHistory={undo:WordHistoryEntry[];redo:WordHistoryEntry[];
+  pending:{entry:WordHistoryEntry;kind:"typing"|"command"}|null;lastKind:string;lastTime:number};
 type RibbonCommand={id:string;label:string;run:()=>void;icon:React.ReactNode;disabled?:boolean;title?:string};
 
 const STORAGE_KEY="xcn_word_simulator_draft_v1";
@@ -155,6 +159,7 @@ export function WordSimulator(){
   const [rulerScroll,setRulerScroll]=useState({left:0,top:0});
   const [measuredPaper,setMeasuredPaper]=useState<{landscape:boolean;zoom:number;height:number}|null>(null);
   const stagedClipboard=useRef<string|null>(null);
+  const editHistory=useRef<WordHistory>({undo:[],redo:[],pending:null,lastKind:"",lastTime:0});
   const [activeTab,setActiveTab]=useState<Tab>("Home");
   const [filename,setFilename]=useState("Document1");
   const [zoom,setZoom]=useState(100);
@@ -205,15 +210,115 @@ export function WordSimulator(){
     return ()=>observer.disconnect();
   },[isLandscape,zoom]);
 
+
+  // A bounded document history covers both native input and direct DOM edits
+  // (Change Case, script formats, Sort and page-break insertion). Browser
+  // execCommand('undo') alone cannot undo those structural transformations.
+  const historyBlocks=(root:HTMLElement)=>Array.from(root.querySelectorAll<HTMLElement>(
+    "p,h1,h2,h3,h4,li,blockquote,td,th"
+  ));
+  function historyCursor(root:HTMLElement,node:Node,offset:number):HistoryCursor|null{
+    const element=node.nodeType===Node.ELEMENT_NODE?node as Element:node.parentElement;
+    const block=element?.closest("p,h1,h2,h3,h4,li,blockquote,td,th") as HTMLElement|null;
+    const index=block?historyBlocks(root).indexOf(block):-1;
+    if(index<0||!block)return null;
+    try{
+      const range=document.createRange();range.selectNodeContents(block);range.setEnd(node,offset);
+      return {block:index,offset:range.cloneContents().textContent?.length??0};
+    }catch{return null;}
+  }
+  function historyEntry():WordHistoryEntry|null{
+    const root=editor.current;if(!root)return null;
+    const selection=window.getSelection(),range=selection?.rangeCount?selection.getRangeAt(0):null;
+    const inside=range&&root.contains(range.startContainer)&&root.contains(range.endContainer);
+    return {html:sanitize(root.innerHTML),
+      start:inside?historyCursor(root,range.startContainer,range.startOffset):null,
+      end:inside?historyCursor(root,range.endContainer,range.endOffset):null};
+  }
+  function beginHistory(kind:"typing"|"command"="command"){
+    const entry=historyEntry();
+    if(entry)editHistory.current.pending={entry,kind};
+  }
+  function commitHistory(){
+    const history=editHistory.current,pending=history.pending;
+    history.pending=null;
+    if(!pending)return;
+    const after=historyEntry();
+    if(!after||after.html===pending.entry.html)return;
+    const now=Date.now();
+    if(!(pending.kind==="typing"&&history.lastKind==="typing"&&now-history.lastTime<550)){
+      history.undo.push(pending.entry);
+      if(history.undo.length>45)history.undo.shift();
+    }
+    history.redo=[];
+    history.lastKind=pending.kind;history.lastTime=now;
+  }
+  function restoreHistorySelection(root:HTMLElement,entry:WordHistoryEntry){
+    const blocks=historyBlocks(root);
+    const find=(cursor:HistoryCursor|null)=>{
+      const block=cursor&&blocks[cursor.block];
+      if(!block)return null;
+      let remaining=cursor.offset,node:Node|null;
+      const walker=document.createTreeWalker(block,NodeFilter.SHOW_TEXT);
+      while(node=walker.nextNode()){
+        const length=node.textContent?.length??0;
+        if(remaining<=length)return {node,offset:remaining};
+        remaining-=length;
+      }
+      return {node:block as Node,offset:block.childNodes.length};
+    };
+    const a=find(entry.start),b=find(entry.end);
+    const last=blocks.at(-1);
+    if(!a&&!last)return;
+    const range=document.createRange();
+    try{
+      if(a)range.setStart(a.node,a.offset);
+      else{range.selectNodeContents(last!);range.collapse(false);}
+      if(b)range.setEnd(b.node,b.offset);
+      else range.collapse(true);
+      const selection=window.getSelection();
+      selection?.removeAllRanges();selection?.addRange(range);
+      savedSelection.current=range.cloneRange();
+    }catch{/* Keep DOM valid even if the original inline wrapper disappeared. */}
+  }
+  function undoRedo(direction:"undo"|"redo"){
+    const root=editor.current;if(!root)return;
+    commitHistory();
+    const history=editHistory.current;
+    const source=direction==="undo"?history.undo:history.redo;
+    const destination=direction==="undo"?history.redo:history.undo;
+    const current=historyEntry();if(!current)return;
+    let target:WordHistoryEntry|undefined;
+    while(source.length){
+      const entry=source.pop()!;
+      if(entry.html!==current.html){target=entry;break;}
+    }
+    if(!target){
+      setStatus(direction==="undo"?"Không có thao tác để hoàn tác":"Không có thao tác để làm lại");
+      return;
+    }
+    destination.push(current);if(destination.length>45)destination.shift();
+    root.innerHTML=target.html;
+    typingScriptRef.current=null;typingScriptNodeRef.current=null;
+    typingScriptExitNodeRef.current=null;typingScriptExitAnchorRef.current=null;
+    pendingFontNodeRef.current=null;history.pending=null;history.lastKind="";
+    root.focus({preventScroll:true});
+    restoreHistorySelection(root,target);
+    rememberSelection();syncFormatState();syncFontControls();
+    updateStats();setRevision(value=>value+1);
+    setStatus(direction==="undo"?"Đã hoàn tác":"Đã làm lại");
+  }
   const updateStats=useCallback(()=>{
     if(editor.current)setStats(textStats(editor.current.innerHTML));
   },[]);
   const markChanged=useCallback(()=>{
+    commitHistory();
     updateStats();setRevision(value=>value+1);setStatus("Đang soạn thảo");
   },[updateStats]);
   const setDocument=useCallback((html:string)=>{
     if(!editor.current)return;
     editor.current.innerHTML=sanitize(html);
+    editHistory.current={undo:[],redo:[],pending:null,lastKind:"",lastTime:0};
     savedSelection.current=null;
     typingScriptRef.current=null;
     typingScriptNodeRef.current=null;
@@ -713,11 +818,14 @@ export function WordSimulator(){
     }
   }
   function command(cmd:string,value?:string){
+    if(cmd==="undo"||cmd==="redo"){undoRedo(cmd);return;}
     restoreSelection();
+    beginHistory();
     const ok=document.execCommand(cmd,false,value);
     if(!ok){
       if(cmd==="undo"||cmd==="redo")setStatus(cmd==="undo"?"Không có thao tác để hoàn tác":"Không có thao tác để làm lại");
       else setStatus("Trình duyệt chưa hỗ trợ lệnh này: "+cmd);
+      editHistory.current.pending=null;
       return;
     }
     rememberSelection();
@@ -852,6 +960,7 @@ export function WordSimulator(){
   // x₂/x² have two separate behaviors: selected text toggles the formatting
   // of the selected content; a collapsed caret enters/exits a typing mode.
   function toggleScriptFormat(kind:"subscript"|"superscript"){
+    beginHistory();
     const root=editor.current;
     const liveSelection=window.getSelection();
     const liveRange=liveSelection?.rangeCount?liveSelection.getRangeAt(0):null;
@@ -1078,9 +1187,11 @@ export function WordSimulator(){
   }
   function insertPageBreak(){
     restoreSelection();
+    beginHistory();
     const root=editor.current;
     if(root)ensureWordCaretInsideParagraph(root);
     if(!root||!insertManualWordPageBreak(root)){
+      editHistory.current.pending=null;
       setStatus("Đặt con trỏ trong văn bản để ngắt trang");return;
     }
     const afterBreak=window.getSelection();
@@ -1299,6 +1410,7 @@ export function WordSimulator(){
     }
     const range=selection.getRangeAt(0);
     if(!range.toString())return;
+    beginHistory();
     const prefix=document.createRange();
     prefix.selectNodeContents(root);
     prefix.setEnd(range.startContainer,range.startOffset);
@@ -1366,6 +1478,7 @@ export function WordSimulator(){
     const sorted=[...paragraphs].sort((a,b)=>
       (a.textContent??"").localeCompare(b.textContent??"","vi",{sensitivity:"base"}));
     if(sorted.every((p,i)=>p===paragraphs[i])){setStatus("Các đoạn đã được sắp xếp");return;}
+    beginHistory();
     const marker=document.createComment("word-sort-anchor");
     paragraphs[0].before(marker);
     for(const block of sorted)marker.before(block);
@@ -1462,11 +1575,13 @@ export function WordSimulator(){
       if(!selected){setStatus("Chọn văn bản trước khi "+(name==="copy"?"sao chép":"cắt"));return;}
       const selection=window.getSelection();
       const saved=selection?.rangeCount?selection.getRangeAt(0).cloneRange():null;
+      if(name==="cut")beginHistory();
       const success=document.execCommand(name,false);
       if(name==="cut"&&!success){
         // A failed cut MUST leave the document intact. Only a confirmed OS
         // clipboard write can authorize a separate delete operation.
         stagedClipboard.current=null;setClipboardMode(null);
+        editHistory.current.pending=null;
         if(!navigator.clipboard?.writeText){
           setStatus("Không thể cắt: clipboard không khả dụng. Văn bản vẫn được giữ nguyên.");return;
         }
@@ -1480,7 +1595,9 @@ export function WordSimulator(){
           if(!sameSelection){
             setStatus("Đã sao chép vào clipboard, nhưng vùng chọn đã đổi; không xóa chữ.");return;
           }
+          beginHistory();
           if(!document.execCommand("delete",false)){
+            editHistory.current.pending=null;
             setStatus("Đã sao chép nhưng không thể xóa vùng chọn; văn bản vẫn còn.");return;
           }
           stagedClipboard.current=selected;setClipboardMode("cut");
@@ -1522,6 +1639,7 @@ export function WordSimulator(){
     }
     if(name==="paragraphShading"){
       restoreSelection();
+      beginHistory();
       const block=currentBlock();
       if(!block||!editor.current?.contains(block)){setStatus("Đặt con trỏ trong đoạn văn");return;}
       block.style.backgroundColor=value==="none"?"":value&&/^#[0-9a-f]{6}$/i.test(value)?value:block.style.backgroundColor?"":"#fff2a8";
@@ -1532,6 +1650,7 @@ export function WordSimulator(){
        name==="paragraphSpaceAfterToggle"||name==="paragraphSpacingOptions"||
        name==="paragraphBorder"){
       restoreSelection();
+      beginHistory();
       const block=currentBlock();
       if(!block||!editor.current?.contains(block)){setStatus("Đặt con trỏ trong đoạn văn");return;}
       if(name==="lineSpacing"){
@@ -1584,6 +1703,7 @@ export function WordSimulator(){
     paintFormat.current=null;
     setPaintArmed(false);
     restoreSelection();
+    beginHistory();
     if(/^(Aptos|Arial|Calibri|Georgia|Verdana|Times New Roman)$/i.test(paint.font))
       document.execCommand("fontName",false,paint.font);
     if(/^#[0-9a-f]{3,8}$/i.test(paint.color)||/^rgb\([\d\s,.%]+\)$/i.test(paint.color))
@@ -1718,10 +1838,16 @@ export function WordSimulator(){
               onPointerUp={endLineGutterSelection}
               onPointerCancel={endLineGutterSelection}
               onLostPointerCapture={()=>{lineGutterDrag.current=null;}}
-              onCompositionStart={()=>{composingRef.current=true;}}
+              onCompositionStart={()=>{composingRef.current=true;beginHistory("typing");}}
               onCompositionEnd={()=>{composingRef.current=false;markChanged();}}
               onBeforeInput={event=>{
                  const native=event.nativeEvent as InputEvent;
+                 if(native.inputType==="historyUndo"||native.inputType==="historyRedo"){
+                   event.preventDefault();
+                   undoRedo(native.inputType==="historyUndo"?"undo":"redo");
+                   return;
+                 }
+                 beginHistory("typing");
                  if(!native.isComposing&&editor.current)
                    ensureWordCaretInsideParagraph(editor.current);
                  if(native.data&&!native.isComposing&&(!native.inputType||native.inputType==="insertText")&&
@@ -1732,6 +1858,15 @@ export function WordSimulator(){
                  }
                }}
                onKeyDown={event=>{
+                 if((event.ctrlKey||event.metaKey)&&!event.altKey&&
+                   (event.key.toLowerCase()==="z"||event.key.toLowerCase()==="y")){
+                   event.preventDefault();
+                   undoRedo(event.key.toLowerCase()==="y"||event.shiftKey?"redo":"undo");
+                   return;
+                 }
+                 if(event.key==="Backspace"||event.key==="Delete"||event.key==="Enter"||
+                   (event.key.length===1&&!event.ctrlKey&&!event.metaKey))
+                   beginHistory("typing");
                  if((event.key.length===1||event.key==="Enter"||
                     event.key==="Backspace"||event.key==="Delete")&&
                     !event.nativeEvent.isComposing&&editor.current)
@@ -1749,7 +1884,7 @@ export function WordSimulator(){
               onInput={event=>{repairExitedScriptText();cleanTypingScriptPlaceholder();cleanPendingFontPlaceholder();cleanScriptExitAnchor();rememberSelection();markChanged();}}
                onKeyUp={event=>{repairExitedScriptText();cleanScriptExitAnchor();if(["ArrowLeft","ArrowRight","ArrowUp","ArrowDown","Home","End","PageUp","PageDown"].includes(event.key))syncTypingScriptCaret();rememberSelection();}}
                onMouseUp={()=>{syncTypingScriptCaret();handleEditorMouseUp();}}
-              onFocus={()=>{if(editor.current)ensureWordCaretInsideParagraph(editor.current);rememberSelection();}} onPaste={event=>{event.preventDefault();setClipboardMode(null);stagedClipboard.current=null;command("insertText",event.clipboardData.getData("text/plain"));}}
+              onFocus={()=>{if(editor.current)ensureWordCaretInsideParagraph(editor.current);rememberSelection();}} onPaste={event=>{event.preventDefault();beginHistory();setClipboardMode(null);stagedClipboard.current=null;command("insertText",event.clipboardData.getData("text/plain"));}}
               onDrop={event=>event.preventDefault()}/>
             </div>
           </div>
