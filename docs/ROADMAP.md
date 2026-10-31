@@ -20,7 +20,8 @@
 
 > *Lịch sử đầu giai đoạn 30/10/2026:* bản kiểm thử đã được chuẩn bị trước khi khởi tạo staging. **Không áp dụng nội dung 'chưa tạo staging' cho hiện tại.**
 
-1. **P0 — Auth/Admin/Roadmap:** **đã nghiệm thu JWT + Data API CRUD/conflict/backup/restore trên staging**. **Chưa nghiệm thu Next.js browser refresh/API/11 trang Admin trong Preview thực**.
+1. **P0 — Auth Gate PR #73:** Word Lab/Slide player/Student/Admin có middleware + Server Auth/role; Vercel Preview nhánh dùng Supabase staging, không Demo. Còn test guest/JWT thật trước release.
+2. **P0 — Auth/Admin/Roadmap:** **đã nghiệm thu JWT + Data API CRUD/conflict/backup/restore trên staging**. **Chưa nghiệm thu Next.js browser refresh/API/11 trang Admin trong Preview thực**.
 2. **P0 — Security:** đánh giá SECURITY DEFINER, password protection, quyền RLS/GRANT trên staging trước khi áp Production.
 3. **P1 — Nghiệm thu Admin:** 11 trang sau đăng nhập Live, màn hình 360/768/1280, error/loading, keyboard và mạng yếu.
 4. **P1 — Contracts:** một luồng dùng chung nội dung/câu hỏi/bài học cho Quiz/Slides/Teacher/Labs, schema và quyền rõ.
@@ -29,15 +30,15 @@
 
 ## Public Website — kế hoạch thiết kế lại 5 trang (31/10/2026)
 
-> **D0/D1 đã hoàn thành; D2–D4 code/CI/Chromium PASS trên nhánh GitHub PR #73, CHƯA merge/deploy Vercel. D5 code/QA PASS (chưa CMS), D6 giao diện/QA PASS nhưng thiếu kênh liên hệ thật; D7 CI/Chromium PASS, chưa release Production. PR #73 còn draft.** Nguồn chi tiết duy nhất: [PUBLIC_WEBSITE_DESIGN_SPEC.md](PUBLIC_WEBSITE_DESIGN_SPEC.md). Đây là kế hoạch trong Git, **không tự tick hoặc ghi đè Roadmap Supabase Production**.
+> **D0/D1 đã hoàn thành; D2–D4 code/CI/Chromium PASS trên nhánh GitHub PR #73, CHƯA merge/deploy Vercel. D5 có 3 bài gốc trên PR #73; D6 chỉ nhận email sau xác minh; D7 CI/Chromium PASS, chưa release Production. PR #73 còn draft.** Nguồn chi tiết duy nhất: [PUBLIC_WEBSITE_DESIGN_SPEC.md](PUBLIC_WEBSITE_DESIGN_SPEC.md). Đây là kế hoạch trong Git, **không tự tick hoặc ghi đè Roadmap Supabase Production**.
 
 - [x] **D0 — Bản đặc tả:** wireframe/copy 5 trang, 6 link nav marketing, catalog 7 nhóm tính năng, palette “Calm Slate Blue” không gradient, responsive, auth gate và QA criteria. Có nguồn Dribbble/ảnh VniTeach làm cảm hứng, không sao chép.
 - [x] **D1 — Public foundation: DONE (PR #71, main `001bbfc`)**. Có palette `xcn-public` không gradient, Navbar role-aware, mega-menu 7 nhóm, Footer, 4 route placeholder trung thực, QA Chromium 360/768/1280/1920; PR CI PASS, Vercel Production READY đúng SHA và alias. Nội dung 4 trang chưa hoàn thiện, để D3–D6. Admin/Word/Slides không đổi.
 - [x] **D2 — Trang chủ (CODE + CI/Chromium PASS, PR #73, chưa deploy):** hero hệ sinh thái, catalog có trạng thái available/building/planned, kiến trúc liên kết module, vai trò, showcase, bảng giá và tin tức preview, CTA auth chỉ khi dùng thật.
 - [x] **D3 — Giới thiệu (CODE + CI/Chromium PASS, PR #73, chưa deploy):** xây route /gioi-thieu và 7 section minh bạch về sản phẩm, đối tượng, hệ sinh thái và lộ trình.
 - [x] **D4 — Bảng giá (CODE + CI/Chromium PASS, PR #73, chưa deploy):** route /bang-gia, ba nhóm Khám phá/Giáo viên/Trường học; so sánh/FAQ/CTA. **Không công bố giá giả hay bật billing khi chưa phê duyệt chính sách.**
-- [x] **D5 — Tin tức (CODE/QA PASS, chưa có CMS/bài xuất bản):** route /tin-tuc, topic filter/search, article cards/empty-state, published-only content; không có bài/dữ liệu giả.
-- [ ] **D6 — Liên hệ (CODE/QA PASS, BLOCKED chưa có kênh/đầu nhận):** route /lien-he, kênh thực đã xác minh; form chỉ khi có backend/anti-spam/privacy đúng và đầu nhận đã được phê duyệt.
+- [x] **D5 — Tin tức (3 bài gốc, trang đọc/SEO/sitemap trên PR #73):** route /tin-tuc, topic filter/search, article cards/empty-state, published-only content; không có bài/dữ liệu giả.
+- [ ] **D6 — Liên hệ (cấu hình email xác minh, BLOCKED chưa có địa chỉ/đầu nhận):** route /lien-he, kênh thực đã xác minh; form chỉ khi có backend/anti-spam/privacy đúng và đầu nhận đã được phê duyệt.
 - [ ] **D7 — QA / release (CI/Chromium 5×6 PASS, chưa merge/release Production và JWT Live):** Chrome responsive, keyboard, WCAG AA, auth/permission deep-link, SEO, CI/build, Vercel READY và SHA khớp.
 - [ ] **Gates thông tin thực:** trước D4 phê duyệt bảng giá/feature entitlement; trước D5 duyệt nguồn tin; trước D6 xác minh email/social/cơ chế nhận form. Không biến các ý tưởng thành tính năng công bố.
 

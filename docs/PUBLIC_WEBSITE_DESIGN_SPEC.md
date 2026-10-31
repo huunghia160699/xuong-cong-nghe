@@ -1,6 +1,6 @@
 # Đặc tả thiết kế 5 trang Website công khai — Xưởng Công Nghệ
 
-> **PHASE D0: SPEC READY FOR CODE REVIEW — CHƯA TRIỂN KHAI GIAO DIỆN.** Biên soạn 31/10/2026 theo yêu cầu thiết kế lại trang chủ, Giới thiệu, Bảng giá, Tin tức, Liên hệ. Tài liệu này là nguồn chính của PUBLIC-WEB; không tạo nhiều file bản nháp/FINAL mới.
+> **D0–D5 đã có code trên PR #73; D6 chờ email xác minh, D7 chờ Auth Live E2E/release.** Biên soạn 31/10/2026 theo yêu cầu thiết kế lại trang chủ, Giới thiệu, Bảng giá, Tin tức, Liên hệ. Tài liệu này là nguồn chính của PUBLIC-WEB; không tạo nhiều file bản nháp/FINAL mới.
 >
 > **Sợi dây liên kết module:** [INDEX.md](INDEX.md) → [UI_DESIGN_SYSTEM.md](UI_DESIGN_SYSTEM.md) (token & UI hiện hành) → tài liệu này (public site mới) → [PRODUCT_AND_MODULES.md](PRODUCT_AND_MODULES.md) (các nhóm sản phẩm) → [ROADMAP.md](ROADMAP.md) (đợt triển khai) → [WORKLOG_AND_RULES.md](WORKLOG_AND_RULES.md) (checkpoint).
 >
@@ -342,3 +342,11 @@ Acceptance chung:
 - D7: `sitemap.ts`, `robots.ts`, Chromium 6 viewport, lọc Tin tức, URL liên hệ, SEO và FAQ; `START-WEB-OFFLINE.cmd` chạy Demo local. Chưa release Production, QA JWT thật và phê duyệt thông tin còn là gate.
 
 **QA 31/10/2026:** GitHub Actions #41155993460 commit `7c2f88e`: 237 unit PASS, typecheck/build PASS, Chromium 5 route × 6 viewport PASS, SEO/News filter/Contact topic/FAQ PASS; Vercel Preview D5–D7 READY. Production vẫn chưa được cập nhật, không coi kiểm Demo là E2E JWT thật.
+
+
+### Auth Gate / D5 nội dung / D6 email — 31/10/2026
+- Trang công khai, catalog công cụ và thư viện bài trình chiếu mở cho khách. Word Lab và mỗi bài `/cong-cu/trinh-chieu/[lessonId]` có kiểm `getUser` và role ở middleware + Server Component. Student/Admin kiểm role; Quiz API có bảo vệ độc lập.
+- **Không cho phép Demo trên Vercel:** trước khi sửa, Preview ở chế độ mock cho phép guest vào Word; đã khắc phục bằng `isLiveMode()` buộc Live khi `VERCEL=1`. Nhánh PR #73 có env Preview chỉ dùng Supabase **staging**, tuyệt đối không lấy DB Production.
+- D5: 3 bài viết gốc do XCN biên soạn, trạng thái published, route bài, canonical/Article JSON-LD, sitemap và card trên Trang chủ. Nội dung cập nhật theo code, không sao chép nguồn bên ngoài.
+- D6: hiển thị duy nhất email khi chủ dự án xác minh hộp thư, bật hai biến server `XCN_CONTACT_EMAIL`, `XCN_CONTACT_EMAIL_APPROVED=true`. Chưa được cung cấp email chính thức nên chưa mở inbox, form, lưu Supabase hay Admin contact; quy trình triển khai sau: staging migration, owner-only RLS, kiểm server, rate-limit/honeypot/consent/retention, nghiệm thu trước Production.
+- **Chưa release:** PR còn draft; cần kiểm guest HTTP redirect 302, student/admin JWT thật, truy cập trực tiếp, hồi quy và Production SHA/alias.

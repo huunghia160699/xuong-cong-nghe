@@ -13,7 +13,7 @@ pnpm install
 pnpm dev
 ```
 
-Mở http://localhost:3000. Mặc định ở chế độ Demo nếu `NEXT_PUBLIC_USE_MOCK_DATA` không bằng `false`. Bản Demo có localStorage và không đồng bộ giữa thiết bị.
+Mở http://localhost:3000. Mặc định ở chế độ Demo khi chạy local nếu `NEXT_PUBLIC_USE_MOCK_DATA` không bằng `false`. Trên Vercel **luôn ép Supabase Live**; Demo không được dùng để đánh giá Auth bảo mật. Bản Demo có localStorage và không đồng bộ giữa thiết bị.
 
 Nếu cần Supabase **development riêng**: tạo `.env.local` theo `.env.example`, dùng cấu hình public dev, reconciled migrations và redirect URLs; xem [docs/SUPABASE_SETUP.md](docs/SUPABASE_SETUP.md). Không dùng Production để thử ghi/role.
 
@@ -34,6 +34,12 @@ pnpm dev
 ```
 
 Mở http://localhost:3000, nhấn `Ctrl+C` để dừng. Những lần sau có thể chạy `START-WEB-OFFLINE.cmd` (mở Demo local, không dùng Vercel hoặc dữ liệu Supabase Production). Với thư mục đã có: `git fetch origin`, `git switch feat/public-website-d2-d4-20261031`, `git pull --ff-only`; không tạo lại nhánh. Lần biên dịch đầu có thể cần mạng để tải font Google nếu chưa cache. Dùng `main` sẽ chỉ thấy giao diện Production cũ cho tới khi PR được merge.
+
+### Email liên hệ chính thức
+Chỉ sau khi xác minh quyền sở hữu và thử gửi/nhận, đặt `XCN_CONTACT_EMAIL` và `XCN_CONTACT_EMAIL_APPROVED=true` trên server Vercel. Chưa có email được xác minh nên form và Admin inbox không được kích hoạt. Không đưa email chưa duyệt vào mã nguồn.
+
+### Kiểm thử Auth trên Preview
+Nhánh PR #73 dùng Supabase **staging** qua cấu hình Vercel Preview riêng. Xác minh guest bị chuyển đăng nhập khi mở trực tiếp Word Lab hoặc bài trình chiếu, rồi kiểm quyền student/admin và các API. Demo local cố ý bỏ qua Auth để phát triển UI, không thể dùng làm bằng chứng bảo mật.
 
 ## Chạy test và release
 
