@@ -42,7 +42,7 @@ try{
   console.warn("Chrome launch attempt "+attempt+"/3 failed:",instance.diagnostics().slice(-1000));
   instance.child.kill("SIGTERM");
   await sleep(300);
-  rmSync(instance.profile,{recursive:true,force:true});
+  rmSync(instance.profile,{recursive:true,force:true,maxRetries:10,retryDelay:200});
  }
  if(!port)throw Error("Chrome debugging port unavailable after three launch attempts");
  const target=await (await fetch("http://127.0.0.1:"+port+"/json/new?"+encodeURIComponent(base),{method:"PUT"})).json();
@@ -232,5 +232,5 @@ try{
 }catch(error){console.error("ADMIN VISUAL QA FAILED:",error);process.exitCode=1;}
 finally{
  ws?.close();instance?.child.kill("SIGTERM");
- await sleep(250);if(instance)rmSync(instance.profile,{recursive:true,force:true});
+ await sleep(500);if(instance)rmSync(instance.profile,{recursive:true,force:true,maxRetries:10,retryDelay:200});
 }
