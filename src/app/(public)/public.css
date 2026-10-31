@@ -393,3 +393,12 @@
 .xcn-public .xcn-article-end{border-top:1px solid var(--public-border);padding-top:27px;margin-top:36px}
 .xcn-public .xcn-article-end a{display:inline-flex;align-items:center;gap:9px;color:var(--public-primary);font-weight:800;font-size:14px}
 @media(max-width:770px){.xcn-public .xcn-article-layout{grid-template-columns:1fr}.xcn-public .xcn-article-toc{position:static}}
+
+.xcn-public .xcn-news-home-list{display:grid;gap:12px}
+.xcn-public .xcn-news-home-list article{padding:22px;border:1px solid var(--public-border);border-radius:16px;background:white}
+.xcn-public .xcn-news-home-list span{font-size:12px;color:var(--public-primary);font-weight:800}
+.xcn-public .xcn-news-home-list h3{margin:8px 0 9px;font-size:18px;font-weight:800;line-height:1.5}
+.xcn-public .xcn-news-home-list h3 a{display:inline; color:var(--public-ink);text-decoration:none}
+.xcn-public .xcn-news-home-list h3 a:hover{color:var(--public-primary)}
+.xcn-public .xcn-news-home-list h3 svg{display:inline;vertical-align:middle;margin-left:5px}
+.xcn-public .xcn-news-home-list p{color:var(--public-muted);font-size:13px;line-height:1.75;margin:0}

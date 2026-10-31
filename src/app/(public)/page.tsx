@@ -2,6 +2,7 @@ import type {Metadata} from "next";
 import Link from "next/link";
 import {ArrowRight,ArrowUpRight,BookOpen,ClipboardCheck,FileText,GraduationCap,Layers3,Presentation,School,ShieldCheck,Users} from "lucide-react";
 import {PublicAtlas} from "@/components/public-atlas";
+import {getPublishedArticles} from "@/config/public-articles";
 import {createSupabaseServerClient} from "@/lib/supabase/server";
 import {isLiveMode} from "@/lib/supabase/config";
 
@@ -25,6 +26,7 @@ const roles=[
 ];
 
 export default async function HomePage(){
+ const highlights=getPublishedArticles().slice(0,2);
  let authenticated=false;
  if(isLiveMode()){
   try{
@@ -131,7 +133,11 @@ export default async function HomePage(){
   </section>
 
   <section className="xcn-marketing-section" aria-labelledby="news-preview-title">
-   <div className="xcn-container xcn-updates-layout"><div><span className="xcn-kicker">07 / Tri thức & cập nhật</span><h2 id="news-preview-title">Góc kiến thức và cập nhật.</h2><p className="xcn-section-intro">Nội dung hướng dẫn Tin học, chia sẻ phương pháp và cập nhật sản phẩm sẽ được xuất bản khi được kiểm duyệt.</p><Link className="xcn-inline-link" href="/tin-tuc">Đến mục Tin tức <ArrowUpRight size={17} aria-hidden="true"/></Link></div><div className="xcn-empty-articles" role="status"><BookOpen size={30} aria-hidden="true"/><h3>Bài viết chuyên môn đang được biên soạn.</h3><p>Chưa có bài đã xuất bản để giới thiệu ở đây.</p></div></div>
+   <div className="xcn-container xcn-updates-layout"><div><span className="xcn-kicker">07 / Tri thức & cập nhật</span><h2 id="news-preview-title">Góc kiến thức và cập nhật.</h2><p className="xcn-section-intro">Bắt đầu từ các hướng dẫn gốc về hệ sinh thái, Word Lab và Trình chiếu; nội dung tiếp tục được cập nhật.</p><Link className="xcn-inline-link" href="/tin-tuc">Đến mục Tin tức <ArrowUpRight size={17} aria-hidden="true"/></Link></div><div className="xcn-news-home-list">{highlights.map(article=><article key={article.slug}>
+    <span>{article.category}</span>
+    <h3><Link href={"/tin-tuc/"+article.slug}>{article.title}<ArrowUpRight size={16} aria-hidden="true"/></Link></h3>
+    <p>{article.summary}</p>
+   </article>)}</div></div>
   </section>
 
   <section className="xcn-marketing-final" aria-labelledby="final-title">
