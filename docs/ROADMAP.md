@@ -27,6 +27,12 @@
 5. **P2 — Teacher Studio:** **mở thiết kế và phát triển staging** cho quản lý lớp, thành viên, giao bài; chỉ bật Production sau test role `teacher` và RLS ownership/cross-class, E2E và phê duyệt phát hành.
 6. **P2–P3 — Live Quiz, Excel/Coding Labs, AI/trò chơi:** triển khai từng module, không mở nhiều công cụ khi data model chưa ổn.
 
+## Word Lab — ổn định dữ liệu trên main, chỉ chạy local (31/10/2026)
+
+- **DONE (mã + QA trên nhánh riêng, đưa về main):** Cut giữ nguyên chữ nếu clipboard bị từ chối; Sort chuyển node đoạn, giữ Bold/Italic; Undo/Redo checkpoint 45 trạng thái, hỗ trợ Ctrl+Z/Ctrl+Y, kể cả sau Sort. Chromium và 242 unit PASS tại [CI #41177167181](https://github.com/huunghia160699/xuong-cong-nghe/actions/runs/41177167181).
+- **CHƯA HOÀN THIỆN WORD LAB:** vẫn `building`, chưa nghiệm thu IME tiếng Việt/tài liệu rất dài/Edge clipboard/Undo với ảnh-bảng/nhập-xuất. Chi tiết [WORD_SIMULATOR_CONTROL_AUDIT.md](WORD_SIMULATOR_CONTROL_AUDIT.md).
+- **Quy tắc mới:** `main` là nhánh đồng bộ máy Windows; kiểm thử bằng `pnpm dev`, `pnpm test`, `pnpm typecheck`, `pnpm build` và `node scripts/word-browser-qa.mjs` (sau khi chạy server). **Tắt auto-deploy Vercel** bằng `vercel.json` (`git.deploymentEnabled:false`) và Project Ignored Build Step `exit 0`. Chỉ mở deploy khi có yêu cầu của chủ dự án. Admin Roadmap metadata v14 (21 epics), chưa mở release.
+
 ## Public Website — kế hoạch thiết kế lại 5 trang (31/10/2026)
 
 > **D0 ĐÃ VIẾT SPEC, D1–D7 CHƯA TRIỂN KHAI.** Nguồn chi tiết duy nhất: [PUBLIC_WEBSITE_DESIGN_SPEC.md](PUBLIC_WEBSITE_DESIGN_SPEC.md). Đây là kế hoạch trong Git, **không tự tick hoặc ghi đè Roadmap Supabase Production**.

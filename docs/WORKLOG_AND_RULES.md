@@ -31,6 +31,13 @@ Không viết lại cả nhật ký cũ. Một task nhiều commit có thể th�
 
 ## III. Nhật ký mới (từ 30/10/2026)
 
+### 2026-10-31 — [WORD / GIT] main để dev local, không auto-deploy
+- **CODE:** cập nhật main chỉ phần Word Lab Cut fail-safe, rich Sort, bounded Undo/Redo, Chrome QA; code đã qua CI #41177167181 trên nhánh.
+- **DEPLOY LOCK:** Vercel project Ignored Build Step `exit 0`; `vercel.json` `git.deploymentEnabled:false`. Push GitHub không đồng nghĩa deploy online; Production phải chờ yêu cầu riêng.
+- **LOCAL:** `git switch main; git pull --ff-only origin main; pnpm install --frozen-lockfile; pnpm dev`, kiểm thử `pnpm test`/`pnpm typecheck`/`pnpm build`. Word Lab còn building, E2E dài/IME chưa nghiệm thu.
+- **Admin Roadmap:** metadata v14 vẫn giữ 21 epics; không thay Auth/RLS/Production dataset.
+
+
 ### 2026-10-31 — [PUBLIC-WEB D1 / ADMIN ROADMAP] Phần việc đang triển khai
 - **DONE (Production Roadmap có chốt CAS):** trước ghi `version=4`, 20 epics, MD5 snapshot `c3442d7b1c2659caa87bd097ce090ce4`; đã **nối thêm** epic `public-website-redesign-d0-d7` gồm checklist D0–D7, chỉ D0 DONE, D1 đang phát triển. SQL kiểm tra phiên bản/hash và không trùng ID, không ghi đè 20 mục trước. Readback: `version=5`, 21 epics, 20 cũ, audit events 5. **Dữ liệu Admin Supabase Production đã đổi theo yêu cầu**, không thay Auth/RLS.
 - **DONE (D1 đã RELEASE, PR #71):** public CSS Calm Slate Blue scoped không gradient, Navbar/mega-menu/mobile, Header kiểm vai trò server, Footer và 4 route placeholder không 404; tests tĩnh + Chromium 5 route × 360/768/1280/1920 PASS, Vercel Production READY commit `001bbfc`, đúng alias. **D1 có thể tick DONE trong Admin sau khi kiểm CAS và đọc lại phiên bản.**

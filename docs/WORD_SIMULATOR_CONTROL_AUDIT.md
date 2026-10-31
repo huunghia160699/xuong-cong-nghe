@@ -46,3 +46,60 @@ Ngày: 15/10/2026. Nguồn hình: ảnh người dùng cung cấp, gồm Clipboa
 - Kiểm thử tự động: kiểm tra sự tồn tại và mapping của các handler, trạng thái vùng chọn, CSS/khả năng responsive, typecheck, production build và smoke route.
 - **Chưa kiểm thử E2E trên browser thật:** cần xác nhận Copy/Cut/Paste với quyền clipboard, giữ selection khi mở color picker, Undo/Redo trên từng trình duyệt, Format Painter với chữ đang có nhiều kiểu và kiểm tra pixel theo ảnh.
 - Các chức năng vẫn dựa trên `document.execCommand` đã deprecated; không tuyên bố tương đương Microsoft Word bản chính thức.
+
+## Tổng duyệt Word Lab — 31/10/2026 (PR #73, chưa Production)
+
+### Phạm vi & độ tin cậy
+
+**Bằng chứng:** GitHub Actions [#41175860593](https://github.com/huunghia160699/xuong-cong-nghe/actions/runs/41175860593), commit `5bc3fd1d`: `pnpm test` 242 PASS/0 fail, `pnpm typecheck` PASS, `pnpm build` PASS; Chromium thực chạy `scripts/word-browser-qa.mjs` trên **website local Demo**, chụp 360/768/1280px, kiểm DOM/selection sau khi bấm Ribbon/gõ bàn phím và khôi phục dữ liệu. Không tuyên bố đã thử trên Preview với tài khoản JWT hay Production. Script được nối vào `.github/workflows/ci.yml` và lưu screenshot + JSON lên Actions artifact.
+
+### Ma trận tính năng
+
+| Phạm vi | Đã có trong code | Bằng chứng Chromium thật | Trạng thái |
+|---|---|---|---|
+| Windows/QAT | Tên tệp; Save, Undo/Redo, New/Print, Close | Khung/10 tab, nút Save, bản nháp | **CORE PASS**, chưa E2E Undo/Redo + đóng |
+| File | Tạo mới, nhập HTML/TXT ≤1 MB, xuất HTML/TXT, in/PDF qua browser | Save + reload giữ bảng/ngắt trang/chữ | **MỘT PHẦN**, import/export/print chưa E2E |
+| Clipboard | Copy/Cut/Paste, Paste Rich, Format Painter | Chỉ đối chiếu mã và unit contract | **CHƯA E2E**, phụ thuộc quyền clipboard |
+| Font | Font/size, B/I/U/strike, sub/super, Change Case, Clear, highlight/màu | Bold, Italic, Subscript bật/tắt vùng chọn, Change Case giữ B/I, Clear Format | **PASS CHO CA ĐÃ THỬ**; U/strike/super/caret/color/dropdown cần bổ sung |
+| Paragraph | Bullets/Numbering, indent/ruler, align, line spacing, shading/borders, sort, ¶ | Bật/tắt ¶ | **MỘT PHẦN**, đa đoạn và kéo thước chưa E2E |
+| Styles/Editing | Normal/Heading/Title, Find/Replace/Select | Contract test, chưa bấm hành vi | **CHƯA E2E** |
+| Insert | Bảng 3×3, ảnh ≤2 MB, link, đường kẻ, ngắt trang | Chèn bảng thật, Ctrl+Enter tạo trang 2 | **MỘT PHẦN**; ảnh/link chưa E2E |
+| Layout | A4 dọc/ngang, lề thường/hẹp, trang nhiều tờ | Tồn tại giấy A4 tại 3 widths | **MỘT PHẦN**; xoay/lề chưa E2E |
+| Review/View | Spellcheck browser, Find, đếm từ/ký tự; thước, zoom 60–160%, fullscreen | Đổi zoom 100→110% | **MỘT PHẦN** |
+| Document engine | contentEditable, Ctrl+Enter, phân trang, lề chọn dòng, IME, autosave 750ms | Nhập chữ thật, Ctrl+Enter, **gõ tiếp đúng trang 2**, hai trang A4, lưu/reload giữ đúng | **PASS CÁC LUỒNG NỀN**; auto-split dài/IME/caret dòng trống còn cần E2E |
+| Design/References/Mailings/Help | Tab giới thiệu chưa hỗ trợ | Xác nhận có tab | **CHƯA TRIỂN KHAI** |
+
+**Không hỗ trợ**: DOCX thực, Header/Footer, Track Changes, Comments, mục lục tự động, layout Word tương thích từng pixel, đồng bộ đám mây và chấm bài.
+
+### Phát hiện/rủi ro từ đối chiếu code (chưa gọi là lỗi tái hiện trong Chromium)
+
+1. **P0 — Cut/Clipboard có nguy cơ mất dữ liệu:** `runHome("cut")` gọi `document.execCommand("delete")` khi `execCommand("cut")` trả false, sau đó luôn `markChanged()`. Cần chỉ xóa sau khi có clipboard write thành công hoặc có buffer khôi phục bảo đảm; test quyền bị từ chối/trình duyệt khác.
+2. **P1 — Sort có nguy cơ phá định dạng:** `sortLines()` gọi `selectedChange()`, thao tác `execCommand("insertText")` thay cả selected range; B/I/links/highlight trong phạm vi có thể bị làm phẳng. Cần bảo toàn các node inline hoặc công bố rõ giới hạn trước khi xử lý.
+3. **P1 — Undo/Redo với DOM surgery và auto pagination chưa có E2E:** `execCommand("undo"/"redo")` không chắc phủ hết những thay đổi trực tiếp DOM (Sub/Super, Change Case, phân trang). Kiểm tra mất selection và history trên tài liệu nhiều trang, IME tiếng Việt.
+4. **P2 — Find/Replace còn tối giản:** `findText` chỉ dò kết quả đầu tiên trong từng text node; `replaceText` dùng `window.prompt` và thay **một kết quả**. Chưa có Find Next/Replace All, không tìm xuyên nhiều inline node.
+5. **P2 — Phạm vi Format Painter giới hạn:** sao chép `font`, `color`, `bold`, `italic`, chưa tái tạo gạch chân, cỡ, khoảng cách đoạn và bảng; không nên mô tả là copy toàn bộ định dạng.
+6. **P1 — Import/export, ảnh, clipboard HTML còn phụ thuộc trình duyệt:** HTML được lọc trước khi nhập/lưu, hình chỉ data:image, chưa test E2E file 1/2 MB và round-trip; PDF qua Print, không phải DOCX.
+
+### Thứ tự xử lý
+
+- **P0:** chặn mất dữ liệu khi Cut thất bại, Undo/Redo và selection reflow thực; test trên Chrome/Edge, clipboard quyền bị chặn.
+- **P1:** Sort không mất markup, dài nhiều trang, IME Telex, bôi dòng ở lề trái, nhập ảnh/HTML và xuất tệp round-trip.
+- **P2:** Find/Replace hoàn chỉnh, nâng Format Painter, tăng lựa chọn Insert và bổ sung hỗ trợ DOCX chỉ sau khi có engine thật.
+
+**Quyết định:** Word Lab vẫn `building`, không tự tick nhóm bảng/ảnh/in/lưu nháp là hoàn tất; bộ QA Chrome core là mục riêng đã PASS. Không thay code trình soạn thảo, không deploy Production khi chỉ yêu cầu tổng duyệt. Admin Roadmap Production metadata CAS v12→v13, 21 epics giữ nguyên; Word epic order 11, chỉ thêm QA PASS và việc còn mở.
+
+## Đợt sửa an toàn dữ liệu & lịch sử chỉnh sửa — 31/10/2026
+
+**Đã sửa code ở PR #73:** `src/features/word-simulator/word-simulator.tsx`; test Chromium trong `scripts/word-browser-qa.mjs`.
+
+| Ưu tiên | Vấn đề trước đây | Biện pháp hiện tại | Bằng chứng |
+|---|---|---|---|
+| P0 | `cut` native trả false nhưng `delete` vẫn chạy, nguy cơ mất chữ nếu clipboard chặn | Không xóa nếu clipboard bị từ chối; nếu dùng async `writeText`, chỉ xóa sau khi ghi thành công, vùng chọn vẫn y nguyên, thao tác `delete` thành công. Không gọi cut thành công khi đã hủy | Chromium mô phỏng clipboard denial, xác nhận `textContent` giữ nguyên |
+| P1 | `sortLines` thay toàn bộ selection bằng `insertText`, làm phẳng định dạng | Chỉ Sort khi chọn >=2 đoạn ở cấp trang; **di chuyển nguyên các phần tử đoạn** với node định dạng gốc; không viết lại rich text | Chromium đảo Alpha/Zulu, vẫn giữ `<i>`/ `<b>` |
+| P1 | `document.execCommand("undo"/"redo")` không bao phủ thay đổi trực tiếp DOM | Lịch sử snapshot văn bản đã sanitize (không chứa wrapper trang A4), tối đa 45 checkpoint, gom nhập ký tự liên tiếp 550ms; Undo/Redo qua Ribbon và Ctrl+Z/Ctrl+Y | Chromium Sort → Ctrl+Z → Ctrl+Y khôi phục đúng thứ tự và B/I |
+
+**QA hoàn thành:** GitHub Actions [#41177167181](https://github.com/huunghia160699/xuong-cong-nghe/actions/runs/41177167181), commit code+QA `69cca519` **PASS**: 242 unit, 76 bài test phụ, typecheck, production build, public/admin browser smoke và Word Chromium. Bộ kiểm tra còn bao gồm Ctrl+Enter và gõ tiếp ở trang 2, Save/Reload và các Ribbon core. Artifact chụp 360/768/1280 và `audit-results.json` trong Actions.
+
+**Giới hạn chưa vượt QA:** snapshot-based history chưa được kiểm thử đủ với gõ IME tiếng Việt dài, tài liệu lớn nhiều trang, mọi thao tác định dạng/drag/drop; trường hợp Cut native báo thành công nhưng quyền clipboard thực tế không đồng nhất ở trình duyệt khác; Paste Rich, ảnh và round-trip HTML/TXT. Sort hiện chủ động giới hạn các đoạn đầy đủ ở top-level, không thực hiện sort cell/bảng hoặc một phần của một dòng. Các mục này cần test bổ sung trước Production.
+
+**Trạng thái:** Word Lab tiếp tục `building`, **không coi toàn bộ Word Lab đã hoàn thành**. Admin Roadmap version 14, 21 epics, Word epic order 11; Cut và Undo/Sort được đánh dấu đã sửa/Chromium PASS, mục QA mở rộng vẫn `done:false`. PR #73 còn draft; không merge Production.
