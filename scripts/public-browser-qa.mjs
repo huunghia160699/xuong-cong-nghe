@@ -73,6 +73,22 @@ try{
    const shot=await call("Page.captureScreenshot",{format:"png",fromSurface:true});
    writeFileSync(join(output,(route.slice(1)||"home")+"-"+width+".png"),Buffer.from(shot.data,"base64"));
    if(route==="/"){
+    const homepage=await evalJs(`(()=>({
+      editorial:!!document.querySelector(".xcn-home-editorial"),
+      sections:["he-sinh-thai","khoa-hoc","du-an"].every(id=>!!document.getElementById(id)),
+      h1:document.querySelector(".xcn-home-hero h1")?.textContent?.trim(),
+      productLinks:[...document.querySelectorAll(".xcn-home-visual-row")].map(n=>n.getAttribute("href")),
+      feature:document.querySelector(".xcn-home-feature"),
+      radius:parseFloat(getComputedStyle(document.querySelector(".xcn-home-feature")).borderTopLeftRadius),
+      backgroundImage:getComputedStyle(document.querySelector(".xcn-home-hero")).backgroundImage,
+      courseCount:document.querySelectorAll(".xcn-home-course").length
+    }))()`);
+    assert.ok(homepage.editorial&&homepage.sections&&homepage.h1,"Editorial homepage structure missing");
+    assert.equal(homepage.productLinks.length,3,"Three real workspaces expected");
+    assert.ok(homepage.productLinks.includes("/cong-cu/mo-phong-word"));
+    assert.ok(homepage.productLinks.includes("/cong-cu/trinh-chieu"));
+    assert.ok(homepage.radius<=12,"Homepage feature has oversized rounded border");
+    assert.equal(homepage.backgroundImage,"none","Homepage should not contain decorative gradients");
     const clicked=await evalJs(`(()=>{
       const toggle=innerWidth<1181
        ? document.querySelector('.xcn-public-mobile-toggle')

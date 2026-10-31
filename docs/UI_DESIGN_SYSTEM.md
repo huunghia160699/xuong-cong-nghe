@@ -19,6 +19,10 @@
 - Bốn trang marketing chưa có nội dung D3–D6 nên sử dụng placeholder trung thực “Đang hoàn thiện”; khi làm các phase sau phải thay placeholder bằng nội dung thật, không khai báo “đã có” sớm.
 - **DONE D1:** PR #71 CI Chromium PASS 5 route × 360/768/1280/1920, Vercel READY main `001bbfc`. D2 tiếp tục thiết kế trang chủ Product Atlas; D3–D6 thay trang placeholder bằng nội dung thật. [PUBLIC_WEBSITE_DESIGN_SPEC.md](PUBLIC_WEBSITE_DESIGN_SPEC.md).
 
+### 31/10/2026 — Phản hồi trang chủ: bớt cảm giác card tạo sẵn
+
+Trang chủ dùng layout biên tập: cỡ chữ có phân cấp, chỉ một bảng module và một showcase Word; phần Slides/Quiz/courses chuyển thành danh sách có divider mảnh, không border bọc mỗi mục. Viền tối đa 1px, radius chủ đạo 7–8px, hạn chế shadow. Palette Calm Slate Blue scoped trong public layout, không gradient/neon; 3 nhóm công cụ có CTA đến route thật. QA Chromium tại 360/768/1280/1920, không scroll ngang và giữ menu/ESC.
+
 ## 1. Thương hiệu và nguyên tắc
 
 - Tên sản phẩm: **Xưởng Công Nghệ**.
