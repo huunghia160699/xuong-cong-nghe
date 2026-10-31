@@ -37,15 +37,17 @@ test("Scoped public theme uses the approved palette without gradient and preserv
  assert.match(current,/blue: "#005BFD"/);
 });
 
-test("All D1 marketing placeholders disclose unfinished content, avoid fake forms and price claims",()=>{
- for(const path of ["gioi-thieu","bang-gia","tin-tuc","lien-he"]){
+test("D2-D6 marketing pages render meaningful content and do not fabricate contact or articles",()=>{
+ for(const path of ["tin-tuc","lien-he","gioi-thieu","bang-gia"]){
   const page=read("src/app/(public)/"+path+"/page.tsx");
-  assert.match(page,/PublicPendingPage/);
+  assert.doesNotMatch(page,/PublicPendingPage/);
   assert.match(page,/export const metadata/);
  }
- const component=read("src/components/public-pending-page.tsx");
- assert.match(component,/Đang hoàn thiện/);
- assert.doesNotMatch(component,/<form\b|payment|checkout/i);
+ const articleData=read("src/config/public-articles.ts");
+ const contactData=read("src/config/public-contact.ts");
+ for(const slug of ["gioi-thieu-he-sinh-thai-xuong-cong-nghe","huong-dan-bat-dau-voi-word-lab","huong-dan-su-dung-thu-vien-trinh-chieu"])assert.ok(articleData.includes(slug));
+ assert.match(contactData,/getVerifiedContactChannels/);
+ assert.doesNotMatch(read("src/app/(public)/lien-he/page.tsx"),/<form\b|onSubmit|payment|checkout/i);
  const footer=read("src/components/footer.tsx");
  assert.doesNotMatch(footer,/href="#"/);
  assert.match(footer,/new Date\(\)\.getFullYear/);

@@ -31,11 +31,35 @@ Không viết lại cả nhật ký cũ. Một task nhiều commit có thể th�
 
 ## III. Nhật ký mới (từ 30/10/2026)
 
-### 2026-10-31 — [PUBLIC-WEB D1 / ADMIN ROADMAP] Phần việc đang triển khai
-- **DONE (Production Roadmap có chốt CAS):** trước ghi `version=4`, 20 epics, MD5 snapshot `c3442d7b1c2659caa87bd097ce090ce4`; đã **nối thêm** epic `public-website-redesign-d0-d7` gồm checklist D0–D7, chỉ D0 DONE, D1 đang phát triển. SQL kiểm tra phiên bản/hash và không trùng ID, không ghi đè 20 mục trước. Readback: `version=5`, 21 epics, 20 cũ, audit events 5. **Dữ liệu Admin Supabase Production đã đổi theo yêu cầu**, không thay Auth/RLS.
-- **DONE (D1 đã RELEASE, PR #71):** public CSS Calm Slate Blue scoped không gradient, Navbar/mega-menu/mobile, Header kiểm vai trò server, Footer và 4 route placeholder không 404; tests tĩnh + Chromium 5 route × 360/768/1280/1920 PASS, Vercel Production READY commit `001bbfc`, đúng alias. **D1 có thể tick DONE trong Admin sau khi kiểm CAS và đọc lại phiên bản.**
-- **DONE (Admin Roadmap đồng bộ):** CAS `v5→v6` tick D1, event `task.completed` + note; CAS `v6→v7` sửa tiêu đề D1 thành “hoàn thành” để không trái checkbox. Readback: 21 epics (20 cũ giữ nguyên), D0/D1 done, D2–D7 chưa làm, 7 audit events. **NEXT:** D2 Product Atlas; D3–D6 vẫn là placeholder.
-- **Tài liệu:** [PUBLIC_WEBSITE_DESIGN_SPEC.md](PUBLIC_WEBSITE_DESIGN_SPEC.md), [ROADMAP.md](ROADMAP.md), [UI_DESIGN_SYSTEM.md](UI_DESIGN_SYSTEM.md). `/admin/roadmap` dùng dữ liệu Supabase khác file Markdown và đã được đồng bộ riêng một lần theo yêu cầu.
+### 2026-10-31 — [WORD LAB P0/P1] Bảo toàn dữ liệu & lịch sử
+- **DONE (PR #73):** Cut deny → giữ chữ; Sort dùng paragraph DOM → không mất B/I; history 45 checkpoint hỗ trợ Ctrl+Z/Y. Chromium #41177167181 PASS: 242 unit + type/build + Cut denied / Sort rich / Undo → Redo.
+- **CÒN MỞ:** clipboard native khác browser, IME, undo nhiều trang, ảnh/table/import; Word Lab vẫn `building`. Admin Roadmap v14/21 epics; QA full chưa tick. Không merge/release Production.
+
+### 2026-10-31 — [WORD LAB] Tổng duyệt Chromium
+- **QA PASS:** Actions #41175860593 SHA `5bc3fd1d`, 242 unit/0 fail, type/build, Chrome 360/768/1280; B/I/Sub on/off, Case giữ markup, Clear, Ctrl+Enter gõ trang 2, bảng, ¶, zoom, local draft reload.
+- **P0/P1 CHƯA XONG:** Cut fallback có nguy cơ mất chữ, Sort mất markup, chưa E2E Undo/clipboard/IME/import ảnh + auto pagination. Chi tiết: `WORD_SIMULATOR_CONTROL_AUDIT.md`.
+- **TRACKING:** PR #73 test-only, Admin Roadmap v13 / 21 epics / Word building. Chưa sửa engine hoặc release Production.
+
+### 2026-10-31 — [AUTH STAGING] Ba vai trò
+- **READ-ONLY PASS:** staging có Admin/Student, chưa có Teacher; 14/14 RLS; SQL impersonation Admin thấy Roadmap, Student không, anon bị 42501. Preview guest redirect về login.
+- **CODE QA:** `verify-auth-staging.mjs` chỉ GET/SELECT với JWT thật từ local, fail-closed nếu sai dự án. Chưa có credentials trong công cụ này nên **không kết luận JWT E2E PASS**.
+- **BLOCKED:** Teacher chưa có, browser JWT/session/logout chưa thử; security advisor còn cảnh báo. Admin Roadmap metadata v11→v12, 21 epics, JWT E2E chưa tick; không đổi Production Auth/RLS/schema.
+
+### 2026-10-31 — [AUTH + D5 + D6] PR #73
+- **CODE:** Word/Slide SSR + middleware Auth/role; Student/Admin role; Vercel fail-closed. Nhánh Preview dùng Supabase staging.
+- **D5:** Ba bài gốc, trang chi tiết, SEO, sitemap, trang chủ hiển thị bài thật.
+- **D6:** Email chỉ công bố sau xác minh owner + bật env; chưa có inbox/form/Admin pipeline.
+- **QA PASS:** CI #41174182232: 239 unit, type/build, Chromium 8×6. Preview guest Word/Slide/Student/Admin → login PASS. Admin Roadmap v11, 21 mục; JWT role còn chờ. Chưa release.
+
+### 2026-10-31 — [D5–D7] PR #73
+- **QA PASS:** D5 lọc/URL/empty; D6 topic/verified-only; D7 237 unit, typecheck/build, Chromium 5×6 + SEO; Vercel Preview READY. **BLOCKED:** CMS, kênh/backend, JWT Live, Production.
+
+
+### 2026-10-31 — [PUBLIC D2–D4 / ROADMAP 21] GitHub-only
+- Admin epic 21 order 20→4; CAS v7→v9, giữ 21 epics. PR #73 D2 Atlas/D3 Giới thiệu/D4 Bảng giá, CI #41114499566 PASS; chưa release.
+
+### 2026-10-31 — [PUBLIC-WEB D1 / ADMIN ROADMAP]
+- D1 shell/nav/footer Production READY SHA `001bbfc`, CI Chromium 5 route × 4 width PASS. Admin Roadmap CAS v4→v7, 21 epics, giữ 20 mục gốc và audit; xem lịch sử trong archive.
 
 ### 2026-10-31 — [PUBLIC-WEB] Đặc tả redesign 5 trang
 - **DONE (D0):** [PUBLIC_WEBSITE_DESIGN_SPEC.md](PUBLIC_WEBSITE_DESIGN_SPEC.md) có wireframe, copy và hành vi Trang chủ/Giới thiệu/Bảng giá/Tin tức/Liên hệ; header/footer, 7 nhóm catalog, palette public scoped #365F80/#223044/#F6F8FB **không gradient**, responsive, auth gate, WCAG, SEO và kế hoạch D1–D7.
@@ -43,12 +67,8 @@ Không viết lại cả nhật ký cũ. Một task nhiều commit có thể th�
 - **NOT IMPLEMENTED:** chưa có 4 route marketing mới, chưa đổi UI/Auth/RLS/Admin/Word/Slides, chưa có billing/CMS/contact thật. Giá, bài viết, liên hệ không được bịa.
 - **NEXT:** PR docs CI PASS; D1 public shell/nav/footer, D2 homepage, D3–D6 từng trang, D7 QA/release. Mỗi đợt phải có checkpoint riêng.
 
-### 2026-10-31 — [PRODUCT/NAV + LAB-MANAGER] Tổng hợp 4 website, lưu ý tưởng quản lý phòng máy
-- **Yêu cầu:** đề xuất mục Navbar trang chủ và liệt kê nhóm chức năng dựa trên VniTeach, Đề Thi Số, DUA Edu, Môn Tin học; bổ sung ý tưởng quản lý phòng máy “giống net sp” để làm sau.
-- **DONE (nghiên cứu/đề xuất):** nhóm nav tương lai `Khóa học · Thực hành · Kiểm tra · Công cụ · Tài nguyên · Dự án · Giáo viên`; liệt kê submenu, nguồn gốc ý tưởng và phân biệt route đã tồn tại với tính năng dự kiến tại [PRODUCT_AND_MODULES.md](PRODUCT_AND_MODULES.md) mục 2A.
-- **DONE (backlog):** LAB-MANAGER tương lai, tạm tham khảo NetSupport School: sơ đồ máy/phòng, trạng thái, phát màn hình, gửi/thu bài, hỗ trợ và giới hạn web/app theo buổi. Ghi rõ yêu cầu agent/thiết bị, consent, phân quyền lớp/phòng, audit và kiểm thử an toàn; ưu tiên **P3** ở [ROADMAP.md](ROADMAP.md), nguồn ghi tại [WEBSITE_REFERENCES.md](WEBSITE_REFERENCES.md).
-- **NOT IMPLEMENTED:** không thay `src/config/navigation.ts`, header, route, API, Supabase, Vercel env/DNS hay triển khai agent điều khiển; mọi menu và công cụ nêu trong bản đề xuất vẫn là ý tưởng cho tới khi có PR xây dựng riêng.
-- **Test/PR:** chỉ tài liệu; ghi thông tin CI/merge tại PR khi được xác minh.
+### 2026-10-31 — [PRODUCT/NAV + LAB-MANAGER] Ý tưởng để làm sau
+- Đề xuất nav từ 4 website và LAB-MANAGER kiểu phòng máy; chi tiết/nội dung tham khảo tại `PRODUCT_AND_MODULES.md` mục 2A, `ROADMAP.md`, `WEBSITE_REFERENCES.md`. Backlog P3 cần agent, consent, role, audit; **chưa triển khai code/API/database/agent**.
 
 ### 2026-10-31 — [AUTH/ROADMAP → TEACHER] Nghiệm thu JWT/RLS/khôi phục staging thành công
 - **DONE — QA trên máy của chủ dự án (báo cáo kết quả đã lọc secrets):** `READ-ONLY PASS` với JWT đăng nhập thật riêng của Admin và Student; Admin được SELECT Roadmap, Student bị RLS từ chối; bộ `verify-roadmap-staging.mjs` trả `STAGING ACCEPTANCE PASS` cho thêm/sửa/xóa, khóa phiên bản, sao lưu và khôi phục.

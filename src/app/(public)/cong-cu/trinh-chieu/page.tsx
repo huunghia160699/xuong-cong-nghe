@@ -26,6 +26,7 @@ export default function PresentationLibraryPage() {
         <p className="mt-3 max-w-3xl text-base leading-8 text-zinc-600">
           Ba nhóm nội dung độc lập: Windows, Word cơ bản và Excel cơ bản. Mỗi chủ đề có kiến thức, ví dụ, bài thực hành và câu hỏi ôn tập.
         </p>
+        <p className="mt-4 rounded-lg border border-blue/20 bg-white p-3 text-sm text-zinc-600">Danh mục bài giảng mở công khai; để sử dụng bài trình chiếu cần đăng nhập.</p>
         <p className="mt-4 text-sm font-medium text-ink">{lessonCount} chủ đề · {slideCount} slide học tập · nhập tên lớp khi trình chiếu</p>
       </div>
       {groups.map(({course,lessons})=><section key={course.id} id={course.id} className="xcn-section-gap scroll-mt-24">

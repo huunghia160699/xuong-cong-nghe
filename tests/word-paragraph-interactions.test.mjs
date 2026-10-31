@@ -88,7 +88,7 @@ test("Ruler marker pointer movement tracks zoom, direction and left/first-line l
   const dragRef={current:{
    pointerId:7,kind:"left",startX:200,startValue:0,startIndent:{...start}
   }};
-  const ctx={
+  const ctx={beginHistory(){},
    dragRef,onIndentChange:value=>{next=value},indent:start,
    zoom,moveLeftIndent:helper,
    paperGeometry:{editorWidth:580*zoom/100},
@@ -196,7 +196,7 @@ test("Paragraph dropdown actions modify line and paragraph spacing, shading and 
  const block={style:{backgroundColor:"",lineHeight:"",marginTop:"",marginBottom:"",borderTop:"",borderBottom:"",marginLeft:"25px"}};
  const second={style:{lineHeight:"",marginTop:"",marginBottom:"",marginLeft:"40px"}};
  let changed=0;
- const context={
+ const context={beginHistory(){},
    editor:{current:{contains:()=>true}},
    restoreSelection(){},currentBlock:()=>block,
    selectedParagraphBlocks:()=>[block,second],
@@ -261,7 +261,7 @@ test("Paragraph L/C/R/J buttons display exactly one active state based on select
    const value=typeof update==="function"?update(active):update;
    if(value!==active){active=value;updateCount++}
  };
- const context={
+ const context={beginHistory(){},
    editor:{current:root},currentBlock,
    window:{getComputedStyle:block=>({textAlign:block.style.textAlign||"start"})},
    setParagraphAlignment:state
@@ -315,7 +315,7 @@ test("Paragraph alignment click updates toolbar immediately and caret movement r
  ];
  let current=paragraphs[0],active="left",changed=0,selectionSync=0;
  const root={contains:node=>paragraphs.includes(node)};
- const ctx={
+ const ctx={beginHistory(){},
    editor:{current:root},currentBlock:()=>current,
    window:{getComputedStyle:block=>({textAlign:block.style.textAlign})},
    setParagraphAlignment:fn=>{active=fn(active)},

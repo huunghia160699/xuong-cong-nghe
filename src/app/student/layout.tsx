@@ -8,6 +8,8 @@ export default async function StudentLayout({ children }: { children: React.Reac
     const supabase = await createSupabaseServerClient();
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) redirect("/dang-nhap?next=/student");
+    const {data:profile,error}=await supabase.from("profiles").select("role").eq("id",user.id).single();
+    if(error||!["admin","student","teacher"].includes(profile?.role??""))redirect("/khong-co-quyen");
   }
   return <AppShell role="student">{children}</AppShell>;
 }

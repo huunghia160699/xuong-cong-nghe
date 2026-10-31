@@ -16,6 +16,7 @@ export default function ToolsPage() {
       <p className="mt-3 max-w-3xl text-base leading-8 text-zinc-600">
         Các công cụ học tập, trình chiếu và thực hành trên cùng nền tảng Xưởng Công Nghệ.
       </p>
+      <p className="mt-5 rounded-xl border border-blue/20 bg-white p-4 text-sm text-zinc-700">Danh mục công cụ mở công khai. Muốn vào Word Lab hoặc bài trình chiếu, hãy đăng nhập; liên kết sẽ chuyển tới đăng nhập nếu chưa có phiên.</p>
       <div className="xcn-section-gap grid items-stretch gap-4 md:grid-cols-2 xl:grid-cols-3">
         <Link href="/cong-cu/trinh-chieu" className="group flex min-h-0 flex-col border border-zinc-900 bg-ink p-5 text-white transition hover:-translate-y-1 hover:shadow-xl">
           <div className="flex items-start justify-between">
@@ -31,7 +32,7 @@ export default function ToolsPage() {
             <div className="mt-6 flex items-center gap-2 text-sm font-semibold text-cyan">Mở trình chiếu <ArrowRight size={16}/></div>
           </div>
         </Link>
-        <Link href="/cong-cu/mo-phong-word" className="group flex min-h-0 flex-col border border-zinc-200 bg-white p-5 transition hover:-translate-y-1 hover:border-blue hover:shadow-lg focus-visible:outline-2 focus-visible:outline-blue">
+        <Link id="word" href="/cong-cu/mo-phong-word" className="group flex min-h-0 flex-col border border-zinc-200 bg-white p-5 transition hover:-translate-y-1 hover:border-blue hover:shadow-lg focus-visible:outline-2 focus-visible:outline-blue">
           <div className="flex items-start justify-between gap-4">
             <FileText size={34} className="text-blue"/>
             <Badge className="border-blue/25 bg-paper text-blue">Dùng thử</Badge>

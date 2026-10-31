@@ -168,3 +168,11 @@ Với **PowerShell**, chạy cùng lệnh `node --env-file=...` trong terminal c
 | Teacher Studio | Gate JWT/Roadmap đạt trước khi thiết kế; release phải có RLS riêng của Teacher/lớp | **MỞ THIẾT KẾ / STAGING DEVELOPMENT; CHƯA BẬT PRODUCTION**. |
 
 **Quan trọng:** script đã chạy thành công và **không được chạy lại trên singleton v8**. `verify-roadmap-staging.mjs` đã được **khóa cứng ref `ordiksbvpewwgrnvzrud`**, từ chối mọi project khác trước thao tác ghi. Bộ kiểm thử này kiểm đường Data API/Supabase JWT thật sau khi có tài khoản QA; nó **không thay thế** kiểm thử browser Next.js Preview, backup download route riêng hay xác nhận email thật.
+
+## Auth staging ba vai trò — 31/10/2026
+
+- **READ ONLY trực tiếp:** Supabase staging có 1 Admin, 1 Student và **chưa có Teacher**; RLS được bật trên 14 bảng. SQL mô phỏng claim/role xác nhận Admin đọc được Roadmap, Student không; `anon` bị từ chối. Đây **không phải JWT thật**. Trên Preview staging khách vẫn xem marketing, còn Word Lab/Slide Player/Student/Admin chuyển về đăng nhập.
+- **Security Advisor:** còn cảnh báo SECURITY DEFINER `is_admin`, `submit_quiz`, `get_quiz_result` và leaked-password protection đang tắt; cần review trước Production, không tự sửa DB.
+- **Bộ test Live:** `node --env-file=.env.staging.qa.local scripts/verify-auth-staging.mjs` chạy `signInWithPassword`, `getUser`, role profile, RLS, GET các URL công cụ/Admin/Student/Quiz và HTTP 401/403 **trên Preview**; không có INSERT/UPDATE/DELETE. Chuẩn bị file local theo `.env.staging.qa.example`, điền credentials staging qua máy của bạn, KHÔNG chia sẻ lên GitHub/Chat.
+- **Điều kiện:** chỉ chấp nhận project staging `ordiksbvpewwgrnvzrud` và hostname Vercel Preview, không Production. Cần 3 tài khoản Admin/Student/Teacher riêng đã xác minh email; **hiện Teacher chưa có**, chưa thể báo FULL PASS. Khi test partial, **xóa hai dòng placeholder** `RLS_TEACHER_EMAIL`/`RLS_TEACHER_PASSWORD` trong file local, rồi đặt `AUTH_QA_ALLOW_PARTIAL=YES` để test hai role; script vẫn trả exit code 2 và `PARTIAL`.
+- **Chưa nghiệm thu:** browser sign-in/logout và phiên refresh thật, Teacher role; việc có CI mock PASS hoặc SQL impersonation không thay thế JWT E2E.
