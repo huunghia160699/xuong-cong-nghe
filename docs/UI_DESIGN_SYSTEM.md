@@ -23,6 +23,13 @@
 
 Trang chủ dùng layout biên tập: cỡ chữ có phân cấp, chỉ một bảng module và một showcase Word; phần Slides/Quiz/courses chuyển thành danh sách có divider mảnh, không border bọc mỗi mục. Viền tối đa 1px, radius chủ đạo 7–8px, hạn chế shadow. Palette Calm Slate Blue scoped trong public layout, không gradient/neon; 3 nhóm công cụ có CTA đến route thật. QA Chromium tại 360/768/1280/1920, không scroll ngang và giữ menu/ESC.
 
+### 01/11/2026 — Trang chủ editorial với hero động (mã chỉ trên main)
+
+- Căn lề Public theo `--xcn-page-gutter:clamp(20px,7.5vw,120px)`, container public tối đa 1920px. Header, footer và homepage dùng cùng gutter; mobile giữ 20px.
+- Hero 2 cột, headline lớn, minh họa HTML/CSS thay phiên Word Lab, Trình chiếu, Quiz sau 5,2 giây. Có nút chọn thủ công; dừng tự chuyển khi hover/focus, dừng tự động với `prefers-reduced-motion`.
+- Các phần còn lại là nhóm nội dung editorial với nền phẳng/màu pastel dịu, ít bo góc, không dày border; không dùng nhãn `01 /` hay chữ chéo trang trí. Minh họa nội bộ, không sao chép Dribbble, không giới thiệu tính năng AI chưa triển khai.
+- Kiểm tra toàn trang tại 360/768/1280/1920 và focus/keyboard. Chỉ thay Public Website, không thay Admin/Word/Slides; không deploy online trước yêu cầu rõ ràng.
+
 ## 1. Thương hiệu và nguyên tắc
 
 - Tên sản phẩm: **Xưởng Công Nghệ**.

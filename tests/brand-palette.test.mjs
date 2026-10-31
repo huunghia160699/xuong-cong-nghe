@@ -13,21 +13,23 @@ test("approved palette is defined in Tailwind", () => {
   assert.doesNotMatch(source, /lime:|#c8f13b/i);
 });
 
-test("primary button stays accessible and editorial homepage uses scoped slate colors", () => {
-  const button = read("src/components/ui/button.tsx");
-  const home = read("src/app/(public)/page.tsx");
-  const css = read("src/app/globals.css");
-  const publicCss = read("src/app/(public)/public.css");
-  assert.match(button, /bg-blue text-white/); // legacy app button is unchanged
-  assert.match(publicCss, /--public-primary:#365F80/);
-  assert.match(publicCss, /\.xcn-home-primary\{background:var\(--public-primary\);color:white\}/);
-  assert.match(publicCss, /\.xcn-home-primary:hover\{background:var\(--public-primary-hover\)\}/);
-  assert.match(home, /className="xcn-home-primary"/);
-  assert.match(home, /id="he-sinh-thai"/);
-  assert.match(home, /id="du-an"/);
-  assert.doesNotMatch(home, /lime|xcn-home-snap|HomeSectionSnap|text-cyan/);
-  assert.doesNotMatch(publicCss, /linear-gradient\(|radial-gradient\(|#c8f13b/i);
-  assert.doesNotMatch(css, /scroll-snap-type|#c8f13b/i);
+test("homepage uses a restrained public palette with no gradients or auto-generated claims", () => {
+  const button=read("src/components/ui/button.tsx");
+  const home=read("src/app/(public)/page.tsx");
+  const publicCss=read("src/app/(public)/public.css");
+  const hero=read("src/components/public-home-hero.tsx");
+  assert.match(button,/bg-blue text-white/); // existing app UI remains unchanged
+  assert.match(publicCss,/--public-primary:#365F80/);
+  assert.match(publicCss,/--xcn-page-gutter:clamp\(20px,7\.5vw,120px\)/);
+  assert.match(publicCss,/\.xcn-new-button-primary\{/);
+  assert.match(publicCss,/background:#2D5C61;color:white/);
+  assert.match(home,/id="he-sinh-thai"/);
+  assert.match(home,/id="khoa-hoc"/);
+  assert.match(home,/id="du-an"/);
+  assert.match(hero,/prefers-reduced-motion: reduce/);
+  assert.match(hero,/window\.clearInterval\(timer\)/);
+  assert.doesNotMatch(home,/xcn-home-index|\d+\s*\/\s*HỆ SINH THÁI|Learn by doing|text-cyan/);
+  assert.doesNotMatch(publicCss,/linear-gradient\(|radial-gradient\(|#c8f13b/i);
 });
 
 test("change tracking is part of the permanent development rules", () => {

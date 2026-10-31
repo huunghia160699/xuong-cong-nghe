@@ -6,6 +6,12 @@
 >
 > **Chưa thực hiện:** không đổi mã ứng dụng, route, Supabase Auth/RLS, bảng giá thật, DNS, bài viết, email liên hệ hoặc theme Admin/Word/Slides bằng riêng tài liệu này.
 
+## Cập nhật thiết kế trang chủ 01/11/2026 — chỉ mã main, không phát hành
+
+Người dùng yêu cầu bỏ card viền lớn, nhãn đánh số kèm gạch chéo và thay trang chủ bằng thiết kế marketing gọn, tinh tế với lề hai bên khoảng 120px ở desktop. Triển khai mới thay bố cục Product Atlas dự kiến bằng Hero có hình mô phỏng 3 công cụ thật (Word Lab, Slides, Quiz) và 5 vùng rõ: công cụ, phương pháp, khóa học, vai trò, lời mời bắt đầu. Hero tự đổi sau 5,2 giây, có nút chọn thủ công, tạm dừng khi hover/focus và tôn trọng reduced motion. Mockup mô tả giao diện, **không** cho rằng Word tự tách câu hỏi/AI chấm bài đã hoạt động. Bảng màu phẳng nhẹ, không gradient/neon, ảnh Dribbble chỉ dùng làm tham khảo thiết kế, không sử dụng như asset.
+
+Đây là công việc **local/CI**. Trạng thái QA phụ thuộc workflow thực tế; các trang marketing khác, Supabase Production và Vercel Production không nằm trong phạm vi phát hành.
+
 ## 0. Quyết định thiết kế và nguyên tắc sản phẩm
 
 1. **Website công khai = bản đồ hệ sinh thái.** Người chưa đăng nhập xem các trang marketing, mọi nhóm công cụ, kiến trúc module, công dụng và trạng thái. Đăng nhập mới sử dụng các chức năng thuộc quyền bên trong. Thay đổi hành vi dùng công cụ từ public sang auth-gated phải được kiểm thử từng route; đây là YÊU CẦU TƯƠNG LAI, không phải tình trạng code hiện tại.

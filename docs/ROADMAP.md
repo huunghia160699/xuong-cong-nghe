@@ -33,10 +33,11 @@
 - **CHƯA HOÀN THIỆN WORD LAB:** vẫn `building`, chưa nghiệm thu IME tiếng Việt/tài liệu rất dài/Edge clipboard/Undo với ảnh-bảng/nhập-xuất. Chi tiết [WORD_SIMULATOR_CONTROL_AUDIT.md](WORD_SIMULATOR_CONTROL_AUDIT.md).
 - **Quy tắc mới:** `main` là nhánh đồng bộ máy Windows; kiểm thử bằng `pnpm dev`, `pnpm test`, `pnpm typecheck`, `pnpm build` và `node scripts/word-browser-qa.mjs` (sau khi chạy server). **Tắt auto-deploy Vercel** bằng `vercel.json` (`git.deploymentEnabled:false`) và Project Ignored Build Step `exit 0`. Chỉ mở deploy khi có yêu cầu của chủ dự án. Admin Roadmap metadata v14 (21 epics), chưa mở release.
 
-## Public Homepage — tinh chỉnh giao diện local (31/10/2026)
+## Trang chủ — thiết kế lại toàn diện, chỉ kiểm thử local
 
-- **DONE (code trên main):** thay Hero có khung/đồ thị giả bằng headline biên tập, bảng module duy nhất, Word Lab showcase lớn và danh sách Slides/Quiz/khóa học dạng đường phân cách mảnh. Giảm border/radius/shadow, dùng Calm Slate Blue không gradient; giữ link thật và hành vi guest/Auth.
-- **QA cần xác nhận:** CI `pnpm test`, `pnpm typecheck`, `pnpm build`, Chromium route / ở 360/768/1280/1920, tràn ngang, menu/ESC và CTA. Chỉ test local/CI, không deploy online. Không thay UI Admin/Word/Slides.
+- **IN PROGRESS / CODE READY:** trang chủ mới thay toàn bộ layout trước: desktop gutter thích ứng tối đa 120px, Hero minh họa ba màn Word Lab/Slides/Quiz đổi tự động mỗi 5,2 giây, cho phép chọn thủ công và tôn trọng reduced motion. Bỏ kicker đánh số/gạch chéo, giảm border/radius và các thẻ hộp lặp lại, tăng thứ bậc typography. Giữ hệ thống màu public dịu và tính toàn vẹn liên kết.
+- **Phạm vi:** `src/app/(public)/page.tsx`, `src/components/public-home-hero.tsx`, `src/app/(public)/public.css`, QA/browser và docs. Không khẳng định các khả năng AI sinh câu hỏi/chấm bài chưa triển khai; hình là mockup riêng, không dùng ảnh Dribbble.
+- **Cần xác minh:** CI unit/typecheck/build và Chromium 360/768/1280/1920, nút chuyển cảnh, mobile, không tràn ngang, menu/ESC, kiểm duyệt thị giác trên local. Tuyệt đối không deploy Preview/Production nếu chưa có yêu cầu.
 
 ## Public Website — kế hoạch thiết kế lại 5 trang (31/10/2026)
 

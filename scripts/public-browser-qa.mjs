@@ -74,21 +74,50 @@ try{
    writeFileSync(join(output,(route.slice(1)||"home")+"-"+width+".png"),Buffer.from(shot.data,"base64"));
    if(route==="/"){
     const homepage=await evalJs(`(()=>({
-      editorial:!!document.querySelector(".xcn-home-editorial"),
+      redesigned:!!document.querySelector(".xcn-new-home"),
       sections:["he-sinh-thai","khoa-hoc","du-an"].every(id=>!!document.getElementById(id)),
-      h1:document.querySelector(".xcn-home-hero h1")?.textContent?.trim(),
-      productLinks:[...document.querySelectorAll(".xcn-home-visual-row")].map(n=>n.getAttribute("href")),
-      feature:!!document.querySelector(".xcn-home-feature"),
-      radius:parseFloat(getComputedStyle(document.querySelector(".xcn-home-feature")).borderTopLeftRadius),
-      backgroundImage:getComputedStyle(document.querySelector(".xcn-home-hero")).backgroundImage,
-      courseCount:document.querySelectorAll(".xcn-home-course").length
+      hero:document.querySelector(".xcn-new-hero h1")?.textContent?.trim(),
+      controls:[...document.querySelectorAll(".xcn-hero-scene-controls button")].length,
+      scene:document.querySelector(".xcn-hero-scene-copy span")?.textContent?.trim(),
+      feature:!!document.querySelector(".xcn-new-tool-feature"),
+      toolLinks:[...document.querySelectorAll(".xcn-new-tool-tile")].map(link=>link.getAttribute("href")),
+      stageRadius:parseFloat(getComputedStyle(document.querySelector(".xcn-hero-showcase-stage")).borderTopLeftRadius),
+      backgroundImage:getComputedStyle(document.querySelector(".xcn-new-hero")).backgroundImage,
+      gutter:parseFloat(getComputedStyle(document.querySelector(".xcn-container")).paddingLeft)
     }))()`);
-    assert.ok(homepage.editorial&&homepage.sections&&homepage.h1&&homepage.feature,"Editorial homepage structure missing");
-    assert.equal(homepage.productLinks.length,3,"Three real workspaces expected");
-    assert.ok(homepage.productLinks.includes("/cong-cu/mo-phong-word"));
-    assert.ok(homepage.productLinks.includes("/cong-cu/trinh-chieu"));
-    assert.ok(homepage.radius<=12,"Homepage feature has oversized rounded border");
-    assert.equal(homepage.backgroundImage,"none","Homepage should not contain decorative gradients");
+    assert.ok(homepage.redesigned&&homepage.sections&&homepage.hero&&homepage.feature,"Redesigned homepage missing");
+    assert.equal(homepage.controls,3,"Three product stories expected");
+    assert.equal(homepage.scene,"Word Lab","Hero must begin with Word Lab");
+    assert.ok(homepage.toolLinks.includes("/cong-cu/trinh-chieu"));
+    assert.ok(homepage.toolLinks.includes("/dang-nhap?next=%2Fstudent%2Fquiz"));
+    assert.ok(homepage.stageRadius<=16,"Hero corners must remain restrained");
+    assert.equal(homepage.backgroundImage,"none","Homepage must not use decorative gradients");
+    if(width>=1920)assert.ok(homepage.gutter>=118&&homepage.gutter<=121,"Desktop gutter should be approximately 120px");
+    if(width<=360)assert.ok(homepage.gutter>=18&&homepage.gutter<=30,"Mobile gutter should be compact");
+    if(width===1280){
+      await wait(5800);
+      const automatic=await evalJs(`document.querySelector(".xcn-hero-scene-copy span")?.textContent?.trim()`);
+      assert.equal(automatic,"Trình chiếu","Hero must advance automatically without user interaction");
+    }
+    const switched=await evalJs(`(()=>{
+      const buttons=[...document.querySelectorAll(".xcn-hero-scene-controls button")];
+      buttons[1]?.click();return buttons.length;
+    })()`);
+    assert.equal(switched,3);
+    await wait(160);
+    const slideScene=await evalJs(`(()=>({
+      label:document.querySelector(".xcn-hero-scene-copy span")?.textContent?.trim(),
+      pressed:document.querySelectorAll(".xcn-hero-scene-controls button[aria-pressed=true]").length,
+      illustration:!!document.querySelector(".xcn-visual-slide")
+    }))()`);
+    assert.ok(slideScene.label==="Trình chiếu"&&slideScene.pressed===1&&slideScene.illustration,"Slide story switching failed");
+    await evalJs(`document.querySelectorAll(".xcn-hero-scene-controls button")[2].click()`);
+    await wait(150);
+    const quizScene=await evalJs(`(()=>({
+      label:document.querySelector(".xcn-hero-scene-copy span")?.textContent?.trim(),
+      illustration:!!document.querySelector(".xcn-visual-quiz")
+    }))()`);
+    assert.ok(quizScene.label==="Quiz"&&quizScene.illustration,"Quiz story switching failed");
     const clicked=await evalJs(`(()=>{
       const toggle=innerWidth<1181
        ? document.querySelector('.xcn-public-mobile-toggle')
