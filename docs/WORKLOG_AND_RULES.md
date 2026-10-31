@@ -31,6 +31,11 @@ Không viết lại cả nhật ký cũ. Một task nhiều commit có thể th�
 
 ## III. Nhật ký mới (từ 30/10/2026)
 
+### 2026-10-31 — [WORD LAB] Tổng duyệt Chromium
+- **QA PASS:** Actions #41175860593 SHA `5bc3fd1d`, 242 unit/0 fail, type/build, Chrome 360/768/1280; B/I/Sub on/off, Case giữ markup, Clear, Ctrl+Enter gõ trang 2, bảng, ¶, zoom, local draft reload.
+- **P0/P1 CHƯA XONG:** Cut fallback có nguy cơ mất chữ, Sort mất markup, chưa E2E Undo/clipboard/IME/import ảnh + auto pagination. Chi tiết: `WORD_SIMULATOR_CONTROL_AUDIT.md`.
+- **TRACKING:** PR #73 test-only, Admin Roadmap v13 / 21 epics / Word building. Chưa sửa engine hoặc release Production.
+
 ### 2026-10-31 — [AUTH STAGING] Ba vai trò
 - **READ-ONLY PASS:** staging có Admin/Student, chưa có Teacher; 14/14 RLS; SQL impersonation Admin thấy Roadmap, Student không, anon bị 42501. Preview guest redirect về login.
 - **CODE QA:** `verify-auth-staging.mjs` chỉ GET/SELECT với JWT thật từ local, fail-closed nếu sai dự án. Chưa có credentials trong công cụ này nên **không kết luận JWT E2E PASS**.

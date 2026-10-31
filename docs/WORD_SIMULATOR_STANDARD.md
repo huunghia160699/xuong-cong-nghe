@@ -483,3 +483,11 @@ Kết quả kiểm tra thực tế trước sửa (người dùng báo): Bold/It
 - **Điều chỉnh test VM khi thêm helper vào cùng file:** các kiểm thử cũ trích `rangeHasScript` đến `syncFormatState` nay phải dừng tại `syncFontControls` để không thực thi nhiều function cùng một biểu thức; kiểm thử `syncFontControls` trích riêng body hàm và loại chú thích lân cận. Các kiểm thử DOM mới vẫn giữ nguyên kỳ vọng về chữ đậm, dropdown reset và text trong chỉ số.
 
 - **Lỗi TypeScript được sửa trong build:** với React SyntheticKeyboardEvent, dùng `event.nativeEvent.isComposing` (thuộc native KeyboardEvent) thay cho `event.isComposing` trong `onKeyDown`, tránh chặn xử lý IME nhưng vẫn bắt phím thường để chèn vào thẻ `<sub>/<sup>`. Build phải chạy lại đến READY.
+
+## 31/10/2026 — Tổng duyệt toàn bộ chức năng Word (test-only, không sửa engine)
+
+- **Phạm vi:** theo [WORD_SIMULATOR_CONTROL_AUDIT.md](WORD_SIMULATOR_CONTROL_AUDIT.md), nhóm File/Home/Insert/Layout/Review/View, 4 tab giới thiệu chưa hỗ trợ, thanh trạng thái, A4, lề chọn dòng và phím tắt.
+- **Thực tế Chromium PASS** GitHub Actions #41175860593 SHA `5bc3fd1d`: 242 unit/0 fail, typecheck/build, 360/768/1280; gõ nội dung, Bold/Italic DOM, bật/tắt Subscript khi bôi đen, Change Case giữ Bold/Italic, Clear Format, ¶, Ctrl+Enter và gõ tiếp tại trang 2, chèn bảng, zoom, lưu localStorage và reload giữ nội dung/bảng/ngắt trang.
+- **Không lẫn các cấp QA:** unit DOM mock ≠ Chromium thật; Chromium local Demo ≠ Preview Live JWT ≠ Production. Các chức năng file import, hình ảnh, Copy/Cut/Paste khi bị chặn quyền, Undo/Redo khi DOM reflow, line gutter, auto pagination nhiều đoạn, Superscript caret mode và IME tiếng Việt vẫn cần browser E2E.
+- **Risk P0:** Cut không nên `delete` nếu chưa đảm bảo clipboard nhận được dữ liệu. **Risk P1:** Sort dùng selectedText replacement nên có thể mất rich-text markup; Undo/Redo trên thay đổi DOM trực tiếp không được đảm bảo.
+- **Không sửa code editor** ở đợt tổng duyệt. Tập trung test riêng để tránh phát hành Word quá sớm. Các lần sửa engine sau vẫn tuân quy trình phát hành của module và release gate chung.

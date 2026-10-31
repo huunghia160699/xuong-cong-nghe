@@ -28,6 +28,12 @@
 5. **P2 — Teacher Studio:** **mở thiết kế và phát triển staging** cho quản lý lớp, thành viên, giao bài; chỉ bật Production sau test role `teacher` và RLS ownership/cross-class, E2E và phê duyệt phát hành.
 6. **P2–P3 — Live Quiz, Excel/Coding Labs, AI/trò chơi:** triển khai từng module, không mở nhiều công cụ khi data model chưa ổn.
 
+## Word Lab — tổng duyệt chức năng (31/10/2026)
+
+- **QA Chromium core PASS:** GitHub Actions [#41175860593](https://github.com/huunghia160699/xuong-cong-nghe/actions/runs/41175860593), 242 unit + typecheck/build, Word browser QA 360/768/1280: gõ, B/I, Subscript toggle, Change Case giữ style, Clear, ¶, Ctrl+Enter + gõ trang 2, bảng, zoom, local draft/reload.
+- **Word Lab vẫn BUILDING:** P0 phòng mất dữ liệu khi Cut thất bại và kiểm Undo/Redo/reflow; P1 kiểm Sort giữ rich text, copy/paste đủ quyền, IME, thước, bảng/ảnh, nhập/xuất tệp, auto paging dài; P2 nâng Find/Replace và các chức năng chưa có. Không DOCX/chấm bài/cloud.
+- **Bằng chứng & chức năng chưa E2E:** [WORD_SIMULATOR_CONTROL_AUDIT.md](WORD_SIMULATOR_CONTROL_AUDIT.md), [WORD_SIMULATOR_STANDARD.md](WORD_SIMULATOR_STANDARD.md). Admin Roadmap v13 (21 epics), Word epic order 11 giữ status building và checkbox hiện tại, thêm QA done/repair pending. Không đổi Production code.
+
 ## Public Website — kế hoạch thiết kế lại 5 trang (31/10/2026)
 
 > **D0/D1 đã hoàn thành; D2–D4 code/CI/Chromium PASS trên nhánh GitHub PR #73, CHƯA merge/deploy Vercel. D5 có 3 bài gốc trên PR #73; D6 chỉ nhận email sau xác minh; D7 CI/Chromium PASS, chưa release Production. PR #73 còn draft.** Nguồn chi tiết duy nhất: [PUBLIC_WEBSITE_DESIGN_SPEC.md](PUBLIC_WEBSITE_DESIGN_SPEC.md). Đây là kế hoạch trong Git, **không tự tick hoặc ghi đè Roadmap Supabase Production**.
