@@ -25,6 +25,7 @@ export default async function ArticlePage({params}:{params:Promise<{slug:string}
   publisher:{"@type":"Organization",name:"Xưởng Công Nghệ"}
  };
  return <main className="xcn-marketing-main">
+  <script type="application/ld+json" dangerouslySetInnerHTML={{__html:JSON.stringify(jsonLd).replace(/</g,"\\u003c")}}/>
   <article>
    <header className="xcn-marketing-page-hero xcn-news-hero"><div className="xcn-container">
     <Link className="xcn-article-back" href="/tin-tuc"><ArrowLeft size={17} aria-hidden="true"/> Tin tức & Tri thức</Link>
