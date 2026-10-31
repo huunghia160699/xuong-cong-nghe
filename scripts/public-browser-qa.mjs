@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-/** Chromium CDP smoke for D1 public shell; QA uses local Demo, not live credentials. */
+/** Chromium CDP smoke for D1-D7 public website; QA uses local Demo, not live credentials. */
 import {spawn} from "node:child_process";
 import {mkdtempSync,existsSync,mkdirSync,readFileSync,writeFileSync,rmSync} from "node:fs";
 import {tmpdir} from "node:os";
@@ -43,7 +43,7 @@ try{
  };
  await call("Page.enable");await call("Runtime.enable");
  const routes=["/","/gioi-thieu","/bang-gia","/tin-tuc","/lien-he"];
- for(const width of [360,768,1280,1920]){
+ for(const width of [360,430,768,1024,1280,1920]){
   for(const route of routes){
    await call("Emulation.setDeviceMetricsOverride",{width,height:width===1280?680:900,deviceScaleFactor:1,mobile:width<=768});
    await call("Page.navigate",{url:base+route});
@@ -72,6 +72,54 @@ try{
    assert.equal(info.footerStyle,"none","Footer gradient/background image is prohibited");
    const shot=await call("Page.captureScreenshot",{format:"png",fromSurface:true});
    writeFileSync(join(output,(route.slice(1)||"home")+"-"+width+".png"),Buffer.from(shot.data,"base64"));
+   const semantics=await evalJs(`(()=>({
+    headingCount:document.querySelectorAll('main h1').length,
+    hasMain:!!document.querySelector('main'),
+    skip:!!document.querySelector('.xcn-public-skip'),
+    canonical:!!document.querySelector('link[rel="canonical"]')
+   }))()`);
+   assert.equal(semantics.headingCount,1,"Expected one H1 "+route);
+   assert.ok(semantics.hasMain&&semantics.skip,"Missing semantic main/skip link");
+   assert.equal(semantics.canonical,true,"Missing canonical on "+route);
+   if(route==="/tin-tuc"){
+    const info=await evalJs(`(()=>({
+      count:document.querySelector('.xcn-news-count')?.textContent,
+      articles:document.querySelectorAll('.xcn-news-card').length,
+      empty:!!document.querySelector('.xcn-news-empty')
+    }))()`);
+    assert.match(info.count??"",/0 bài viết đã xuất bản/);
+    assert.equal(info.articles,0,"No articles approved for publication");
+    assert.ok(info.empty,"Missing empty-state");
+    const chose=await evalJs(`(()=>{
+     const b=[...document.querySelectorAll('.xcn-news-category')].find(x=>x.textContent?.includes('Tin học & ứng dụng'));
+     if(!b)return false;b.click();return true;
+    })()`);
+    assert.ok(chose,"Missing news category filter");
+    await wait(450);
+    const selected=await evalJs(`(()=>({
+      query:new URLSearchParams(location.search).get('category'),
+      active:document.querySelector('.xcn-news-category[aria-pressed="true"]')?.textContent?.trim(),
+      clear:!!document.querySelector('.xcn-news-clear')
+    }))()`);
+    assert.equal(selected.query,"Tin học & ứng dụng");
+    assert.equal(selected.active,"Tin học & ứng dụng");
+    assert.equal(selected.clear,true);
+    await evalJs("document.querySelector('.xcn-news-clear')?.click()");
+    await wait(450);
+    assert.equal(await evalJs("location.search"),"","Clear filters must reset URL");
+   }
+   if(route==="/lien-he"){
+    assert.equal(await evalJs("!!document.querySelector('main form, main input[type=submit]')"),false,"No fake contact form");
+    await call("Page.navigate",{url:base+"/lien-he?topic=pricing"});
+    await wait(800);
+    assert.equal(await evalJs("document.querySelector('.xcn-contact-topic h3')?.textContent?.trim()"),"Tìm hiểu quyền sử dụng","Pricing link topic");
+   }
+   if(route==="/bang-gia"){
+    assert.equal(await evalJs(`(()=>{
+     const d=document.querySelector('.xcn-faq-list details');if(!d)return false;
+     d.querySelector('summary')?.click();return d.open;
+    })()`),true,"FAQ must open");
+   }
    if(route==="/"){
     // D2 acceptance: filters update visible cards and announce counts, then reset.
     const initial=await evalJs("document.querySelectorAll('.xcn-atlas-card').length");
@@ -124,7 +172,15 @@ try{
    console.log("PASS PUBLIC",route,width,"h1",info.title);
   }
  }
- console.log("PASS PUBLIC D1-D4: 5 routes x 4 viewports, Atlas filter/reset, responsive menu/ESC");
+ const robotsResponse=await fetch(base+"/robots.txt");
+ const sitemapResponse=await fetch(base+"/sitemap.xml");
+ assert.equal(robotsResponse.status,200,"Missing robots.txt");
+ assert.equal(sitemapResponse.status,200,"Missing sitemap.xml");
+ const robotsText=await robotsResponse.text();
+ const sitemapText=await sitemapResponse.text();
+ assert.match(robotsText,/Disallow: \/admin\//);
+ for(const route of ["/gioi-thieu","/bang-gia","/tin-tuc","/lien-he"])assert.ok(sitemapText.includes(route),"Sitemap missing "+route);
+ console.log("PASS PUBLIC D1-D7 QA: 5 routes x 6 viewports, SEO, news filter, contact topic, FAQ, Atlas and menu/ESC");
 }catch(error){console.error("PUBLIC VISUAL QA FAILED:",error);process.exitCode=1;}
 finally{
  ws?.close();child?.kill("SIGTERM");await wait(150);if(profile)rmSync(profile,{recursive:true,force:true});
