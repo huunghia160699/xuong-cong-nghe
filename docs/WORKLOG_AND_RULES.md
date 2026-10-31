@@ -34,7 +34,7 @@ Không viết lại cả nhật ký cũ. Một task nhiều commit có thể th�
 ### 2026-10-31 — [AUTH STAGING] Ba vai trò
 - **READ-ONLY PASS:** staging có Admin/Student, chưa có Teacher; 14/14 RLS; SQL impersonation Admin thấy Roadmap, Student không, anon bị 42501. Preview guest redirect về login.
 - **CODE QA:** `verify-auth-staging.mjs` chỉ GET/SELECT với JWT thật từ local, fail-closed nếu sai dự án. Chưa có credentials trong công cụ này nên **không kết luận JWT E2E PASS**.
-- **BLOCKED:** Teacher chưa có, browser JWT/session/logout chưa thử; security advisor còn cảnh báo. Không đổi Production.
+- **BLOCKED:** Teacher chưa có, browser JWT/session/logout chưa thử; security advisor còn cảnh báo. Admin Roadmap metadata v11→v12, 21 epics, JWT E2E chưa tick; không đổi Production Auth/RLS/schema.
 
 ### 2026-10-31 — [AUTH + D5 + D6] PR #73
 - **CODE:** Word/Slide SSR + middleware Auth/role; Student/Admin role; Vercel fail-closed. Nhánh Preview dùng Supabase staging.
