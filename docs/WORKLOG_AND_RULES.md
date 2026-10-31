@@ -31,14 +31,18 @@ Không viết lại cả nhật ký cũ. Một task nhiều commit có thể th�
 
 ## III. Nhật ký mới (từ 30/10/2026)
 
+### 2026-10-31 — [AUTH + D5 + D6] PR #73
+- **CODE:** Word/Slide SSR + middleware Auth/role; Student/Admin role; Vercel fail-closed. Nhánh Preview dùng Supabase staging.
+- **D5:** Ba bài gốc, trang chi tiết, SEO, sitemap, trang chủ hiển thị bài thật.
+- **D6:** Email chỉ công bố sau xác minh owner + bật env; chưa có inbox/form/Admin pipeline.
+- **QA:** CI/Chromium đang chạy; chờ kiểm URL guest và JWT thật. Chưa merge/release.
+
 ### 2026-10-31 — [D5–D7] PR #73
 - **QA PASS:** D5 lọc/URL/empty; D6 topic/verified-only; D7 237 unit, typecheck/build, Chromium 5×6 + SEO; Vercel Preview READY. **BLOCKED:** CMS, kênh/backend, JWT Live, Production.
 
 
 ### 2026-10-31 — [PUBLIC D2–D4 / ROADMAP 21] GitHub-only
-- **DONE:** Admin roadmap epic 21 chuyển order 20 → 4, sau Public Landing, CAS v7→v8; tick D2–D4 code/CI v8→v9, giữ 21 epics và audit.
-- **CODE:** PR #73 (draft), nhánh `feat/public-website-d2-d4-20261031`: D2 Product Atlas/catalog trạng thái và filter, D3 Giới thiệu 7 phần, D4 Bảng giá 3 nhóm/FAQ/so sánh không giá giả. CSS responsive, test, tài liệu cập nhật. D5–D6 vẫn placeholder.
-- **QA PASS:** GitHub Actions #41114499566 SHA `177014272`: 234 unit, typecheck, build, Chromium 5 trang × 4 kích thước, lọc/khôi phục Product Atlas; Admin D2–D4 đã tick và ghi chú GitHub-only. Chưa merge `main`/deploy Vercel.
+- Admin epic 21 order 20→4; CAS v7→v9, giữ 21 epics. PR #73 D2 Atlas/D3 Giới thiệu/D4 Bảng giá, CI #41114499566 PASS; chưa release.
 
 ### 2026-10-31 — [PUBLIC-WEB D1 / ADMIN ROADMAP] Phần việc đang triển khai
 - **DONE (Production Roadmap có chốt CAS):** trước ghi `version=4`, 20 epics, MD5 snapshot `c3442d7b1c2659caa87bd097ce090ce4`; đã **nối thêm** epic `public-website-redesign-d0-d7` gồm checklist D0–D7, chỉ D0 DONE, D1 đang phát triển. SQL kiểm tra phiên bản/hash và không trùng ID, không ghi đè 20 mục trước. Readback: `version=5`, 21 epics, 20 cũ, audit events 5. **Dữ liệu Admin Supabase Production đã đổi theo yêu cầu**, không thay Auth/RLS.
