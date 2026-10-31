@@ -340,3 +340,5 @@ Acceptance chung:
 - D5: `/tin-tuc` có 7 bộ lọc, tìm kiếm đồng bộ `?q=&category=`, empty-state; `src/config/public-articles.ts` chưa có bài duyệt, chỉ xuất bài `published`. Không tạo bài/CMS giả.
 - D6: `/lien-he?topic=` hỗ trợ support/pricing/school/feedback/partnership, FAQ, chỉ hiển thị kênh có xác minh qua `src/config/public-contact.ts`. Chưa có email/hotline/social thật, backend/consent nên không bật form.
 - D7: `sitemap.ts`, `robots.ts`, Chromium 6 viewport, lọc Tin tức, URL liên hệ, SEO và FAQ; `START-WEB-OFFLINE.cmd` chạy Demo local. Chưa release Production, QA JWT thật và phê duyệt thông tin còn là gate.
+
+**QA 31/10/2026:** GitHub Actions #41155993460 commit `7c2f88e`: 237 unit PASS, typecheck/build PASS, Chromium 5 route × 6 viewport PASS, SEO/News filter/Contact topic/FAQ PASS; Vercel Preview D5–D7 READY. Production vẫn chưa được cập nhật, không coi kiểm Demo là E2E JWT thật.

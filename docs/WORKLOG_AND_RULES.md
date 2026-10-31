@@ -32,7 +32,7 @@ Không viết lại cả nhật ký cũ. Một task nhiều commit có thể th�
 ## III. Nhật ký mới (từ 30/10/2026)
 
 ### 2026-10-31 — [D5–D7] PR #73
-- **CODE:** D5 lọc/tìm URL, empty; D6 chọn nhu cầu, kênh xác minh; D7 SEO, Chromium 6 viewport, local Demo. **BLOCKED:** CMS, liên hệ/backend, JWT Live, release Production.
+- **QA PASS:** D5 lọc/URL/empty; D6 topic/verified-only; D7 237 unit, typecheck/build, Chromium 5×6 + SEO; Vercel Preview READY. **BLOCKED:** CMS, kênh/backend, JWT Live, Production.
 
 
 ### 2026-10-31 — [PUBLIC D2–D4 / ROADMAP 21] GitHub-only
