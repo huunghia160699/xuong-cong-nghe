@@ -7,7 +7,7 @@ import {getPublishedArticles} from "@/config/public-articles";
 
 export const metadata:Metadata={
  title:"Tin tức & Tri thức",
- description:"Khám phá các nội dung Tin học, giáo dục số và cập nhật chính thức từ Xưởng Công Nghệ khi bài viết được xuất bản.",
+ description:"Bài viết gốc về hệ sinh thái, hướng dẫn thực hành Word Lab và Trình chiếu từ Xưởng Công Nghệ.",
  alternates:{canonical:"/tin-tuc"},
  openGraph:{title:"Tin tức & Tri thức | Xưởng Công Nghệ",url:"/tin-tuc"}
 };
@@ -18,7 +18,7 @@ export default function NewsPage(){
   <section className="xcn-marketing-page-hero xcn-news-hero" aria-labelledby="news-title"><div className="xcn-container">
    <span className="xcn-kicker">Xưởng Công Nghệ / Tin tức & Tri thức</span>
    <h1 id="news-title">Kiến thức mới. Cách làm rõ ràng.</h1>
-   <p>Nơi dành cho nội dung Tin học, phương pháp dạy học, chuyển đổi số và các cập nhật sản phẩm được xác minh. Bài viết chỉ xuất hiện khi đã được duyệt và xuất bản.</p>
+   <p>Nơi dành cho nội dung Tin học, phương pháp dạy học, chuyển đổi số và các cập nhật sản phẩm được xác minh. Các hướng dẫn gốc giúp bạn bắt đầu học và thực hành với công cụ hiện có.</p>
   </div></section>
   <section className="xcn-marketing-section" aria-labelledby="article-heading"><div className="xcn-container">
    <div className="xcn-section-heading"><span className="xcn-kicker">01 / Thư viện bài viết</span><h2 id="article-heading">Tìm hiểu theo chủ đề của bạn.</h2><p>Chọn chủ đề hoặc nhập từ khóa. Bộ lọc được lưu trên đường dẫn để bạn có thể chia sẻ kết quả tìm kiếm.</p></div>

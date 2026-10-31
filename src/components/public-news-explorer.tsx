@@ -69,7 +69,7 @@ export function PublicNewsExplorer({articles}:{articles:readonly PublicArticle[]
    </div>
    : <div className="xcn-news-empty">
     <span className="xcn-news-empty-icon"><BookOpen size={29} aria-hidden="true"/></span>
-    <h2>{articles.length===0?"Bài viết chuyên môn đang được biên soạn.":"Chưa có bài viết phù hợp."}</h2>
+    <h2>{articles.length===0?"Chưa có bài viết được xuất bản.":"Chưa có bài viết phù hợp."}</h2>
     <p>{articles.length===0
      ?"Chưa có bài viết chính thức được xuất bản. Bộ lọc và tìm kiếm đã sẵn sàng khi nội dung được duyệt."
      :"Hãy thử từ khóa hoặc chủ đề khác để tìm nội dung phù hợp."}</p>
