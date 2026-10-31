@@ -37,20 +37,17 @@ test("Scoped public theme uses the approved palette without gradient and preserv
  assert.match(current,/blue: "#005BFD"/);
 });
 
-test("Unfinished D5-D6 marketing placeholders disclose status, and D3-D4 have substantive pages",()=>{
- for(const path of ["tin-tuc","lien-he"]){
-  const page=read("src/app/(public)/"+path+"/page.tsx");
-  assert.match(page,/PublicPendingPage/);
-  assert.match(page,/export const metadata/);
- }
- for(const path of ["gioi-thieu","bang-gia"]){
+test("D2-D6 marketing pages render meaningful content and do not fabricate contact or articles",()=>{
+ for(const path of ["tin-tuc","lien-he","gioi-thieu","bang-gia"]){
   const page=read("src/app/(public)/"+path+"/page.tsx");
   assert.doesNotMatch(page,/PublicPendingPage/);
   assert.match(page,/export const metadata/);
  }
- const component=read("src/components/public-pending-page.tsx");
- assert.match(component,/Đang hoàn thiện/);
- assert.doesNotMatch(component,/<form\b|payment|checkout/i);
+ const articleData=read("src/config/public-articles.ts");
+ const contactData=read("src/config/public-contact.ts");
+ assert.match(articleData,/EDITORIAL_ARTICLES:readonly PublicArticle\[\]=\[\]/);
+ assert.match(contactData,/VERIFIED_CONTACT_CHANNELS:readonly ContactChannel\[\]=\[\]/);
+ assert.doesNotMatch(read("src/app/(public)/lien-he/page.tsx"),/<form\b|onSubmit|payment|checkout/i);
  const footer=read("src/components/footer.tsx");
  assert.doesNotMatch(footer,/href="#"/);
  assert.match(footer,/new Date\(\)\.getFullYear/);
