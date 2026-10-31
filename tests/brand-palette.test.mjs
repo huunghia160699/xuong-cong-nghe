@@ -21,7 +21,7 @@ test("homepage uses a restrained public palette with no gradients or auto-genera
   assert.match(button,/bg-blue text-white/); // existing app UI remains unchanged
   assert.match(publicCss,/--public-primary:#365F80/);
   assert.match(publicCss,/--xcn-page-gutter:clamp\(20px,7\.5vw,120px\)/);
-  assert.match(publicCss,/\.xcn-new-button-primary\{/);
+  assert.match(publicCss,/\.xcn-new-button-primary,\.xcn-new-last-button\{/);
   assert.match(publicCss,/background:#2D5C61;color:white/);
   assert.match(home,/id="he-sinh-thai"/);
   assert.match(home,/id="khoa-hoc"/);

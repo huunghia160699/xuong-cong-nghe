@@ -31,17 +31,12 @@ Không viết lại cả nhật ký cũ. Một task nhiều commit có thể th�
 
 ## III. Nhật ký mới (từ 30/10/2026)
 
-### 2026-11-01 — [PUBLIC HOME] Thiết kế lại trọn trang theo phản hồi người dùng
-- **CODE main:** layout mới lề desktop ~120px; Hero mô phỏng Word Lab/Trình chiếu/Quiz đổi tự động và chọn thủ công, có reduced-motion. Thiết kế lại khối sản phẩm, cách học, khóa học, vai trò và CTA; bỏ nhãn đánh số/gạch chéo và card viền lớn.
-- **QA:** cập nhật unit palette + Chromium responsive và chuyển cảnh, CI là bằng chứng khi chạy xong. Thiết kế lấy cảm hứng từ các nguyên tắc typography/visual trên Dribbble, không sao chép tài sản hay claim AI không tồn tại.
-- **AN TOÀN:** chỉ commit `main`, khóa auto-deploy Vercel giữ nguyên; không thay Auth/RLS/schema/data Production, không phát hành website. Admin Roadmap Production không thay khi chưa được phép.
-- **CHƯA XÁC NHẬN:** nghiệm thu thị giác trên Windows local.
+### 2026-11-01 — [PUBLIC HOME] Full redesign local
+- **CODE:** Hero 3 cảnh Word/Slides/Quiz (5,2s, manual/reduced motion), toàn bộ homepage, gutter desktop 120px.
+- **QA:** unit/typecheck/build/Chromium CI; thị giác Windows còn chờ duyệt. **NO DEPLOY**, Production và Admin Roadmap không đổi.
 
-
-### 2026-10-31 — [PUBLIC HOME] Bỏ viền lớn và card kiểu AI
-- **CODE main:** đổi Hero/tổ chức nội dung trang chủ với tiêu đề mạnh, màu slate, showcase Word riêng và hàng Slides/Quiz/course. CSS scoped `xcn-home-*`; không đụng Admin/Word/Slides.
-- **QA:** bổ sung Chrome smoke / cho bố cục, link thật, không gradient và radius <=12; kiểm trên CI. Không deploy online; giữ khóa Vercel `git.deploymentEnabled:false` và Ignored Build Step `exit 0`.
-- **CÒN MỞ:** duyệt thị giác trên máy Windows và các phần Public Website D3–D7 chưa thuộc main.
+### 2026-10-31 — [PUBLIC HOME] Thiết kế cũ, đã được bản 01/11 thay thế
+- **Lịch sử:** trang chủ dạng editorial; CI PASS, chưa deploy. Đã tiếp nhận phản hồi cần thiết kế lại.
 
 ### 2026-10-31 — [WORD / GIT] main local, Vercel locked
 - Word Cut/Undo/Sort trên main; auto-deploy Vercel chặn bằng `vercel.json` và `exit 0`, chỉ test local/CI, Production không đổi.
