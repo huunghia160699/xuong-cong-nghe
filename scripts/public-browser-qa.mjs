@@ -42,7 +42,7 @@ try{
   return r.result?.value;
  };
  await call("Page.enable");await call("Runtime.enable");
- const routes=["/","/gioi-thieu","/bang-gia","/tin-tuc","/lien-he"];
+ const routes=["/","/gioi-thieu","/bang-gia","/tin-tuc","/lien-he","/tin-tuc/gioi-thieu-he-sinh-thai-xuong-cong-nghe","/tin-tuc/huong-dan-bat-dau-voi-word-lab","/tin-tuc/huong-dan-su-dung-thu-vien-trinh-chieu"];
  for(const width of [360,430,768,1024,1280,1920]){
   for(const route of routes){
    await call("Emulation.setDeviceMetricsOverride",{width,height:width===1280?680:900,deviceScaleFactor:1,mobile:width<=768});
@@ -87,11 +87,11 @@ try{
       articles:document.querySelectorAll('.xcn-news-card').length,
       empty:!!document.querySelector('.xcn-news-empty')
     }))()`);
-    assert.match(info.count??"",/0 bài viết đã xuất bản/);
-    assert.equal(info.articles,0,"No articles approved for publication");
-    assert.ok(info.empty,"Missing empty-state");
+    assert.match(info.count??"",/3 bài viết đã xuất bản/);
+    assert.equal(info.articles,3,"Expected three original published guides");
+    assert.equal(info.empty,false,"Published guides should render cards");
     const chose=await evalJs(`(()=>{
-     const b=[...document.querySelectorAll('.xcn-news-category')].find(x=>x.textContent?.includes('Tin học & ứng dụng'));
+     const b=[...document.querySelectorAll('.xcn-news-category')].find(x=>x.textContent?.includes('Hướng dẫn sử dụng'));
      if(!b)return false;b.click();return true;
     })()`);
     assert.ok(chose,"Missing news category filter");
@@ -101,12 +101,17 @@ try{
       active:document.querySelector('.xcn-news-category[aria-pressed="true"]')?.textContent?.trim(),
       clear:!!document.querySelector('.xcn-news-clear')
     }))()`);
-    assert.equal(selected.query,"Tin học & ứng dụng");
-    assert.equal(selected.active,"Tin học & ứng dụng");
+    assert.equal(selected.query,"Hướng dẫn sử dụng");
+    assert.equal(selected.active,"Hướng dẫn sử dụng");
     assert.equal(selected.clear,true);
+    assert.equal(await evalJs("document.querySelectorAll(\'.xcn-news-card\').length"),2,"Two usage guides should match");
     await evalJs("document.querySelector('.xcn-news-clear')?.click()");
     await wait(450);
     assert.equal(await evalJs("location.search"),"","Clear filters must reset URL");
+    assert.equal(await evalJs("document.querySelectorAll(\'.xcn-news-card\').length"),3);
+   }
+   if(route.startsWith("/tin-tuc/")){
+    assert.ok(await evalJs("document.querySelectorAll('.xcn-article-body section').length>=3"),"Published guide missing sections");
    }
    if(route==="/lien-he"){
     assert.equal(await evalJs("!!document.querySelector('main form, main input[type=submit]')"),false,"No fake contact form");
@@ -180,7 +185,7 @@ try{
  const sitemapText=await sitemapResponse.text();
  assert.match(robotsText,/Disallow: \/admin\//);
  for(const route of ["/gioi-thieu","/bang-gia","/tin-tuc","/lien-he"])assert.ok(sitemapText.includes(route),"Sitemap missing "+route);
- console.log("PASS PUBLIC D1-D7 QA: 5 routes x 6 viewports, SEO, news filter, contact topic, FAQ, Atlas and menu/ESC");
+ console.log("PASS PUBLIC D1-D7 QA: 8 routes x 6 viewports, SEO, news filter, contact topic, FAQ, Atlas and menu/ESC");
 }catch(error){console.error("PUBLIC VISUAL QA FAILED:",error);process.exitCode=1;}
 finally{
  ws?.close();child?.kill("SIGTERM");await wait(150);if(profile)rmSync(profile,{recursive:true,force:true});
