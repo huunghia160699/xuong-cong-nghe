@@ -78,12 +78,12 @@ try{
       sections:["he-sinh-thai","khoa-hoc","du-an"].every(id=>!!document.getElementById(id)),
       h1:document.querySelector(".xcn-home-hero h1")?.textContent?.trim(),
       productLinks:[...document.querySelectorAll(".xcn-home-visual-row")].map(n=>n.getAttribute("href")),
-      feature:document.querySelector(".xcn-home-feature"),
+      feature:!!document.querySelector(".xcn-home-feature"),
       radius:parseFloat(getComputedStyle(document.querySelector(".xcn-home-feature")).borderTopLeftRadius),
       backgroundImage:getComputedStyle(document.querySelector(".xcn-home-hero")).backgroundImage,
       courseCount:document.querySelectorAll(".xcn-home-course").length
     }))()`);
-    assert.ok(homepage.editorial&&homepage.sections&&homepage.h1,"Editorial homepage structure missing");
+    assert.ok(homepage.editorial&&homepage.sections&&homepage.h1&&homepage.feature,"Editorial homepage structure missing");
     assert.equal(homepage.productLinks.length,3,"Three real workspaces expected");
     assert.ok(homepage.productLinks.includes("/cong-cu/mo-phong-word"));
     assert.ok(homepage.productLinks.includes("/cong-cu/trinh-chieu"));
