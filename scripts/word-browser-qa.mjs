@@ -255,6 +255,76 @@ try{
  })()`);
  assert.equal(clear,true,"Clear Formatting kept bold/italic wrappers");
  result("Clear All Formatting",{cleared:true});
+ // Denied OS clipboard must NEVER delete the selected original text.
+ await selectString("wordqa-verify");
+ const clipboardBefore=await evaluate("document.querySelector('.wsl-editor').textContent");
+ const disabledCopy=await evaluate(`(()=>{
+  window.__wordOriginalExec=document.execCommand;
+  document.execCommand=function(cmd,...args){
+   if(cmd==="cut")return false;
+   return window.__wordOriginalExec.call(document,cmd,...args);
+  };
+  Object.defineProperty(navigator,"clipboard",{
+   configurable:true,value:{writeText:()=>Promise.reject(new Error("clipboard permission denied"))}
+  });
+  return true;
+ })()`);
+ assert.equal(disabledCopy,true);
+ await click('button[aria-label="Cut — Cắt"]');
+ await wait(220);
+ const clipboardAfter=await evaluate("document.querySelector('.wsl-editor').textContent");
+ assert.equal(clipboardAfter,clipboardBefore,"Failed Cut must not remove ANY text");
+ assert.ok(await evaluate("document.querySelector('.wsl-editor').textContent.includes('wordqa-verify')"));
+ await evaluate("document.execCommand=window.__wordOriginalExec");
+ result("denied Cut keeps all content",{unchanged:true});
+ // Rich Sort must reorder entire DOM paragraphs (not insertText) and support
+ // both Undo and Redo keyboard shortcuts after a programmatic transformation.
+ const fixture=await evaluate(`(()=>{
+  const root=document.querySelector(".wsl-editor");
+  root.innerHTML="<p><b>Zulu</b> 2</p><p><i>Alpha</i> 1</p>";
+  root.dispatchEvent(new InputEvent("input",{bubbles:true,inputType:"insertFromPaste"}));
+  return root.textContent;
+ })()`);
+ assert.ok(fixture.includes("Zulu")&&fixture.includes("Alpha"));
+ await until("document.querySelectorAll('.wsl-editor .wsl-document-page > p').length===2");
+ const selectedSort=await evaluate(`(()=>{
+  const paragraphs=[...document.querySelectorAll('.wsl-editor .wsl-document-page > p')];
+  const range=document.createRange();range.selectNodeContents(paragraphs[0]);
+  range.setEndAfter(paragraphs[1]);
+  const selection=window.getSelection();selection.removeAllRanges();selection.addRange(range);
+  document.querySelector(".wsl-editor").focus();document.dispatchEvent(new Event("selectionchange"));
+  return selection.toString();
+ })()`);
+ assert.ok(selectedSort.includes("Zulu")&&selectedSort.includes("Alpha"));
+ await click('button[aria-label="Sort"]');
+ const richSorted=await until(`(()=>{
+  const parts=[...document.querySelectorAll('.wsl-editor .wsl-document-page > p')];
+  if(parts.length!==2||!parts[0].textContent.includes("Alpha"))return null;
+  return {first:parts[0].textContent,second:parts[1].textContent,
+   italic:!!parts[0].querySelector("i"),bold:!!parts[1].querySelector("b")};
+ })()`);
+ assert.ok(richSorted.italic&&richSorted.bold,"Sort flattened rich-text formatting");
+ result("Sort keeps paragraph style nodes",richSorted);
+ await focusEnd();
+ const shortcut=async key=>{
+  await call("Input.dispatchKeyEvent",{type:"rawKeyDown",key,code:"Key"+key.toUpperCase(),windowsVirtualKeyCode:key.toUpperCase().charCodeAt(0),modifiers:2});
+  await call("Input.dispatchKeyEvent",{type:"keyUp",key,code:"Key"+key.toUpperCase(),windowsVirtualKeyCode:key.toUpperCase().charCodeAt(0),modifiers:2});
+ };
+ await shortcut("z");
+ const undo=await until(`(()=>{
+  const parts=[...document.querySelectorAll(".wsl-editor .wsl-document-page > p")];
+  return parts.length===2&&parts[0].textContent.includes("Zulu")&&
+   parts[0].querySelector("b")&&parts[1].querySelector("i");
+ })()`);
+ assert.equal(undo,true,"Ctrl+Z failed to undo rich Sort");
+ await shortcut("y");
+ const redo=await until(`(()=>{
+  const parts=[...document.querySelectorAll(".wsl-editor .wsl-document-page > p")];
+  return parts.length===2&&parts[0].textContent.includes("Alpha")&&
+   parts[0].querySelector("i")&&parts[1].querySelector("b");
+ })()`);
+ assert.equal(redo,true,"Ctrl+Y failed to redo rich Sort");
+ result("Ctrl+Z / Ctrl+Y preserve rich sort",{undo:true,redo:true});
  assert.equal(errors.length,0,"Browser runtime exceptions: "+errors.join("; "));
  console.log("PASS WORD REAL CHROMIUM: shell, 3 viewports, native typing, bold, marks, local save, Ctrl+Enter, table, zoom, reload.");
 }catch(error){
