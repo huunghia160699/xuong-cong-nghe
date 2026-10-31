@@ -42,12 +42,19 @@ export async function middleware(request: NextRequest) {
     return redirected(`/dang-nhap?next=${encodeURIComponent(safeNextPath(path + request.nextUrl.search))}`);
   }
 
-  if (path.startsWith("/admin")) {
-    const { data: profile, error: profileError } = await supabase.from("profiles").select("role").eq("id", user.id).single();
-    if (profileError || profile?.role !== "admin") return redirected("/khong-co-quyen");
-  }
+  // Check the server-owned role even for direct URLs, not just UI CTA links.
+  const {data:profile,error:profileError}=await supabase.from("profiles")
+    .select("role").eq("id",user.id).single();
+  if(profileError||!["admin","student","teacher"].includes(profile?.role??""))
+    return redirected("/khong-co-quyen");
+  if(path.startsWith("/admin")&&profile?.role!=="admin")
+    return redirected("/khong-co-quyen");
 
   return response;
 }
 
-export const config = { matcher: ["/student/:path*", "/admin/:path*", "/doi-mat-khau"] };
+// The presentation lesson listing is public; only the actual lesson player is gated.
+export const config = { matcher: [
+ "/student/:path*", "/admin/:path*", "/doi-mat-khau",
+ "/cong-cu/mo-phong-word/:path*", "/cong-cu/trinh-chieu/:lessonId"
+] };

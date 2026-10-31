@@ -1,4 +1,6 @@
 import type { Metadata } from "next";
+import {requireToolAccess} from "@/lib/supabase/require-tool-access";
+export const dynamic="force-dynamic";
 import { notFound, permanentRedirect } from "next/navigation";
 import { allPresentationLessons, canonicalPresentationLessonId, findPresentationLesson, legacyPresentationLessonIds } from "@/features/presentations/catalog";
 import { PresentationPlayer } from "@/features/presentations/components/player";
@@ -26,6 +28,7 @@ export default async function LessonPresentation({
 }) {
   const {lessonId}=await params;
   const search=await searchParams;
+  await requireToolAccess("/cong-cu/trinh-chieu/"+encodeURIComponent(lessonId));
   const entry=findPresentationLesson(lessonId);
   if(!entry) notFound();
   // Old bookmarked ?class=hl-26-27 values still prefill the editable class prompt.
