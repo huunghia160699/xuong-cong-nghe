@@ -1348,7 +1348,34 @@ export function WordSimulator(){
     markChanged();
   }
   function changeCase(){changeCasePreservingStyles("toggle");}
-  function sortLines(){selectedChange(text=>text.split(/\r?\n/).sort((a,b)=>a.localeCompare(b,"vi")).join("\n"));}
+  function sortLines(){
+    restoreSelection();
+    const root=editor.current,selection=window.getSelection();
+    if(!root||!selection?.rangeCount||selection.isCollapsed){
+      setStatus("Chọn ít nhất hai đoạn văn để sắp xếp");return;
+    }
+    const range=selection.getRangeAt(0);
+    // Moving the actual paragraphs preserves nested B/I/U, links, colors and
+    // metadata. Replacing the selection with plain text silently destroyed it.
+    const paragraphs=Array.from(root.querySelectorAll<HTMLElement>(
+      "p,h1,h2,h3,h4,blockquote"
+    )).filter(block=>
+      (block.parentElement===root||block.parentElement?.hasAttribute("data-wsl-page"))&&
+      range.intersectsNode(block));
+    if(paragraphs.length<2){setStatus("Chọn ít nhất hai đoạn văn để sắp xếp");return;}
+    const sorted=[...paragraphs].sort((a,b)=>
+      (a.textContent??"").localeCompare(b.textContent??"","vi",{sensitivity:"base"}));
+    if(sorted.every((p,i)=>p===paragraphs[i])){setStatus("Các đoạn đã được sắp xếp");return;}
+    const marker=document.createComment("word-sort-anchor");
+    paragraphs[0].before(marker);
+    for(const block of sorted)marker.before(block);
+    marker.remove();
+    const after=document.createRange();
+    after.setStartBefore(sorted[0]);after.setEndAfter(sorted.at(-1)!);
+    selection.removeAllRanges();selection.addRange(after);
+    rememberSelection();markChanged();
+    setStatus("Đã sắp xếp các đoạn và giữ nguyên định dạng");
+  }
   function applyStyle(name:string){
     const tag:Record<string,string>={"Normal":"p","No Spacing":"p","Heading 1":"h1","Heading 2":"h2","Title":"h1","Subtitle":"h2"};
     blockCommand(tag[name]??"p");
@@ -1433,19 +1460,45 @@ export function WordSimulator(){
       restoreSelection();
       const selected=window.getSelection()?.toString()??"";
       if(!selected){setStatus("Chọn văn bản trước khi "+(name==="copy"?"sao chép":"cắt"));return;}
-      stagedClipboard.current=selected;
+      const selection=window.getSelection();
+      const saved=selection?.rangeCount?selection.getRangeAt(0).cloneRange():null;
       const success=document.execCommand(name,false);
+      if(name==="cut"&&!success){
+        // A failed cut MUST leave the document intact. Only a confirmed OS
+        // clipboard write can authorize a separate delete operation.
+        stagedClipboard.current=null;setClipboardMode(null);
+        if(!navigator.clipboard?.writeText){
+          setStatus("Không thể cắt: clipboard không khả dụng. Văn bản vẫn được giữ nguyên.");return;
+        }
+        void navigator.clipboard.writeText(selected).then(()=>{
+          const live=window.getSelection();
+          const sameSelection=!!(live?.rangeCount&&saved&&
+            editor.current?.contains(saved.startContainer)&&editor.current?.contains(saved.endContainer)&&
+            live.toString()===selected&&
+            live.getRangeAt(0).compareBoundaryPoints(Range.START_TO_START,saved)===0&&
+            live.getRangeAt(0).compareBoundaryPoints(Range.END_TO_END,saved)===0);
+          if(!sameSelection){
+            setStatus("Đã sao chép vào clipboard, nhưng vùng chọn đã đổi; không xóa chữ.");return;
+          }
+          if(!document.execCommand("delete",false)){
+            setStatus("Đã sao chép nhưng không thể xóa vùng chọn; văn bản vẫn còn.");return;
+          }
+          stagedClipboard.current=selected;setClipboardMode("cut");
+          rememberSelection();markChanged();
+          setStatus("Đã cắt. Chọn vị trí rồi bấm Paste; Esc để hủy.");
+        }).catch(()=>setStatus("Không thể cắt: clipboard bị từ chối. Văn bản vẫn được giữ nguyên."));
+        return;
+      }
       if(name==="cut"){
-        if(!success)document.execCommand("delete");
+        stagedClipboard.current=selected;setClipboardMode("cut");
         rememberSelection();markChanged();
       }else{
-        window.getSelection()?.collapseToEnd();
-        rememberSelection();
+        selection?.collapseToEnd();rememberSelection();
         if(!success&&navigator.clipboard?.writeText){
-          void navigator.clipboard.writeText(selected).catch(()=>{});
+          void navigator.clipboard.writeText(selected).catch(()=>setStatus("Không thể sao chép vào clipboard."));
         }
+        stagedClipboard.current=selected;setClipboardMode("copy");
       }
-      setClipboardMode(name);
       setPaintArmed(false);paintFormat.current=null;
       setStatus(name==="copy"?"Đã sao chép. Chọn vị trí rồi bấm Paste; Esc để hủy.":"Đã cắt. Chọn vị trí rồi bấm Paste; Esc để hủy.");
       return;
