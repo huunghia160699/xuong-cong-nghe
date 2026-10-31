@@ -8,7 +8,7 @@ export const VERIFIED_CONTACT_CHANNELS:readonly ContactChannel[]=[];
 export function getVerifiedContactChannels():readonly ContactChannel[]{
  if(process.env.XCN_CONTACT_EMAIL_APPROVED!=="true")return VERIFIED_CONTACT_CHANNELS;
  const address=(process.env.XCN_CONTACT_EMAIL??"").trim();
- if(address.length>254||! /^[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,}$/i.test(address))
+ if(address.length>254||! /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$/i.test(address))
   return VERIFIED_CONTACT_CHANNELS;
  return [{id:"email",label:"Email hỗ trợ chính thức",value:address,href:"mailto:"+address,
   description:"Kênh email đã được xác minh để nhận yêu cầu hỗ trợ và hợp tác."}];
