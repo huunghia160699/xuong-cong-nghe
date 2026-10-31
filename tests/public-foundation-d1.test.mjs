@@ -45,8 +45,8 @@ test("D2-D6 marketing pages render meaningful content and do not fabricate conta
  }
  const articleData=read("src/config/public-articles.ts");
  const contactData=read("src/config/public-contact.ts");
- assert.match(articleData,/EDITORIAL_ARTICLES:readonly PublicArticle\[\]=\[\]/);
- assert.match(contactData,/VERIFIED_CONTACT_CHANNELS:readonly ContactChannel\[\]=\[\]/);
+ for(const slug of ["gioi-thieu-he-sinh-thai-xuong-cong-nghe","huong-dan-bat-dau-voi-word-lab","huong-dan-su-dung-thu-vien-trinh-chieu"])assert.ok(articleData.includes(slug));
+ assert.match(contactData,/getVerifiedContactChannels/);
  assert.doesNotMatch(read("src/app/(public)/lien-he/page.tsx"),/<form\b|onSubmit|payment|checkout/i);
  const footer=read("src/components/footer.tsx");
  assert.doesNotMatch(footer,/href="#"/);

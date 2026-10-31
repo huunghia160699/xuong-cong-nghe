@@ -3,12 +3,12 @@ import assert from "node:assert/strict";
 import {readFileSync,existsSync} from "node:fs";
 const read=path=>readFileSync(path,"utf8");
 
-test("D5 news has seven topic filters, URL search, debounce and no fake published articles",()=>{
+test("D5 original published articles have searchable index and detail pages",()=>{
  const list=read("src/config/public-articles.ts");
  const client=read("src/components/public-news-explorer.tsx");
  const page=read("src/app/(public)/tin-tuc/page.tsx");
  for(const name of ["Hướng dẫn sử dụng","Tin học & ứng dụng","Giáo dục số","AI trong dạy học","Cập nhật sản phẩm","STEM & dự án"])assert.ok(list.includes(name));
- assert.match(list,/EDITORIAL_ARTICLES:readonly PublicArticle\[\]=\[\]/);
+ for(const slug of ["gioi-thieu-he-sinh-thai-xuong-cong-nghe","huong-dan-bat-dau-voi-word-lab","huong-dan-su-dung-thu-vien-trinh-chieu"])assert.ok(list.includes('slug:"'+slug+'"'));
  assert.match(list,/article.status==="published"/);
  assert.match(client,/useSearchParams/);
  assert.match(client,/setTimeout\(/);
@@ -19,14 +19,21 @@ test("D5 news has seven topic filters, URL search, debounce and no fake publishe
  assert.match(client,/router\.replace\(/);
  assert.match(page,/canonical:"\/tin-tuc"/);
  assert.doesNotMatch(page,/PublicPendingPage/);
- assert.ok(!existsSync("src/app/(public)/tin-tuc/[slug]/page.tsx"),"No unapproved article routes");
+ assert.ok(existsSync("src/app/(public)/tin-tuc/[slug]/page.tsx"));
+ const detail=read("src/app/(public)/tin-tuc/[slug]/page.tsx");
+ assert.match(detail,/getPublishedArticle\(/);
+ assert.match(detail,/notFound\(\)/);
+ assert.match(detail,/schema.org/);
 });
 test("D6 contact only publishes verified channels, no fake submission",()=>{
  const data=read("src/config/public-contact.ts");
  const page=read("src/app/(public)/lien-he/page.tsx");
- assert.match(data,/VERIFIED_CONTACT_CHANNELS:readonly ContactChannel\[\]=\[\]/);
+ assert.match(data,/getVerifiedContactChannels/);
+ assert.match(data,/XCN_CONTACT_EMAIL_APPROVED/);
+ assert.match(read(".env.example"),/XCN_CONTACT_EMAIL_APPROVED=false/);
  assert.match(page,/getContactTopic/);
  assert.match(page,/Kênh liên hệ đang được cập nhật/);
+ assert.match(page,/getVerifiedContactChannels\(\)/);
  assert.match(page,/\/lien-he\?topic=/);
  assert.match(page,/canonical:"\/lien-he"/);
  assert.match(page,/Biểu mẫu gửi thông tin sẽ chỉ xuất hiện/);
