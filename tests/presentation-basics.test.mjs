@@ -1530,6 +1530,7 @@ test("Unselected caret: x₂/x² enters typing mode, second click exits; switchi
  };
  const created=[];
  const harness={
+  beginHistory(){},
   window:{getSelection:()=>selection},
   editor:{current:root},
   formatActive:button,
