@@ -58,6 +58,7 @@ export function PublicNewsExplorer({articles}:{articles:readonly PublicArticle[]
     aria-pressed={value===category} onClick={()=>choose(value)}>{value}</button>)}
   </div>
   <p className="xcn-news-count" role="status" aria-live="polite">{matching.length} bài viết đã xuất bản phù hợp</p>
+  {(query||category!=="Tất cả")&&<button type="button" onClick={clear} className="xcn-news-clear"><X size={17} aria-hidden="true"/> Xóa bộ lọc</button>}
   {matching.length>0
    ? <div className="xcn-news-grid">
     {matching.map(article=><article className="xcn-news-card" key={article.slug}>
@@ -73,7 +74,6 @@ export function PublicNewsExplorer({articles}:{articles:readonly PublicArticle[]
     <p>{articles.length===0
      ?"Chưa có bài viết chính thức được xuất bản. Bộ lọc và tìm kiếm đã sẵn sàng khi nội dung được duyệt."
      :"Hãy thử từ khóa hoặc chủ đề khác để tìm nội dung phù hợp."}</p>
-    {(query||category!=="Tất cả")&&<button type="button" onClick={clear} className="xcn-news-clear"><X size={17} aria-hidden="true"/> Xóa bộ lọc</button>}
     <Link className="xcn-inline-link" href="/#he-sinh-thai">Khám phá công cụ đang có <ArrowRight size={17} aria-hidden="true"/></Link>
    </div>}
  </>;
