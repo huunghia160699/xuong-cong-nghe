@@ -491,3 +491,11 @@ Kết quả kiểm tra thực tế trước sửa (người dùng báo): Bold/It
 - **Không lẫn các cấp QA:** unit DOM mock ≠ Chromium thật; Chromium local Demo ≠ Preview Live JWT ≠ Production. Các chức năng file import, hình ảnh, Copy/Cut/Paste khi bị chặn quyền, Undo/Redo khi DOM reflow, line gutter, auto pagination nhiều đoạn, Superscript caret mode và IME tiếng Việt vẫn cần browser E2E.
 - **Risk P0:** Cut không nên `delete` nếu chưa đảm bảo clipboard nhận được dữ liệu. **Risk P1:** Sort dùng selectedText replacement nên có thể mất rich-text markup; Undo/Redo trên thay đổi DOM trực tiếp không được đảm bảo.
 - **Không sửa code editor** ở đợt tổng duyệt. Tập trung test riêng để tránh phát hành Word quá sớm. Các lần sửa engine sau vẫn tuân quy trình phát hành của module và release gate chung.
+
+## 31/10/2026 — P0/P1 sửa Cut, Undo/Redo và Sort giữ định dạng
+
+- Cut: **chỉ xóa khi clipboard thao tác thành công**; nếu `execCommand("cut")` thất bại thì ưu tiên `navigator.clipboard.writeText` và phải xác nhận promise resolve + vùng chọn không đổi mới được xóa. Bị từ chối hoặc vùng chọn đổi thì **giữ toàn bộ văn bản** và hiển thị trạng thái minh bạch.
+- Undo/Redo: dùng bounded history 45 trạng thái HTML đã sanitize; hỗ trợ click Undo/Redo và Ctrl+Z/Ctrl+Y/Cmd+Z. Gộp các input liên tục trong khoảng 550ms, không ghi page wrapper/gutter hoặc thư mục server vào lịch sử. Khi khôi phục phải giữ trang có nội dung hợp lệ, cập nhật Ribbon/statistics và chạy pagination lại.
+- Sort: sắp xếp **các đoạn được chọn** bằng di chuyển node DOM thật, tuyệt đối không `insertText` cả vùng đã có format. Nếu chọn dưới 2 đoạn, thông báo yêu cầu chọn đủ hai đoạn; không thay đổi nội dung.
+- **Bằng chứng:** [Actions #41177167181](https://github.com/huunghia160699/xuong-cong-nghe/actions/runs/41177167181) PASS 242 unit, type/build, Chromium Cut denied giữ chữ, Sort giữ B/I, Ctrl+Z undo, Ctrl+Y redo. Local Demo, không phải Production.
+- **Còn phải kiểm:** lịch sử dài đa trang, IME Telex, Undo/Redo với bảng/ảnh/đổi lề, Ctrl+C/X/V trên Chrome/Edge khi clipboard bị deny, anchor selection, bài nhập/ xuất. Không release Production/không tuyên bố Word ngang MS Word khi chưa được nghiệm thu.

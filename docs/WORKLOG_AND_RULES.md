@@ -31,6 +31,10 @@ Không viết lại cả nhật ký cũ. Một task nhiều commit có thể th�
 
 ## III. Nhật ký mới (từ 30/10/2026)
 
+### 2026-10-31 — [WORD LAB P0/P1] Bảo toàn dữ liệu & lịch sử
+- **DONE (PR #73):** Cut deny → giữ chữ; Sort dùng paragraph DOM → không mất B/I; history 45 checkpoint hỗ trợ Ctrl+Z/Y. Chromium #41177167181 PASS: 242 unit + type/build + Cut denied / Sort rich / Undo → Redo.
+- **CÒN MỞ:** clipboard native khác browser, IME, undo nhiều trang, ảnh/table/import; Word Lab vẫn `building`. Admin Roadmap v14/21 epics; QA full chưa tick. Không merge/release Production.
+
 ### 2026-10-31 — [WORD LAB] Tổng duyệt Chromium
 - **QA PASS:** Actions #41175860593 SHA `5bc3fd1d`, 242 unit/0 fail, type/build, Chrome 360/768/1280; B/I/Sub on/off, Case giữ markup, Clear, Ctrl+Enter gõ trang 2, bảng, ¶, zoom, local draft reload.
 - **P0/P1 CHƯA XONG:** Cut fallback có nguy cơ mất chữ, Sort mất markup, chưa E2E Undo/clipboard/IME/import ảnh + auto pagination. Chi tiết: `WORD_SIMULATOR_CONTROL_AUDIT.md`.
@@ -63,12 +67,8 @@ Không viết lại cả nhật ký cũ. Một task nhiều commit có thể th�
 - **NOT IMPLEMENTED:** chưa có 4 route marketing mới, chưa đổi UI/Auth/RLS/Admin/Word/Slides, chưa có billing/CMS/contact thật. Giá, bài viết, liên hệ không được bịa.
 - **NEXT:** PR docs CI PASS; D1 public shell/nav/footer, D2 homepage, D3–D6 từng trang, D7 QA/release. Mỗi đợt phải có checkpoint riêng.
 
-### 2026-10-31 — [PRODUCT/NAV + LAB-MANAGER] Tổng hợp 4 website, lưu ý tưởng quản lý phòng máy
-- **Yêu cầu:** đề xuất mục Navbar trang chủ và liệt kê nhóm chức năng dựa trên VniTeach, Đề Thi Số, DUA Edu, Môn Tin học; bổ sung ý tưởng quản lý phòng máy “giống net sp” để làm sau.
-- **DONE (nghiên cứu/đề xuất):** nhóm nav tương lai `Khóa học · Thực hành · Kiểm tra · Công cụ · Tài nguyên · Dự án · Giáo viên`; liệt kê submenu, nguồn gốc ý tưởng và phân biệt route đã tồn tại với tính năng dự kiến tại [PRODUCT_AND_MODULES.md](PRODUCT_AND_MODULES.md) mục 2A.
-- **DONE (backlog):** LAB-MANAGER tương lai, tạm tham khảo NetSupport School: sơ đồ máy/phòng, trạng thái, phát màn hình, gửi/thu bài, hỗ trợ và giới hạn web/app theo buổi. Ghi rõ yêu cầu agent/thiết bị, consent, phân quyền lớp/phòng, audit và kiểm thử an toàn; ưu tiên **P3** ở [ROADMAP.md](ROADMAP.md), nguồn ghi tại [WEBSITE_REFERENCES.md](WEBSITE_REFERENCES.md).
-- **NOT IMPLEMENTED:** không thay `src/config/navigation.ts`, header, route, API, Supabase, Vercel env/DNS hay triển khai agent điều khiển; mọi menu và công cụ nêu trong bản đề xuất vẫn là ý tưởng cho tới khi có PR xây dựng riêng.
-- **Test/PR:** chỉ tài liệu; ghi thông tin CI/merge tại PR khi được xác minh.
+### 2026-10-31 — [PRODUCT/NAV + LAB-MANAGER] Ý tưởng để làm sau
+- Đề xuất nav từ 4 website và LAB-MANAGER kiểu phòng máy; chi tiết/nội dung tham khảo tại `PRODUCT_AND_MODULES.md` mục 2A, `ROADMAP.md`, `WEBSITE_REFERENCES.md`. Backlog P3 cần agent, consent, role, audit; **chưa triển khai code/API/database/agent**.
 
 ### 2026-10-31 — [AUTH/ROADMAP → TEACHER] Nghiệm thu JWT/RLS/khôi phục staging thành công
 - **DONE — QA trên máy của chủ dự án (báo cáo kết quả đã lọc secrets):** `READ-ONLY PASS` với JWT đăng nhập thật riêng của Admin và Student; Admin được SELECT Roadmap, Student bị RLS từ chối; bộ `verify-roadmap-staging.mjs` trả `STAGING ACCEPTANCE PASS` cho thêm/sửa/xóa, khóa phiên bản, sao lưu và khôi phục.

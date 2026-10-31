@@ -87,3 +87,19 @@ Ngày: 15/10/2026. Nguồn hình: ảnh người dùng cung cấp, gồm Clipboa
 - **P2:** Find/Replace hoàn chỉnh, nâng Format Painter, tăng lựa chọn Insert và bổ sung hỗ trợ DOCX chỉ sau khi có engine thật.
 
 **Quyết định:** Word Lab vẫn `building`, không tự tick nhóm bảng/ảnh/in/lưu nháp là hoàn tất; bộ QA Chrome core là mục riêng đã PASS. Không thay code trình soạn thảo, không deploy Production khi chỉ yêu cầu tổng duyệt. Admin Roadmap Production metadata CAS v12→v13, 21 epics giữ nguyên; Word epic order 11, chỉ thêm QA PASS và việc còn mở.
+
+## Đợt sửa an toàn dữ liệu & lịch sử chỉnh sửa — 31/10/2026
+
+**Đã sửa code ở PR #73:** `src/features/word-simulator/word-simulator.tsx`; test Chromium trong `scripts/word-browser-qa.mjs`.
+
+| Ưu tiên | Vấn đề trước đây | Biện pháp hiện tại | Bằng chứng |
+|---|---|---|---|
+| P0 | `cut` native trả false nhưng `delete` vẫn chạy, nguy cơ mất chữ nếu clipboard chặn | Không xóa nếu clipboard bị từ chối; nếu dùng async `writeText`, chỉ xóa sau khi ghi thành công, vùng chọn vẫn y nguyên, thao tác `delete` thành công. Không gọi cut thành công khi đã hủy | Chromium mô phỏng clipboard denial, xác nhận `textContent` giữ nguyên |
+| P1 | `sortLines` thay toàn bộ selection bằng `insertText`, làm phẳng định dạng | Chỉ Sort khi chọn >=2 đoạn ở cấp trang; **di chuyển nguyên các phần tử đoạn** với node định dạng gốc; không viết lại rich text | Chromium đảo Alpha/Zulu, vẫn giữ `<i>`/ `<b>` |
+| P1 | `document.execCommand("undo"/"redo")` không bao phủ thay đổi trực tiếp DOM | Lịch sử snapshot văn bản đã sanitize (không chứa wrapper trang A4), tối đa 45 checkpoint, gom nhập ký tự liên tiếp 550ms; Undo/Redo qua Ribbon và Ctrl+Z/Ctrl+Y | Chromium Sort → Ctrl+Z → Ctrl+Y khôi phục đúng thứ tự và B/I |
+
+**QA hoàn thành:** GitHub Actions [#41177167181](https://github.com/huunghia160699/xuong-cong-nghe/actions/runs/41177167181), commit code+QA `69cca519` **PASS**: 242 unit, 76 bài test phụ, typecheck, production build, public/admin browser smoke và Word Chromium. Bộ kiểm tra còn bao gồm Ctrl+Enter và gõ tiếp ở trang 2, Save/Reload và các Ribbon core. Artifact chụp 360/768/1280 và `audit-results.json` trong Actions.
+
+**Giới hạn chưa vượt QA:** snapshot-based history chưa được kiểm thử đủ với gõ IME tiếng Việt dài, tài liệu lớn nhiều trang, mọi thao tác định dạng/drag/drop; trường hợp Cut native báo thành công nhưng quyền clipboard thực tế không đồng nhất ở trình duyệt khác; Paste Rich, ảnh và round-trip HTML/TXT. Sort hiện chủ động giới hạn các đoạn đầy đủ ở top-level, không thực hiện sort cell/bảng hoặc một phần của một dòng. Các mục này cần test bổ sung trước Production.
+
+**Trạng thái:** Word Lab tiếp tục `building`, **không coi toàn bộ Word Lab đã hoàn thành**. Admin Roadmap version 14, 21 epics, Word epic order 11; Cut và Undo/Sort được đánh dấu đã sửa/Chromium PASS, mục QA mở rộng vẫn `done:false`. PR #73 còn draft; không merge Production.

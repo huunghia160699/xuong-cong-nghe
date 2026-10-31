@@ -28,6 +28,12 @@
 5. **P2 — Teacher Studio:** **mở thiết kế và phát triển staging** cho quản lý lớp, thành viên, giao bài; chỉ bật Production sau test role `teacher` và RLS ownership/cross-class, E2E và phê duyệt phát hành.
 6. **P2–P3 — Live Quiz, Excel/Coding Labs, AI/trò chơi:** triển khai từng module, không mở nhiều công cụ khi data model chưa ổn.
 
+## Word Lab — đợt sửa an toàn dữ liệu (31/10/2026)
+
+- **DONE (code + Chromium):** Cut fail-safe không xóa văn bản khi clipboard bị chặn; Sort đổi thứ tự đoạn nhưng vẫn giữ B/I; Undo/Redo lưu checkpoint cho DOM transform, Ctrl+Z → Ctrl+Y phục hồi rich Sort. Actions [#41177167181](https://github.com/huunghia160699/xuong-cong-nghe/actions/runs/41177167181) PASS: 242 unit, 76 tests phụ, type/build, Word Chrome.
+- **CÒN MỞ:** QA đa trình duyệt/IME tiếng Việt, lịch sử dài nhiều trang, quyền clipboard native, Undo/Redo bảng/ảnh/pagination, rich paste, import/export, hình; không tick hoàn thiện Word Lab. [Biên bản](WORD_SIMULATOR_CONTROL_AUDIT.md).
+- **Roadmap Admin v14/21 epics:** Word Lab order 11, status `building`; thêm 2 tác vụ đã sửa và 1 tác vụ QA E2E tiếp tục mở. PR #73 draft, chưa merge/release Production.
+
 ## Word Lab — tổng duyệt chức năng (31/10/2026)
 
 - **QA Chromium core PASS:** GitHub Actions [#41175860593](https://github.com/huunghia160699/xuong-cong-nghe/actions/runs/41175860593), 242 unit + typecheck/build, Word browser QA 360/768/1280: gõ, B/I, Subscript toggle, Change Case giữ style, Clear, ¶, Ctrl+Enter + gõ trang 2, bảng, zoom, local draft/reload.
