@@ -161,6 +161,15 @@ try{
  })()`,10000);
  await screenshot("word-ctrl-enter-page-break");
  result("Ctrl+Enter new A4 page",pagination);
+ // The user's critical regression: typing AFTER Ctrl+Enter must start on page two.
+ await call("Input.insertText",{text:"SECOND-PAGE-QA"});
+ const onSecond=await until(`(()=>{
+  const pages=[...document.querySelectorAll('.wsl-document-page')];
+  return pages.length>=2&&pages[1].textContent?.includes('SECOND-PAGE-QA')&&
+    !pages[0].textContent?.includes('SECOND-PAGE-QA');
+ })()`);
+ assert.equal(onSecond,true,"Caret after Ctrl+Enter must type into page two");
+ result("caret stays on second page",{secondPageText:true});
  // Insert a real table via the toolbar, not direct DOM injection.
  assert.equal(await focusEnd(),true);
  await click('.wsl-tab:not(.is-active)' + ':nth-child(3)'); // Insert is third tab after File/Home.
@@ -194,6 +203,58 @@ try{
  }))()`);
  assert.ok(restored.text&&restored.tables>=1&&restored.breaks>=1,"Draft rehydration dropped table/page break/text");
  result("save reload persistence",restored);
+ // Real browser tests of delicate formatting that previously lost selection/markup.
+ await selectString("WORDQA-VERIFY");
+ await click('button[aria-label="Italic"]');
+ const italic=await evaluate(`(()=>{
+   const w=document.createTreeWalker(document.querySelector('.wsl-editor'),NodeFilter.SHOW_TEXT);
+   let n;while(n=w.nextNode())if(n.data.includes('WORDQA-VERIFY'))return !!n.parentElement.closest('i,em');
+   return false;
+ })()`);
+ assert.equal(italic,true,"Italic did not preserve the selected text");
+ result("selected Italic DOM",{italic:true});
+ await selectString("WORDQA-VERIFY");
+ await click('button[aria-label="Subscript"]');
+ const sub=await evaluate(`(()=>{
+   const w=document.createTreeWalker(document.querySelector('.wsl-editor'),NodeFilter.SHOW_TEXT);
+   let n;while(n=w.nextNode())if(n.data.includes('WORDQA-VERIFY'))return !!n.parentElement.closest('sub');
+   return false;
+ })()`);
+ assert.equal(sub,true,"Subscript does not format the selected text");
+ await selectString("WORDQA-VERIFY");
+ await click('button[aria-label="Subscript"]');
+ const unsub=await evaluate(`(()=>{
+   const w=document.createTreeWalker(document.querySelector('.wsl-editor'),NodeFilter.SHOW_TEXT);
+   let n;while(n=w.nextNode())if(n.data.includes('WORDQA-VERIFY'))return !n.parentElement.closest('sub');
+   return false;
+ })()`);
+ assert.equal(unsub,true,"Subscript did not toggle OFF for selected text");
+ result("Subscript on/off selected text",{applied:true,removed:true});
+ await selectString("WORDQA-VERIFY");
+ await click('button[aria-label="Mở tùy chọn Change Case"]');
+ const changed=await evaluate(`(()=>{
+  const b=[...document.querySelectorAll('[role="menuitem"]')].find(x=>x.textContent?.trim()==="chữ thường");
+  if(!b)return false;b.click();return true;
+ })()`);
+ assert.equal(changed,true,"Change Case option not found");
+ await until("document.querySelector('.wsl-editor')?.textContent?.includes('wordqa-verify')");
+ const preserved=await evaluate(`(()=>{
+  const w=document.createTreeWalker(document.querySelector('.wsl-editor'),NodeFilter.SHOW_TEXT);
+  let n;while(n=w.nextNode())if(n.data.includes('wordqa-verify'))
+    return !!n.parentElement.closest('b,strong')&&!!n.parentElement.closest('i,em');
+  return false;
+ })()`);
+ assert.equal(preserved,true,"Change Case erased mixed bold/italic formatting");
+ result("Change Case preserves inline styles",{lowercase:true,bold:true,italic:true});
+ await selectString("wordqa-verify");
+ await click('button[aria-label="Clear All Formatting"]');
+ const clear=await evaluate(`(()=>{
+  const w=document.createTreeWalker(document.querySelector('.wsl-editor'),NodeFilter.SHOW_TEXT);
+  let n;while(n=w.nextNode())if(n.data.includes('wordqa-verify'))return !n.parentElement.closest('b,strong,i,em');
+  return false;
+ })()`);
+ assert.equal(clear,true,"Clear Formatting kept bold/italic wrappers");
+ result("Clear All Formatting",{cleared:true});
  assert.equal(errors.length,0,"Browser runtime exceptions: "+errors.join("; "));
  console.log("PASS WORD REAL CHROMIUM: shell, 3 viewports, native typing, bold, marks, local save, Ctrl+Enter, table, zoom, reload.");
 }catch(error){
