@@ -144,6 +144,8 @@ jobs:
           ADMIN_QA_OUTPUT=/tmp/xcn-admin-qa node scripts/admin-browser-qa.mjs
           # D1 public foundation: 5 marketing routes x 360/768/1280/1920, mobile menu + Escape.
           PUBLIC_QA_OUTPUT=/tmp/xcn-public-qa node scripts/public-browser-qa.mjs
+          # Word Lab: genuine Chromium typing, selection, Ribbon commands and A4 pagination.
+          WORD_QA_OUTPUT=/tmp/xcn-word-qa node scripts/word-browser-qa.mjs
 
       - name: Upload Admin visual QA screenshots
         if: always()
@@ -160,5 +162,14 @@ jobs:
         with:
           name: public-d1-browser-qa-screenshots
           path: /tmp/xcn-public-qa/*.png
+          if-no-files-found: ignore
+          retention-days: 7
+
+      - name: Upload Word browser QA evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: word-browser-qa-evidence
+          path: /tmp/xcn-word-qa/
           if-no-files-found: ignore
           retention-days: 7
