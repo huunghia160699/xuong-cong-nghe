@@ -1,7 +1,7 @@
 import type {Metadata} from "next";
 import Link from "next/link";
 import {ArrowRight,ArrowUpRight,BookOpen,Headset,Lightbulb,Mail,School,ShieldCheck,Users} from "lucide-react";
-import {CONTACT_TOPICS,VERIFIED_CONTACT_CHANNELS,getContactTopic,type ContactTopic} from "@/config/public-contact";
+import {CONTACT_TOPICS,getVerifiedContactChannels,getContactTopic,type ContactTopic} from "@/config/public-contact";
 
 export const metadata:Metadata={
  title:"Liên hệ & Hợp tác",
@@ -26,6 +26,7 @@ export default async function ContactPage({searchParams}:{searchParams:Promise<{
  const params=await searchParams;
  const topic=getContactTopic(params.topic);
  const selected=CONTACT_TOPICS[topic];
+ const channels=getVerifiedContactChannels();
  return <main className="xcn-marketing-main">
   <section className="xcn-marketing-page-hero xcn-contact-hero" aria-labelledby="contact-title"><div className="xcn-container">
    <span className="xcn-kicker">Xưởng Công Nghệ / Liên hệ & Hợp tác</span>
@@ -47,8 +48,8 @@ export default async function ContactPage({searchParams}:{searchParams:Promise<{
   </div></section>
   <section id="kenh-lien-he" className="xcn-marketing-section xcn-marketing-surface" aria-labelledby="contact-channels-title"><div className="xcn-container xcn-method-layout">
    <div><span className="xcn-kicker">02 / Kênh chính thức</span><h2 id="contact-channels-title">Thông tin liên hệ được xác minh.</h2><p className="xcn-section-intro">Chúng tôi không công bố email, số điện thoại hoặc đường dẫn mạng xã hội khi chưa xác nhận đúng chủ sở hữu và kênh tiếp nhận.</p></div>
-   {VERIFIED_CONTACT_CHANNELS.length>0
-    ? <ul className="xcn-contact-channel-list">{VERIFIED_CONTACT_CHANNELS.map(channel=><li key={channel.id}><Mail size={20} aria-hidden="true"/><div><strong>{channel.label}</strong><p>{channel.description}</p><a href={channel.href} rel="noopener noreferrer">{channel.value} <ArrowUpRight size={15} aria-hidden="true"/></a></div></li>)}</ul>
+   {channels.length>0
+    ? <ul className="xcn-contact-channel-list">{channels.map(channel=><li key={channel.id}><Mail size={20} aria-hidden="true"/><div><strong>{channel.label}</strong><p>{channel.description}</p><a href={channel.href} rel="noopener noreferrer">{channel.value} <ArrowUpRight size={15} aria-hidden="true"/></a></div></li>)}</ul>
     : <div className="xcn-contact-not-ready"><Mail size={30} aria-hidden="true"/><h3>Kênh liên hệ đang được cập nhật.</h3><p>Chưa có địa chỉ email, hotline, Zalo hay liên kết mạng xã hội được phê duyệt để công bố. Chúng tôi chưa tiếp nhận lời nhắn trực tiếp trên trang này.</p><div className="xcn-contact-notice"><ShieldCheck size={19} aria-hidden="true"/><span>Biểu mẫu gửi thông tin sẽ chỉ xuất hiện khi có hệ thống tiếp nhận, bảo vệ dữ liệu và chống spam.</span></div></div>}
   </div></section>
   <section className="xcn-marketing-section" aria-labelledby="contact-faq-title"><div className="xcn-container xcn-faq-layout">
