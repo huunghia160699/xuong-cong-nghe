@@ -31,6 +31,10 @@ Không viết lại cả nhật ký cũ. Một task nhiều commit có thể th�
 
 ## III. Nhật ký mới (từ 30/10/2026)
 
+### 2026-10-31 — [D5–D7] PR #73
+- **CODE:** D5 lọc/tìm URL, empty; D6 chọn nhu cầu, kênh xác minh; D7 SEO, Chromium 6 viewport, local Demo. **BLOCKED:** CMS, liên hệ/backend, JWT Live, release Production.
+
+
 ### 2026-10-31 — [PUBLIC D2–D4 / ROADMAP 21] GitHub-only
 - **DONE:** Admin roadmap epic 21 chuyển order 20 → 4, sau Public Landing, CAS v7→v8; tick D2–D4 code/CI v8→v9, giữ 21 epics và audit.
 - **CODE:** PR #73 (draft), nhánh `feat/public-website-d2-d4-20261031`: D2 Product Atlas/catalog trạng thái và filter, D3 Giới thiệu 7 phần, D4 Bảng giá 3 nhóm/FAQ/so sánh không giá giả. CSS responsive, test, tài liệu cập nhật. D5–D6 vẫn placeholder.

@@ -17,6 +17,24 @@ Mở http://localhost:3000. Mặc định ở chế độ Demo nếu `NEXT_PUBLI
 
 Nếu cần Supabase **development riêng**: tạo `.env.local` theo `.env.example`, dùng cấu hình public dev, reconciled migrations và redirect URLs; xem [docs/SUPABASE_SETUP.md](docs/SUPABASE_SETUP.md). Không dùng Production để thử ghi/role.
 
+### Chạy local Windows khi Vercel chưa cập nhật
+
+Trong PowerShell, cài Node.js 22 và Git; lần đầu cần Internet để tải các thư viện và font:
+
+```powershell
+git clone https://github.com/huunghia160699/xuong-cong-nghe.git
+cd xuong-cong-nghe
+git fetch origin feat/public-website-d2-d4-20261031
+git switch -c feat/public-website-d2-d4-20261031 --track origin/feat/public-website-d2-d4-20261031
+corepack enable
+corepack prepare pnpm@9 --activate
+pnpm install --frozen-lockfile
+Copy-Item .env.example .env.local
+pnpm dev
+```
+
+Mở http://localhost:3000, nhấn `Ctrl+C` để dừng. Những lần sau có thể chạy `START-WEB-OFFLINE.cmd` (mở Demo local, không dùng Vercel hoặc dữ liệu Supabase Production). Với thư mục đã có: `git fetch origin`, `git switch feat/public-website-d2-d4-20261031`, `git pull --ff-only`; không tạo lại nhánh. Lần biên dịch đầu có thể cần mạng để tải font Google nếu chưa cache. Dùng `main` sẽ chỉ thấy giao diện Production cũ cho tới khi PR được merge.
+
 ## Chạy test và release
 
 ```bash

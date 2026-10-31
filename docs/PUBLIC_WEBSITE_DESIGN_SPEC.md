@@ -334,3 +334,9 @@ Acceptance chung:
 
 
 **Cập nhật implementation 31/10/2026 — D2–D4:** đã có mã nguồn trên nhánh `feat/public-website-d2-d4-20261031` (homepage Product Atlas, About 7 sections, Pricing so sánh/FAQ không fake giá). Đã tạo registry `src/config/public-catalog.ts` với 3 trạng thái thực; D5/D6 giữ placeholder; D2–D4 đã PASS CI/Chromium: 234 unit, typecheck, build, 5 trang × 4 viewport và Atlas filter/reset (run #41114499566, SHA `177014272`). D7 vẫn cần E2E auth/role và quyết định phát hành. Không tự coi đã deploy. Quyền truy cập công cụ Word/Slides hiện là route công khai được giới thiệu/preview, không gắn nhãn bảo vệ Auth ở client nếu middleware chưa chặn. Không công bố entitlement/giá khi chưa duyệt.
+
+
+### Implementation 31/10/2026 — D5–D7 (GitHub PR #73)
+- D5: `/tin-tuc` có 7 bộ lọc, tìm kiếm đồng bộ `?q=&category=`, empty-state; `src/config/public-articles.ts` chưa có bài duyệt, chỉ xuất bài `published`. Không tạo bài/CMS giả.
+- D6: `/lien-he?topic=` hỗ trợ support/pricing/school/feedback/partnership, FAQ, chỉ hiển thị kênh có xác minh qua `src/config/public-contact.ts`. Chưa có email/hotline/social thật, backend/consent nên không bật form.
+- D7: `sitemap.ts`, `robots.ts`, Chromium 6 viewport, lọc Tin tức, URL liên hệ, SEO và FAQ; `START-WEB-OFFLINE.cmd` chạy Demo local. Chưa release Production, QA JWT thật và phê duyệt thông tin còn là gate.
