@@ -26,6 +26,11 @@ test("homepage uses a restrained public palette with no gradients or auto-genera
   assert.match(home,/id="he-sinh-thai"/);
   assert.match(home,/id="khoa-hoc"/);
   assert.match(home,/id="du-an"/);
+  assert.match(home,/Học đến đâu,/);
+  assert.match(publicCss,/--xcn-home-copy:clamp\(17px,\.98vw,19px\)/);
+  assert.match(publicCss,/grid-template-columns:minmax\(0,46fr\) minmax\(0,54fr\)/);
+  assert.doesNotMatch(home,/xcn-new-hero-helper|xcn-new-hero-subline|xcn-new-eyebrow|xcn-new-benefits/);
+  assert.doesNotMatch(hero,/xcn-hero-showcase-footnote|scene\.note/);
   assert.match(hero,/prefers-reduced-motion: reduce/);
   assert.match(hero,/window\.clearInterval\(timer\)/);
   assert.doesNotMatch(home,/xcn-home-index|\d+\s*\/\s*HỆ SINH THÁI|Learn by doing|text-cyan/);

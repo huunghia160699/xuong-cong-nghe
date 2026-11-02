@@ -31,9 +31,9 @@ Không viết lại cả nhật ký cũ. Một task nhiều commit có thể th�
 
 ## III. Nhật ký mới (từ 30/10/2026)
 
-### 2026-11-01 — [PUBLIC HOME] Full redesign local
-- **CODE:** Hero 3 cảnh Word/Slides/Quiz (5,2s, manual/reduced motion), toàn bộ homepage, gutter desktop 120px.
-- **QA:** unit/typecheck/build/Chromium CI; thị giác Windows còn chờ duyệt. **NO DEPLOY**, Production và Admin Roadmap không đổi.
+### 2026-11-02 — [PUBLIC HOME] Chữ lớn, rõ, ít lời dư
+- **CODE:** giữ slogan chính; rút gọn Hero, bỏ eyebrow/helper/benefits và chú thích trùng. Font fluid clamp theo viewport, Hero desktop 46/54, tablet/mobile một cột; carousel giữ 3 cảnh.
+- **QA:** CI unit/typecheck/build/Chromium 360/768/1280/1920; tình trạng sẽ đối chiếu run sau push. Không deploy hay sửa Production Supabase/Admin Roadmap.
 
 ### 2026-10-31 — [PUBLIC HOME] Thiết kế cũ, đã được bản 01/11 thay thế
 - **Lịch sử:** trang chủ dạng editorial; CI PASS, chưa deploy. Đã tiếp nhận phản hồi cần thiết kế lại.

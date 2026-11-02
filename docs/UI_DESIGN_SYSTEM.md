@@ -30,6 +30,12 @@ Trang chủ dùng layout biên tập: cỡ chữ có phân cấp, chỉ một b�
 - Các phần còn lại là nhóm nội dung editorial với nền phẳng/màu pastel dịu, ít bo góc, không dày border; không dùng nhãn `01 /` hay chữ chéo trang trí. Minh họa nội bộ, không sao chép Dribbble, không giới thiệu tính năng AI chưa triển khai.
 - Kiểm tra toàn trang tại 360/768/1280/1920 và focus/keyboard. Chỉ thay Public Website, không thay Admin/Word/Slides; không deploy online trước yêu cầu rõ ràng.
 
+### 02/11/2026 — Tỷ lệ chữ và nội dung ngắn trên trang chủ
+
+- Header/hero giữ cỡ chữ theo `clamp(px, vw, px)` thay vì đặt đơn vị % thuần (vốn phụ thuộc font cha và dễ làm chữ mất cân đối). Hero desktop chia 46/54; tablet/mobile 1 cột, title 35–78px tùy viewport, body tối thiểu 17px, nhãn ý nghĩa 14–16px.
+- Không viết thêm eyebrow hoặc dòng chú thích dưới lời kêu gọi khi thông tin đã rõ. Slogan **“Học đến đâu, làm được đến đó.”** giữ nguyên. Microcopy phải cụ thể, không lặp ý giữa các section.
+- QA trên viewport 360, 768, 1280, 1920: không overflow, chữ dễ đọc, carousel và các nút hoạt động; không đổi Admin/Word/Slides và không deploy.
+
 ## 1. Thương hiệu và nguyên tắc
 
 - Tên sản phẩm: **Xưởng Công Nghệ**.

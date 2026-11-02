@@ -33,6 +33,12 @@
 - **CHƯA HOÀN THIỆN WORD LAB:** vẫn `building`, chưa nghiệm thu IME tiếng Việt/tài liệu rất dài/Edge clipboard/Undo với ảnh-bảng/nhập-xuất. Chi tiết [WORD_SIMULATOR_CONTROL_AUDIT.md](WORD_SIMULATOR_CONTROL_AUDIT.md).
 - **Quy tắc mới:** `main` là nhánh đồng bộ máy Windows; kiểm thử bằng `pnpm dev`, `pnpm test`, `pnpm typecheck`, `pnpm build` và `node scripts/word-browser-qa.mjs` (sau khi chạy server). **Tắt auto-deploy Vercel** bằng `vercel.json` (`git.deploymentEnabled:false`) và Project Ignored Build Step `exit 0`. Chỉ mở deploy khi có yêu cầu của chủ dự án. Admin Roadmap metadata v14 (21 epics), chưa mở release.
 
+## Trang chủ — typography đồng bộ và tinh giản nội dung (02/11/2026)
+
+- **CODE:** Giữ slogan "Học đến đâu, làm được đến đó."; bỏ kicker, helper, nhãn nhỏ và mô tả trùng lặp. Mô tả Hero ngắn một đoạn, nội dung module rõ chức năng, giữ trạng thái tính năng và liên kết thật.
+- **RESPONSIVE:** chia Hero theo tỷ lệ 46/54 trên desktop; font `clamp()` theo `vw` (có ngưỡng min/max), đổi thành 1 cột trên tablet/mobile. Body tối thiểu 16–17px, meta 14–16px; lề desktop tối đa 120px; giữ chuyển cảnh Word/Slides/Quiz.
+- **QA:** tăng hồi quy typography và kiểm tra copy dư trong Chrome 360/768/1280/1920. Chỉ test local/CI, **không deploy online**, không sửa Production Supabase/Auth/Roadmap.
+
 ## Trang chủ — thiết kế lại toàn diện, chỉ kiểm thử local
 
 - **IN PROGRESS / CODE READY:** trang chủ mới thay toàn bộ layout trước: desktop gutter thích ứng tối đa 120px, Hero minh họa ba màn Word Lab/Slides/Quiz đổi tự động mỗi 5,2 giây, cho phép chọn thủ công và tôn trọng reduced motion. Bỏ kicker đánh số/gạch chéo, giảm border/radius và các thẻ hộp lặp lại, tăng thứ bậc typography. Giữ hệ thống màu public dịu và tính toàn vẹn liên kết.

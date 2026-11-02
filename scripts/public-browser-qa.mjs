@@ -78,15 +78,26 @@ try{
       sections:["he-sinh-thai","khoa-hoc","du-an"].every(id=>!!document.getElementById(id)),
       hero:document.querySelector(".xcn-new-hero h1")?.textContent?.trim(),
       controls:[...document.querySelectorAll(".xcn-hero-scene-controls button")].length,
-      scene:document.querySelector(".xcn-hero-scene-copy span")?.textContent?.trim(),
+      scene:document.querySelector(".xcn-hero-scene-copy strong")?.textContent?.trim(),
       feature:!!document.querySelector(".xcn-new-tool-feature"),
       toolLinks:[...document.querySelectorAll(".xcn-new-tool-tile")].map(link=>link.getAttribute("href")),
       stageRadius:parseFloat(getComputedStyle(document.querySelector(".xcn-hero-showcase-stage")).borderTopLeftRadius),
       backgroundImage:getComputedStyle(document.querySelector(".xcn-new-hero")).backgroundImage,
-      gutter:parseFloat(getComputedStyle(document.querySelector(".xcn-container")).paddingLeft)
+      gutter:parseFloat(getComputedStyle(document.querySelector(".xcn-container")).paddingLeft),
+      headingPx:parseFloat(getComputedStyle(document.querySelector(".xcn-new-hero-copy h1")).fontSize),
+      bodyPx:parseFloat(getComputedStyle(document.querySelector(".xcn-new-hero-description")).fontSize),
+      scenePx:parseFloat(getComputedStyle(document.querySelector(".xcn-hero-scene-copy span")).fontSize),
+      redundantLabels:document.querySelectorAll(".xcn-new-hero-helper,.xcn-new-hero-subline,.xcn-new-benefits,.xcn-new-eyebrow").length,
+      description:document.querySelector(".xcn-new-hero-description")?.textContent?.trim()
     }))()`);
     assert.ok(homepage.redesigned&&homepage.sections&&homepage.hero&&homepage.feature,"Redesigned homepage missing");
     assert.equal(homepage.controls,3,"Three product stories expected");
+    assert.equal(homepage.redundantLabels,0,"Redundant microcopy should not reappear");
+    assert.ok(homepage.description?.length<130,"Hero copy should stay concise");
+    assert.ok(homepage.headingPx>=34&&homepage.headingPx<=81,"Fluid hero title outside legible bounds");
+    assert.ok(homepage.bodyPx>=16&&homepage.scenePx>=16,"Body or carousel captions too small");
+    if(width===360)assert.ok(homepage.headingPx<=43,"Mobile H1 is disproportionate");
+    if(width===1920)assert.ok(homepage.headingPx>=70,"Large desktop H1 should remain prominent");
     assert.equal(homepage.scene,"Word Lab","Hero must begin with Word Lab");
     assert.ok(homepage.toolLinks.includes("/cong-cu/trinh-chieu"));
     assert.ok(homepage.toolLinks.includes("/dang-nhap?next=%2Fstudent%2Fquiz"));
@@ -96,7 +107,7 @@ try{
     if(width<=360)assert.ok(homepage.gutter>=18&&homepage.gutter<=30,"Mobile gutter should be compact");
     if(width===1280){
       await wait(5800);
-      const automatic=await evalJs(`document.querySelector(".xcn-hero-scene-copy span")?.textContent?.trim()`);
+      const automatic=await evalJs(`document.querySelector(".xcn-hero-scene-copy strong")?.textContent?.trim()`);
       assert.equal(automatic,"Trình chiếu","Hero must advance automatically without user interaction");
     }
     const switched=await evalJs(`(()=>{
@@ -106,7 +117,7 @@ try{
     assert.equal(switched,3);
     await wait(160);
     const slideScene=await evalJs(`(()=>({
-      label:document.querySelector(".xcn-hero-scene-copy span")?.textContent?.trim(),
+      label:document.querySelector(".xcn-hero-scene-copy strong")?.textContent?.trim(),
       pressed:document.querySelectorAll(".xcn-hero-scene-controls button[aria-pressed=true]").length,
       illustration:!!document.querySelector(".xcn-visual-slide")
     }))()`);
@@ -114,7 +125,7 @@ try{
     await evalJs(`document.querySelectorAll(".xcn-hero-scene-controls button")[2].click()`);
     await wait(150);
     const quizScene=await evalJs(`(()=>({
-      label:document.querySelector(".xcn-hero-scene-copy span")?.textContent?.trim(),
+      label:document.querySelector(".xcn-hero-scene-copy strong")?.textContent?.trim(),
       illustration:!!document.querySelector(".xcn-visual-quiz")
     }))()`);
     assert.ok(quizScene.label==="Quiz"&&quizScene.illustration,"Quiz story switching failed");

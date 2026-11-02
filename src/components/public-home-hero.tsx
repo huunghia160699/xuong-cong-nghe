@@ -1,12 +1,12 @@
 "use client";
 
 import {useEffect,useState} from "react";
-import {ArrowRight,Check,ClipboardCheck,FileText,Presentation,Play} from "lucide-react";
+import {Check,ClipboardCheck,FileText,Presentation,Play} from "lucide-react";
 
 const scenes=[
- {name:"Word Lab",caption:"Soạn thảo văn bản",note:"Luyện định dạng như trên một trang giấy thật."},
- {name:"Trình chiếu",caption:"Học bằng hình ảnh",note:"Theo dõi nội dung và tương tác theo chủ đề."},
- {name:"Quiz",caption:"Kiểm tra kiến thức",note:"Chọn đáp án và nhận phản hồi trong bài luyện."}
+ {name:"Word Lab",caption:"Soạn thảo văn bản"},
+ {name:"Trình chiếu",caption:"Học bằng hình ảnh"},
+ {name:"Quiz",caption:"Kiểm tra kiến thức"}
 ] as const;
 
 function WordArtwork(){
@@ -69,7 +69,7 @@ export function PublicHomeHero(){
    </div>
   </div>
   <div className="xcn-hero-showcase-bottom">
-   <div className="xcn-hero-scene-copy"><span>{scene.name}</span><strong>{scene.caption}</strong><small>{scene.note}</small></div>
+   <div className="xcn-hero-scene-copy"><strong>{scene.name}</strong><span>{scene.caption}</span></div>
    <div className="xcn-hero-scene-controls" role="group" aria-label="Chọn hình minh họa">
     {scenes.map((item,index)=><button type="button" key={item.name} aria-label={`Xem minh họa ${item.name}`}
       aria-pressed={index===active} onClick={()=>setActive(index)}>
@@ -77,6 +77,5 @@ export function PublicHomeHero(){
     </button>)}
    </div>
   </div>
-  <div className="xcn-hero-showcase-footnote"><span>Các giao diện minh họa cho công cụ học tập</span><ArrowRight size={14} aria-hidden="true"/></div>
  </div>;
 }
