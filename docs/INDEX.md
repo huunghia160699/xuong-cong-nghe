@@ -1,5 +1,7 @@
 # Bản đồ tài liệu — Xưởng Công Nghệ
 
+> Entry point ngắn gọn: [docs/README.md](README.md). Quy ước viết và đặt tên: [DOCUMENTATION_STYLE_GUIDE.md](DOCUMENTATION_STYLE_GUIDE.md).
+
 > **Điểm vào duy nhất cho các phiên phát triển mới.** Cập nhật 30/10/2026.
 > **Quy tắc: đọc theo nhiệm vụ, không đọc lại toàn bộ repository hay toàn bộ Markdown.** Các báo cáo trong `archive/` là lịch sử, không phải trạng thái hiện tại.
 
