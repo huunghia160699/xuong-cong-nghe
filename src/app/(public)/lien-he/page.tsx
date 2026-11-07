@@ -1,11 +1,18 @@
 import type {Metadata} from "next";
-import {ContactCard,PublicHero,SectionTitle,TrustNote} from "@/components/public-content";
 import Link from "next/link";
+import {ArrowRight,Building2,GraduationCap,LifeBuoy,ShieldCheck,UserRound} from "lucide-react";
 
-export const metadata:Metadata={
- title:"Liên hệ",
- description:"Các kênh liên hệ và biểu mẫu đang được hoàn thiện. Thông tin liên lạc sẽ chỉ được công bố sau khi được xác minh."
-};
+export const metadata:Metadata={title:"Liên hệ",description:"Chọn đúng luồng hỗ trợ cho người học, giáo viên và nhà trường."};
+
 export default function Page(){
- return <main><PublicHero eyebrow="Hỗ trợ" title="Kết nối với Xưởng Công Nghệ." description="Hãy cho chúng tôi biết bạn đang muốn học, thực hành, xây nội dung hay triển khai cho một lớp học. Các kênh tiếp nhận chính thức sẽ được mở theo từng giai đoạn."><div className="xcn-content-actions"><Link className="xcn-content-primary" href="/dang-nhap">Vào không gian của tôi</Link><Link className="xcn-content-secondary" href="/cong-cu">Xem công cụ</Link></div></PublicHero><section className="xcn-content-section"><div className="xcn-container"><SectionTitle eyebrow="Bạn cần hỗ trợ gì?" title="Chọn đúng hướng để được phản hồi rõ hơn."/><div className="xcn-content-grid three"><ContactCard title="Người học" description="Hỏi về bài học, công cụ, tài khoản hoặc tiến độ cá nhân." href="/dang-nhap" label="Đăng nhập để bắt đầu"/><ContactCard title="Giáo viên" description="Trao đổi về học liệu, lớp học, bài giao và không gian giáo viên." href="/gioi-thieu" label="Xem định hướng"/><ContactCard title="Nhà trường" description="Tìm hiểu cách triển khai theo lớp, vai trò và phạm vi dữ liệu." href="/gioi-thieu" label="Tìm hiểu nền tảng"/></div></div></section><section className="xcn-content-section soft"><div className="xcn-container xcn-content-two-col"><div><SectionTitle eyebrow="Trước khi liên hệ" title="Thông tin giúp xử lý nhanh hơn."/></div><ul className="xcn-bullet-list"><li>Ghi rõ bạn đang dùng vai trò người học, giáo viên hay quản trị.</li><li>Nêu tên trang/tính năng và bước gây ra vấn đề.</li><li>Không gửi mật khẩu, mã đăng nhập, JWT hoặc khóa bí mật.</li><li>Nếu báo lỗi, hãy kèm thiết bị và trình duyệt đang sử dụng.</li></ul></div></section><section className="xcn-content-section"><div className="xcn-container"><TrustNote>Biểu mẫu liên hệ sẽ chỉ được mở khi có backend, chống spam, chính sách riêng tư và đầu nhận đã được xác minh.</TrustNote></div></section></main>;
+ return <main className="xcn-contact">
+  <section className="xcn-contact-hero"><div className="xcn-container xcn-contact-hero-grid"><div><p className="xcn-page-kicker">Trung tâm hỗ trợ</p><h1>Hãy bắt đầu từ điều bạn đang cần.</h1><p>Chọn đúng nhóm bên dưới để tìm đường đi nhanh nhất. Kênh tiếp nhận chính thức sẽ được mở khi quy trình hỗ trợ và bảo vệ dữ liệu hoàn tất.</p></div><div className="xcn-contact-signal" aria-hidden="true"><span/><span/><span/><div><LifeBuoy/><b>Chúng tôi đang lắng nghe</b><small>Chọn một hướng để bắt đầu</small></div></div></div></section>
+  <section className="xcn-contact-paths"><div className="xcn-container"><div className="xcn-contact-paths-head"><span>Chọn một hướng</span><h2>Bạn đang liên hệ với vai trò nào?</h2></div><div className="xcn-contact-path-grid">
+   <article><span>01</span><UserRound/><div><h3>Người học</h3><p>Bài học, công cụ, tài khoản hoặc tiến độ cá nhân.</p><Link href="/dang-nhap">Đăng nhập để bắt đầu <ArrowRight size={17}/></Link></div></article>
+   <article><span>02</span><GraduationCap/><div><h3>Giáo viên</h3><p>Học liệu, lớp học, bài giao và không gian giáo viên.</p><Link href="/gioi-thieu">Xem định hướng <ArrowRight size={17}/></Link></div></article>
+   <article><span>03</span><Building2/><div><h3>Nhà trường</h3><p>Triển khai theo lớp, quyền truy cập và phạm vi dữ liệu.</p><Link href="/bang-gia">Xem quyền sử dụng <ArrowRight size={17}/></Link></div></article>
+  </div></div></section>
+  <section className="xcn-contact-prepare"><div className="xcn-container xcn-contact-prepare-grid"><div className="xcn-contact-note"><ShieldCheck/><span>An toàn trước tiên</span><h2>Đừng gửi mật khẩu, JWT hoặc khóa bí mật.</h2><p>Ảnh chụp lỗi nên che email, mã truy cập và dữ liệu cá nhân.</p></div><div><span className="xcn-contact-small">Trước khi liên hệ</span><h2>Bốn thông tin giúp xử lý nhanh hơn.</h2><ol><li><b>01</b><span>Vai trò của bạn: người học, giáo viên hay quản trị.</span></li><li><b>02</b><span>Tên trang hoặc tính năng đang sử dụng.</span></li><li><b>03</b><span>Các bước đã làm trước khi vấn đề xảy ra.</span></li><li><b>04</b><span>Thiết bị và trình duyệt đang dùng.</span></li></ol></div></div></section>
+  <section className="xcn-contact-footer"><div className="xcn-container"><div><span>Trong lúc chờ kênh hỗ trợ chính thức</span><h2>Bạn vẫn có thể khám phá nền tảng.</h2></div><Link href="/cong-cu">Xem các công cụ đang hoạt động <ArrowRight size={18}/></Link></div></section>
+ </main>;
 }
