@@ -3,7 +3,6 @@ import { BarChart3, BookOpen, ClipboardCheck, FileText, FolderKanban, Gauge, Gra
 /** Public marketing links are distinct from Admin/Student navigation. All targets resolve. */
 export const publicNav = [
   { label: "Trang chủ", href: "/" },
-  { label: "Hệ sinh thái", href: "/cong-cu" },
   { label: "Giới thiệu", href: "/gioi-thieu" },
   { label: "Bảng giá", href: "/bang-gia" },
   { label: "Tin tức", href: "/tin-tuc" },

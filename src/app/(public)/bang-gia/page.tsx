@@ -1,10 +1,11 @@
 import type {Metadata} from "next";
-import {PublicPendingPage} from "@/components/public-pending-page";
+import Link from "next/link";
+import {Bullet,FeatureCard,PublicHero,SectionTitle,TrustNote} from "@/components/public-content";
 
 export const metadata:Metadata={
  title:"Bảng giá",
  description:"Chính sách giá và quyền sử dụng đang được xây dựng. Chúng tôi chưa công bố giá hoặc gói thanh toán khi chưa có thông tin chính thức."
 };
 export default function Page(){
- return <PublicPendingPage section="Bảng giá" title="Lựa chọn cách sử dụng phù hợp." description="Chính sách giá và quyền sử dụng đang được xây dựng. Chúng tôi chưa công bố giá hoặc gói thanh toán khi chưa có thông tin chính thức."/>;
+ return <main><PublicHero eyebrow="Cách sử dụng" title="Bắt đầu miễn phí, mở rộng khi bạn cần." description="Xưởng Công Nghệ đang hoàn thiện mô hình quyền sử dụng. Trước mắt, bạn có thể khám phá các công cụ công khai và chỉ cần đăng nhập khi muốn lưu tiến độ hoặc tham gia không gian riêng."><div className="xcn-content-actions"><Link className="xcn-content-primary" href="/cong-cu">Dùng thử miễn phí</Link><Link className="xcn-content-secondary" href="/dang-nhap">Đăng nhập</Link></div></PublicHero><section className="xcn-content-section"><div className="xcn-container"><SectionTitle eyebrow="Quyền sử dụng" title="Ba cách tiếp cận rõ ràng."/><div className="xcn-content-grid three"><FeatureCard title="Khám phá" description="Dùng thử các trải nghiệm công khai trên trang chủ và khu vực công cụ." label="Khám phá ngay" href="/cong-cu"/><FeatureCard title="Người học" description="Đăng nhập để lưu bài làm, tiến độ, kết quả và lộ trình cá nhân." label="Vào không gian" href="/dang-nhap"/><FeatureCard title="Giáo viên" description="Không gian lớp học và bài giao sẽ được mở theo từng giai đoạn đã kiểm thử." label="Tìm hiểu thêm" href="/gioi-thieu"/></div></div></section><section className="xcn-content-section soft"><div className="xcn-container xcn-content-two-col"><div><SectionTitle eyebrow="Cam kết" title="Không công bố giá giả hoặc quyền chưa sẵn sàng."/></div><ul className="xcn-bullet-list"><Bullet>Giá và gói dịch vụ chỉ được công bố sau khi có chính sách chính thức.</Bullet><Bullet>Quyền sử dụng được gắn với tài khoản và vai trò, không dựa trên nhãn marketing.</Bullet><Bullet>Dữ liệu học tập cá nhân chỉ được lưu sau khi người dùng đăng nhập và đồng ý.</Bullet><Bullet>Khi có gói trả phí, trang này sẽ bổ sung so sánh, thanh toán và hoàn tiền.</Bullet></ul></div></section><section className="xcn-content-section"><div className="xcn-container"><TrustNote>Trạng thái hiện tại: chưa mở billing production. Hãy dùng các tính năng công khai để trải nghiệm trước.</TrustNote></div></section></main>;
 }

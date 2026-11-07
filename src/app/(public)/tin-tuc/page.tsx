@@ -1,10 +1,11 @@
 import type {Metadata} from "next";
-import {PublicPendingPage} from "@/components/public-pending-page";
+import Link from "next/link";
+import {FeatureCard,PublicHero,SectionTitle} from "@/components/public-content";
 
 export const metadata:Metadata={
  title:"Tin tức & Tri thức",
  description:"Góc kiến thức Tin học, hướng dẫn và cập nhật sản phẩm đang được biên soạn. Chưa có bài viết chính thức được xuất bản tại đây."
 };
 export default function Page(){
- return <PublicPendingPage section="Tin tức & Tri thức" title="Kiến thức mới. Cách làm rõ ràng." description="Góc kiến thức Tin học, hướng dẫn và cập nhật sản phẩm đang được biên soạn. Chưa có bài viết chính thức được xuất bản tại đây."/>;
+ return <main><PublicHero eyebrow="Tin tức & Tri thức" title="Kiến thức mới. Cách làm rõ ràng." description="Nơi tập hợp hướng dẫn thực hành, tư duy công nghệ và những cập nhật quan trọng của Xưởng Công Nghệ."/><section className="xcn-content-section"><div className="xcn-container"><div className="xcn-news-toolbar"><SectionTitle eyebrow="Chuyên mục" title="Bắt đầu từ điều bạn đang cần."/><div className="xcn-news-filters"><span className="active">Tất cả</span><span>Kỹ năng số</span><span>Hướng dẫn</span><span>Sản phẩm</span></div></div><div className="xcn-content-grid three"><FeatureCard title="Học bằng cách làm" description="Vì sao bài thực hành ngắn và phản hồi sớm giúp người học tiến bộ bền vững." label="Bài nổi bật"/><FeatureCard title="Excel cho công việc" description="Các khái niệm nền tảng sẽ được trình bày bằng ví dụ gần với công việc hằng ngày." label="Đang biên soạn"/><FeatureCard title="AI có trách nhiệm" description="Sử dụng AI để học và làm việc tốt hơn mà vẫn kiểm tra, bảo vệ dữ liệu và tự suy nghĩ." label="Đang biên soạn"/></div></div></section><section className="xcn-content-section soft"><div className="xcn-container xcn-content-two-col"><div><SectionTitle eyebrow="Định hướng nội dung" title="Mỗi bài viết dẫn đến một hành động."/></div><div className="xcn-content-list"><div><strong>Đọc</strong><p>Hiểu một khái niệm bằng ngôn ngữ rõ ràng, ít thuật ngữ thừa.</p></div><div><strong>Thử</strong><p>Mở công cụ hoặc bài học liên quan để làm ngay.</p></div><div><strong>Áp dụng</strong><p>Tạo một sản phẩm nhỏ và lưu lại tiến bộ khi đã đăng nhập.</p></div></div></div></section><section className="xcn-content-section"><div className="xcn-container xcn-content-cta"><h2>Muốn bắt đầu ngay?</h2><p>Không cần chờ bài viết mới. Bạn có thể mở các công cụ đang có trên nền tảng.</p><Link className="xcn-content-primary" href="/cong-cu">Khám phá công cụ</Link></div></section></main>;
 }
