@@ -1,157 +1,526 @@
-# Roadmap triển khai — Xưởng Công Nghệ
+# Roadmap tổng thể — Xưởng Công Nghệ
 
-> **Bản công việc ở repository, cập nhật nguồn tra cứu ngày 30/10/2026.**
-> Điểm vào: [INDEX.md](INDEX.md). Mối quan hệ code: [PRODUCT_AND_MODULES.md](PRODUCT_AND_MODULES.md).
-> **Dữ liệu Roadmap chính thức trong Admin Production là Supabase**; checklist này không tự đồng bộ với Supabase hoặc ngược lại. Không tick các mục chỉ vì tài liệu nêu dự kiến.
-> Chi tiết từng việc: [XCN_FUNCTION_ROADMAP_CHECKLIST.md](XCN_FUNCTION_ROADMAP_CHECKLIST.md); Master Plan: [XUONG_CONG_NGHE_MASTER_PLAN_2026_2028.md](XUONG_CONG_NGHE_MASTER_PLAN_2026_2028.md).
-> Kiểm toán 30/10/2026: [SYSTEM_AUDIT_2026-10-30.md](SYSTEM_AUDIT_2026-10-30.md). Các báo cáo bảo mật/sync cũ giữ nguyên tại [archive/PHASE_00_SECURITY_AND_SYNC_REPORTS_2026-10.md](archive/PHASE_00_SECURITY_AND_SYNC_REPORTS_2026-10.md).
+> **Trạng thái:** CURRENT / kế hoạch hợp nhất  
+> **Ngày cập nhật:** 07/11/2026  
+> **Nguồn chính:** tiến độ repository, kiểm toán hệ thống, Master Plan, checklist chức năng và bốn báo cáo tham khảo sản phẩm.  
+> **Nguyên tắc:** báo cáo tham khảo chỉ cung cấp ý tưởng; không sao chép giao diện, nội dung hoặc mã nguồn. Mục chưa có bằng chứng code/test/deploy được xem là **CHƯA TRIỂN KHAI**.
 
-## Ưu tiên hiện hành (bám theo kiểm toán, chưa đánh dấu hoàn tất)
+## 1. Tầm nhìn sản phẩm
 
-### Quyết định 31/10/2026 — mở cổng Teacher Studio ở mức thiết kế
+Xưởng Công Nghệ là nền tảng học công nghệ theo chu trình:
 
-- **PASS `P0_STAGING_AUTH_ROADMAP`:** người dùng chạy local `READ-ONLY PASS` và `STAGING ACCEPTANCE PASS` với hai JWT Admin/Student thực; quyền trên Roadmap, CRUD, conflict, backup/restore và audit đạt. Đối chiếu SQL riêng xác nhận **singleton version 8, 0 items, 8 events (1–8)**. Không thu thập mật khẩu/JWT.
-- **ĐƯỢC PHÉP:** phân tích yêu cầu, thiết kế hợp đồng lớp–thành viên–bài giao, tạo migration và RLS **trên staging**, viết test bằng user thử nghiệm và PR riêng, không sửa dữ liệu Production.
-- **CHƯA ĐƯỢC PHÉP:** coi hệ thống đã nghiệm thu toàn diện, bật Teacher Studio Production, mở quyền lớp/bài nộp khi chưa có E2E và RLS ownership riêng của Teacher/Student.
-- **CÒN CHẶN PRODUCTION:** nghiệm thu 11 trang Admin trên browser login thật/Preview, API 401/403/409, mạng yếu, quyền teacher test account + ownership/cross-class isolation, xử lý cảnh báo SECURITY DEFINER và bảo vệ mật khẩu phù hợp trước release.
-- **Chi tiết bằng chứng và runbook:** [WORKLOG_AND_RULES.md](WORKLOG_AND_RULES.md) và [SUPABASE_SETUP.md](SUPABASE_SETUP.md). Không tự đồng bộ checklist Roadmap Production từ Markdown.
+`khám phá → học có hướng dẫn → thực hành → kiểm tra → nhận phản hồi → lưu tiến bộ → giáo viên theo dõi`
 
-> *Lịch sử 30/10/2026:* staging đã được tạo và tài khoản QA xác minh bằng SQL; bài test JWT trên máy local lúc đó còn chờ. **Trạng thái 31/10 được cập nhật ở quyết định phía trên.**
+Bốn báo cáo tham khảo bổ sung bốn năng lực:
 
-> *Lịch sử đầu giai đoạn 30/10/2026:* bản kiểm thử đã được chuẩn bị trước khi khởi tạo staging. **Không áp dụng nội dung 'chưa tạo staging' cho hiện tại.**
+- DUA Edu: dashboard học tập, lộ trình, Quiz, Slides và Data Lab.
+- Đề Thi Số: tạo đề, ma trận, lớp học, chấm bài, trình chiếu, QR và trò chơi lớp.
+- Môn Tin học: chấm code real-time, nhiều loại bài, AI sư phạm, kho bài và thư viện.
+- Tin học cơ bản: lộ trình tự học, typing thích ứng, gamification, blog, tiện ích và tài nguyên.
 
-1. **P0 — Auth/Admin/Roadmap:** **đã nghiệm thu JWT + Data API CRUD/conflict/backup/restore trên staging**. **Chưa nghiệm thu Next.js browser refresh/API/11 trang Admin trong Preview thực**.
-2. **P0 — Security:** đánh giá SECURITY DEFINER, password protection, quyền RLS/GRANT trên staging trước khi áp Production.
-3. **P1 — Nghiệm thu Admin:** 11 trang sau đăng nhập Live, màn hình 360/768/1280, error/loading, keyboard và mạng yếu.
-4. **P1 — Contracts:** một luồng dùng chung nội dung/câu hỏi/bài học cho Quiz/Slides/Teacher/Labs, schema và quyền rõ.
-5. **P2 — Teacher Studio:** **mở thiết kế và phát triển staging** cho quản lý lớp, thành viên, giao bài; chỉ bật Production sau test role `teacher` và RLS ownership/cross-class, E2E và phê duyệt phát hành.
-6. **P2–P3 — Live Quiz, Excel/Coding Labs, AI/trò chơi:** triển khai từng module, không mở nhiều công cụ khi data model chưa ổn.
+Xưởng Công Nghệ sẽ hấp thụ **mô hình luồng** và **nguyên tắc UX**, không bê nguyên tính năng vào cùng một lần phát triển.
 
-## Word Lab — ổn định dữ liệu trên main, chỉ chạy local (31/10/2026)
+## 2. Thứ tự ưu tiên
 
-- **DONE (mã + QA trên nhánh riêng, đưa về main):** Cut giữ nguyên chữ nếu clipboard bị từ chối; Sort chuyển node đoạn, giữ Bold/Italic; Undo/Redo checkpoint 45 trạng thái, hỗ trợ Ctrl+Z/Ctrl+Y, kể cả sau Sort. Chromium và 242 unit PASS tại [CI #41177167181](https://github.com/huunghia160699/xuong-cong-nghe/actions/runs/41177167181).
-- **CHƯA HOÀN THIỆN WORD LAB:** vẫn `building`, chưa nghiệm thu IME tiếng Việt/tài liệu rất dài/Edge clipboard/Undo với ảnh-bảng/nhập-xuất. Chi tiết [WORD_SIMULATOR_CONTROL_AUDIT.md](WORD_SIMULATOR_CONTROL_AUDIT.md).
-- **Quy tắc mới:** `main` là nhánh đồng bộ máy Windows; kiểm thử bằng `pnpm dev`, `pnpm test`, `pnpm typecheck`, `pnpm build` và `node scripts/word-browser-qa.mjs` (sau khi chạy server). **Tắt auto-deploy Vercel** bằng `vercel.json` (`git.deploymentEnabled:false`) và Project Ignored Build Step `exit 0`. Chỉ mở deploy khi có yêu cầu của chủ dự án. Admin Roadmap metadata v14 (21 epics), chưa mở release.
+| Ưu tiên | Mục tiêu | Điều kiện hoàn thành |
+|---|---|---|
+| P0 | An toàn dữ liệu, Auth, RLS, Roadmap và release gate | Có bằng chứng SQL, E2E, 401/403/409 và audit |
+| P1 | Lõi học viên hiện tại và Teacher Studio nền tảng | Giáo viên tạo nội dung, học viên học/nộp, dữ liệu phân quyền đúng |
+| P1 | Public Website và onboarding | 5 trang public, CTA thật, responsive, SEO, accessibility |
+| P2 | Nội dung tương tác: Quiz, Slides, Word/Excel Lab | Có autosave, chấm, kết quả và khôi phục |
+| P2 | Lớp học, giao bài, bài nộp, thống kê | Ownership/cross-class isolation được kiểm thử |
+| P3 | Live Quiz, QR, trình chiếu và hoạt động nhóm | 40–50 thiết bị, reconnect và mạng yếu đạt |
+| P3 | Coding Lab, SQL, chấm file, Scratch/HTML | Sandbox, test case, quota và audit log đạt |
+| P4 | AI sư phạm, typing thích ứng, gamification | Consent, giới hạn lượt, teacher review và dữ liệu tối thiểu |
+| P4 | Thư viện, blog, tài nguyên và commerce | Quyền đọc, phiên bản, bản quyền, thanh toán/hoàn tiền rõ |
+| P5 | Quản lý phòng máy, realtime nâng cao, phụ huynh/trường | Có pilot, đánh giá pháp lý/bảo mật và SLA vận hành |
 
-## Trang chủ — typography đồng bộ và tinh giản nội dung (02/11/2026)
+## 3. Trạng thái nền hiện tại
 
-- **CODE:** Giữ slogan "Học đến đâu, làm được đến đó."; bỏ kicker, helper, nhãn nhỏ và mô tả trùng lặp. Mô tả Hero ngắn một đoạn, nội dung module rõ chức năng, giữ trạng thái tính năng và liên kết thật.
-- **RESPONSIVE:** chia Hero theo tỷ lệ 46/54 trên desktop; font `clamp()` theo `vw` (có ngưỡng min/max), đổi thành 1 cột trên tablet/mobile. Body tối thiểu 16–17px, meta 14–16px; lề desktop tối đa 120px; giữ chuyển cảnh Word/Slides/Quiz.
-- **QA:** tăng hồi quy typography và kiểm tra copy dư trong Chrome 360/768/1280/1920. Chỉ test local/CI, **không deploy online**, không sửa Production Supabase/Auth/Roadmap.
+### Đã có hoặc đã được kiểm chứng
 
-## Trang chủ — thiết kế lại toàn diện, chỉ kiểm thử local
+- Student learning flow, Quiz, tiến độ và Admin nền tảng đã có trong mã nguồn.
+- Supabase SSR/Auth/RLS và Roadmap production có migration; staging đã chạy nghiệm thu JWT Roadmap CRUD/conflict/backup/restore.
+- Public foundation đã được triển khai theo PR đã ghi trong lịch sử.
+- Word Lab đã có các checkpoint Cut/Sort/Undo/Redo và CI tương ứng.
+- Các tài liệu chuyên môn và báo cáo tham khảo đã được lập.
 
-- **IN PROGRESS / CODE READY:** trang chủ mới thay toàn bộ layout trước: desktop gutter thích ứng tối đa 120px, Hero minh họa ba màn Word Lab/Slides/Quiz đổi tự động mỗi 5,2 giây, cho phép chọn thủ công và tôn trọng reduced motion. Bỏ kicker đánh số/gạch chéo, giảm border/radius và các thẻ hộp lặp lại, tăng thứ bậc typography. Giữ hệ thống màu public dịu và tính toàn vẹn liên kết.
-- **Phạm vi:** `src/app/(public)/page.tsx`, `src/components/public-home-hero.tsx`, `src/app/(public)/public.css`, QA/browser và docs. Không khẳng định các khả năng AI sinh câu hỏi/chấm bài chưa triển khai; hình là mockup riêng, không dùng ảnh Dribbble.
-- **Cần xác minh:** CI unit/typecheck/build và Chromium 360/768/1280/1920, nút chuyển cảnh, mobile, không tràn ngang, menu/ESC, kiểm duyệt thị giác trên local. Tuyệt đối không deploy Preview/Production nếu chưa có yêu cầu.
+### Chưa được coi là hoàn tất
 
-## Public Website — kế hoạch thiết kế lại 5 trang (31/10/2026)
+- Teacher Studio browser E2E với role teacher thật.
+- Ownership và cross-class isolation cho lớp/bài nộp.
+- Coding sandbox production.
+- AI production với consent và dữ liệu học sinh.
+- Live Quiz/QR nhiều thiết bị.
+- Chấm file, thư viện có bản quyền và commerce.
+- Full release gate trên tất cả breakpoint và mạng yếu.
 
-> **D0 ĐÃ VIẾT SPEC, D1–D7 CHƯA TRIỂN KHAI.** Nguồn chi tiết duy nhất: [PUBLIC_WEBSITE_DESIGN_SPEC.md](PUBLIC_WEBSITE_DESIGN_SPEC.md). Đây là kế hoạch trong Git, **không tự tick hoặc ghi đè Roadmap Supabase Production**.
+## 4. Giai đoạn P0 — Nền an toàn và hợp đồng dữ liệu
 
-- [x] **D0 — Bản đặc tả:** wireframe/copy 5 trang, 6 link nav marketing, catalog 7 nhóm tính năng, palette “Calm Slate Blue” không gradient, responsive, auth gate và QA criteria. Có nguồn Dribbble/ảnh VniTeach làm cảm hứng, không sao chép.
-- [x] **D1 — Public foundation: DONE (PR #71, main `001bbfc`)**. Có palette `xcn-public` không gradient, Navbar role-aware, mega-menu 7 nhóm, Footer, 4 route placeholder trung thực, QA Chromium 360/768/1280/1920; PR CI PASS, Vercel Production READY đúng SHA và alias. Nội dung 4 trang chưa hoàn thiện, để D3–D6. Admin/Word/Slides không đổi.
-- [ ] **D2 — Trang chủ:** hero hệ sinh thái, catalog có trạng thái available/building/planned, kiến trúc liên kết module, vai trò, showcase, bảng giá và tin tức preview, CTA auth chỉ khi dùng thật.
-- [ ] **D3 — Giới thiệu:** xây route /gioi-thieu và 7 section minh bạch về sản phẩm, đối tượng, hệ sinh thái và lộ trình.
-- [ ] **D4 — Bảng giá:** route /bang-gia, ba nhóm Khám phá/Giáo viên/Trường học; so sánh/FAQ/CTA. **Không công bố giá giả hay bật billing khi chưa phê duyệt chính sách.**
-- [ ] **D5 — Tin tức:** route /tin-tuc, topic filter/search, article cards/empty-state, published-only content; không có bài/dữ liệu giả.
-- [ ] **D6 — Liên hệ:** route /lien-he, kênh thực đã xác minh; form chỉ khi có backend/anti-spam/privacy đúng và đầu nhận đã được phê duyệt.
-- [ ] **D7 — QA / release:** Chrome responsive, keyboard, WCAG AA, auth/permission deep-link, SEO, CI/build, Vercel READY và SHA khớp.
-- [ ] **Gates thông tin thực:** trước D4 phê duyệt bảng giá/feature entitlement; trước D5 duyệt nguồn tin; trước D6 xác minh email/social/cơ chế nhận form. Không biến các ý tưởng thành tính năng công bố.
+### 4.1. Database và quyền
 
-**Quy tắc làm việc:** chỉ đọc [INDEX.md](INDEX.md) → đặc tả PUBLIC-WEB và file code liên quan; ghi DONE/IN PROGRESS/BLOCKED trong [WORKLOG_AND_RULES.md](WORKLOG_AND_RULES.md) sau từng phase.
+- Duy trì schema migration versioned.
+- Tách rõ user, profile, role, organization, class, membership, assignment, submission, attempt và audit event.
+- RLS theo ownership: giáo viên chỉ thấy lớp/bài của mình; học viên chỉ thấy lớp/bài được giao; quản trị viên có quyền theo scope.
+- Kiểm tra SECURITY DEFINER, EXECUTE grant, search_path và quyền PUBLIC.
+- Có unique/version constraint cho Roadmap và các tài liệu chỉnh sửa đồng thời.
+- Không để client tự quyết định điểm, role, owner hoặc trạng thái phát hành.
 
----
+### 4.2. Hợp đồng API
 
-## Những mục cũ bên dưới là backlog / lịch sử đã xuất hiện
+Mọi mutation phải có:
 
-**Quan trọng:** các checkbox trong phần MVP 0.1/0.2 và ghi chú dated trước 30/10/2026 phản ánh thời điểm viết, không phải trạng thái Production ngày hôm nay. Đặc biệt những câu “chưa áp migrations”, “chưa deploy” có thể đã lỗi thời; luôn kiểm GitHub/Supabase/Vercel thực tế trước khi hành động. Mục chưa có bằng chứng E2E vẫn là chưa nghiệm thu.
+- Auth bắt buộc.
+- Input schema.
+- Quyền resource-level.
+- Idempotency hoặc chống ghi trùng.
+- Mã lỗi chuẩn: 400, 401, 403, 404, 409, 422, 429, 500.
+- Audit event cho thao tác nhạy cảm.
 
-## MVP 0.1 — Nền và vòng học thử
-- [x] Homepage, Course Detail, Student Dashboard, Lesson, Quiz, Result
-- [x] Nội dung Excel 9 bài + 6 câu hỏi
-- [x] Local demo progress + kết quả
-- [x] Unit test, typecheck, build và smoke test demo
+### 4.3. Release gate
 
-## MVP 0.2 — Auth và dữ liệu thật (mã nguồn đã có, cần cấu hình triển khai)
-- [x] Supabase SSR client và middleware làm mới session
-- [x] Đăng nhập, đăng ký học viên, khôi phục/đổi mật khẩu, đăng xuất
-- [x] Kiểm tra quyền student/admin ở middleware và Server Layout
-- [x] Tự tạo profiles.role=student bằng trigger
-- [x] Lưu tiến độ bài học thật trong bảng lesson_progress (code)
-- [x] RPC submit_quiz/get_quiz_result chấm điểm và xem kết quả theo tài khoản (code)
-- [x] Quiz API không trả đáp án đúng trước khi nộp
-- [x] Live Student Dashboard hiển thị tiến độ và bài nộp theo tài khoản
-- [x] Live Admin Dashboard dữ liệu thật + tạo/đổi trạng thái khóa học
-- [x] Seed Supabase 9 lessons + 6 quiz questions
-- [x] **Migrations/seed đã từng được áp trên Supabase theo kiểm toán sau đó; cần đối chiếu migration history hiện tại trước mọi DB push**
-- [ ] **Chưa kiểm thử Auth, RLS, RPC với nhiều tài khoản trong môi trường thật**
-- [x] **Đã có Vercel Production Live theo kiểm toán sau đó; xác nhận lại SHA trước từng lần phát hành**
-- [ ] Editor CRUD chương/bài/câu hỏi và autosave quiz đang làm dở
+Chỉ release khi có:
 
-## MVP 0.3 — Thực hành chuyên sâu
-- Excel Lab tương tác và tự chấm
-- Word Lab, Notes, Tools, Resources
-- Teacher Workspace, AI Tutor, thương mại ở giai đoạn sau
+- Unit/typecheck/build.
+- Browser E2E.
+- RLS thật với Admin/Teacher/Student.
+- Mobile 360, tablet 768, desktop 1280/1920.
+- Keyboard navigation và reduced motion.
+- Loading, empty, error, offline/reconnect.
+- Vercel READY đúng commit SHA.
+- Không có secret trong log, docs hoặc client bundle.
 
+## 5. Giai đoạn P1 — Kiến trúc giao diện chung
 
-## Backlog — Điều hướng sản phẩm và quản lý phòng máy (chỉ ý tưởng, 31/10/2026)
+### 5.1. Public shell
 
-> **TRẠNG THÁI: ĐÃ GHI Ý TƯỞNG, CHƯA THỰC HIỆN.** Không sửa Navbar hiện tại, không đăng ký DNS, không tạo agent, API/DB/role/quyền trên Production hoặc staging. Nguồn chuẩn chi tiết: [PRODUCT_AND_MODULES.md](PRODUCT_AND_MODULES.md) mục 2A; nguồn so sánh: [WEBSITE_REFERENCES.md](WEBSITE_REFERENCES.md).
+**Desktop**
 
-### Hướng tổ chức trang chủ (chưa duyệt UI)
+- Header cao khoảng 64–72px.
+- Logo trái.
+- Nav giữa theo nhóm: Học tập, Thực hành, Kiểm tra, Công cụ, Tài nguyên.
+- CTA phải: Đăng nhập và Không gian của tôi.
+- Container tối đa 1200px, gutter thích ứng.
+- Không dùng menu quá dày hoặc link chưa tồn tại.
 
-- [ ] Cân nhắc Navbar **Khóa học · Thực hành · Kiểm tra · Công cụ · Tài nguyên · Dự án · Giáo viên**, logo dẫn về Trang chủ; nút phải `Đăng nhập` / `Không gian của tôi` theo role.
-- [ ] Gắn submenu rõ ràng theo chức năng, phân biệt link đang có với ứng dụng sắp phát triển, không đặt link chết/đăng sai nhãn hoạt động. Mobile dùng menu thu gọn theo nhóm; desktop không quá dày.
-- [ ] Giữ route đang hoạt động `/khoa-hoc`, `/student/quiz`, `/cong-cu`, `/cong-cu/trinh-chieu`, `/cong-cu/mo-phong-word` và các anchor đã tồn tại cho đến khi có UI/SEO migration.
-- [ ] Khi thiết kế UI thật, đọc [UI_DESIGN_SYSTEM.md](UI_DESIGN_SYSTEM.md), rà độ rộng/chiều cao 360/768/1280 và phân quyền trước khi sửa `src/config/navigation.ts`.
+**Mobile**
 
-### Công cụ quản lý phòng máy Tin học (LAB-MANAGER) — P3, chưa phát triển
+- Header gọn: logo, menu, CTA.
+- Menu mở dạng drawer theo nhóm.
+- CTA chính luôn chạm được bằng một tay.
+- Không để bảng lớn tràn ngang.
+- Focus/ESC đóng menu; trap focus trong drawer.
 
-- [ ] Nghiên cứu nhu cầu của phòng Tin học 30–50 máy; tạm hiểu “NetSP” là **NetSupport School**, xác minh lại tên tham khảo trước giai đoạn thiết kế sâu.
-- [ ] Thiết kế sơ đồ phòng, vị trí/chỗ ngồi, trạng thái máy online/offline, ca học và gắn với lớp của Teacher Studio.
-- [ ] Nghiên cứu phát màn hình giáo viên, hiển thị thumbnail máy học sinh, gửi URL/file bài tập, thu bài, nhắn tin và hỗ trợ từng máy.
-- [ ] Nghiên cứu giới hạn truy cập web/app, khóa màn hình và điều hành thiết bị **chỉ trong môi trường học được phép**, có thông báo/chính sách rõ.
-- [ ] Đánh giá mô hình agent cài ở thiết bị (LAN/Windows), đăng ký chứng chỉ thiết bị, phân quyền theo giáo viên-phòng-ca, audit, consent, chống điều khiển trái phép và rủi ro riêng tư học sinh.
-- [ ] Khi có yêu cầu phát triển: thí điểm **chỉ sơ đồ phòng và trạng thái máy**, staging riêng; chức năng remote monitoring/control phải qua đánh giá bảo mật/pháp lý và phê duyệt tách biệt. Không tự triển khai chỉ vì ý tưởng đã được ghi.
+### 5.2. Student shell
 
-**Vị trí sản phẩm tương lai:** người khám phá tại `Công cụ → Quản lý phòng máy` (chỉ hiện khi có chức năng thật); giáo viên sử dụng từ `Teacher Studio → Phòng máy`. Tên miền `lab.xuongcongnghe.net` chỉ là ví dụ quy hoạch, chưa xác minh DNS/sở hữu. Không thay thế hay sao chép NetSupport School.
+- Header: logo, tiến độ tổng, thông báo, avatar.
+- Sidebar desktop / bottom navigation mobile.
+- Điều hướng chính: Tổng quan, Lộ trình, Bài học, Luyện tập, Kết quả, Tài nguyên.
+- Khu nội dung rộng, card ít nhưng có thứ bậc rõ.
+- Luôn hiển thị “bước tiếp theo” thay vì chỉ hiển thị danh sách.
 
----
+### 5.3. Teacher shell
 
-## Backlog — Phòng trắc nghiệm tương tác trực tiếp (chờ triển khai)
+- Header: lớp đang chọn, thông báo, tài khoản.
+- Sidebar: Tổng quan, Nội dung, Ngân hàng câu hỏi, Lớp học, Giao bài, Chấm bài, Thống kê, Trình chiếu, Cài đặt.
+- Breadcrumb ở mọi trang sâu.
+- Primary action cố định theo ngữ cảnh: Tạo bài, Giao bài, Chấm, Xuất báo cáo.
+- Không trộn ví/commerce vào khu chấm và giảng dạy.
 
-**Ghi nhận:** 2026-10-26. **Trạng thái:** CHƯA TRIỂN KHAI, chỉ lưu yêu cầu để làm sau.
-**Định hướng đã chọn:** GV mở phòng, HS dùng điện thoại/máy tính tham gia bằng mã, chọn đáp án ngay trên thiết bị; ưu tiên hơn phương án quét thẻ giấy. Học hỏi luồng chức năng, không sao chép thiết kế hoặc mã nguồn của Kahoot, Quizizz hay dethiso.vn.
+### 5.4. Admin shell
 
-### Giai đoạn 1 — Live Quiz do giáo viên điều khiển (ưu tiên)
+- Sidebar riêng cho hệ thống, user/role, Roadmap, audit, cài đặt.
+- Không dùng cùng affordance với Teacher nếu quyền khác nhau.
+- Mọi destructive action có confirm và audit event.
 
-- [ ] GV chọn bộ câu hỏi có sẵn trong ngân hàng/công cụ soạn câu hỏi của HuuNghia Studio, tạo phiên trực tiếp gắn với lớp hoặc phiên khách.
-- [ ] Sinh mã phòng ngắn, khó trùng (đề xuất PIN 6 chữ số, có thời hạn), liên kết chia sẻ và QR tham gia; phòng chờ hiển thị số lượng và danh sách người tham gia.
-- [ ] HS vào phòng từ trình duyệt điện thoại bằng mã/link/QR, nhập tên hoặc chọn đúng hồ sơ HS trong lớp; không bắt buộc đăng ký đối với phiên khách.
-- [ ] GV điều khiển bắt đầu/tạm dừng/tiếp tục/chuyển câu/kết thúc; đặt thời lượng cho từng câu và tùy chọn khóa/cho sửa đáp án trước hạn.
-- [ ] Màn hình trình chiếu hiển thị câu hỏi, trạng thái nhận đáp án và đồng hồ; giao diện HS tối ưu cho màn hình nhỏ, đáp án A/B/C/D rõ ràng, thao tác chạm thuận tiện.
-- [ ] Nhận, lưu, chấm và thống kê câu trả lời theo thời gian thực; đếm HS đã/chưa trả lời. Không gửi đáp án đúng trước khi GV công bố.
-- [ ] Sau khi GV công bố: hiển thị biểu đồ phân bổ A/B/C/D, đáp án đúng, lời giải; GV có thể giảng giải trước khi chuyển câu.
-- [ ] Cuối phiên: tổng hợp theo HS/câu/lớp, lưu lịch sử hoạt động và xuất CSV/Excel; bảng xếp hạng/điểm thưởng là cấu hình tùy chọn, tránh gây áp lực.
-- [ ] Xử lý mất mạng/tải lại trang: tái kết nối bằng token phiên, khôi phục lựa chọn đã gửi, chống ghi trùng hoặc nộp sau hạn; đếm giờ và trạng thái phiên do server xác thực.
-- [ ] Quyền và an toàn: chỉ GV chủ phòng được điều khiển, kiểm soát người lạ/tên trùng/spam, giới hạn lượt tham gia, tránh hiển thị thông tin cá nhân HS công khai.
-- [ ] Kiểm thử thực tế với 40–50 thiết bị trong một lớp; kiểm tra độ trễ, đồng bộ, reconnect, thao tác trên Android/iOS, màn hình máy chiếu và mạng Wi-Fi yếu.
+## 6. Giai đoạn P1 — Student Dashboard và lộ trình
 
-### Giai đoạn 2 — Mở rộng sau khi Live Quiz ổn định
+### Bố cục
 
-- [ ] HS làm theo tốc độ riêng, giới hạn thời gian toàn bài, giao bài qua lớp hoặc liên kết và nộp/chấm tự động.
-- [ ] Hỗ trợ thêm đúng/sai, nhiều đáp án, điền ngắn và câu hỏi có hình ảnh/công thức; tái sử dụng ngân hàng câu hỏi.
-- [ ] Trò chơi thi đấu đội, bảng điểm trực tiếp, hiệu ứng chuyển câu và các mẫu gamification tùy bật/tắt; không ưu tiên hơn tính ổn định của bản đầu.
-- [ ] Phân tích độ khó câu hỏi, câu HS sai nhiều, theo dõi tiến bộ và xuất báo cáo phục vụ giáo viên.
+1. **Welcome card:** tên, streak, bài tiếp theo.
+2. **Continue learning:** bài đang dở với CTA tiếp tục.
+3. **Roadmap:** các chặng theo thứ tự, trạng thái locked/current/done.
+4. **Practice queue:** câu sai, bài cần ôn, quiz đề xuất.
+5. **Recent results:** điểm và nhận xét gần nhất.
+6. **Resource rail:** bài viết, video, tiện ích liên quan.
 
-### Tài liệu tham khảo và phạm vi
+### Luồng
 
-- Trang tham khảo: https://dethiso.vn
-- Luồng phòng thi đấu tham khảo: https://dethiso.vn/docs/dau-truong/tao-dau-truong-2-doi
-- Luồng giao bài/chấm/khôi phục: https://dethiso.vn/docs/thi-online/giao-bai-cho-lop
-- Từ dethiso.vn có thể học luồng tạo PIN, phòng chờ, giáo viên điều khiển, HS trả lời trên điện thoại, bảng điểm; các số giới hạn/khẳng định hiệu năng trên website bên ngoài chưa được kiểm chứng độc lập.
-- **Ngoài phạm vi yêu cầu hiện tại:** quét thẻ giấy/Plickers, sửa trực tiếp editor Word, triển khai database hoặc tạo phòng thi thật. Chỉ ghi vào roadmap, không tự xây dựng cho đến khi có yêu cầu.
+`Đăng nhập → Dashboard → chọn bước tiếp theo → Lesson → Practice → Result → Review/Continue`
 
+### Nguyên tắc
 
-Chi tiết cấu hình: `docs/SUPABASE_SETUP.md`.
+- Không bắt người học chọn từ quá nhiều menu.
+- Luôn lưu tiến độ sau mỗi đơn vị có ý nghĩa.
+- Result không chỉ là điểm: phải có lỗi, giải thích và hành động tiếp theo.
+- Empty state phải hướng dẫn học viên bắt đầu bằng một CTA duy nhất.
+
+## 7. Giai đoạn P1/P2 — Nội dung, Quiz và ngân hàng câu hỏi
+
+### Teacher flow
+
+`Tạo nội dung → chọn loại → nhập/nhập file → xem trước → kiểm tra → lưu nháp → phát hành`
+
+Loại nội dung:
+
+- Lesson.
+- Quiz.
+- Đúng/Sai.
+- Tự luận.
+- Bài thực hành file.
+- Bài code/SQL (sau khi sandbox đạt).
+- Slide/presentation.
+
+### Question bank
+
+- Tags: lớp, chủ đề, chuẩn đầu ra, độ khó, ngôn ngữ.
+- Versioning và trạng thái draft/review/published/archived.
+- Preview không lộ đáp án cho learner.
+- Reuse câu hỏi vào nhiều đề nhưng giữ snapshot khi đã giao.
+- Có lịch sử sửa và người sửa.
+
+### Quiz UI
+
+- Header: tiến độ, thời gian, lưu trạng thái.
+- Main: một câu hoặc nhóm câu, media/công thức accessible.
+- Footer: trước/sau, đánh dấu xem lại, nộp.
+- Result: điểm, câu sai, giải thích, nút ôn lại.
+- Server là nguồn sự thật cho timer, attempt và điểm.
+
+## 8. Giai đoạn P2 — Teacher Studio, lớp và giao bài
+
+### Luồng tạo lớp
+
+`Teacher Dashboard → Lớp học → Tạo lớp → mã lớp → thêm thành viên → kiểm tra danh sách`
+
+### Luồng giao bài
+
+`Chọn lớp → chọn nội dung → đặt hạn → cấu hình attempt/quyền xem đáp án → preview → giao`
+
+### Student flow
+
+`Vào lớp bằng mã → xem bài được giao → làm bài → nộp → nhận trạng thái → xem điểm/nhận xét`
+
+### Bố cục lớp học
+
+- Header: tên lớp, mã lớp, giáo viên.
+- Tabs: Tổng quan, Thành viên, Bài giao, Bài nộp, Thống kê.
+- Summary cards: số học viên, bài sắp hạn, bài chưa chấm.
+- Table desktop / cards mobile.
+- Filter theo trạng thái, hạn, nhóm.
+- Không hiển thị dữ liệu học sinh ngoài scope.
+
+### Bài nộp
+
+- Queue chưa chấm.
+- Detail theo học viên và attempt.
+- Rubric/annotation.
+- Lịch sử chấm.
+- Publish/reopen điểm.
+- Export có quyền và audit.
+
+## 9. Giai đoạn P2 — Word/Excel/Slides Lab
+
+### Word Lab
+
+- Toolbar/ribbon có nhóm ngữ nghĩa.
+- Editor trung tâm.
+- Panel task/hướng dẫn bên phải.
+- Autosave indicator.
+- Undo/redo và clipboard fallback.
+- QA IME tiếng Việt, tài liệu dài, ảnh/bảng, import/export.
+
+### Excel Lab
+
+- Grid trung tâm.
+- Formula bar.
+- Panel mục tiêu và lỗi.
+- Test dữ liệu có kiểm soát.
+- Kết quả: công thức đúng, định dạng đúng, lỗi tham chiếu.
+
+### Slides
+
+- Thumbnail rail trái.
+- Canvas giữa.
+- Inspector phải.
+- Present mode tách khỏi edit mode.
+- Hỗ trợ presenter controls, reduced motion và keyboard.
+
+### Luồng dùng chung
+
+`Mở bài → đọc mục tiêu → thao tác → autosave → kiểm tra → nhận phản hồi → nộp`
+
+## 10. Giai đoạn P2/P3 — Trình chiếu và Live Quiz
+
+### Giáo viên mở phiên
+
+`Teacher → Live/Trình chiếu → chọn bộ câu hỏi → tạo phòng → PIN/QR → phòng chờ → bắt đầu`
+
+### Học sinh tham gia
+
+`Mở link/PIN → nhập tên hoặc chọn hồ sơ → xác nhận → chờ → trả lời`
+
+### Màn hình phòng chờ
+
+- PIN và QR lớn.
+- Số người đã vào.
+- Danh sách tên có kiểm soát riêng tư.
+- Trạng thái kết nối.
+- Nút bắt đầu chỉ dành cho giáo viên.
+
+### Trong câu hỏi
+
+**Màn chiếu**
+
+- Câu hỏi, media, timer.
+- Số người đã trả lời.
+- Không lộ đáp án trước khi công bố.
+
+**Thiết bị học sinh**
+
+- Đáp án lớn, chạm dễ.
+- Trạng thái đã gửi.
+- Reconnect không mất lựa chọn.
+- Không hiển thị bảng xếp hạng nếu lớp không bật.
+
+### Sau câu
+
+- Phân bố đáp án.
+- Đáp án đúng và giải thích.
+- Giáo viên giảng giải.
+- Chuyển câu bằng nút hoặc phím.
+
+### Release gate
+
+- 40–50 thiết bị.
+- Wi-Fi yếu.
+- Refresh/reconnect.
+- Android/iOS.
+- Đồng hồ server.
+- Chống nộp trùng và nộp sau hạn.
+
+## 11. Giai đoạn P3 — Coding Lab, SQL, Scratch và file review
+
+### Coding flow
+
+`Chọn bài → editor → chạy thử → test công khai → nộp → test ẩn → điểm → phản hồi`
+
+- Sandbox tách biệt.
+- Resource quota.
+- No outbound network.
+- Test case versioned.
+- Compile/runtime error thân thiện.
+- Không trả đáp án hidden test.
+
+### SQL
+
+- Database fixture read-only.
+- Reset giữa các lượt.
+- Query timeout.
+- Chặn mutation ngoài phạm vi.
+- Hiển thị kết quả mẫu và giải thích.
+
+### Scratch/HTML
+
+- Preview sandbox.
+- Rubric theo hành vi/kết quả.
+- Giới hạn iframe/script.
+- Giáo viên xem lại sản phẩm cùng metadata.
+
+### File review
+
+- Viewer PDF/Office.
+- Annotation layer không sửa file gốc.
+- Comment theo vị trí.
+- Dấu Đúng/Sai.
+- Version và trạng thái draft/published.
+
+## 12. Giai đoạn P3 — Thư viện, blog và tài nguyên
+
+### Library UI
+
+- Filter theo lớp, chủ đề, loại, quyền đọc.
+- Card có tiêu đề, tác giả, thời lượng/số trang, trạng thái public/locked.
+- Reader có mục lục, tiến độ đọc, search.
+- Video có transcript/captions.
+- Tài liệu locked phải nêu điều kiện truy cập.
+
+### Blog/resources
+
+- Topic filter.
+- Search.
+- Published-only.
+- Related lesson/resource.
+- Empty state không dựng dữ liệu giả.
+- Quyền upload/chia sẻ và quy trình kiểm duyệt.
+
+## 13. Giai đoạn P4 — AI sư phạm
+
+AI chỉ mở sau khi P0–P3 có dữ liệu và quyền ổn định.
+
+### Kịch bản ưu tiên
+
+1. AI rà lỗi cùng em.
+2. Trợ giảng theo chủ đề.
+3. Dạy lại cho AI.
+4. AI vấn đáp.
+5. Phản biện AI.
+6. AI tranh biện.
+7. Nhập vai.
+8. An toàn số/nhận diện lừa đảo.
+
+### UI block
+
+- Mục tiêu học.
+- Phạm vi chủ đề.
+- Số lượt còn lại.
+- Consent và cảnh báo dữ liệu.
+- Chat/interaction.
+- Rubric cuối phiên.
+- Nút giáo viên xem lại.
+- Nút báo lỗi hoặc kết thúc.
+
+### Nguyên tắc
+
+- AI không tự công bố điểm cuối nếu chưa có teacher review.
+- Không gửi dữ liệu cá nhân không cần thiết.
+- Chặn prompt lạc đề và prompt injection.
+- Lưu audit tối thiểu, có thời hạn xóa.
+- Hiển thị rõ AI có thể sai.
+
+## 14. Giai đoạn P4 — Typing, gamification và động lực
+
+### Typing
+
+- Bài theo cụm phím.
+- Telex tiếng Việt.
+- WPM/accuracy.
+- Phím yếu.
+- Bài tập cá nhân hóa.
+- Chế độ luyện nhanh và luyện theo lộ trình.
+
+### Gamification
+
+- XP, streak, badge.
+- Nhiệm vụ ngày/tháng.
+- Leaderboard opt-in.
+- Phần thưởng không làm sai lệch mục tiêu học.
+- Hạn chế hiển thị dữ liệu cá nhân.
+
+### Không ưu tiên sớm
+
+- Ví/hoa hồng/commerce phức tạp.
+- Realtime battle.
+- Hệ tiền tệ nhiều lớp.
+
+## 15. Giai đoạn P5 — Commerce và quản trị cấp trường
+
+### Commerce
+
+- Product, entitlement, order, invoice, refund.
+- Hiển thị giá thật đã phê duyệt.
+- License/version.
+- Điều khoản trước thanh toán.
+- Webhook idempotent.
+- Audit và hỗ trợ hoàn tiền.
+
+### School dashboard
+
+- Nhiều lớp/nhiều giáo viên.
+- Báo cáo theo lớp/khối.
+- Role matrix.
+- Export theo quyền.
+- Phụ huynh chỉ xem con mình.
+- Retention và consent rõ.
+
+## 16. Giai đoạn P5 — Quản lý phòng máy
+
+Chỉ nghiên cứu sau khi lõi Teacher Studio ổn định.
+
+### Pilot an toàn
+
+1. Sơ đồ phòng.
+2. Vị trí và trạng thái online/offline.
+3. Gắn máy với lớp/ca.
+4. Audit đăng ký thiết bị.
+
+Remote monitoring/control, khóa màn hình, giới hạn web/app chỉ được làm sau đánh giá pháp lý, consent và bảo mật riêng. Không tự triển khai agent điều khiển thiết bị chỉ vì ý tưởng đã có trong tài liệu.
+
+## 17. Design system và trạng thái bắt buộc
+
+Mọi route phải có:
+
+- Loading skeleton.
+- Empty state.
+- Error state có retry.
+- Offline/reconnect state khi có realtime.
+- Success feedback.
+- Confirm cho destructive action.
+- Keyboard focus.
+- Screen reader label.
+- Reduced motion.
+- Responsive 360/768/1280/1920.
+
+### Bố cục ưu tiên
+
+- Một primary action mỗi màn hình.
+- Không quá ba card summary trên mobile.
+- Table chuyển thành card ở màn hình hẹp.
+- Sidebar chuyển drawer/bottom nav.
+- Detail dùng split view desktop, stacked view mobile.
+- Breadcrumb cho route sâu.
+- Không dùng placeholder để giả làm tính năng đã chạy.
+
+## 18. Backlog đã hấp thụ từ báo cáo tham khảo
+
+### Đưa vào trước
+
+- Review câu sai và ôn lại.
+- Roadmap học theo chặng.
+- Question bank và ma trận.
+- Teacher flow giao bài/chấm/kết quả.
+- Trình chiếu và Live Quiz.
+- Coding sandbox cơ bản.
+- Chấm file có annotation.
+- Thư viện theo lớp/chủ đề.
+- Loading/empty/error states.
+
+### Để sau
+
+- AI kịch bản nâng cao.
+- Typing thích ứng.
+- Gamification sâu.
+- Nhiều trò chơi realtime.
+- PowerPoint add-in.
+- Commerce.
+- Quản lý phòng máy.
+- Parent/school analytics mở rộng.
+
+## 19. Definition of Done chung
+
+Một tính năng chỉ được đánh dấu DONE khi:
+
+- Có owner và route rõ.
+- Có schema/API/RLS tương ứng.
+- Có loading/empty/error/success.
+- Có mobile và keyboard QA.
+- Có test quyền đúng/sai.
+- Có audit cho thao tác nhạy cảm.
+- Có xử lý retry/reconnect nếu cần.
+- Có tài liệu cập nhật.
+- CI/build PASS.
+- Deploy READY và SHA khớp nếu phát hành.
+
+## 20. Tài liệu nguồn
+
+- [PRODUCT_AND_MODULES.md](PRODUCT_AND_MODULES.md)
+- [ARCHITECTURE_AND_SECURITY.md](ARCHITECTURE_AND_SECURITY.md)
+- [ROADMAP cũ và lịch sử quyết định](ROADMAP.md)
+- [XCN_FUNCTION_ROADMAP_CHECKLIST.md](XCN_FUNCTION_ROADMAP_CHECKLIST.md)
+- [XUONG_CONG_NGHE_MASTER_PLAN_2026_2028.md](XUONG_CONG_NGHE_MASTER_PLAN_2026_2028.md)
+- [DUA_EDU_DEEP_REVIEW.md](DUA_EDU_DEEP_REVIEW.md)
+- [DETHISO_DEEP_REVIEW.md](DETHISO_DEEP_REVIEW.md)
+- [MONTINHOC_DEEP_REVIEW.md](MONTINHOC_DEEP_REVIEW.md)
+- [TINHOCBAN_DEEP_REVIEW.md](TINHOCBAN_DEEP_REVIEW.md)
+
+> Đây là roadmap tổng hợp. Trạng thái triển khai thực tế vẫn phải đối chiếu code, CI, Vercel và Supabase trước khi đánh dấu hoàn tất.
