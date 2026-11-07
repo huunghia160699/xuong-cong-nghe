@@ -67,3 +67,12 @@ Sau mỗi bước:
 - Tách snapshot báo cáo có ngày khi thật sự cần kiểm toán; không viết lại toàn bộ repo mỗi lần.
 
 **Quyết định chính:** `docs/INDEX.md` là điểm vào duy nhất; `AGENTS.md` là hướng dẫn điều phối ngắn; tên file chuyên ngành được duy trì ổn định, repo Git giữ lịch sử.
+
+
+## Báo cáo rà soát nền tảng tham khảo
+
+- [DUA_EDU_DEEP_REVIEW.md](DUA_EDU_DEEP_REVIEW.md)
+- [DETHISO_DEEP_REVIEW.md](DETHISO_DEEP_REVIEW.md)
+- [MONTINHOC_DEEP_REVIEW.md](MONTINHOC_DEEP_REVIEW.md)
+- [TINHOCBAN_DEEP_REVIEW.md](TINHOCBAN_DEEP_REVIEW.md)
+- [VNITEACH_DEEP_REVIEW.md](VNITEACH_DEEP_REVIEW.md)
