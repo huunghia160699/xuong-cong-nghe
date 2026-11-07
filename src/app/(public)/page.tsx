@@ -1,90 +1,68 @@
 import type {Metadata} from "next";
 import Link from "next/link";
-import {ArrowRight,ArrowUpRight,BookOpen,CheckCircle2,ClipboardCheck,FileText,GraduationCap,Presentation,ShieldCheck,Users} from "lucide-react";
-import {PublicHomeHero} from "@/components/public-home-hero";
+import {
+ ArrowRight,ArrowUpRight,BarChart3,BookOpen,BrainCircuit,CheckCircle2,
+ ClipboardCheck,Code2,FileText,Gamepad2,GraduationCap,Library,MousePointer2,
+ Newspaper,Presentation,School,ShieldCheck,Sparkles,Target,
+ WandSparkles,Zap
+} from "lucide-react";
 import {courses} from "@/data/mock";
 import {getPublishedCourses} from "@/features/courses/live-public";
 import {isLiveMode} from "@/lib/supabase/config";
 
 export const metadata:Metadata={
- title:"Xưởng Công Nghệ | Học công nghệ bằng cách thực hành",
- description:"Học và luyện kỹ năng số với Word Lab, trình chiếu Tin học, trắc nghiệm và các lộ trình thực hành của Xưởng Công Nghệ.",
+ title:"Xưởng Công Nghệ | Học, thực hành và sáng tạo với công nghệ",
+ description:"Một xưởng học số dành cho người học và giáo viên: khóa học, công cụ thực hành, bài luyện, trò chơi, tài nguyên và tin tức công nghệ.",
  alternates:{canonical:"/"}
 };
 
-const learning=[
- {title:"Học để hiểu",description:"Xem ví dụ rồi tự làm theo từng bước.",icon:BookOpen},
- {title:"Luyện cho vững",description:"Thử trên công cụ, luyện lại khi cần.",icon:ClipboardCheck},
- {title:"Ứng dụng được",description:"Tạo bài làm và sản phẩm của riêng bạn.",icon:CheckCircle2}
+const worlds=[
+ {icon:BookOpen,title:"Học tập",desc:"Lộ trình ngắn, bài học rõ và bước tiếp theo dễ thấy.",meta:"Khóa học · Roadmap"},
+ {icon:MousePointer2,title:"Thực hành",desc:"Tự tay làm trên Word Lab, trình chiếu và các phòng lab.",meta:"Office · Data · Coding"},
+ {icon:ClipboardCheck,title:"Kiểm tra",desc:"Quiz, câu sai cần ôn và kết quả giúp biết nên học gì tiếp.",meta:"Quiz · Đề · Phản hồi"},
+ {icon:Gamepad2,title:"Trò chơi",desc:"Học qua thử thách lớp, ô chữ, đua kiến thức và nhiệm vụ.",meta:"Games · Live · XP"},
+ {icon:GraduationCap,title:"Giáo viên",desc:"Hướng tới tạo nội dung, giao bài, chấm và theo dõi lớp.",meta:"Teacher Studio"},
+ {icon:Library,title:"Tài nguyên",desc:"Bài viết, ebook, video, dataset và học liệu theo chủ đề.",meta:"Library · News"}
+] as const;
+
+const roadmapGroups=[
+ {no:"01",title:"Học & luyện",items:"Lộ trình · Quiz · Typing · Chứng chỉ",tone:"mint"},
+ {no:"02",title:"Sáng tạo",items:"Word · Excel · Slides · Scratch · Web",tone:"blue"},
+ {no:"03",title:"Lớp học",items:"Giao bài · Chấm · Live Quiz · Báo cáo",tone:"peach"},
+ {no:"04",title:"Khám phá",items:"AI sư phạm · Data Lab · Coding · SQL",tone:"yellow"},
+ {no:"05",title:"Động lực",items:"XP · Nhiệm vụ · Garden · Đấu trường",tone:"green"}
 ] as const;
 
 export default async function HomePage(){
  const listedCourses=isLiveMode()?await getPublishedCourses():courses;
- return <main className="xcn-new-home">
-  <section className="xcn-new-hero" aria-labelledby="home-title">
-   <div className="xcn-container xcn-new-hero-layout">
-    <div className="xcn-new-hero-copy">
-     <h1 id="home-title">Học đến đâu,<br/><span>làm được đến đó.</span></h1>
-     <p className="xcn-new-hero-description">Học kỹ năng số bằng cách tự tay thực hành. Chọn một công cụ, làm thử và tiến bộ qua mỗi bài học.</p>
-     <div className="xcn-new-hero-actions">
-      <Link href="/cong-cu" className="xcn-new-button-primary">Khám phá công cụ <ArrowUpRight size={18} aria-hidden="true"/></Link>
-      <Link href="/khoa-hoc" className="xcn-new-button-text">Xem khóa học <ArrowRight size={18} aria-hidden="true"/></Link>
-     </div>
-    </div>
-    <PublicHomeHero/>
-   </div>
-  </section>
+ return <main className="xcn-universe">
+  <section className="xcn-u-hero" aria-labelledby="home-title"><div className="xcn-container xcn-u-hero-grid">
+   <div className="xcn-u-hero-copy"><p className="xcn-u-eyebrow"><span/> Một xưởng học số cho mọi người</p><h1 id="home-title">Học công nghệ.<br/><em>Tự tay làm thật.</em></h1><p>Khóa học, công cụ thực hành, bài luyện, trò chơi và không gian lớp học — cùng nằm trong một hành trình giúp bạn hiểu, làm được và tiến bộ.</p><div className="xcn-u-actions"><Link href="/cong-cu" className="xcn-u-primary">Vào xưởng thực hành <ArrowUpRight size={18}/></Link><Link href="/khoa-hoc" className="xcn-u-secondary">Khám phá khóa học <ArrowRight size={18}/></Link></div><div className="xcn-u-hero-notes"><span><CheckCircle2/> Dùng thử trước</span><span><CheckCircle2/> Học theo lộ trình</span><span><CheckCircle2/> Phù hợp lớp học</span></div></div>
+   <div className="xcn-u-console" aria-label="Bản xem trước hệ sinh thái Xưởng Công Nghệ"><div className="xcn-u-console-top"><span><i/><i/><i/></span><b>XƯỞNG CÔNG NGHỆ</b><small>Khám phá</small></div><div className="xcn-u-console-body"><div className="xcn-u-console-nav"><span className="active"><Sparkles/>Hôm nay</span><span><BookOpen/>Học</span><span><Gamepad2/>Chơi</span><span><Target/>Tiến bộ</span></div><div className="xcn-u-console-main"><div className="xcn-u-welcome"><small>BƯỚC TIẾP THEO</small><strong>Làm quen với Word</strong><p>Tiếp tục bài thực hành đang mở.</p><div><span>64%</span><i><b/></i></div></div><div className="xcn-u-mini-grid"><article className="word"><FileText/><span>Word Lab</span><small>Thực hành</small></article><article className="quiz"><ClipboardCheck/><span>Quiz nhanh</span><small>10 câu</small></article><article className="game"><Gamepad2/><span>Thử thách</span><small>Đang lên ý tưởng</small></article><article className="news"><Newspaper/><span>Tri thức mới</span><small>Khám phá</small></article></div></div></div></div>
+  </div></section>
 
-  <section id="he-sinh-thai" className="xcn-new-section xcn-new-tools" aria-labelledby="tools-title">
-   <div className="xcn-container">
-    <div className="xcn-new-section-head"><div><h2 id="tools-title">Không chỉ xem bài giảng.<br/>Bạn có thể bắt tay vào làm.</h2></div><p>Soạn văn bản, học qua trình chiếu và luyện kiến thức — tất cả trong một nơi.</p></div>
-    <div className="xcn-new-tool-feature">
-     <div className="xcn-new-tool-art" aria-hidden="true">
-      <div className="xcn-new-tool-paper">
-       <div className="xcn-new-tool-ribbon"><span>Trang đầu</span><span>Chèn</span><span>Bố trí</span><span>Xem</span></div>
-       <div className="xcn-new-tool-page"><span>TÀI LIỆU THỰC HÀNH</span><strong>Lập kế hoạch học tập</strong><div className="xcn-new-tool-line wide"/><div className="xcn-new-tool-line"/><div className="xcn-new-tool-line mid"/><p><b>01.</b> Mục tiêu trong tuần</p><div className="xcn-new-tool-line wide"/><div className="xcn-new-tool-line mid"/></div>
-      </div>
-     </div>
-     <div className="xcn-new-tool-copy"><div className="xcn-new-tool-heading"><FileText size={33} strokeWidth={1.6} aria-hidden="true"/><span>Word Lab</span></div><h3>Tập soạn thảo<br/>như trên Word.</h3><p>Gõ, định dạng văn bản và làm quen với trang A4 ngay trên trình duyệt.</p><span className="xcn-new-status">Đang tiếp tục hoàn thiện</span><Link href="/cong-cu/mo-phong-word" className="xcn-new-text-action">Mở bản trải nghiệm <ArrowUpRight size={19} aria-hidden="true"/></Link></div>
-    </div>
-    <div className="xcn-new-two-tools">
-     <Link href="/cong-cu/trinh-chieu" className="xcn-new-tool-tile"><div className="xcn-new-tool-tile-icon xcn-new-tile-blue"><Presentation size={31} strokeWidth={1.6} aria-hidden="true"/></div><div><h3>Trình chiếu<br/>Tin học.</h3><p>Học theo chủ đề với slide và câu hỏi tương tác.</p><span>Xem thư viện <ArrowUpRight size={17} aria-hidden="true"/></span></div></Link>
-     <Link href="/dang-nhap?next=%2Fstudent%2Fquiz" className="xcn-new-tool-tile"><div className="xcn-new-tool-tile-icon xcn-new-tile-peach"><ClipboardCheck size={31} strokeWidth={1.6} aria-hidden="true"/></div><div><h3>Trắc nghiệm<br/>và bài luyện.</h3><p>Làm bài, nhận phản hồi và xem kết quả học tập.</p><span>Vào bài luyện <ArrowUpRight size={17} aria-hidden="true"/></span></div></Link>
-    </div>
-    <Link href="/cong-cu" className="xcn-new-all-link">Xem toàn bộ công cụ <ArrowRight size={18} aria-hidden="true"/></Link>
-   </div>
-  </section>
+  <section className="xcn-u-proof"><div className="xcn-container"><span>Học để hiểu</span><i/><span>Làm để thành thạo</span><i/><span>Chia sẻ để cùng tiến bộ</span></div></section>
 
-  <section id="du-an" className="xcn-new-section xcn-new-learning" aria-labelledby="learning-title">
-   <div className="xcn-container">
-    <div className="xcn-new-section-head"><div><h2 id="learning-title">Hiểu một điều mới.<br/>Thử ngay điều đó.</h2></div><p>Hiểu kiến thức qua ví dụ, luyện tập rồi áp dụng vào bài làm thực tế.</p></div>
-    <div className="xcn-new-learning-grid">{learning.map(item=><article key={item.title}><div className="xcn-new-learning-icon"><item.icon size={25} strokeWidth={1.6} aria-hidden="true"/></div><h3>{item.title}</h3><p>{item.description}</p></article>)}</div>
-    <div className="xcn-new-learning-note"><p>Học để hiểu. Làm để thành thạo.</p></div>
-   </div>
-  </section>
+  <section className="xcn-u-worlds" id="he-sinh-thai" aria-labelledby="worlds-title"><div className="xcn-container"><div className="xcn-u-section-head"><div><p className="xcn-u-eyebrow"><span/> Tất cả trong một nơi</p><h2 id="worlds-title">Mỗi điều bạn muốn giỏi hơn<br/>đều có một cửa để bắt đầu.</h2></div><p>Từ một bài học ngắn đến phòng lab, từ trò chơi cả lớp đến công cụ giáo viên — mọi phần dùng chung một hành trình học.</p></div><div className="xcn-u-world-grid">{worlds.map((world,index)=><article key={world.title} className={`world-${index+1}`}><div><world.icon/><span>0{index+1}</span></div><h3>{world.title}</h3><p>{world.desc}</p><small>{world.meta}</small></article>)}</div></div></section>
 
-  <section id="khoa-hoc" className="xcn-new-section xcn-new-courses" aria-labelledby="courses-title">
-   <div className="xcn-container">
-    <div className="xcn-new-section-head"><div><h2 id="courses-title">Bắt đầu từ điều<br/>bạn muốn giỏi hơn.</h2></div><p>Chọn chủ đề phù hợp và học theo từng bước.</p></div>
-    {listedCourses.length?<div className="xcn-new-course-grid">{listedCourses.slice(0,3).map((course,index)=><Link href={`/khoa-hoc/${course.slug}`} key={course.slug} className="xcn-new-course">
-      <div className={`xcn-new-course-cover xcn-new-course-cover-${index%3}`}><span>{course.category}</span><BookOpen size={49} strokeWidth={1.25} aria-hidden="true"/></div>
-      <div className="xcn-new-course-body"><small>{course.level} · {course.lessons} bài học</small><strong>{course.title}</strong><span>Xem lộ trình <ArrowUpRight size={17} aria-hidden="true"/></span></div>
-     </Link>)}</div>:<p className="xcn-new-empty">Khóa học đang được cập nhật. Bạn vẫn có thể khám phá các công cụ thực hành.</p>}
-    <Link href="/khoa-hoc" className="xcn-new-all-link">Khám phá tất cả khóa học <ArrowRight size={18} aria-hidden="true"/></Link>
-   </div>
-  </section>
+  <section className="xcn-u-tools" aria-labelledby="tools-title"><div className="xcn-container"><div className="xcn-u-tools-intro"><div><p className="xcn-u-eyebrow light"><span/> Công cụ đang có</p><h2 id="tools-title">Mở trình duyệt.<br/>Bắt đầu làm.</h2></div><p>Không cần chỉ đứng ngoài xem. Bạn có thể thử những trải nghiệm đã hoạt động và thấy rõ những gì đang tiếp tục hoàn thiện.</p></div><div className="xcn-u-tool-stage">
+   <Link href="/cong-cu/mo-phong-word" className="xcn-u-tool-feature"><div className="xcn-u-word-art" aria-hidden="true"><div className="xcn-u-word-window"><div><span>File</span><span>Trang đầu</span><span>Chèn</span><span>Bố trí</span></div><article><small>BÀI THỰC HÀNH</small><strong>Kế hoạch học tập</strong><i/><i/><i className="short"/><p><b>01</b> Mục tiêu tuần này</p></article></div></div><div className="xcn-u-tool-content"><span className="available">Đang dùng được</span><div><FileText/><small>WORD LAB</small></div><h3>Soạn thảo như trên Word.</h3><p>Gõ, định dạng, dùng Ribbon và làm quen với trang A4 ngay trên trình duyệt.</p><b>Mở bản trải nghiệm <ArrowUpRight size={18}/></b></div></Link>
+   <div className="xcn-u-tool-side"><Link href="/cong-cu/trinh-chieu"><span className="available">Đang dùng được</span><Presentation/><div><h3>Trình chiếu Tin học</h3><p>Slide trực quan và câu hỏi tương tác theo chủ đề.</p></div><ArrowUpRight/></Link><Link href="/dang-nhap?next=%2Fstudent%2Fquiz"><span className="available">Đang dùng được</span><ClipboardCheck/><div><h3>Quiz & bài luyện</h3><p>Làm bài, xem phản hồi và kết quả học tập.</p></div><ArrowUpRight/></Link><article><span className="planned">Trong lộ trình</span><Code2/><div><h3>Coding & Data Lab</h3><p>Python, SQL, HTML và dữ liệu trong sandbox an toàn.</p></div><ArrowRight/></article></div>
+  </div><Link href="/cong-cu" className="xcn-u-view-all">Xem toàn bộ khu công cụ <ArrowRight/></Link></div></section>
 
-  <section className="xcn-new-section xcn-new-audience" aria-labelledby="audience-title">
-   <div className="xcn-container xcn-new-audience-layout">
-    <div><h2 id="audience-title">Một nền tảng.<br/>Đúng nhu cầu của bạn.</h2><p>Không gian riêng cho người học, giáo viên và quản trị.</p><Link href="/gioi-thieu" className="xcn-new-text-action">Tìm hiểu về Xưởng Công Nghệ <ArrowUpRight size={18} aria-hidden="true"/></Link></div>
-    <div className="xcn-new-audience-list">
-     <div><GraduationCap size={27} strokeWidth={1.6} aria-hidden="true"/><div><h3>Người học</h3><p>Học bài, thực hành và xem kết quả của mình.</p></div><span>Đã có nền tảng</span></div>
-     <div><Users size={27} strokeWidth={1.6} aria-hidden="true"/><div><h3>Giáo viên</h3><p>Hướng tới quản lý học liệu, lớp học và bài giao.</p></div><span>Đang phát triển</span></div>
-     <div><ShieldCheck size={27} strokeWidth={1.6} aria-hidden="true"/><div><h3>Quản trị</h3><p>Quản lý nội dung, người dùng và phân quyền.</p></div><span>Cần tài khoản có quyền</span></div>
-    </div>
-   </div>
-  </section>
+  <section className="xcn-u-courses" aria-labelledby="courses-title"><div className="xcn-container"><div className="xcn-u-course-head"><div><p className="xcn-u-eyebrow"><span/> Học theo đường đi rõ ràng</p><h2 id="courses-title">Chọn một kỹ năng.<br/>Đi từng bước tới đích.</h2></div><Link href="/khoa-hoc">Tất cả khóa học <ArrowRight/></Link></div>{listedCourses.length?<div className="xcn-u-course-grid">{listedCourses.slice(0,3).map((course,index)=><Link href={`/khoa-hoc/${course.slug}`} key={course.slug} className={`xcn-u-course course-${index+1}`}><div className="xcn-u-course-cover"><span>0{index+1}</span><BookOpen/><small>{course.category}</small></div><div><span>{course.level} · {course.lessons} bài học</span><h3>{course.title}</h3><b>Xem lộ trình <ArrowUpRight/></b></div></Link>)}</div>:<div className="xcn-u-course-empty"><BookOpen/><p>Khóa học đang được cập nhật. Bạn vẫn có thể bắt đầu bằng các công cụ thực hành.</p></div>}</div></section>
 
-  <section className="xcn-new-last" aria-labelledby="last-title"><div className="xcn-container xcn-new-last-layout"><div><h2 id="last-title">Mở công cụ.<br/>Bắt đầu học thật.</h2></div><Link href="/cong-cu" className="xcn-new-last-button">Khám phá Xưởng Công Nghệ <ArrowUpRight size={19} aria-hidden="true"/></Link></div></section>
+  <section className="xcn-u-roles" aria-labelledby="roles-title"><div className="xcn-container xcn-u-roles-grid"><div className="xcn-u-role-copy"><p className="xcn-u-eyebrow light"><span/> Hai vai trò, một lớp học</p><h2 id="roles-title">Người học tiến bộ.<br/>Giáo viên nhìn thấy hành trình.</h2><p>Nền tảng được quy hoạch để nội dung tạo một lần có thể dùng cho bài học, bài giao, quiz, trình chiếu và trò chơi.</p><Link href="/gioi-thieu">Xem cách Xưởng vận hành <ArrowRight/></Link></div><div className="xcn-u-role-panels"><article className="student"><div><GraduationCap/><span>NGƯỜI HỌC</span></div><h3>Biết mình nên làm gì tiếp theo.</h3><ul><li>Tiếp tục bài đang học</li><li>Ôn lại câu sai</li><li>Xem tiến độ và kết quả</li><li>Khám phá tài nguyên liên quan</li></ul><span className="role-status available">Đã có nền tảng</span></article><article className="teacher"><div><School/><span>GIÁO VIÊN</span></div><h3>Chuẩn bị và theo dõi lớp ở một nơi.</h3><ul><li>Tạo nội dung và ngân hàng câu hỏi</li><li>Giao bài theo lớp</li><li>Chấm và phản hồi</li><li>Trình chiếu, thống kê, báo cáo</li></ul><span className="role-status planned">Đang phát triển</span></article></div></div></section>
+
+  <section className="xcn-u-play" aria-labelledby="play-title"><div className="xcn-container"><div className="xcn-u-section-head"><div><p className="xcn-u-eyebrow"><span/> Học mà muốn quay lại</p><h2 id="play-title">Trò chơi không chỉ để vui.<br/>Mỗi lượt chơi đều quay về kiến thức.</h2></div><p>Khu trò chơi nằm trong lộ trình dài hạn và sẽ dùng chung kho câu hỏi, lớp học, quyền riêng tư cùng dữ liệu tiến bộ.</p></div><div className="xcn-u-playground">
+   <article className="xcn-u-game-main"><div className="xcn-u-game-sky"><span/><span/><span/><div className="xcn-u-game-island"><i>XP</i><b>VƯỜN<br/>TRI THỨC</b></div><div className="xcn-u-game-path"><i/><i/><i/><i/></div></div><div><span className="planned">Ý tưởng dài hạn</span><h3>Xây khu vườn bằng chính tiến bộ học tập.</h3><p>Nhiệm vụ, streak, huy hiệu và Garden chỉ mở sau khi vòng học cốt lõi ổn định.</p></div></article>
+   <div className="xcn-u-game-list"><article><div><Target/><b>Live Quiz</b></div><span>Phòng chơi · PIN · QR</span><small>Trong lộ trình</small></article><article><div><Zap/><b>Đường đua tri thức</b></div><span>Cùng lớp trả lời theo đội</span><small>Ý tưởng</small></article><article><div><WandSparkles/><b>Ô chữ & ghép từ</b></div><span>Dùng chung kho câu hỏi</span><small>Ý tưởng</small></article><article><div><Gamepad2/><b>Đấu trường Quiz</b></div><span>Phiên ngắn, luật rõ ràng</span><small>Ý tưởng dài hạn</small></article></div>
+  </div></div></section>
+
+  <section className="xcn-u-roadmap" aria-labelledby="roadmap-title"><div className="xcn-container"><div className="xcn-u-roadmap-top"><div><p className="xcn-u-eyebrow light"><span/> 132 ý tưởng đã được lưu</p><h2 id="roadmap-title">Không phải 132 ứng dụng.<br/>Là một bản đồ để xây đúng thứ tự.</h2></div><p>Năm website tham khảo đã được chuyển hóa thành năm nhóm năng lực. Ý tưởng chưa triển khai luôn được ghi rõ trạng thái.</p></div><div className="xcn-u-roadmap-grid">{roadmapGroups.map(group=><article key={group.no} className={group.tone}><span>{group.no}</span><h3>{group.title}</h3><p>{group.items}</p><small>Trong Roadmap</small></article>)}</div><div className="xcn-u-roadmap-foot"><p><ShieldCheck/> Dữ liệu và quyền trước · Tiến độ học trước game · Giáo viên kiểm duyệt AI</p><Link href="/gioi-thieu">Hiểu thêm về định hướng <ArrowRight/></Link></div></div></section>
+
+  <section className="xcn-u-news" aria-labelledby="news-title"><div className="xcn-container"><div className="xcn-u-news-head"><div><p className="xcn-u-eyebrow"><span/> Tin tức & tri thức</p><h2 id="news-title">Đọc để hiểu.<br/>Mở công cụ để làm.</h2></div><Link href="/tin-tuc">Vào tạp chí <ArrowUpRight/></Link></div><div className="xcn-u-news-grid"><article className="featured"><div><span>01</span><strong>LEARN<br/>BY<br/><em>DOING</em></strong></div><small>Kỹ năng học tập</small><h3>Vì sao bài thực hành ngắn giúp kiến thức ở lại lâu hơn?</h3><p>Góc nhìn về học bằng cách làm và phản hồi sớm.</p></article><article><div className="xcn-u-news-icon"><BarChart3/></div><small>Excel · Công việc</small><h3>Từ bảng dữ liệu thô đến một câu trả lời có ích.</h3><p>Đang biên soạn</p></article><article><div className="xcn-u-news-icon ai"><BrainCircuit/></div><small>AI · Tư duy</small><h3>Dùng AI tốt hơn mà vẫn giữ quyền tự suy nghĩ.</h3><p>Đang biên soạn</p></article></div></div></section>
+
+  <section className="xcn-u-final"><div className="xcn-container xcn-u-final-grid"><div><p>Một nơi để học, làm, chơi và cùng nhau tiến bộ.</p><h2>Mở một cánh cửa.<br/>Bắt đầu hành trình của bạn.</h2></div><div><Link href="/cong-cu" className="xcn-u-final-primary">Khám phá Xưởng Công Nghệ <ArrowUpRight/></Link><Link href="/bang-gia">Xem quyền sử dụng <ArrowRight/></Link></div></div></section>
  </main>;
 }
