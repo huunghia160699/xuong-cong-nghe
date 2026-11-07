@@ -2,7 +2,7 @@
 
 > **Trạng thái:** CURRENT / kế hoạch hợp nhất  
 > **Ngày cập nhật:** 07/11/2026  
-> **Nguồn chính:** tiến độ repository, kiểm toán hệ thống, Master Plan, checklist chức năng và bốn báo cáo tham khảo sản phẩm.  
+> **Nguồn chính:** tiến độ repository, kiểm toán hệ thống, Master Plan, checklist chức năng và năm báo cáo tham khảo sản phẩm.  
 > **Nguyên tắc:** báo cáo tham khảo chỉ cung cấp ý tưởng; không sao chép giao diện, nội dung hoặc mã nguồn. Mục chưa có bằng chứng code/test/deploy được xem là **CHƯA TRIỂN KHAI**.
 
 ## 1. Tầm nhìn sản phẩm
@@ -11,8 +11,9 @@ Xưởng Công Nghệ là nền tảng học công nghệ theo chu trình:
 
 `khám phá → học có hướng dẫn → thực hành → kiểm tra → nhận phản hồi → lưu tiến bộ → giáo viên theo dõi`
 
-Bốn báo cáo tham khảo bổ sung bốn năng lực:
+Năm nguồn tham khảo được ghi nhận, mỗi nguồn bổ sung một nhóm năng lực:
 
+- VniTeach: trung tâm công cụ giáo viên, tiện ích lớp và hoạt động ôn tập.
 - DUA Edu: dashboard học tập, lộ trình, Quiz, Slides và Data Lab.
 - Đề Thi Số: tạo đề, ma trận, lớp học, chấm bài, trình chiếu, QR và trò chơi lớp.
 - Môn Tin học: chấm code real-time, nhiều loại bài, AI sư phạm, kho bài và thư viện.
@@ -473,6 +474,8 @@ Mọi route phải có:
 
 ## 18. Backlog đã hấp thụ từ báo cáo tham khảo
 
+Danh mục đầy đủ 132 ý tưởng có mã từ năm nguồn được lưu tại [mục 21](#21-ngân-hàng-tính-năng-tham-khảo-từ-5-website--chỉ-lưu-ý-tưởng-07112026); mọi mục chỉ ở dạng **chờ nghiên cứu**, không phát sinh lệnh xây dựng.
+
 ### Đưa vào trước
 
 - Review câu sai và ôn lại.
@@ -522,5 +525,189 @@ Một tính năng chỉ được đánh dấu DONE khi:
 - [DETHISO_DEEP_REVIEW.md](DETHISO_DEEP_REVIEW.md)
 - [MONTINHOC_DEEP_REVIEW.md](MONTINHOC_DEEP_REVIEW.md)
 - [TINHOCBAN_DEEP_REVIEW.md](TINHOCBAN_DEEP_REVIEW.md)
+- [WEBSITE_REFERENCES.md](WEBSITE_REFERENCES.md) và báo cáo VniTeach gốc lưu trong Library.
 
 > Đây là roadmap tổng hợp. Trạng thái triển khai thực tế vẫn phải đối chiếu code, CI, Vercel và Supabase trước khi đánh dấu hoàn tất.
+
+## 21. Ngân hàng tính năng tham khảo từ **5 website** — chỉ lưu ý tưởng (07/11/2026)
+
+> **TRẠNG THÁI: BACKLOG / NOT STARTED — KHÔNG PHẢI LỆNH TRIỂN KHAI.** Đây là **132 hạng mục ý tưởng có mã truy vết** từ 5 báo cáo; gồm chức năng quan sát/được quảng bá ở website nguồn và phương án chuyển hóa cho Xưởng Công Nghệ. Một số hạng mục đã có một phần nền tảng trong code; việc ghi ở đây **không reset hoặc nâng trạng thái** chúng. Không tạo route/UI/API/schema, không giao task phát triển, không tick Admin Roadmap, không deploy, không cập nhật Supabase Production.
+
+**Cách đọc:** `P2+`, `P3+`, `P4+`, `P5+` chỉ là **mốc cân nhắc sớm nhất** sau các dependency; **không phải ngày bắt đầu, mức phê duyệt hay cam kết release**. Trước mắt vẫn giữ thứ tự ưu tiên P0/P1 hiện hành ở mục 2. Cùng một năng lực xuất hiện ở nhiều website **chỉ xây một lần**, dùng chung câu hỏi, lớp, bài giao, bài nộp và học liệu. Thẻ nguồn (VN/DT/DU/MT/TC) để truy lại ý tưởng, không phải năm hệ thống độc lập.
+
+**Điều kiện mở backlog khi được yêu cầu sau này:**
+
+1. **Dữ liệu/quyền trước:** Admin/Teacher/Student JWT, RLS ownership, phòng chống lộ dữ liệu, backup, audit và E2E staging. Teacher Studio + question bank + assignment/submission tạo lõi dùng chung trước game/chấm/AI.
+2. **Tiến độ học trước game:** học có mục tiêu → thực hành → phản hồi → theo dõi, sau đó mới XP, bảng xếp hạng, nhiệm vụ, vườn, thi đấu hoặc tiền ảo.
+3. **Chỉ mở module nguy cơ cao khi có thiết kế riêng:** Word/PDF OCR và công thức phải qua bước GV xác nhận; code/SQL/Scratch/HTML chạy sandbox với quota; camera/OMR/giám sát cần consent, quyền và kiểm sai; AI cần hạn mức, bảo vệ trẻ em, giám sát giáo viên; shop/ví/hoa hồng cần pháp lý và vận hành.
+4. **Không sao chép** source, thương hiệu, game art, giao diện, nội dung học liệu hoặc tuyên bố hiệu năng từ các nguồn. Chức năng quảng bá hoặc phần chưa truy cập được chỉ được ghi **tham khảo chưa xác minh**.
+5. **Khi người dùng duyệt bắt đầu một mục:** mở task riêng theo ID, thiết kế luồng và owner, kiểm tra code hiện hữu tránh trùng, xác nhận scope/acceptance/security, test local/staging và cập nhật checkpoint. Production/Preview chỉ deploy khi có yêu cầu rõ.
+
+### 21.1. VniTeach / VniTest — 20 ứng dụng đã nêu tên và cổng chung
+
+Nguồn: Nguồn Library `NGHIEN_CUU_VNITEACH_HE_SINH_THAI_UNG_DUNG_2026-10-30.md` (20 app có tên, không suy đoán ứng dụng thứ 21) + [WEBSITE_REFERENCES.md](WEBSITE_REFERENCES.md).
+
+| ID | Năng lực ghi nhận để nghiên cứu/phát triển độc lập | Đợt tối thiểu* |
+|---|---|---|
+| `VN-01` | Trung tâm công cụ giáo viên theo tác vụ; mở/hướng dẫn/điều kiện dùng, SSO đồng bộ khi an toàn | P2+ |
+| `VN-02` | VniClock: đồng hồ đếm xuôi/ngược, pause/reset, toàn màn hình | P2+ |
+| `VN-03` | VniMillionaire: trò hỏi đáp kiểu Ai là triệu phú, dùng chung kho câu hỏi | P4+ |
+| `VN-04` | VniBoard: bảng viết/chú thích, bút/tẩy/Undo, layer tách bài giảng | P3+ |
+| `VN-05` | VniForm: phiếu khảo sát, exit ticket, thu phản hồi lớp học | P3+ |
+| `VN-06` | VniClass: sổ lớp/chủ nhiệm, danh sách HS, việc lớp (chi tiết cần khảo sát) | P2+ |
+| `VN-07` | VniLuckyNumber: bốc số may mắn, gọi lượt | P2+ |
+| `VN-08` | VniSchedule: xem lịch học/dạy; tối ưu xếp lịch trường/phòng sau | P5+ |
+| `VN-09` | VniPowerPoint: tái sử dụng bộ câu hỏi trong slide/trò chơi PowerPoint | P4+ |
+| `VN-10` | VniCam: phát hình camera điện thoại lên màn chiếu, consent/mã phiên | P5+ |
+| `VN-11` | VniTest: nhập Word/PDF, nhận dạng câu/đáp án/ảnh/công thức; editor, trộn đề, xuất Word/ZIP, thi/chấm/thống kê; bắt buộc giáo viên kiểm duyệt | P3+ |
+| `VN-12` | VniPlan: hỗ trợ giáo án gắn năng lực số, hoạt động, minh chứng; giáo viên duyệt | P4+ |
+| `VN-13` | VniYouth: thi đua/công tác Đoàn/trường | P5+ |
+| `VN-14` | VniLuckyWheel: quay tên, chọn nhóm/nhiệm vụ | P2+ |
+| `VN-15` | VniPlickers: trả lời bằng thẻ giấy, giáo viên quét (chưa xác minh ứng dụng cụ thể) | P4+ |
+| `VN-16` | VniBookmark: bộ sưu tập link/học liệu theo lớp, môn, nhãn | P3+ |
+| `VN-17` | VniPuzzle: trò lật mảnh ghép kèm ảnh/câu hỏi | P4+ |
+| `VN-18` | VniCrossword: ô chữ ngang/dọc ôn thuật ngữ | P4+ |
+| `VN-19` | VniWordFly: ghép chữ chuyển động có reduced-motion | P4+ |
+| `VN-20` | VniWordSearch: tìm từ khóa trong bảng chữ | P4+ |
+| `VN-21` | VniPDF: chuyển PDF thành ảnh, giới hạn tệp và bảo mật | P3+ |
+
+### 21.2. Đề Thi Số — soạn/giao/chấm đề, lớp học, game
+
+Nguồn: [DETHISO_DEEP_REVIEW.md](DETHISO_DEEP_REVIEW.md).
+
+| ID | Năng lực ghi nhận để nghiên cứu/phát triển độc lập | Đợt tối thiểu* |
+|---|---|---|
+| `DT-01` | Teacher Dashboard: bắt đầu nhanh, công việc hôm nay, lớp/đề gần đây | P2+ |
+| `DT-02` | Luồng tạo đề từ DOCX/PDF hoặc nhập từng câu thủ công | P2+ |
+| `DT-03` | Biên tập câu hỏi/đáp án, công thức, hình, bảng, kéo thả, rà soát trước lưu | P2+ |
+| `DT-04` | Kho đề cá nhân: phiên bản, nháp, giao lớp, chia sẻ, trình chiếu | P2+ |
+| `DT-05` | Question bank theo môn/chủ đề/độ khó, tái sử dụng | P2+ |
+| `DT-06` | Ma trận đề và bản đặc tả theo môn, lớp, mức độ nhận thức | P3+ |
+| `DT-07` | AI soạn đề/ma trận: consent dữ liệu, preview, giáo viên quyết định | P4+ |
+| `DT-08` | Trộn câu/đáp án từ Word thành nhiều mã đề, giữ công thức/hình | P3+ |
+| `DT-09` | Xuất mã đề DOCX/ZIP và đáp án tổng hợp, kiểm round-trip | P3+ |
+| `DT-10` | Tạo lớp, danh sách HS, mã tham gia, giao bài và tiến độ | P2+ |
+| `DT-11` | Giao đề bằng link/mã/QR, phạm vi lớp, hạn làm và quyền | P3+ |
+| `DT-12` | Thi trực tuyến, đồng hồ và chấm server, công bố kết quả theo quyền | P3+ |
+| `DT-13` | Thiết kế/in phiếu trắc nghiệm nhiều lựa chọn, đúng/sai, trả lời ngắn | P4+ |
+| `DT-14` | OMR chấm ảnh phiếu bằng camera; kiểm ngoại lệ, duyệt người chấm, audit | P4+ |
+| `DT-15` | Chấm tự luận bằng rubric, nhận xét, lịch sử sửa điểm, khóa sau công bố | P3+ |
+| `DT-16` | Thống kê đề/lớp/câu, phân phối điểm, tỷ lệ hoàn thành, xu hướng | P3+ |
+| `DT-17` | Trình chiếu đề TV/projector, fullscreen, phím tắt ẩn/hiện đáp án, âm thanh tùy chọn | P3+ |
+| `DT-18` | PowerPoint add-in chèn câu hỏi lên slide desktop, kiểm tương thích và bản quyền | P5+ |
+| `DT-19` | Thẻ QR giấy cho lớp thiếu thiết bị; quét bằng điện thoại giáo viên | P4+ |
+| `DT-20` | Game Chinh phục đại dương dùng đáp án là cá | P4+ |
+| `DT-21` | Game chấm điểm nhóm theo bài/đề | P4+ |
+| `DT-22` | Đường đua tri thức 3D: QR, xe, tốc độ theo câu trả lời | P5+ |
+| `DT-23` | Bậc thang lên mây: đội, cổng câu hỏi, luật làm lại | P5+ |
+| `DT-24` | Rung chuông vàng: điện thoại/thẻ, giới hạn thời gian và luật hồi sinh | P4+ |
+| `DT-25` | Vũ điệu tri thức: camera nhận dạng cử chỉ; consent/ánh sáng/thiết bị | P5+ |
+| `DT-26` | Đấu trường RPG: luật, cân bằng điểm, phiên chơi (chưa kiểm chứng chi tiết) | P5+ |
+| `DT-27` | Gỡ bom: game câu hỏi có thời gian/hồi phục phiên | P5+ |
+| `DT-28` | Nông trại game: giữ ý tưởng, trang nguồn chưa có nội dung kiểm chứng | P5+ |
+| `DT-29` | Kho giáo án/slide/bộ câu hỏi/video/đào tạo giáo viên | P4+ |
+| `DT-30` | Chia sẻ đề công khai/đồng nghiệp, quyền sao chép, version | P3+ |
+| `DT-31` | Thư viện đề cộng đồng: mã đề, môn, tìm kiếm, kiểm duyệt bản quyền | P4+ |
+| `DT-32` | Dịch vụ tư vấn thiết kế đề/bài giảng và hỗ trợ giáo viên | P5+ |
+| `DT-33` | Hồ sơ giáo viên, trường/môn, settings, export/xóa tài khoản | P3+ |
+| `DT-34` | Minh bạch dữ liệu thi/chống gian lận: tab switch/time log, consent, lưu/xóa | P4+ |
+
+### 21.3. DUA Edu / DataLab — tự học, luyện lập trình và động lực
+
+Nguồn: [DUA_EDU_DEEP_REVIEW.md](DUA_EDU_DEEP_REVIEW.md).
+
+| ID | Năng lực ghi nhận để nghiên cứu/phát triển độc lập | Đợt tối thiểu* |
+|---|---|---|
+| `DU-01` | Trang bắt đầu theo mục tiêu và nút tiếp tục học/bài thực hành | P2+ |
+| `DU-02` | Danh mục môn Data Mindset, Growth Analytics, SQL, Python, Excel/Sheets, Power BI, thống kê | P3+ |
+| `DU-03` | Danh sách/chi tiết khóa học, bộ lọc, yêu cầu, ghi danh, tiến độ | P2+ |
+| `DU-04` | Lab Python/SQL: code editor, chạy thử, test/result, phản hồi lỗi | P3+ |
+| `DU-05` | Bộ bài Python Data Analyst/visualization và SQL nâng cao | P4+ |
+| `DU-06` | Dataset và case study nghề nghiệp: ngân hàng, bán lẻ, marketing, tín dụng, sản phẩm | P3+ |
+| `DU-07` | Bài trước/sau, lưu bài, ghi chú, kết quả mong đợi, làm tiếp | P3+ |
+| `DU-08` | Roadmap dữ liệu 8 chặng, mục tiêu, kỹ năng, bài tập, case study, tiến độ | P3+ |
+| `DU-09` | Student Dashboard: lịch học, điểm danh, lịch sử và đang học dở | P2+ |
+| `DU-10` | Hồ sơ: level, XP, huy hiệu, hoạt động và kỹ năng đã đạt | P4+ |
+| `DU-11` | Nhiệm vụ ngày/tuần, tiến độ và nhận phần thưởng một lần | P4+ |
+| `DU-12` | BXH tuần/tổng/đội/chuyên cần, quyền riêng tư opt-in | P4+ |
+| `DU-13` | World map chuyển khu học/vườn/đấu trường/shop, luôn có menu truy cập trực tiếp | P5+ |
+| `DU-14` | Vườn ảo, hồ cá/Koi, gieo/tưới/bón/thu hoạch/bán vật phẩm ảo | P5+ |
+| `DU-15` | Đấu trường quiz phòng chung/riêng, trận ngắn tính thời gian | P5+ |
+| `DU-16` | Đấu đội theo XP, luật tính trung bình, chống gian lận thưởng | P5+ |
+| `DU-17` | Kho ebook/dataset/cheatsheet/hướng dẫn/phỏng vấn, lọc/tìm/quyền | P3+ |
+| `DU-18` | Khóa Zoom theo đợt, giảng viên, video xem lại, đồ án thực tế | P4+ |
+| `DU-19` | Chat/cộng đồng/sự kiện học tập, moderation | P5+ |
+| `DU-20` | Huy hiệu và chứng chỉ theo chuẩn đầu ra | P4+ |
+| `DU-21` | Shop/tiền ảo/quà, gói Free/Plus/Pro và entitlement | P5+ |
+| `DU-22` | XP, streak, nhiệm vụ nhóm, động lực học không ép cạnh tranh | P4+ |
+
+### 21.4. Môn Tin học — chương trình phổ thông, chấm thực hành và AI sư phạm
+
+Nguồn: [MONTINHOC_DEEP_REVIEW.md](MONTINHOC_DEEP_REVIEW.md).
+
+| ID | Năng lực ghi nhận để nghiên cứu/phát triển độc lập | Đợt tối thiểu* |
+|---|---|---|
+| `MT-01` | Chương trình Tin học GDPT lớp 3–12, chủ đề A–G, chuẩn đầu ra | P3+ |
+| `MT-02` | Lớp mã tham gia; vai trò HS/GV/nhà trường/phụ huynh và dữ liệu đúng phạm vi | P2+ |
+| `MT-03` | Giao/thu bài theo hạn, loại bài, rubric, quản lý submission | P2+ |
+| `MT-04` | Trắc nghiệm, đúng/sai, trả lời ngắn, tự luận theo thang phù hợp | P2+ |
+| `MT-05` | Chấm code Python/C++/Java/JavaScript theo public/hidden test | P3+ |
+| `MT-06` | Chấm SQL trên database fixture cách ly và reset mỗi lượt | P3+ |
+| `MT-07` | Scratch (.sb3) chạy trên web, nộp bài và đánh giá | P3+ |
+| `MT-08` | HTML/CSS live preview, nộp sản phẩm web trong sandbox | P3+ |
+| `MT-09` | Judge sandbox CPU/RAM/network/timeout, lỗi biên dịch, audit | P3+ |
+| `MT-10` | Nộp/chấm file Word/Excel/PDF với lớp annotation giữ file gốc | P3+ |
+| `MT-11` | AI gợi ý nhận xét theo rubric/test/bài làm, giáo viên duyệt/sửa/bác | P4+ |
+| `MT-12` | Kho bài tập tìm/lọc theo lớp, chủ đề, ngôn ngữ, loại, khó và tác giả | P3+ |
+| `MT-13` | Thư viện ebook/video theo chương trình, quyền và tiến độ đọc | P4+ |
+| `MT-14` | Phân tích lớp/khối/trường, phụ huynh xem đúng con mình | P5+ |
+| `MT-15` | AI phản biện: phát hiện lập luận AI cố ý sai | P4+ |
+| `MT-16` | Trợ giảng AI giới hạn chủ đề do GV chọn | P4+ |
+| `MT-17` | AI nhập vai khách hàng, phỏng vấn, tình huống an toàn mạng | P4+ |
+| `MT-18` | AI vấn đáp cá nhân hóa theo câu trả lời, rubric cuối phiên | P4+ |
+| `MT-19` | AI dấu mặt mô phỏng lừa đảo, rèn nhận diện | P4+ |
+| `MT-20` | AI tranh biện, buộc giải thích bằng dẫn chứng | P4+ |
+| `MT-21` | Dạy lại cho AI, nhận nhận xét về giải thích kiến thức | P4+ |
+| `MT-22` | AI rà lỗi cùng em, gợi ý sửa sai không làm hộ | P4+ |
+| `MT-23` | Bài tập Tin học thực tiễn, nghề nghiệp, STEM, dự án web | P3+ |
+| `MT-24` | Bài kiểm tra ba phần/nhiều kiểu nộp theo môn | P3+ |
+| `MT-25` | Cảnh báo chuyển tab/chống gian lận minh bạch; khiếu nại được | P4+ |
+| `MT-26` | Quản trị trường, giáo viên, ngân hàng nội dung kiểm duyệt | P5+ |
+| `MT-27` | Version bài nộp, lịch sử chấm/sửa điểm và export đúng quyền | P3+ |
+
+### 21.5. Tin học cơ bản — Office, luyện thi, typing, tiện ích
+
+Nguồn: [TINHOCBAN_DEEP_REVIEW.md](TINHOCBAN_DEEP_REVIEW.md).
+
+| ID | Năng lực ghi nhận để nghiên cứu/phát triển độc lập | Đợt tối thiểu* |
+|---|---|---|
+| `TC-01` | Lộ trình máy tính cơ bản → Office → an toàn số/chứng chỉ | P2+ |
+| `TC-02` | Luyện IC3/MOS, đánh giá kỹ năng theo cấp độ | P3+ |
+| `TC-03` | Quiz theo chủ đề/độ khó, bộ 10/20/30/50 câu, thi thử | P2+ |
+| `TC-04` | Ôn câu sai/câu ghim/câu khó, lịch sử làm bài | P2+ |
+| `TC-05` | Thi quiz 1v1, luật phiên và chống gian lận | P4+ |
+| `TC-06` | Video bài học về máy tính, Word, Excel, PowerPoint, an toàn số, Scratch | P3+ |
+| `TC-07` | Gõ 10 ngón với 30 bài theo cụm phím, Telex tiếng Việt | P3+ |
+| `TC-08` | WPM/accuracy/phím yếu, bài luyện thích ứng/AI khi đủ điều kiện | P4+ |
+| `TC-09` | Game luyện gõ, đấu gõ 1v1, skin bàn phím | P4+ |
+| `TC-10` | Nhiệm vụ ngày/tháng, mục tiêu, thời hạn và thưởng | P4+ |
+| `TC-11` | XP, streak, badges, bảng xếp hạng và ruby/điểm ảo | P4+ |
+| `TC-12` | Kiểm tra bàn phím, mã phím, hướng dẫn lỗi phím | P3+ |
+| `TC-13` | Kiểm tra/luyện chuột, click/kéo/thả | P3+ |
+| `TC-14` | Kiểm tra màn hình, điểm chết và hướng dẫn giới hạn kết quả | P3+ |
+| `TC-15` | Thư viện phím tắt, hướng dẫn bàn phím đầy đủ | P3+ |
+| `TC-16` | Symbols Guide/ký tự đặc biệt | P3+ |
+| `TC-17` | OMR scanner (liên kết công cụ chấm phiếu) | P4+ |
+| `TC-18` | Tiện ích Excel có phiên bản/giấy phép rõ | P3+ |
+| `TC-19` | Blog Windows: driver, cài/gỡ app, PIN/mật khẩu, khóa máy, Find My Device | P3+ |
+| `TC-20` | Bài học browser, Google/Microsoft/cloud, máy in, cài Windows, chọn thiết bị | P3+ |
+| `TC-21` | Tiếng Anh từ vựng/cụm từ A1–C1 và thuật ngữ CNTT | P5+ |
+| `TC-22` | Nghe, gõ, quiz, sắp xếp câu, TTS, trạng thái đã học/ôn cách quãng | P5+ |
+| `TC-23` | Hồ sơ tiến độ, kết quả thi, typing, streak và huy hiệu | P3+ |
+| `TC-24` | Cửa hàng học liệu/tiện ích Excel/Scratch/tài nguyên số theo quyền | P5+ |
+| `TC-25` | Ví Ruby, giới thiệu, hoa hồng/đại lý, lịch sử ví (cần pháp lý) | P5+ |
+| `TC-26` | Liên hệ/hỗ trợ đa chủ đề và báo lỗi có trạng thái xử lý | P3+ |
+| `TC-27` | Điều khoản, bảo mật, giá/thanh toán, chấm dứt/hoàn tiền, khiếu nại | P5+ |
+| `TC-28` | Tài liệu tải xuống theo miễn phí/giới hạn và quyền sử dụng | P3+ |
+
+**Chốt phạm vi:** 21 ý tưởng VniTeach, 34 Đề Thi Số, 22 DUA Edu, 27 Môn Tin học, 28 Tin học cơ bản = **132 hạng mục**. Các nhóm **có ý tưởng trùng nhau** (question bank, Live Quiz, camera OMR, lớp, kho tài liệu, XP) phải được hợp nhất vào một thiết kế duy nhất khi triển khai; không tính 132 ý tưởng là 132 app hoặc 132 đầu việc phải làm ngay. Tình trạng kế hoạch hiện hành ở mục 2–19 không đổi.

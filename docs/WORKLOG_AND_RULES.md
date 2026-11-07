@@ -31,6 +31,9 @@ Không viết lại cả nhật ký cũ. Một task nhiều commit có thể th�
 
 ## III. Nhật ký mới (từ 30/10/2026)
 
+### 2026-11-07 — [ROADMAP] Lưu 5 nguồn
+- **DOCS:** thêm 132 ý tưởng vào `ROADMAP.md`; toàn bộ chưa kích hoạt. Không code, DB, Admin Roadmap hay deploy.
+
 ### 2026-11-02 — [PUBLIC HOME] Chữ lớn, rõ, ít lời dư
 - **CODE:** giữ slogan chính; rút gọn Hero, bỏ eyebrow/helper/benefits và chú thích trùng. Font fluid clamp theo viewport, Hero desktop 46/54, tablet/mobile một cột; carousel giữ 3 cảnh.
 - **QA:** CI unit/typecheck/build/Chromium 360/768/1280/1920; tình trạng sẽ đối chiếu run sau push. Không deploy hay sửa Production Supabase/Admin Roadmap.

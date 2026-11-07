@@ -17,6 +17,7 @@
 | REF-04 | [Đề Thi Số](https://dethiso.vn/) | Đã được dùng và lưu làm tham khảo trong docs/ROADMAP.md và docs/XUONG_CONG_NGHE_MASTER_PLAN_2026_2028.md | Thi trực tuyến, giao bài, đánh giá, trò chơi Live Quiz | Xác nhận có trong tài liệu dự án; không có bằng chứng độc lập về mọi chức năng đã quảng bá |
 | REF-05 | [DUA Edu / DataLab](https://duaedu.net/) | **Người dùng gửi trực tiếp 30/10/2026**, link có fbclid đã chuẩn hóa về URL gốc | Học dữ liệu theo lộ trình, lab Python/SQL trên web, tài nguyên và ghi danh khóa | Đã đọc trang công khai; chưa thử sau đăng nhập |
 | REF-06 | [Môn Tin học](https://montinhoc.vn/) | **Người dùng gửi trực tiếp 30/10/2026**; trước đó AGENTS.md từng nhắc là trang mood tham khảo | Hệ thống dạy Tin học lớp 3–12: giao bài, chấm code, Scratch, HTML/CSS, phân quyền | Đã đọc trang công khai; chưa thử chấm code, AI/RLS sau đăng nhập |
+| REF-07 | [Tin học cơ bản](https://tinhoccoban.vn/) | Báo cáo khảo sát ngày 07/11/2026; **không khẳng định người dùng đã trực tiếp gửi link** | Lộ trình Tin học/Office, luyện thi, typing Telex, tiện ích máy tính, blog và phần thưởng | Đã khảo sát trang công khai, chưa thử tài khoản/thi/chấm/commerce |
 
 **Không tính là website người dùng đã gửi:** GitHub, Vercel, Supabase, tài liệu Microsoft và những trang chỉ xuất hiện do tab trình duyệt đang mở hoặc kết quả tìm kiếm. Chúng thuộc nguồn kỹ thuật hoặc nguồn duyệt web, không phải bằng chứng người dùng chủ động gửi link tham khảo.
 
@@ -163,13 +164,19 @@ Mỗi lần có URL mới, thêm một REF mới với:
 - Nguồn được dẫn, ngày khảo sát, phần chưa truy cập được.
 - Nếu chưa chắc từng được người dùng gửi thì gắn trạng thái “nguồn tìm thấy trong tài liệu”, không tự xưng là link người dùng đã gửi.
 
+### REF-07 — Tin học cơ bản (bổ sung 07/11/2026)
+
+- Báo cáo chi tiết: [TINHOCBAN_DEEP_REVIEW.md](TINHOCBAN_DEEP_REVIEW.md).
+- Ý tưởng chính: lộ trình Tin học, quiz/thi thử, typing Telex thích ứng, kiểm tra thiết bị, blog, nhiệm vụ và kịch bản thương mại để sau.
+- Mọi ý tưởng từ nguồn này được truy vết bằng mã `TC-xx` trong [ROADMAP.md](ROADMAP.md); không thay menu hay mở sản phẩm mới ở lượt cập nhật tài liệu.
+
 ## 8. Kết luận
 
-Tài liệu đã ghi bốn website chính: VniTeach, Đề Thi Số, DUA Edu/DataLab và Môn Tin học. DUA Edu và Môn Tin học là hai liên kết người dùng cung cấp thêm ngày 30/10/2026; chức năng sau đăng nhập chỉ được xem là chưa xác minh. Định hướng **tenungdung.xuongcongnghe.net** đã được lưu như nguyên tắc thiết kế đề xuất, chưa triển khai DNS/Vercel/Auth; sử dụng chính sổ tay này làm danh sách tham khảo cập nhật cho các đợt nghiên cứu kế tiếp.
+Tài liệu đã ghi năm website đối chiếu: VniTeach, Đề Thi Số, DUA Edu/DataLab, Môn Tin học và Tin học cơ bản (nguồn bổ sung ngày 07/11/2026). DUA Edu và Môn Tin học là hai liên kết người dùng cung cấp thêm ngày 30/10/2026; chức năng sau đăng nhập chỉ được xem là chưa xác minh. Định hướng **tenungdung.xuongcongnghe.net** đã được lưu như nguyên tắc thiết kế đề xuất, chưa triển khai DNS/Vercel/Auth; sử dụng chính sổ tay này làm danh sách tham khảo cập nhật cho các đợt nghiên cứu kế tiếp.
 
 ## 9. Bản tổng hợp chức năng đưa vào Navbar — 31/10/2026
 
-**Bốn nguồn sản phẩm chính** được gom vào một hệ sinh thái Xưởng Công Nghệ theo mục đích người dùng, không sao chép y nguyên navigation/menu của nguồn:
+**Năm nguồn sản phẩm** được tổng hợp trong cùng một hệ sinh thái Xưởng Công Nghệ theo mục đích người dùng, không sao chép y nguyên navigation/menu của nguồn:
 
 | Trang đã tham khảo | Nhóm tính năng tham khảo | Nhóm Navbar Xưởng Công Nghệ đề xuất |
 | --- | --- | --- |
@@ -177,6 +184,7 @@ Tài liệu đã ghi bốn website chính: VniTeach, Đề Thi Số, DUA Edu/Dat
 | [Đề Thi Số](https://dethiso.vn/) | Soạn đề/ma trận, nhập Word, ngân hàng câu hỏi, giao đề, tự chấm, quiz trực tiếp, game ôn tập | Kiểm tra, Giáo viên, Tài nguyên |
 | [DUA Edu / DataLab](https://duaedu.net/) | Khóa học và lộ trình SQL/Python/data, thực hành, dataset, sách/cheatsheet, đồ án | Khóa học, Thực hành, Tài nguyên, Dự án |
 | [Môn Tin học](https://montinhoc.vn/) | Tin học theo lớp/môn, Scratch, Python/HTML/CSS, chấm bài thực hành, lớp học, học liệu và hỗ trợ giáo viên | Khóa học, Thực hành, Giáo viên, Tài nguyên |
+| [Tin học cơ bản](https://tinhoccoban.vn/) | Luyện Word/Excel/PowerPoint, gõ 10 ngón Telex, ôn câu sai, tiện ích máy tính, blog, nhiệm vụ và XP | Khóa học, Thực hành, Kiểm tra, Công cụ, Tài nguyên |
 
 **Đề xuất 7 mục cấp một:** `Khóa học · Thực hành · Kiểm tra · Công cụ · Tài nguyên · Dự án · Giáo viên`; logo là Trang chủ, tài khoản bên phải. Danh sách submenu, đường dẫn hiện có và trạng thái tương lai: [PRODUCT_AND_MODULES.md](PRODUCT_AND_MODULES.md#2a-đề-xuất-điều-hướng-công-khai-theo-4-nguồn-tham-khảo--31102026).
 
