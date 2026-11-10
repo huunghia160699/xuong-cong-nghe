@@ -337,3 +337,10 @@ Acceptance chung:
 - [WCAG 2.2 — W3C](https://www.w3.org/TR/WCAG22/) — chuẩn tương phản, bàn phím và nội dung.
 
 **Trạng thái 31/10/2026:** D0 đặc tả đã hoàn thành; **D1 đã được triển khai** (Public scoped palette, header/nav/mega-menu/footer, 4 route placeholder) qua PR #71, CI Chromium 5 trang × 4 độ rộng PASS, Vercel READY commit `001bbfc`. D2–D7 chưa hoàn thành. Khi đổi hướng thiết kế, cập nhật đúng file và Worklog thay vì tạo tài liệu v2/final trùng.
+
+
+## 2026-11-10 — Điều chỉnh D2: Trang chủ Editorial Learning Workshop
+
+Đây là phương án thực hiện mới thay cho phần homepage Product Atlas/console giả trong đặc tả trước. Header/Footer, bốn trang marketing khác, Auth/RLS và các module thực hành giữ nguyên. Trang chủ kể câu chuyện hành động và giới thiệu toàn bộ nhóm tính năng theo trạng thái thực tế, có lối vào Học/Thực hành/Kiểm tra/Giáo viên. Các hình Word/Slides/Quiz trong Hero là minh họa do dự án tạo bằng HTML/CSS, không phải ảnh chụp ứng dụng thật. Teacher Studio, Coding/Data Lab và gamification chưa hoàn thiện không có CTA sử dụng; catalog khóa học dùng nguồn công bố theo cấu hình môi trường hiện có.
+
+Triển khai mã và regression test tại nhánh `homepage-workshop-2026-11-10`; việc nghiệm thu build và phát hành là bước tách biệt, không suy ra đã Production chỉ từ commit.
