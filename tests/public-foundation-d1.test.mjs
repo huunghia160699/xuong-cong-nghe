@@ -9,9 +9,10 @@ test("D1 marketing navigation resolves to existing public routes, not dead links
   assert.ok(config.includes('"/'+route+'"'),"navbar route missing: "+route);
   assert.ok(existsSync("src/app/(public)/"+route+"/page.tsx"),"404 for "+route);
  }
- for(const label of ["Trang chủ","Hệ sinh thái","Giới thiệu","Bảng giá","Tin tức","Liên hệ"]){
+ for(const label of ["Trang chủ","Giới thiệu","Bảng giá","Tin tức","Liên hệ"]){
   assert.ok(config.includes('label: "'+label+'"'),"navbar label missing: "+label);
  }
+ assert.match(config,/export const publicEcosystemNav/);
  const header=read("src/components/public-header.tsx");
  assert.match(header,/getUser\(\)/);
  assert.match(header,/profiles/);
@@ -37,15 +38,20 @@ test("Scoped public theme uses the approved palette without gradient and preserv
  assert.match(current,/blue: "#005BFD"/);
 });
 
-test("All D1 marketing placeholders disclose unfinished content, avoid fake forms and price claims",()=>{
+test("Public marketing pages have content without invented billing, support or articles",()=>{
  for(const path of ["gioi-thieu","bang-gia","tin-tuc","lien-he"]){
   const page=read("src/app/(public)/"+path+"/page.tsx");
-  assert.match(page,/PublicPendingPage/);
   assert.match(page,/export const metadata/);
+  assert.match(page,/<main className=/);
+  assert.match(page,/<h1/);
+  assert.doesNotMatch(page,/PublicPendingPage|<form\b/);
  }
- const component=read("src/components/public-pending-page.tsx");
- assert.match(component,/Đang hoàn thiện/);
- assert.doesNotMatch(component,/<form\b|payment|checkout/i);
+ const pricing=read("src/app/(public)/bang-gia/page.tsx");
+ const journal=read("src/app/(public)/tin-tuc/page.tsx");
+ const contact=read("src/app/(public)/lien-he/page.tsx");
+ assert.match(pricing,/chưa mở thanh toán production/i);
+ assert.match(journal,/Đang biên soạn/);
+ assert.match(contact,/Kênh tiếp nhận chính thức/);
  const footer=read("src/components/footer.tsx");
  assert.doesNotMatch(footer,/href="#"/);
  assert.match(footer,/new Date\(\)\.getFullYear/);

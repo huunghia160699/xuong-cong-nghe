@@ -53,7 +53,8 @@ test("Legacy reports are preserved in history but the active documentation stays
   assert.ok(existsSync(path),"Missing archive "+path);
   assert.ok(read(path).length>10_000,"History not fully preserved: "+path);
  }
- assert.ok(read("docs/WORKLOG_AND_RULES.md").length<12_000);
+ // Retain current checkpoint history; archive it as the active log approaches 18k.
+ assert.ok(read("docs/WORKLOG_AND_RULES.md").length<18_000);
 });
 
 test("Five-source roadmap preserves the complete parked backlog without marking features done",()=>{
