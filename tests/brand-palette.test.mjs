@@ -16,25 +16,16 @@ test("approved palette is defined in Tailwind", () => {
 test("homepage uses a restrained public palette with no gradients or auto-generated claims", () => {
   const button=read("src/components/ui/button.tsx");
   const home=read("src/app/(public)/page.tsx");
-  const publicCss=read("src/app/(public)/public.css");
-  const hero=read("src/components/public-home-hero.tsx");
+  const universeCss=read("src/app/(public)/home-universe.css");
+  const condensedCss=read("src/app/(public)/home-condensed.css");
   assert.match(button,/bg-blue text-white/); // existing app UI remains unchanged
-  assert.match(publicCss,/--public-primary:#365F80/);
-  assert.match(publicCss,/--xcn-page-gutter:clamp\(20px,7\.5vw,120px\)/);
-  assert.match(publicCss,/\.xcn-new-button-primary,\.xcn-new-last-button\{/);
-  assert.match(publicCss,/background:#2D5C61;color:white/);
-  assert.match(home,/id="he-sinh-thai"/);
-  assert.match(home,/id="khoa-hoc"/);
-  assert.match(home,/id="du-an"/);
+  assert.match(universeCss,/--u-ink:#213c43/);
   assert.match(home,/Học đến đâu,/);
-  assert.match(publicCss,/--xcn-home-copy:clamp\(17px,\.98vw,19px\)/);
-  assert.match(publicCss,/grid-template-columns:minmax\(0,46fr\) minmax\(0,54fr\)/);
-  assert.doesNotMatch(home,/xcn-new-hero-helper|xcn-new-hero-subline|xcn-new-eyebrow|xcn-new-benefits/);
-  assert.doesNotMatch(hero,/xcn-hero-showcase-footnote|scene\.note/);
-  assert.match(hero,/prefers-reduced-motion: reduce/);
-  assert.match(hero,/window\.clearInterval\(timer\)/);
-  assert.doesNotMatch(home,/xcn-home-index|\d+\s*\/\s*HỆ SINH THÁI|Learn by doing|text-cyan/);
-  assert.doesNotMatch(publicCss,/linear-gradient\(|radial-gradient\(|#c8f13b/i);
+  assert.match(home,/Đang sử dụng được/);
+  assert.match(home,/Đây là bản đồ phát triển, không phải 132 ứng dụng đang hoạt động/);
+  assert.match(condensedCss,/\.xcn-u-future-grid/);
+  assert.doesNotMatch(home,/Mỗi điều bạn muốn giỏi hơn|Trò chơi không chỉ để vui|xcn-u-playground/);
+  assert.doesNotMatch(`${universeCss}${condensedCss}`,/linear-gradient\(|radial-gradient\(|#c8f13b/i);
 });
 
 test("change tracking is part of the permanent development rules", () => {

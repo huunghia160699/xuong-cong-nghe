@@ -1,5 +1,6 @@
 import "./public.css";
 import "./home-universe.css";
+import "./home-condensed.css";
 import {Footer} from "@/components/footer";
 import {PublicHeader} from "@/components/public-header";
 
