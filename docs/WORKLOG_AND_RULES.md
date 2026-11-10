@@ -35,7 +35,7 @@ Không viết lại cả nhật ký cũ. Một task nhiều commit có thể th�
 - **DONE (local):** khôi phục slogan `Học đến đâu, làm được đến đó.`; đưa Word Lab, Trình chiếu và Quiz lên ngay sau Hero; bỏ hai vùng dài về sáu nhóm hệ sinh thái và sân chơi tương lai; gom 132 ý tưởng thành danh sách Roadmap nhỏ, ghi rõ chưa hoạt động.
 - **UI/UX:** giữ hệ màu và ngôn ngữ thị giác hiện tại; rút tiêu đề section thành tên chức năng rõ nghĩa; CTA cuối dẫn thẳng tới Word Lab và khóa học.
 - **QA:** TypeScript PASS; production build PASS với 76/76 kiểm tra bắt buộc; 7/7 regression public layout/palette PASS; Chromium local xác nhận Hero, thứ tự nội dung và nhãn trạng thái. Bộ `pnpm test -- --run` đầy đủ còn lỗi cũ ở các test Word parsing TypeScript ngoài phạm vi và đã được báo riêng, không sửa ngầm.
-- **RELEASE:** chờ commit, GitHub main và Vercel Production READY cùng SHA trước khi đánh dấu phát hành.
+- **RELEASE:** code commit `d356ec4` đã lên GitHub main; Vercel Production READY và alias chính phản hồi 200 với slogan mới, khu công cụ đứng trước, Roadmap gọn và không còn sân chơi tương lai cỡ lớn.
 
 ### 2026-11-07 — [ROADMAP] Lưu 5 nguồn
 - **DOCS:** thêm 132 ý tưởng vào `ROADMAP.md`; toàn bộ chưa kích hoạt. Không code, DB, Admin Roadmap hay deploy.
