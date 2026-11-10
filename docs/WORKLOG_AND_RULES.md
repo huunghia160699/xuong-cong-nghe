@@ -31,6 +31,10 @@ Không viết lại cả nhật ký cũ. Một task nhiều commit có thể th�
 
 ## III. Nhật ký mới (từ 30/10/2026)
 
+### 2026-11-10 — [PUBLIC HOME] Đồng bộ font tiêu đề tin tức
+- **DONE (local):** bỏ font serif Georgia khỏi tiêu đề thẻ bài viết trên trang chủ; dùng font sans-serif kế thừa từ hệ thống giao diện, giữ nguyên nội dung và bố cục.
+- **QA:** TypeScript, 7 regression public layout/palette và production build 76/76 đều PASS. **RELEASE:** chờ commit và Vercel Production xác minh trong cùng tác vụ.
+
 ### 2026-11-10 — [PUBLIC HOME] Khôi phục slogan và rút gọn trang chủ
 - **DONE (local):** khôi phục slogan `Học đến đâu, làm được đến đó.`; đưa Word Lab, Trình chiếu và Quiz lên ngay sau Hero; bỏ hai vùng dài về sáu nhóm hệ sinh thái và sân chơi tương lai; gom 132 ý tưởng thành danh sách Roadmap nhỏ, ghi rõ chưa hoạt động.
 - **UI/UX:** giữ hệ màu và ngôn ngữ thị giác hiện tại; rút tiêu đề section thành tên chức năng rõ nghĩa; CTA cuối dẫn thẳng tới Word Lab và khóa học.
