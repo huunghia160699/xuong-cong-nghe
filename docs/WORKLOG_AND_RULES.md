@@ -31,8 +31,8 @@ Không viết lại cả nhật ký cũ. Một task nhiều commit có thể th�
 
 ## III. Nhật ký mới (từ 30/10/2026)
 
-### 2026-11-10 — [PUBLIC HOME] Đồng bộ font tiêu đề tin tức
-- **DONE (local):** bỏ font serif Georgia khỏi tiêu đề thẻ bài viết trên trang chủ; dùng font sans-serif kế thừa từ hệ thống giao diện, giữ nguyên nội dung và bố cục.
+### 2026-11-10 — [PUBLIC HOME] Đồng bộ font trang chủ
+- **DONE (local):** bỏ font serif Georgia khỏi tiêu đề thẻ bài viết và vế nhấn màu xanh của slogan Hero; dùng font sans-serif kế thừa từ hệ thống giao diện, giữ nguyên nội dung và bố cục.
 - **QA:** TypeScript, 7 regression public layout/palette và production build 76/76 đều PASS. **RELEASE:** chờ commit và Vercel Production xác minh trong cùng tác vụ.
 
 ### 2026-11-10 — [PUBLIC HOME] Khôi phục slogan và rút gọn trang chủ
