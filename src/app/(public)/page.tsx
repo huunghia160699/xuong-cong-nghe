@@ -15,6 +15,13 @@ const roadmapGroups=[
  {title:"Động lực",items:"XP · Nhiệm vụ · Garden · Đấu trường"}
 ] as const;
 
+const entryPaths=[
+ {icon:BookOpen,title:"Tôi muốn học",description:"Chọn khóa học và đi theo từng bước.",href:"/khoa-hoc",action:"Xem khóa học",tone:"mint"},
+ {icon:FileText,title:"Tôi muốn thực hành",description:"Mở Word Lab, trình chiếu hoặc công cụ thật.",href:"/cong-cu",action:"Mở khu công cụ",tone:"blue"},
+ {icon:ClipboardCheck,title:"Tôi muốn kiểm tra",description:"Luyện tập, nhận phản hồi và xem kết quả.",href:"/dang-nhap?next=%2Fstudent%2Fquiz",action:"Vào bài luyện",tone:"peach"},
+ {icon:School,title:"Tôi là giáo viên",description:"Tìm hiểu không gian chuẩn bị và theo dõi lớp.",href:"/gioi-thieu",action:"Xem Teacher Studio",tone:"yellow"}
+] as const;
+
 export default async function HomePage(){
  const listedCourses=isLiveMode()?await getPublishedCourses():courses;
  return <main className="xcn-universe xcn-u-condensed">
@@ -24,6 +31,8 @@ export default async function HomePage(){
   </div></section>
 
   <section className="xcn-u-proof"><div className="xcn-container"><span>Học để hiểu</span><i/><span>Làm để thành thạo</span><i/><span>Chia sẻ để cùng tiến bộ</span></div></section>
+
+  <section className="xcn-u-entry" aria-labelledby="entry-title"><div className="xcn-container"><div className="xcn-u-entry-head"><div><p className="xcn-u-eyebrow"><span/> Chọn lối vào</p><h2 id="entry-title">Bạn muốn làm gì hôm nay?</h2></div><p>Một trang chủ để giới thiệu toàn bộ hệ thống. Khi đăng nhập, bạn sẽ được đưa vào workspace và sidebar phù hợp với vai trò của mình.</p></div><div className="xcn-u-entry-grid">{entryPaths.map(path=><Link href={path.href} className={`xcn-u-entry-card ${path.tone}`} key={path.title}><div><path.icon/><ArrowUpRight/></div><h3>{path.title}</h3><p>{path.description}</p><span>{path.action} <ArrowRight/></span></Link>)}</div></div></section>
 
   <section className="xcn-u-tools" aria-labelledby="tools-title"><div className="xcn-container"><div className="xcn-u-tools-intro"><div><p className="xcn-u-eyebrow light"><span/> Đang sử dụng được</p><h2 id="tools-title">Công cụ thực hành.</h2></div><p>Ba trải nghiệm có thể mở ngay. Các chức năng đang phát triển được ghi rõ để bạn luôn biết mình có thể làm gì.</p></div><div className="xcn-u-tool-stage">
    <Link href="/cong-cu/mo-phong-word" className="xcn-u-tool-feature"><div className="xcn-u-word-art" aria-hidden="true"><div className="xcn-u-word-window"><div><span>File</span><span>Trang đầu</span><span>Chèn</span><span>Bố trí</span></div><article><small>BÀI THỰC HÀNH</small><strong>Kế hoạch học tập</strong><i/><i/><i className="short"/><p><b>01</b> Mục tiêu tuần này</p></article></div></div><div className="xcn-u-tool-content"><span className="available">Đang dùng được</span><div><FileText/><small>WORD LAB</small></div><h3>Soạn thảo như trên Word.</h3><p>Gõ, định dạng, dùng Ribbon và làm quen với trang A4 ngay trên trình duyệt.</p><b>Mở bản trải nghiệm <ArrowUpRight size={18}/></b></div></Link>
