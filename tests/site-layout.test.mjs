@@ -61,7 +61,8 @@ test("public library and tool cards follow content height with fluid vertical sp
  assert.doesNotMatch(tools,/min-h-\[75vh\]|min-h-\[275px\]|min-h-\[320px\]/);
  assert.match(library,/xcn-page-pad/);
  assert.match(tools,/xcn-page-pad/);
- assert.match(home,/xcn-u-hero/);
+ assert.match(home,/ws-hero/);
+ assert.match(read("src/app/(public)/home-workshop.css"),/\.ws-hero/);
  assert.match(read("src/app/(public)/public.css"),/--xcn-page-gutter:clamp\(20px,7\.5vw,120px\)/);
  assert.doesNotMatch(home,/min-h-\[560px\]|min-h-\[480px\]|min-h-72/);
 });
