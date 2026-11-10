@@ -106,3 +106,11 @@ Nguồn định nghĩa kỹ thuật: `tailwind.config.ts` và `src/app/globals.c
 4. Thử kích thước chiều cao thấp, menu overflow, keyboard tab/ESC/focus và không horizontal scroll ngoài ý muốn.
 5. `pnpm test`, `pnpm typecheck`, `pnpm build`, Chromium QA trên các route ảnh hưởng.
 6. Ghi vào [WORKLOG_AND_RULES.md](WORKLOG_AND_RULES.md) và chỉ xác nhận Production khi SHA + READY + domain khớp.
+
+
+### 2026-11-10 — Homepage: Digital Learning Workshop (đang nghiệm thu)
+
+- Chỉ phạm vi route `/`: `src/app/(public)/page.tsx`, stylesheet riêng `home-workshop.css`; giữ nguyên PublicHeader, Footer, Auth/Role, Word, Slides và Admin.
+- Hướng nghệ thuật: thiết kế biên tập không gradient, nền giấy sáng, typography rõ, màu sắc trầm, khoảng trắng chủ động; ưu tiên minh họa tương tác Word/Slides/Quiz với ghi chú minh họa, không dùng dashboard/bài viết/số liệu giả.
+- Luồng giới thiệu: Hero → 4 nhu cầu → Word Lab, Slides, Quiz → phương pháp học → khóa học thật → danh mục chức năng/trạng thái → Teacher Studio (đang phát triển) → FAQ → CTA.
+- Quy tắc nghiệm thu: kiểm CTA có route thật, module tương lai không gắn link giả, một H1, focus/keyboard, reduced-motion và 360/768/1280/1920; cần chạy full CI/Next build trước phát hành.

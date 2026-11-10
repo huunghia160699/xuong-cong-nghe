@@ -104,3 +104,10 @@ Không viết lại cả nhật ký cũ. Một task nhiều commit có thể th�
 - Đã viết script JWT và CRUD/backup/restore + chốt chống chạy nhầm Production. Sau đó tạo staging và nghiệm thu thành công ngày 31/10. Quy trình đầy đủ: [SUPABASE_SETUP.md](SUPABASE_SETUP.md); lịch sử chi tiết giữ trong Git.
 ### 2026-10-30 — [DOCS/ARCH] Chuẩn hóa tài liệu
 - Đã kiểm toán hệ thống và gộp tài liệu theo module, lưu lịch sử ở docs/archive. Quy tắc đọc đúng file, checkpoint đúng công việc; xem [INDEX.md](INDEX.md) và [SYSTEM_AUDIT_2026-10-30.md](SYSTEM_AUDIT_2026-10-30.md).
+
+
+### 2026-11-10 — [PUBLIC HOME] Redesign toàn bộ trang chủ, chuẩn bị GitHub/Vercel
+- **CODE READY:** `src/app/(public)/page.tsx` và `layout.tsx` được cập nhật; thêm `home-workshop.css`, `tests/public-homepage-workshop.test.mjs`.
+- **Phạm vi:** chỉ trang chủ công khai và stylesheet riêng; không sửa Supabase Auth/RLS/data, Student/Admin Sidebar, các Lab, Header/Footer.
+- **QA trước GitHub:** 4/4 regression riêng PASS trong gói triển khai; bản preview Chromium nhiều viewport PASS. Full repo `pnpm test/typecheck/build` và live E2E cần xác minh qua CI/Vercel.
+- **RELEASE GATE:** branch `homepage-workshop-2026-11-10` dùng để kiểm thử trước khi cập nhật `main`. Không tự coi GitHub commit là đã phát hành Production.

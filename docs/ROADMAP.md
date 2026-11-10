@@ -711,3 +711,10 @@ Nguồn: [TINHOCBAN_DEEP_REVIEW.md](TINHOCBAN_DEEP_REVIEW.md).
 | `TC-28` | Tài liệu tải xuống theo miễn phí/giới hạn và quyền sử dụng | P3+ |
 
 **Chốt phạm vi:** 21 ý tưởng VniTeach, 34 Đề Thi Số, 22 DUA Edu, 27 Môn Tin học, 28 Tin học cơ bản = **132 hạng mục**. Các nhóm **có ý tưởng trùng nhau** (question bank, Live Quiz, camera OMR, lớp, kho tài liệu, XP) phải được hợp nhất vào một thiết kế duy nhất khi triển khai; không tính 132 ý tưởng là 132 app hoặc 132 đầu việc phải làm ngay. Tình trạng kế hoạch hiện hành ở mục 2–19 không đổi.
+
+
+### 2026-11-10 — P1 Public Website: Full Homepage Redesign
+
+- **CODE READY (nhánh QA):** Trang chủ `/` mới theo Digital Learning Workshop, Hero → bốn lối vào → Labs → cách học → khóa học → catalog → giáo viên → FAQ → CTA.
+- **GIỮ NGUYÊN:** Header/Footer công khai, workspace Student/Admin, Word Lab, Slides, Auth/RLS, Supabase Production, Admin Roadmap.
+- **REGRESSION:** Bổ sung `tests/public-homepage-workshop.test.mjs` kiểm cấu trúc, route, trạng thái và CSS responsive; release chỉ DONE sau Next build và xác minh deployment theo SHA.
