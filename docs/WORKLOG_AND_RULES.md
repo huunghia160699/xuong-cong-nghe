@@ -111,3 +111,7 @@ Không viết lại cả nhật ký cũ. Một task nhiều commit có thể th�
 - **Phạm vi:** chỉ trang chủ công khai và stylesheet riêng; không sửa Supabase Auth/RLS/data, Student/Admin Sidebar, các Lab, Header/Footer.
 - **QA trước GitHub:** 4/4 regression riêng PASS trong gói triển khai; bản preview Chromium nhiều viewport PASS. Full repo `pnpm test/typecheck/build` và live E2E cần xác minh qua CI/Vercel.
 - **RELEASE GATE:** branch `homepage-workshop-2026-11-10` dùng để kiểm thử trước khi cập nhật `main`. Không tự coi GitHub commit là đã phát hành Production.
+
+### 2026-11-10 — [PUBLIC HOME] Chromium QA theo trang chủ mới
+- **FIX:** cập nhật `scripts/public-browser-qa.mjs` kiểm tra Hero/editorial, bốn lối vào, tám nhóm công cụ, CTA thật, disclosure FAQ, nav mobile/Escape và screenshot 5 route × 4 viewport; bỏ giả định carousel của phiên bản cũ.
+- **GATE:** `pnpm test`, `typecheck`, `build` đã PASS ở CI PR #75; Chromium public QA của mã mới tiếp tục nghiệm thu trên PR tiếp theo. Không thay sản phẩm hoặc Production Supabase.
