@@ -73,88 +73,39 @@ try{
    const shot=await call("Page.captureScreenshot",{format:"png",fromSurface:true});
    writeFileSync(join(output,(route.slice(1)||"home")+"-"+width+".png"),Buffer.from(shot.data,"base64"));
    if(route==="/"){
-    const homepage=await evalJs(`(()=>({
-      redesigned:!!document.querySelector(".xcn-new-home"),
-      sections:["he-sinh-thai","khoa-hoc","du-an"].every(id=>!!document.getElementById(id)),
-      hero:document.querySelector(".xcn-new-hero h1")?.textContent?.trim(),
-      controls:[...document.querySelectorAll(".xcn-hero-scene-controls button")].length,
-      scene:document.querySelector(".xcn-hero-scene-copy strong")?.textContent?.trim(),
-      feature:!!document.querySelector(".xcn-new-tool-feature"),
-      toolLinks:[...document.querySelectorAll(".xcn-new-tool-tile")].map(link=>link.getAttribute("href")),
-      stageRadius:parseFloat(getComputedStyle(document.querySelector(".xcn-hero-showcase-stage")).borderTopLeftRadius),
-      backgroundImage:getComputedStyle(document.querySelector(".xcn-new-hero")).backgroundImage,
-      gutter:parseFloat(getComputedStyle(document.querySelector(".xcn-container")).paddingLeft),
-      headingPx:parseFloat(getComputedStyle(document.querySelector(".xcn-new-hero-copy h1")).fontSize),
-      bodyPx:parseFloat(getComputedStyle(document.querySelector(".xcn-new-hero-description")).fontSize),
-      scenePx:parseFloat(getComputedStyle(document.querySelector(".xcn-hero-scene-copy span")).fontSize),
-      redundantLabels:document.querySelectorAll(".xcn-new-hero-helper,.xcn-new-hero-subline,.xcn-new-benefits,.xcn-new-eyebrow").length,
-      description:document.querySelector(".xcn-new-hero-description")?.textContent?.trim()
-    }))()`);
-    assert.ok(homepage.redesigned&&homepage.sections&&homepage.hero&&homepage.feature,"Redesigned homepage missing");
-    assert.equal(homepage.controls,3,"Three product stories expected");
-    assert.equal(homepage.redundantLabels,0,"Redundant microcopy should not reappear");
-    assert.ok(homepage.description?.length<130,"Hero copy should stay concise");
-    assert.ok(homepage.headingPx>=34&&homepage.headingPx<=81,"Fluid hero title outside legible bounds");
-    assert.ok(homepage.bodyPx>=16&&homepage.scenePx>=16,"Body or carousel captions too small");
-    if(width===360)assert.ok(homepage.headingPx<=43,"Mobile H1 is disproportionate");
-    if(width===1920)assert.ok(homepage.headingPx>=70,"Large desktop H1 should remain prominent");
-    assert.equal(homepage.scene,"Word Lab","Hero must begin with Word Lab");
-    assert.ok(homepage.toolLinks.includes("/cong-cu/trinh-chieu"));
-    assert.ok(homepage.toolLinks.includes("/dang-nhap?next=%2Fstudent%2Fquiz"));
-    assert.ok(homepage.stageRadius<=16,"Hero corners must remain restrained");
-    assert.equal(homepage.backgroundImage,"none","Homepage must not use decorative gradients");
-    if(width>=1920)assert.ok(homepage.gutter>=118&&homepage.gutter<=121,"Desktop gutter should be approximately 120px");
-    if(width<=360)assert.ok(homepage.gutter>=18&&homepage.gutter<=30,"Mobile gutter should be compact");
-    if(width===1280){
-      await wait(5800);
-      const automatic=await evalJs(`document.querySelector(".xcn-hero-scene-copy strong")?.textContent?.trim()`);
-      assert.equal(automatic,"Trình chiếu","Hero must advance automatically without user interaction");
+    const homepage=await evalJs("(()=>({root:!!document.querySelector('.xcn-workshop'),hero:!!document.querySelector('.ws-hero'),h1:document.querySelector('.ws-hero h1')?.textContent?.trim(),h1Count:document.querySelectorAll('main h1').length,description:document.querySelector('.ws-hero-copy>p')?.textContent?.trim(),headingPx:parseFloat(getComputedStyle(document.querySelector('.ws-hero h1')).fontSize),backgroundImage:getComputedStyle(document.querySelector('.ws-hero')).backgroundImage,product:!!document.querySelector('.ws-hero-work[aria-label]'),feature:!!document.querySelector('.ws-feature-main'),paths:document.querySelectorAll('.ws-path-grid a.ws-path').length,catalogRows:document.querySelectorAll('.ws-directory-row').length,planned:[...document.querySelectorAll('.ws-directory-row')].filter(row=>row.querySelector('.ws-directory-status.planned')).every(row=>!row.querySelector('a.ws-directory-action')),sections:['bat-dau','du-an'].every(id=>!!document.getElementById(id)),faq:document.querySelectorAll('.ws-faq-items details').length,links:[...document.querySelectorAll('main a[href]')].map(a=>a.getAttribute('href')),gutter:parseFloat(getComputedStyle(document.querySelector('.xcn-container')).paddingLeft)}))()");
+    assert.ok(homepage.root&&homepage.hero&&homepage.product&&homepage.feature&&homepage.sections,"Editorial homepage content missing");
+    assert.equal(homepage.h1Count,1,"Homepage must use exactly one H1");
+    assert.match(homepage.h1,/Học đến đâu,/);
+    assert.match(homepage.h1,/làm được đến đó/);
+    assert.ok(homepage.description?.length>40&&homepage.description.length<260,"Hero description missing or too long");
+    assert.ok(homepage.headingPx>=40&&homepage.headingPx<=120,"Hero type outside expected responsive range");
+    assert.equal(homepage.backgroundImage,"none","Homepage hero must use a flat, non-gradient background");
+    assert.equal(homepage.paths,4,"Four goal-based entry paths expected");
+    assert.equal(homepage.catalogRows,8,"Product directory should account for eight product groups");
+    assert.ok(homepage.planned,"Planned modules must not link to unfinished tools");
+    assert.equal(homepage.faq,3,"FAQ should offer three native disclosure controls");
+    for(const href of ["/cong-cu/mo-phong-word","/cong-cu/trinh-chieu","/dang-nhap?next=%2Fstudent%2Fquiz","/khoa-hoc"])assert.ok(homepage.links.includes(href),"Missing real product CTA: "+href);
+    if(width===360)assert.ok(homepage.headingPx<=47,"Mobile headline must fit small screens");
+    if(width===1920)assert.ok(homepage.headingPx>=90,"Desktop hero headline must remain prominent");
+    if(width===1920)assert.ok(homepage.gutter>=110&&homepage.gutter<=130,"Desktop gutter should use the shared public rhythm");
+    if(width===360)assert.ok(homepage.gutter>=18&&homepage.gutter<=30,"Mobile gutter should remain usable");
+    const faqOpened=await evalJs("(()=>{const detail=document.querySelector('.ws-faq-items details');if(!detail)return false;detail.querySelector('summary')?.click();return detail.open})()");
+    assert.equal(faqOpened,true,"FAQ first disclosure must open with a click");
+    if(width<1181){
+     const opened=await evalJs("(()=>{const button=document.querySelector('.xcn-public-mobile-toggle');if(!button)return false;button.click();return true})()");
+     assert.equal(opened,true,"Mobile navigation button missing @"+width);
+     await wait(300);
+     const visible=await evalJs("(()=>{const toggle=document.querySelector('.xcn-public-mobile-toggle');return toggle?.getAttribute('aria-expanded')==='true'&&!!document.querySelector('.xcn-public-mobile-panel')})()");
+     assert.equal(visible,true,"Mobile navigation did not open @"+width);
+     await call("Input.dispatchKeyEvent",{type:"keyDown",key:"Escape",code:"Escape"});
+     await call("Input.dispatchKeyEvent",{type:"keyUp",key:"Escape",code:"Escape"});
+     await wait(180);
+     const closed=await evalJs("(()=>{const toggle=document.querySelector('.xcn-public-mobile-toggle');return toggle?.getAttribute('aria-expanded')==='false'&&!document.querySelector('.xcn-public-mobile-panel')})()");
+     assert.equal(closed,true,"Escape did not close mobile navigation @"+width);
+    }else{
+     assert.equal(info.navLinks.length,5,"Desktop navigation should display the five public destinations");
     }
-    const switched=await evalJs(`(()=>{
-      const buttons=[...document.querySelectorAll(".xcn-hero-scene-controls button")];
-      buttons[1]?.click();return buttons.length;
-    })()`);
-    assert.equal(switched,3);
-    await wait(160);
-    const slideScene=await evalJs(`(()=>({
-      label:document.querySelector(".xcn-hero-scene-copy strong")?.textContent?.trim(),
-      pressed:document.querySelectorAll(".xcn-hero-scene-controls button[aria-pressed=true]").length,
-      illustration:!!document.querySelector(".xcn-visual-slide")
-    }))()`);
-    assert.ok(slideScene.label==="Trình chiếu"&&slideScene.pressed===1&&slideScene.illustration,"Slide story switching failed");
-    await evalJs(`document.querySelectorAll(".xcn-hero-scene-controls button")[2].click()`);
-    await wait(150);
-    const quizScene=await evalJs(`(()=>({
-      label:document.querySelector(".xcn-hero-scene-copy strong")?.textContent?.trim(),
-      illustration:!!document.querySelector(".xcn-visual-quiz")
-    }))()`);
-    assert.ok(quizScene.label==="Quiz"&&quizScene.illustration,"Quiz story switching failed");
-    const clicked=await evalJs(`(()=>{
-      const toggle=innerWidth<1181
-       ? document.querySelector('.xcn-public-mobile-toggle')
-       : document.querySelector('.xcn-public-nav-toggle');
-      if(!toggle)return false;
-      toggle.click();return true;
-    })()`);
-    assert.equal(clicked,true,"Navigation toggle missing @"+width);
-    // React state updates after the click handler, not synchronously inside DOM.evaluate.
-    await wait(300);
-    const interactive=await evalJs(`(()=>{
-      if(innerWidth<1181){
-       const toggle=document.querySelector('.xcn-public-mobile-toggle');
-       return toggle?.getAttribute('aria-expanded')==='true'
-         && !!document.querySelector('.xcn-public-mobile-panel');
-      }
-      const toggle=document.querySelector('.xcn-public-nav-toggle');
-      return toggle?.getAttribute('aria-expanded')==='true'
-        && document.querySelectorAll('.xcn-public-mega-item').length===7;
-    })()`);
-    assert.equal(interactive,true,"Menu interaction failed @"+width);
-    await call("Input.dispatchKeyEvent",{type:"keyDown",key:"Escape",code:"Escape"});
-    await call("Input.dispatchKeyEvent",{type:"keyUp",key:"Escape",code:"Escape"});
-    await wait(150);
-    const closed=await evalJs("!document.querySelector('.xcn-public-mobile-panel') && !document.querySelector('.xcn-public-mega')");
-    assert.equal(closed,true,"Escape did not close active navigation");
    }
    console.log("PASS PUBLIC",route,width,"h1",info.title);
   }
