@@ -13,19 +13,22 @@ test("approved palette is defined in Tailwind", () => {
   assert.doesNotMatch(source, /lime:|#c8f13b/i);
 });
 
-test("homepage uses a restrained public palette with no gradients or auto-generated claims", () => {
+test("homepage uses scoped editorial public styles and distinguishes available from planned features", () => {
   const button=read("src/components/ui/button.tsx");
   const home=read("src/app/(public)/page.tsx");
-  const universeCss=read("src/app/(public)/home-universe.css");
-  const condensedCss=read("src/app/(public)/home-condensed.css");
-  assert.match(button,/bg-blue text-white/); // existing app UI remains unchanged
-  assert.match(universeCss,/--u-ink:#213c43/);
+  const css=read("src/app/(public)/home-workshop.css");
+  const layout=read("src/app/(public)/layout.tsx");
+  assert.match(button,/bg-blue text-white/);
+  assert.match(home,/className="xcn-workshop"/);
   assert.match(home,/Học đến đâu,/);
-  assert.match(home,/Đang sử dụng được/);
-  assert.match(home,/Đây là bản đồ phát triển, không phải 132 ứng dụng đang hoạt động/);
-  assert.match(condensedCss,/\.xcn-u-future-grid/);
-  assert.doesNotMatch(home,/Mỗi điều bạn muốn giỏi hơn|Trò chơi không chỉ để vui|xcn-u-playground/);
-  assert.doesNotMatch(`${universeCss}${condensedCss}`,/linear-gradient\(|radial-gradient\(|#c8f13b/i);
+  for(const label of ["Có thể sử dụng","Cần đăng nhập","Đang phát triển","Trong lộ trình"])assert.ok(home.includes(label),label);
+  assert.match(home,/href:null/);
+  assert.match(layout,/home-workshop\.css/);
+  assert.doesNotMatch(layout,/home-universe\.css|home-condensed\.css/);
+  assert.match(css,/\.xcn-workshop/);
+  assert.match(css,/@media\(max-width:600px\)/);
+  assert.doesNotMatch(css,/linear-gradient\(|radial-gradient\(|#c8f13b/i);
+  assert.doesNotMatch(home,/132 ứng dụng đang hoạt động|xcn-u-playground/);
 });
 
 test("change tracking is part of the permanent development rules", () => {
