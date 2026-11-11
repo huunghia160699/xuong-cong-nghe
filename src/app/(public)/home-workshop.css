@@ -3,11 +3,11 @@
 .xcn-workshop{--ws-navy:#252345;--ws-purple:#7545ee;--ws-blue:#0fbeee;--ws-orange:#ff9e2c;--ws-green:#70d32f;--ws-coral:#ff5b68;--ws-lavender:#f4f5ff;--ws-muted:#5c5a73;color:var(--ws-navy);background:#fff;overflow:hidden;font-family:var(--font-body,Arial),sans-serif}
 .xcn-workshop *{box-sizing:border-box}
 .xcn-workshop a{text-decoration:none}
-.xcn-workshop h1,.xcn-workshop h2,.xcn-workshop h3{font-family:var(--font-heading,Arial),sans-serif;color:var(--ws-navy);font-weight:850;letter-spacing:-.045em}
+.xcn-workshop h1,.xcn-workshop h2,.xcn-workshop h3{font-family:inherit;color:var(--ws-navy);font-weight:850;letter-spacing:-.02em}
 .xcn-workshop .ws-hero{padding:68px 0 0;text-align:center;position:relative}
 .xcn-workshop .ws-hero-copy{max-width:1180px;margin:auto;display:flex;flex-direction:column;align-items:center}
 .xcn-workshop .ws-hero-kicker,.xcn-workshop .ws-kicker{font-size:11px;letter-spacing:.13em;font-weight:850;color:#6655a0}
-.xcn-workshop .ws-hero h1{font-size:clamp(43px,5.35vw,82px);line-height:1.09;letter-spacing:-.06em;margin:17px 0 24px}
+.xcn-workshop .ws-hero h1{font-size:clamp(43px,5.35vw,82px);line-height:1.16;letter-spacing:-.025em;margin:17px 0 24px}
 .xcn-workshop .ws-hero h1 span{color:#36316e}
 .xcn-workshop .ws-hero-copy>p:nth-of-type(2){max-width:670px;font-size:clamp(17px,1.35vw,20px);line-height:1.65;margin:0 auto 42px;color:#3f3d67;font-weight:600}
 .xcn-workshop .ws-roles-label{font-size:14px;font-weight:850;margin:0 0 16px;letter-spacing:-.018em}
@@ -33,7 +33,7 @@
 .xcn-workshop .ws-mosaic-9{left:75%;top:61%;transform:rotate(-10deg)}
 .xcn-workshop .ws-mosaic-center{position:absolute;z-index:4;left:50%;top:36%;transform:translate(-50%,-5%);width:clamp(230px,24vw,345px);display:flex;align-items:center;flex-direction:column;text-align:center;padding:18px 8px}
 .xcn-workshop .ws-mosaic-center>span{font-size:11px;font-weight:850;letter-spacing:.15em;color:#554ca6}
-.xcn-workshop .ws-mosaic-center strong{margin:8px 0 18px;font-size:clamp(18px,2vw,28px);line-height:1.18;font-weight:850;letter-spacing:-.045em}
+.xcn-workshop .ws-mosaic-center strong{margin:8px 0 18px;font-size:clamp(18px,2vw,28px);line-height:1.18;font-weight:850;letter-spacing:-.02em}
 .xcn-workshop .ws-mosaic-center>a{display:inline-flex;gap:9px;align-items:center;justify-content:center;padding:12px 27px;min-width:151px;color:#fff;background:var(--ws-purple);border-radius:100px;font-size:14px;font-weight:800;box-shadow:0 7px 18px #7545ee44}
 .xcn-workshop .ws-mosaic-center>a:hover{background:#5c2cd5}
 .xcn-workshop .ws-mosaic-caption{position:absolute;bottom:5%;left:50%;transform:translateX(-50%);font-weight:700;font-size:11px;color:#655e83;white-space:nowrap}
@@ -86,7 +86,7 @@
 .xcn-workshop .ws-progress-blob{width:355px;max-width:100%;height:295px;position:absolute;border-radius:55% 45% 48% 51%;background:#e1fac5;transform:rotate(8deg)}
 .xcn-workshop .ws-progress-board{z-index:1;padding:32px 25px;width:350px;max-width:95%;background:white;border-radius:18px;border:1px solid #e8eedf;box-shadow:0 9px 22px #41732b1c;transform:rotate(5deg)}
 .xcn-workshop .ws-progress-board>span{font-size:10px;color:#579b45;font-weight:850;letter-spacing:.09em}
-.xcn-workshop .ws-progress-board>strong{display:block;font-size:21px;margin:12px 0 24px;letter-spacing:-.04em}
+.xcn-workshop .ws-progress-board>strong{display:block;font-size:21px;margin:12px 0 24px;letter-spacing:-.02em}
 .xcn-workshop .ws-progress-line{display:flex;justify-content:space-between;align-items:center;position:relative}
 .xcn-workshop .ws-progress-line:before{content:'';height:3px;background:#c8e5b9;position:absolute;left:14px;right:14px;top:50%;transform:translateY(-50%)}
 .xcn-workshop .ws-progress-line i{display:grid;place-items:center;width:39px;height:39px;border-radius:50%;border:2px solid #c6d7bd;background:#fff;color:#8e9f83;z-index:1;font-style:normal}
@@ -120,7 +120,7 @@
 .xcn-workshop .ws-directory{max-width:1050px;margin:0 auto;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}
 .xcn-workshop .ws-directory-row{min-width:0;display:flex;flex-direction:column;align-items:flex-start;min-height:212px;padding:21px 20px;background:#fff;border:1px solid #eceaf7;border-radius:17px;box-shadow:0 5px 12px #37296108}
 .xcn-workshop .ws-directory-index{font-size:11px;color:#a28de4;font-weight:850}
-.xcn-workshop .ws-directory-row h3{font-size:20px;line-height:1.2;letter-spacing:-.036em;margin:17px 0 8px}
+.xcn-workshop .ws-directory-row h3{font-size:20px;line-height:1.2;letter-spacing:-.02em;margin:17px 0 8px}
 .xcn-workshop .ws-directory-row p{color:#66647c;font-size:12px;line-height:1.55;margin:0 0 14px}
 .xcn-workshop .ws-directory-area{display:inline-flex;margin-top:auto;padding:7px 11px;border-radius:999px;background:#f2effc;color:#7055b6;font-size:10px;font-weight:850}
 .xcn-workshop .ws-directory-more{display:flex;gap:9px;align-items:center;justify-content:center;width:max-content;margin:28px auto 0;color:#6840d4;font-size:14px;font-weight:850}
