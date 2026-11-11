@@ -120,3 +120,9 @@ Không viết lại cả nhật ký cũ. Một task nhiều commit có thể th�
 - **CODE (nhánh QA):** xóa nhãn trạng thái và lời nhắc roadmap khỏi UI homepage; dùng tám nhãn lĩnh vực, chỉnh SEO, FAQ, Teacher Studio copy; giữ route thật và hệ màu/cấu trúc.
 - **REGRESSION:** cập nhật `tests/public-homepage-workshop.test.mjs`, `tests/brand-palette.test.mjs`, `scripts/public-browser-qa.mjs` cho catalog không có badge trạng thái, CTA hợp lệ.
 - **PHẠM VI/AN TOÀN:** không chỉnh Auth/RLS, dữ liệu Production, Sidebar, các Lab hoặc Vercel; chờ CI xác minh mới ghi PASS.
+
+### 2026-11-11 — [PUBLIC HOME] Thiết kế lại theo ảnh tham chiếu ClassDojo
+- **CODE READY (PR #77):** thay page.tsx, scoped home-workshop.css, regression homepage, Chromium QA; bố cục tham chiếu ClassDojo nhưng đồ họa, nội dung và thương hiệu Xưởng tự thiết kế.
+- **Đường đi:** Học viên /khoa-hoc; giáo viên/phụ huynh /gioi-thieu; nhà trường /lien-he; Word Lab /cong-cu/mo-phong-word; Slides /cong-cu/trinh-chieu; Quiz qua đăng nhập. Không link giả hoặc review/số liệu giả.
+- **QA local isolated:** TSX parse PASS; 4/4 structural regression PASS; browser standalone CSS/HTML ở 390 và 1440 không tràn ngang, chưa đại diện Next/CI. Đợi GitHub CI để cập nhật PASS đầy đủ.
+- **RELEASE:** chưa merge main hoặc Vercel; không đổi Auth/RLS/Production Supabase hay Admin Roadmap.
