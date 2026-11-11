@@ -16,15 +16,17 @@ test('public homepage: one primary headline and accessible landmarks',()=>{
  }
 });
 
-test('public homepage: operational destinations and honest roadmap states',()=>{
+test('public homepage: genuine destinations and a unified eight-category catalog',()=>{
  for(const href of ['/khoa-hoc','/cong-cu','/cong-cu/mo-phong-word','/cong-cu/trinh-chieu','/dang-nhap?next=%2Fstudent%2Fquiz']){
   assert.ok(page.includes(href),`Missing supported route: ${href}`);
  }
- for(const label of ['Có thể sử dụng','Cần đăng nhập','Đang phát triển','Trong lộ trình']){
-  assert.ok(page.includes(label),`Missing state: ${label}`);
+ for(const category of ['Học tập','Soạn thảo','Bài giảng','Đánh giá','Thư viện','Giảng dạy','Kỹ năng số','Tương tác']){
+  assert.ok(page.includes('area:"'+category+'"'),`Missing catalog category: ${category}`);
  }
- assert.match(page,/href:null/);
- assert.doesNotMatch(page,/href="#"/);
+ assert.equal((page.match(/area:"/g)||[]).length,8);
+ assert.match(page,/ws-directory-area/);
+ assert.doesNotMatch(page,/Đã có nền tảng|Có thể sử dụng|Cần đăng nhập|Đang phát triển|Trong lộ trình|đang được xây dựng|đang được cập nhật/);
+ assert.doesNotMatch(page,/href:null|href="#"/);
  assert.doesNotMatch(page,/132 ý tưởng|Tri thức mới|Gamification giúp/);
 });
 
