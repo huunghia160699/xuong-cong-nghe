@@ -115,3 +115,8 @@ Không viết lại cả nhật ký cũ. Một task nhiều commit có thể th�
 ### 2026-11-10 — [PUBLIC HOME] Chromium QA theo trang chủ mới
 - **FIX:** cập nhật `scripts/public-browser-qa.mjs` kiểm tra Hero/editorial, bốn lối vào, tám nhóm công cụ, CTA thật, disclosure FAQ, nav mobile/Escape và screenshot 5 route × 4 viewport; bỏ giả định carousel của phiên bản cũ.
 - **GATE:** `pnpm test`, `typecheck`, `build` đã PASS ở CI PR #75; Chromium public QA của mã mới tiếp tục nghiệm thu trên PR tiếp theo. Không thay sản phẩm hoặc Production Supabase.
+
+### 2026-11-11 — [PUBLIC HOME] Copy như sản phẩm hoàn chỉnh
+- **CODE (nhánh QA):** xóa nhãn trạng thái và lời nhắc roadmap khỏi UI homepage; dùng tám nhãn lĩnh vực, chỉnh SEO, FAQ, Teacher Studio copy; giữ route thật và hệ màu/cấu trúc.
+- **REGRESSION:** cập nhật `tests/public-homepage-workshop.test.mjs`, `tests/brand-palette.test.mjs`, `scripts/public-browser-qa.mjs` cho catalog không có badge trạng thái, CTA hợp lệ.
+- **PHẠM VI/AN TOÀN:** không chỉnh Auth/RLS, dữ liệu Production, Sidebar, các Lab hoặc Vercel; chờ CI xác minh mới ghi PASS.
