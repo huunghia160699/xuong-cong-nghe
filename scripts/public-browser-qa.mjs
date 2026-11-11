@@ -143,7 +143,7 @@ try{
     }
    }
    if(route==="/"){
-    await evalJs("document.querySelector('.xcn-public-footer').scrollIntoView({block:'end'})");
+    await evalJs("(()=>{document.documentElement.style.scrollBehavior='auto';document.querySelector('.xcn-public-footer').scrollIntoView({block:'end',behavior:'instant'});})()");
     await wait(200);
     const footerShot=await call("Page.captureScreenshot",{format:"png",fromSurface:true});
     writeFileSync(join(output,"footer-"+width+".png"),Buffer.from(footerShot.data,"base64"));
