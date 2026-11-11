@@ -120,3 +120,9 @@ Nguồn định nghĩa kỹ thuật: `tailwind.config.ts` và `src/app/globals.c
 - Ngôn ngữ người dùng: tên chức năng + giá trị sử dụng + đường đi phù hợp. Không hiển thị “đã có”, “cần đăng nhập”, “đang phát triển”, “trong lộ trình”, hoặc thông báo roadmap trong vùng giới thiệu sản phẩm.
 - Catalog tám nhóm dùng nhãn **lĩnh vực** (Học tập, Soạn thảo, Bài giảng, Đánh giá, Thư viện, Giảng dạy, Kỹ năng số, Tương tác) thay vì nhãn trạng thái; catalog là nội dung biên tập không giả tương tác. CTA chỉ đến route đang tồn tại.
 - Trạng thái triển khai thực tế tiếp tục ghi trong tài liệu nội bộ, không suy luận rằng module chưa nghiệm thu đã hoạt động. Giữ responsive, reduced-motion, WCAG, một H1.
+
+### 2026-11-11 — Homepage Art Direction: community-first narrative
+- Tham chiếu trực quan từ ảnh ClassDojo người dùng cung cấp về **nhịp bố cục**, không lấy logo, nhân vật, đánh giá hay hình ảnh gốc.
+- Trang chủ mới: Hero căn giữa, bốn vai trò, collage 9 ảnh nghiêng, 5 câu chuyện so le theo đường nét chấm, CTA pastel, hệ sinh thái/khóa học, bốn giá trị, bảo mật và banner ảnh cuối. Hệ màu navy, tím, xanh ngọc, cam, lục, coral trên nền sáng; minh họa CSS/HTML riêng.
+- Ảnh bên ngoài dùng ảnh minh họa Unsplash (không được gọi là ảnh người dùng thực); màu nền dự phòng nếu ảnh tải lỗi. Không sao chép thương hiệu ClassDojo hoặc tạo đánh giá/số liệu giả.
+- Chỉ sửa homepage và CSS scoped .xcn-workshop; một H1, role links thật, responsive 360/768/1280/1920, hỗ trợ reduced-motion; Header/Footer và các module không đổi.
