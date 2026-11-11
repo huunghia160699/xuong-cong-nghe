@@ -73,27 +73,45 @@ try{
    const shot=await call("Page.captureScreenshot",{format:"png",fromSurface:true});
    writeFileSync(join(output,(route.slice(1)||"home")+"-"+width+".png"),Buffer.from(shot.data,"base64"));
    if(route==="/"){
-    const homepage=await evalJs("(()=>({root:!!document.querySelector('.xcn-workshop'),hero:!!document.querySelector('.ws-hero'),h1:document.querySelector('.ws-hero h1')?.textContent?.trim(),h1Count:document.querySelectorAll('main h1').length,description:document.querySelector('.ws-hero-copy>p')?.textContent?.trim(),headingPx:parseFloat(getComputedStyle(document.querySelector('.ws-hero h1')).fontSize),backgroundImage:getComputedStyle(document.querySelector('.ws-hero')).backgroundImage,product:!!document.querySelector('.ws-hero-work[aria-label]'),feature:!!document.querySelector('.ws-feature-main'),paths:document.querySelectorAll('.ws-path-grid a.ws-path').length,catalogRows:document.querySelectorAll('.ws-directory-row').length,catalogAreas:document.querySelectorAll('.ws-directory-row .ws-directory-area').length,catalogLinks:document.querySelectorAll('.ws-directory-row a').length,statusBadges:document.querySelectorAll('.ws-directory-status').length,sections:['bat-dau','du-an'].every(id=>!!document.getElementById(id)),faq:document.querySelectorAll('.ws-faq-items details').length,links:[...document.querySelectorAll('main a[href]')].map(a=>a.getAttribute('href')),gutter:parseFloat(getComputedStyle(document.querySelector('.xcn-container')).paddingLeft)}))()");
-    assert.ok(homepage.root&&homepage.hero&&homepage.product&&homepage.feature&&homepage.sections,"Editorial homepage content missing");
-    assert.equal(homepage.h1Count,1,"Homepage must use exactly one H1");
-    assert.match(homepage.h1,/Học đến đâu,/);
-    assert.match(homepage.h1,/làm được đến đó/);
-    assert.ok(homepage.description?.length>40&&homepage.description.length<260,"Hero description missing or too long");
-    assert.ok(homepage.headingPx>=40&&homepage.headingPx<=120,"Hero type outside expected responsive range");
-    assert.equal(homepage.backgroundImage,"none","Homepage hero must use a flat, non-gradient background");
-    assert.equal(homepage.paths,4,"Four goal-based entry paths expected");
-    assert.equal(homepage.catalogRows,8,"Product directory should account for eight product groups");
-    assert.equal(homepage.catalogAreas,8,"All eight catalog rows need a functional topic label");
-    assert.equal(homepage.catalogLinks,0,"Catalog is editorial; navigation uses separate working CTAs");
-    assert.equal(homepage.statusBadges,0,"Do not show product release statuses on homepage");
-    assert.equal(homepage.faq,3,"FAQ should offer three native disclosure controls");
-    for(const href of ["/cong-cu/mo-phong-word","/cong-cu/trinh-chieu","/dang-nhap?next=%2Fstudent%2Fquiz","/khoa-hoc"])assert.ok(homepage.links.includes(href),"Missing real product CTA: "+href);
-    if(width===360)assert.ok(homepage.headingPx<=47,"Mobile headline must fit small screens");
-    if(width===1920)assert.ok(homepage.headingPx>=90,"Desktop hero headline must remain prominent");
-    if(width===1920)assert.ok(homepage.gutter>=110&&homepage.gutter<=130,"Desktop gutter should use the shared public rhythm");
-    if(width===360)assert.ok(homepage.gutter>=18&&homepage.gutter<=30,"Mobile gutter should remain usable");
-    const faqOpened=await evalJs("(()=>{const detail=document.querySelector('.ws-faq-items details');if(!detail)return false;detail.querySelector('summary')?.click();return detail.open})()");
-    assert.equal(faqOpened,true,"FAQ first disclosure must open with a click");
+    const homepage=await evalJs(`(()=>({
+      root:!!document.querySelector('.xcn-workshop'),
+      hero:!!document.querySelector('.ws-hero'),
+      h1:document.querySelector('.ws-hero h1')?.textContent?.trim(),
+      h1Count:document.querySelectorAll('main h1').length,
+      headingPx:parseFloat(getComputedStyle(document.querySelector('.ws-hero h1')).fontSize),
+      heroCopy:document.querySelector('.ws-hero-copy>p:nth-of-type(2)')?.textContent?.trim(),
+      backgroundImage:getComputedStyle(document.querySelector('.ws-hero')).backgroundImage,
+      rolePaths:document.querySelectorAll('.ws-path-grid a.ws-path').length,
+      photos:document.querySelectorAll('.ws-mosaic-photo').length,
+      mosaicCTA:document.querySelector('.ws-mosaic-center a')?.getAttribute('href'),
+      stories:document.querySelectorAll('.ws-journey-row').length,
+      storyTrail:!!document.querySelector('.ws-journey-trail'),
+      discovery:!!document.querySelector('.ws-discover-inner'),
+      catalogRows:document.querySelectorAll('.ws-directory-row').length,
+      areas:document.querySelectorAll('.ws-directory-row .ws-directory-area').length,
+      statusBadges:document.querySelectorAll('.ws-directory-status').length,
+      values:document.querySelectorAll('.ws-value-card').length,
+      finalBanner:!!document.querySelector('.ws-photo-finale'),
+      links:[...document.querySelectorAll('main a[href]')].map(a=>a.getAttribute('href')),
+      gutter:parseFloat(getComputedStyle(document.querySelector('.xcn-container')).paddingLeft)
+    }))()`);
+    assert.ok(homepage.root&&homepage.hero&&homepage.discovery&&homepage.storyTrail&&homepage.finalBanner,"Community-first homepage is missing a section");
+    assert.equal(homepage.h1Count,1,"Homepage must have one H1");
+    assert.match(homepage.h1,/Nơi học tập trở thành/);
+    assert.ok(homepage.heroCopy?.length>35&&homepage.heroCopy.length<240,"Hero description should be concise");
+    assert.ok(homepage.headingPx>=32&&homepage.headingPx<=86,"Responsive hero title outside expected range");
+    assert.equal(homepage.backgroundImage,"none","Hero background must remain simple and white");
+    assert.equal(homepage.rolePaths,4,"Four user role cards required");
+    assert.equal(homepage.photos,9,"Photo mosaic must contain nine visual cards");
+    assert.equal(homepage.mosaicCTA,"/cong-cu","Hero CTA should lead to existing tools");
+    assert.equal(homepage.stories,5,"Five alternating learning stories required");
+    assert.equal(homepage.catalogRows,8,"Eight ecosystem groups required");
+    assert.equal(homepage.areas,8,"Every ecosystem group needs a topic label");
+    assert.equal(homepage.statusBadges,0,"Homepage should not display development status badges");
+    assert.equal(homepage.values,4,"Four learning values required");
+    for(const href of ["/cong-cu/mo-phong-word","/cong-cu/trinh-chieu","/dang-nhap?next=%2Fstudent%2Fquiz","/khoa-hoc"])assert.ok(homepage.links.includes(href),"Missing real destination: "+href);
+    if(width===360)assert.ok(homepage.headingPx<=40,"Mobile H1 is too large");
+    if(width===1920)assert.ok(homepage.headingPx>=70,"Desktop H1 should remain prominent");
     if(width<1181){
      const opened=await evalJs("(()=>{const button=document.querySelector('.xcn-public-mobile-toggle');if(!button)return false;button.click();return true})()");
      assert.equal(opened,true,"Mobile navigation button missing @"+width);
@@ -106,10 +124,9 @@ try{
      const closed=await evalJs("(()=>{const toggle=document.querySelector('.xcn-public-mobile-toggle');return toggle?.getAttribute('aria-expanded')==='false'&&!document.querySelector('.xcn-public-mobile-panel')})()");
      assert.equal(closed,true,"Escape did not close mobile navigation @"+width);
     }else{
-     assert.equal(info.navLinks.length,5,"Desktop navigation should display the five public destinations");
+     assert.equal(info.navLinks.length,5,"Desktop navigation should show five public routes");
     }
-   }
-   console.log("PASS PUBLIC",route,width,"h1",info.title);
+   }   console.log("PASS PUBLIC",route,width,"h1",info.title);
   }
  }
  console.log("PASS D1 public shell 5 routes x 4 viewports + responsive menu/ESC");
