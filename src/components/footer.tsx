@@ -2,7 +2,7 @@ import Link from "next/link";
 import {BookOpen,FileText,Globe2,Presentation} from "lucide-react";
 import {Brand} from "@/components/brand";
 
-// Every footer destination resolves to an existing route. No unverified social profiles or app-store badges.
+// Every footer destination resolves to an existing route; shortcut badges are genuine product links.
 const columns=[
  {title:"Về Xưởng",links:[
   {label:"Giới thiệu",href:"/gioi-thieu"},
