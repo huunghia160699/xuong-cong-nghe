@@ -131,3 +131,8 @@ Không viết lại cả nhật ký cũ. Một task nhiều commit có thể th�
 - **FIX (nhánh QA):** homepage heading trước dùng `--font-heading` không khai báo → Arial fallback; thay bằng Noto Sans có subset Vietnamese qua Next font, áp dụng cục bộ toàn homepage. Hero line-height 1.16, giảm tracking chữ đậm để hiển thị dấu.
 - **REGRESSION:** thêm test cấu hình font/không fallback và kiểm computed font trong Chromium QA; giữ nguyên route, UI nội dung, Header/Footer, Word/Slides, Auth và Supabase Production.
 - **KIỂM THỬ/PHÁT HÀNH:** ghi PASS/READY riêng theo CI và Vercel sau khi có bằng chứng; không tự suy luận từ commit.
+
+### 2026-11-11 — [PUBLIC FOOTER] Bố cục ClassDojo
+- **CODE READY:** brand trái, 4 cột link, locale tĩnh, hàng tiện ích; không copy logo hay tạo social/store links giả.
+- **REGRESSION:** test footer mới, Chromium 5 route × 4 viewport và screenshot footer; chạy pnpm test, typecheck, build qua CI.
+- **SCOPE:** giữ Auth/RLS/Supabase, Word/Slides, Admin; chưa merge main, chưa deploy.
