@@ -1,5 +1,5 @@
 import Link from "next/link";
-import {ArrowUpRight,BookOpen,FileText,Globe2,Presentation} from "lucide-react";
+import {BookOpen,FileText,Globe2,Presentation} from "lucide-react";
 import {Brand} from "@/components/brand";
 
 // Every footer destination resolves to an existing route. No unverified social profiles or app-store badges.
