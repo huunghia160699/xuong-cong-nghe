@@ -55,3 +55,13 @@ test('public homepage: role shell, live courses and scoped responsive presentati
  assert.match(css,/@media\(prefers-reduced-motion:reduce\)/);
  assert.doesNotMatch(css,/linear-gradient\(|radial-gradient\(|scroll-snap/);
 });
+
+test('public homepage: Noto Sans loads Vietnamese glyphs without unresolved heading fallback',()=>{
+ assert.match(page,/import \{Noto_Sans\} from "next\/font\/google"/);
+ assert.match(page,/Noto_Sans\(\{subsets:\["latin","vietnamese"\],display:"swap"\}\)/);
+ assert.match(page,/style=\{\{fontFamily:homepageFont\.style\.fontFamily\}\}/);
+ assert.match(css,/\.xcn-workshop h1,\.xcn-workshop h2,\.xcn-workshop h3\{font-family:inherit/);
+ assert.doesNotMatch(css,/--font-heading/);
+ assert.match(css,/\.ws-hero h1\{[^}]*line-height:1\.16;letter-spacing:-\.025em/);
+ for(const phrase of ['Nơi học tập trở thành','Học đến đâu, làm được đến đó','Khám phá'])assert.ok(page.includes(phrase),phrase);
+});
