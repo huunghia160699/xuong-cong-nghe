@@ -70,6 +70,17 @@ try{
    assert.ok(info.scrollWidth<=info.viewport+4,"Horizontal overflow "+route+" @"+width+": "+JSON.stringify(info));
    assert.equal(info.style,"none","Header gradient/background image is prohibited");
    assert.equal(info.footerStyle,"none","Footer gradient/background image is prohibited");
+
+   const footerQA=await evalJs("(()=>{const el=document.querySelector('.xcn-public-footer');const nav=el?.querySelector('.xcn-public-footer-links');return {columns:nav?.querySelectorAll('.xcn-public-footer-column').length,gridCount:getComputedStyle(nav).gridTemplateColumns.split(' ').filter(Boolean).length,groups:[...nav.querySelectorAll('h2')].map(x=>x.textContent.trim()),links:nav.querySelectorAll('a').length,quick:el.querySelectorAll('.xcn-public-footer-quicklinks a').length,apps:el.querySelectorAll('.xcn-public-footer-apps a').length,locale:el.querySelector('.xcn-public-footer-locale')?.textContent.trim(),allLinks:[...el.querySelectorAll('a[href]')].map(x=>x.getAttribute('href'))}})()");
+   assert.equal(footerQA.columns,4,"Footer must show four information groups @"+width);
+   assert.equal(footerQA.gridCount,width<=700?2:4,"Footer grid must be responsive @"+width);
+   assert.equal(footerQA.links,16,"Footer information links incomplete @"+width);
+   assert.equal(footerQA.quick,3,"Footer shortcut icons missing @"+width);
+   assert.equal(footerQA.apps,2,"Footer feature badges missing @"+width);
+   assert.match(footerQA.locale,/Tiếng Việt/);
+   assert.deepEqual(footerQA.groups,["Về Xưởng","Học & thực hành","Khám phá","Kết nối"]);
+   assert.ok(footerQA.allLinks.every(href=>href&&href.startsWith("/")&&href!=="#"),"Footer has an unsupported link @"+width);
+
    const shot=await call("Page.captureScreenshot",{format:"png",fromSurface:true});
    writeFileSync(join(output,(route.slice(1)||"home")+"-"+width+".png"),Buffer.from(shot.data,"base64"));
    if(route==="/"){
@@ -130,7 +141,15 @@ try{
     }else{
      assert.equal(info.navLinks.length,5,"Desktop navigation should show five public routes");
     }
-   }   console.log("PASS PUBLIC",route,width,"h1",info.title);
+   }
+   if(route==="/"){
+    await evalJs("(()=>{document.documentElement.style.scrollBehavior='auto';document.querySelector('.xcn-public-footer').scrollIntoView({block:'end',behavior:'instant'});})()");
+    await wait(200);
+    const footerShot=await call("Page.captureScreenshot",{format:"png",fromSurface:true});
+    writeFileSync(join(output,"footer-"+width+".png"),Buffer.from(footerShot.data,"base64"));
+    await evalJs("window.scrollTo(0,0)");
+   }
+   console.log("PASS PUBLIC",route,width,"h1",info.title);
   }
  }
  console.log("PASS D1 public shell 5 routes x 4 viewports + responsive menu/ESC");

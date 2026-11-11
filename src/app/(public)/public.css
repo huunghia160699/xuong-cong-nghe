@@ -84,23 +84,119 @@
 .xcn-public-mega-item small{display:block;margin-top:4px;font-size:12px;
  line-height:1.45;color:var(--public-muted)}
 .xcn-public-mobile-panel{display:none}
-.xcn-public-footer{margin-top:auto;border-top:1px solid var(--public-border);
- background:var(--public-surface)}
-.xcn-public-footer-inner{display:grid;grid-template-columns:minmax(250px,1.12fr) minmax(0,1.8fr);
- gap:clamp(24px,4vw,90px);padding-block:clamp(48px,6dvh,80px)}
-.xcn-public-footer-brand p{margin:20px 0 10px;max-width:330px;
- font-size:15px;line-height:1.75;color:var(--public-muted)}
-.xcn-public-footer-brand>span{font-size:14px;font-weight:700;color:var(--public-primary)}
-.xcn-public-footer-links{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:28px}
-.xcn-public-footer-links h2{margin:0 0 16px;font-size:15px;font-weight:800;
- color:var(--public-ink)}
-.xcn-public-footer-links ul{margin:0;padding:0;list-style:none;display:grid;gap:13px}
-.xcn-public-footer-links a{display:inline-flex;align-items:center;gap:5px;
- font-size:14px;line-height:1.5;text-decoration:none;color:var(--public-muted)}
-.xcn-public-footer-links a:hover{color:var(--public-primary)}
-.xcn-public-footer-bottom{display:flex;justify-content:space-between;gap:12px;
- border-top:1px solid var(--public-border);padding-block:20px;
- font-size:13px;color:var(--public-muted)}
+/* A community-first editorial footer: brand + four slim columns + utility rail. */
+.xcn-public-footer{
+ margin-top:auto;border-top:1px solid #eeedf3;background:#fff;
+ color:#252345;font-family:var(--font-body),sans-serif;
+}
+.xcn-public-footer-inner{
+ display:grid;grid-template-columns:minmax(245px,1.04fr) minmax(0,2fr);
+ align-items:start;gap:clamp(42px,6vw,118px);
+ padding-block:clamp(56px,5.6vw,92px) clamp(50px,5vw,74px);
+}
+.xcn-public-footer-brand .xcn-brand{gap:12px;white-space:normal}
+.xcn-public-footer-brand .xcn-brand-name{
+ color:#252345;font-family:var(--font-body),sans-serif;
+ font-size:clamp(21px,2vw,27px);font-weight:800;
+ letter-spacing:-.045em;text-transform:none;line-height:1.2;
+}
+.xcn-public-footer-brand p{
+ max-width:330px;margin:20px 0 24px;font-size:14px;
+ line-height:1.75;color:#575773;
+}
+.xcn-public-footer-locale{
+ display:inline-flex;align-items:center;gap:9px;
+ padding:9px 14px;border:1px solid #e6e4ef;border-radius:999px;
+ color:#484567;background:#fff;font-size:12px;font-weight:700;
+}
+.xcn-public-footer-locale svg{color:#7545ee}
+.xcn-public-footer-links{
+ display:grid;grid-template-columns:repeat(4,minmax(0,1fr));
+ column-gap:clamp(15px,2.6vw,48px);row-gap:32px;
+}
+.xcn-public-footer-column{min-width:0}
+.xcn-public-footer-links h2{
+ margin:4px 0 19px;font-size:13px;font-weight:800;
+ line-height:1.4;letter-spacing:-.01em;color:#252345;
+}
+.xcn-public-footer-links ul{
+ display:grid;gap:12px;list-style:none;margin:0;padding:0;
+}
+.xcn-public-footer-links a{
+ display:inline-block;color:#63617b;text-decoration:none;
+ font-size:12px;line-height:1.55;font-weight:500;
+ transition:color .18s ease;
+}
+.xcn-public-footer-links a:hover,.xcn-public-footer-links a:focus-visible{
+ color:#7545ee;text-decoration:underline;text-underline-offset:3px;
+}
+.xcn-public-footer-bottom{
+ display:grid;grid-template-columns:auto minmax(0,1fr) auto;
+ align-items:center;gap:clamp(14px,3.2vw,45px);
+ border-top:1px solid #eeedf3;padding-block:23px 28px;
+ font-size:11px;color:#78768d;
+}
+.xcn-public-footer-quicklinks{display:flex;gap:9px;align-items:center}
+.xcn-public-footer-quicklinks a{
+ display:grid;place-items:center;width:34px;height:34px;
+ border-radius:50%;border:1px solid #eae8f3;color:#333153;
+ text-decoration:none;transition:color .18s,background-color .18s;
+}
+.xcn-public-footer-quicklinks a:hover{
+ background:#f2efff;color:#7545ee;
+}
+.xcn-public-footer-meta{
+ display:flex;gap:clamp(10px,1.35vw,21px);align-items:center;
+ justify-content:center;flex-wrap:wrap;line-height:1.5;
+}
+.xcn-public-footer-meta a{color:#76738c;text-decoration:none}
+.xcn-public-footer-meta a:hover{color:#7545ee;text-decoration:underline}
+.xcn-public-footer-apps{display:flex;align-items:center;gap:8px}
+.xcn-public-footer-app{
+ display:inline-flex;align-items:center;gap:9px;min-width:128px;
+ min-height:43px;padding:7px 11px;border:1px solid #23213e;
+ border-radius:7px;background:#252345;color:#fff;text-decoration:none;
+ transition:background-color .18s,transform .18s;
+}
+.xcn-public-footer-app:hover{
+ background:#413477;transform:translateY(-1px);
+}
+.xcn-public-footer-app svg{flex:none}
+.xcn-public-footer-app span{display:grid;gap:1px}
+.xcn-public-footer-app small{
+ font-size:8px;line-height:1.1;font-weight:650;letter-spacing:.055em;
+}
+.xcn-public-footer-app strong{
+ font-size:12px;line-height:1.2;font-weight:800;white-space:nowrap;
+}
+@media(max-width:1100px){
+ .xcn-public-footer-inner{grid-template-columns:1fr;gap:38px}
+ .xcn-public-footer-brand p{max-width:450px}
+ .xcn-public-footer-bottom{grid-template-columns:1fr auto}
+ .xcn-public-footer-meta{justify-content:flex-start;grid-column:1}
+ .xcn-public-footer-apps{grid-column:2;grid-row:1/3}
+}
+@media(max-width:700px){
+ .xcn-public-footer-inner{padding-block:52px 44px;gap:38px}
+ .xcn-public-footer-links{grid-template-columns:repeat(2,minmax(0,1fr));column-gap:24px;row-gap:31px}
+ .xcn-public-footer-links h2{margin-bottom:14px;font-size:13px}
+ .xcn-public-footer-links ul{gap:11px}
+ .xcn-public-footer-links a{font-size:13px}
+ .xcn-public-footer-bottom{grid-template-columns:1fr;gap:19px;padding-block:25px}
+ .xcn-public-footer-meta,.xcn-public-footer-apps{grid-column:1;grid-row:auto}
+ .xcn-public-footer-apps{flex-wrap:wrap}
+}
+@media(max-width:440px){
+ .xcn-public-footer-brand .xcn-brand-name{font-size:21px;letter-spacing:-.04em}
+ .xcn-public-footer-apps{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}
+ .xcn-public-footer-app{min-width:0;gap:7px;padding:7px 8px}
+ .xcn-public-footer-app strong{font-size:11px}
+ .xcn-public-footer-app svg{width:19px;height:19px}
+}
+@media(prefers-reduced-motion:reduce){
+ .xcn-public-footer-links a,.xcn-public-footer-quicklinks a,
+ .xcn-public-footer-app{transition:none;transform:none}
+}
 .xcn-public-placeholder{min-height:clamp(420px,55dvh,700px);
  padding-block:clamp(76px,9dvh,130px)}
 .xcn-public-placeholder-wrap{max-width:760px;margin-inline:auto;text-align:center}

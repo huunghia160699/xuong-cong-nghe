@@ -131,3 +131,8 @@ Nguồn định nghĩa kỹ thuật: `tailwind.config.ts` và `src/app/globals.c
 - **Quy tắc:** Tiêu đề và nội dung trang chủ dùng `Noto Sans` qua `next/font/google` với subset `latin`, `vietnamese`, `display:"swap"`. Font chỉ áp dụng tại `src/app/(public)/page.tsx`, không ảnh hưởng Admin/Word/Slides.
 - **Nguyên nhân đã sửa:** Trang chủ trước đây gọi biến `--font-heading` không được khai báo, nên tiêu đề rơi xuống Arial. Tiêu đề kế thừa đúng font đã tự host bởi Next; giảm letter-spacing âm và tăng line-height Hero để dấu tiếng Việt không chạm nhau.
 - **QA:** kiểm tra ảnh Chromium 360/768/1280/1920, giá trị `getComputedStyle(...).fontFamily` của H1 và body, `pnpm test`, `pnpm typecheck`, `pnpm build`. Không đưa font vào workspace soạn thảo.
+
+### 2026-11-11 — Footer công khai theo nhịp bố cục ClassDojo
+- Footer nền trắng, brand/mission bên trái; bốn cột liên kết bên phải; hàng tiện ích dưới đường phân cách. Nhận diện Xưởng riêng, không dùng ảnh/logo, social, App Store/Google Play của ClassDojo.
+- Desktop: 4 cột; mobile: 2 cột. Nhãn Tiếng Việt là thông tin, không phải bộ chuyển ngôn ngữ; lối tắt Word Lab/Trình chiếu dẫn route thật.
+- Dùng font body tiếng Việt, focus visible, reduced-motion. Regression 5 route public tại 360/768/1280/1920.

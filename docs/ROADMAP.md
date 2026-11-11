@@ -733,3 +733,8 @@ Nguồn: [TINHOCBAN_DEEP_REVIEW.md](TINHOCBAN_DEEP_REVIEW.md).
 - **CODE (nhánh QA):** dùng `Noto Sans` có subset Vietnamese cho nội dung và tiêu đề homepage, không dùng fallback `--font-heading` chưa khai báo; điều chỉnh line-height/letter-spacing.
 - **REGRESSION:** kiểm thử dấu tiếng Việt và computed font trên Chromium; không chỉnh API, Supabase Auth/RLS, Word Lab/Slides, Public Header/Footer hoặc các route khác.
 - **RELEASE GATE:** GitHub Actions PASS, xác minh `vercel.json` khóa tự deploy rồi mới merge main/deploy Production theo SHA.
+
+### 2026-11-11 — Public Footer: Reference redesign
+- **CODE READY (nhánh QA):** brand/mission, 4 nhóm liên kết, locale tĩnh, thanh tiện ích shortcut và CSS responsive 360/768/1280/1920.
+- **REGRESSION:** test riêng footer, Chromium 5 route × 4 viewport, ảnh footer. Không thay Auth/RLS/Supabase, Word/Slides, Admin hoặc homepage content.
+- **RELEASE:** chờ CI và nghiệm thu; không tự deploy Vercel khi chưa yêu cầu.

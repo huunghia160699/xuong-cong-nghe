@@ -350,3 +350,6 @@ Trang chủ không làm bảng kiểm trạng thái phát hành. Thay copy relea
 
 ### 2026-11-11 — D2 homepage: bố cục theo ảnh tham chiếu ClassDojo
 Art direction ưu tiên nhịp thị giác từ ảnh người dùng: lời hứa học tập giữa trang, bốn vai trò, dải ảnh nghiêng, chuỗi nội dung xen kẽ text/illustration cùng đường chấm uốn lượn, CTA pastel, vùng giá trị cộng đồng, thông điệp tin cậy và banner ảnh cuối. Copy và minh họa mang nhận diện Xưởng Công Nghệ. 9 ảnh trang trí có nguồn Unsplash, không ngụ ý là cộng đồng thực tế của Xưởng. Các thẻ giá trị không phải lời đánh giá. Word Lab, Trình chiếu, Quiz và Khóa học dẫn tới route thật; các nhóm khác không tạo liên kết giả. Không deploy Production nếu chưa được yêu cầu phát hành.
+
+### 2026-11-11 — Public footer theo ảnh tham chiếu ClassDojo
+Brand và thông điệp ở trái; bốn cột liên kết nhỏ theo nhóm; hàng tiện ích dưới đường phân cách mảnh. Nền trắng, chữ navy và điểm nhấn tím của Xưởng. Không sao chép logo/hình ClassDojo, không giả social hoặc app-store badges; dùng lối tắt thật đến Khóa học, Word Lab, Trình chiếu. Mobile hai cột, mọi anchor có URL hợp lệ; footer dùng chung toàn bộ public routes.
