@@ -126,3 +126,8 @@ Nguồn định nghĩa kỹ thuật: `tailwind.config.ts` và `src/app/globals.c
 - Trang chủ mới: Hero căn giữa, bốn vai trò, collage 9 ảnh nghiêng, 5 câu chuyện so le theo đường nét chấm, CTA pastel, hệ sinh thái/khóa học, bốn giá trị, bảo mật và banner ảnh cuối. Hệ màu navy, tím, xanh ngọc, cam, lục, coral trên nền sáng; minh họa CSS/HTML riêng.
 - Ảnh bên ngoài dùng ảnh minh họa Unsplash (không được gọi là ảnh người dùng thực); màu nền dự phòng nếu ảnh tải lỗi. Không sao chép thương hiệu ClassDojo hoặc tạo đánh giá/số liệu giả.
 - Chỉ sửa homepage và CSS scoped .xcn-workshop; một H1, role links thật, responsive 360/768/1280/1920, hỗ trợ reduced-motion; Header/Footer và các module không đổi.
+
+### 2026-11-11 — Font tiếng Việt: homepage
+- **Quy tắc:** Tiêu đề và nội dung trang chủ dùng `Noto Sans` qua `next/font/google` với subset `latin`, `vietnamese`, `display:"swap"`. Font chỉ áp dụng tại `src/app/(public)/page.tsx`, không ảnh hưởng Admin/Word/Slides.
+- **Nguyên nhân đã sửa:** Trang chủ trước đây gọi biến `--font-heading` không được khai báo, nên tiêu đề rơi xuống Arial. Tiêu đề kế thừa đúng font đã tự host bởi Next; giảm letter-spacing âm và tăng line-height Hero để dấu tiếng Việt không chạm nhau.
+- **QA:** kiểm tra ảnh Chromium 360/768/1280/1920, giá trị `getComputedStyle(...).fontFamily` của H1 và body, `pnpm test`, `pnpm typecheck`, `pnpm build`. Không đưa font vào workspace soạn thảo.
