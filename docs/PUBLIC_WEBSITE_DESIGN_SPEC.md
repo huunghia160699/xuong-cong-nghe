@@ -344,3 +344,6 @@ Acceptance chung:
 Đây là phương án thực hiện mới thay cho phần homepage Product Atlas/console giả trong đặc tả trước. Header/Footer, bốn trang marketing khác, Auth/RLS và các module thực hành giữ nguyên. Trang chủ kể câu chuyện hành động và giới thiệu toàn bộ nhóm tính năng theo trạng thái thực tế, có lối vào Học/Thực hành/Kiểm tra/Giáo viên. Các hình Word/Slides/Quiz trong Hero là minh họa do dự án tạo bằng HTML/CSS, không phải ảnh chụp ứng dụng thật. Teacher Studio, Coding/Data Lab và gamification chưa hoàn thiện không có CTA sử dụng; catalog khóa học dùng nguồn công bố theo cấu hình môi trường hiện có.
 
 Triển khai mã và regression test tại nhánh `homepage-workshop-2026-11-10`; việc nghiệm thu build và phát hành là bước tách biệt, không suy ra đã Production chỉ từ commit.
+
+### 2026-11-11 — Trang chủ: diễn đạt hệ sinh thái nhất quán
+Trang chủ không làm bảng kiểm trạng thái phát hành. Thay copy release/roadmap bằng mô tả công dụng của các nhóm kỹ năng; Word/Slides/Quiz có CTA thật; danh mục chức năng là bảng biên tập thống nhất theo lĩnh vực, không bấm giả. Hero và minh họa giữ dấu hiệu ví dụ rõ ràng. FAQ chỉ trả lời nhu cầu học tập, không trình bày checklist tiến độ. Các giới hạn triển khai thật phải tiếp tục được quản lý trong product/roadmap nội bộ; không phát sinh lời hứa chức năng hoặc URL không tồn tại.
