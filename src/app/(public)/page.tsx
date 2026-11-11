@@ -1,4 +1,5 @@
 import type {Metadata} from "next";
+import {Noto_Sans} from "next/font/google";
 import Link from "next/link";
 import {
  ArrowDown,ArrowRight,ArrowUpRight,BookOpen,CalendarDays,Check,ChevronDown,
@@ -8,6 +9,10 @@ import {
 import {courses} from "@/data/mock";
 import {getPublishedCourses} from "@/features/courses/live-public";
 import {isLiveMode} from "@/lib/supabase/config";
+
+// Self-hosted by next/font, including the Vietnamese glyph subset and variable weights.
+// Applies only to the public homepage, not the editing tools or admin workspace.
+const homepageFont=Noto_Sans({subsets:["latin","vietnamese"],display:"swap"});
 
 export const metadata:Metadata={
  title:"Xưởng Công Nghệ | Học đến đâu, làm được đến đó",
@@ -55,7 +60,7 @@ const values=[
 
 export default async function HomePage(){
  const listedCourses=isLiveMode()?await getPublishedCourses():courses;
- return <main className="xcn-workshop">
+ return <main className="xcn-workshop" style={{fontFamily:homepageFont.style.fontFamily}}>
   <section className="ws-hero" aria-labelledby="ws-home-title">
    <div className="xcn-container ws-hero-copy">
     <p className="ws-hero-kicker">XƯỞNG CÔNG NGHỆ · KHÔNG GIAN HỌC TẬP SỐ</p>
