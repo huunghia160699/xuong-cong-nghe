@@ -347,3 +347,6 @@ Triển khai mã và regression test tại nhánh `homepage-workshop-2026-11-10`
 
 ### 2026-11-11 — Trang chủ: diễn đạt hệ sinh thái nhất quán
 Trang chủ không làm bảng kiểm trạng thái phát hành. Thay copy release/roadmap bằng mô tả công dụng của các nhóm kỹ năng; Word/Slides/Quiz có CTA thật; danh mục chức năng là bảng biên tập thống nhất theo lĩnh vực, không bấm giả. Hero và minh họa giữ dấu hiệu ví dụ rõ ràng. FAQ chỉ trả lời nhu cầu học tập, không trình bày checklist tiến độ. Các giới hạn triển khai thật phải tiếp tục được quản lý trong product/roadmap nội bộ; không phát sinh lời hứa chức năng hoặc URL không tồn tại.
+
+### 2026-11-11 — D2 homepage: bố cục theo ảnh tham chiếu ClassDojo
+Art direction ưu tiên nhịp thị giác từ ảnh người dùng: lời hứa học tập giữa trang, bốn vai trò, dải ảnh nghiêng, chuỗi nội dung xen kẽ text/illustration cùng đường chấm uốn lượn, CTA pastel, vùng giá trị cộng đồng, thông điệp tin cậy và banner ảnh cuối. Copy và minh họa mang nhận diện Xưởng Công Nghệ. 9 ảnh trang trí có nguồn Unsplash, không ngụ ý là cộng đồng thực tế của Xưởng. Các thẻ giá trị không phải lời đánh giá. Word Lab, Trình chiếu, Quiz và Khóa học dẫn tới route thật; các nhóm khác không tạo liên kết giả. Không deploy Production nếu chưa được yêu cầu phát hành.
