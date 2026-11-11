@@ -114,3 +114,9 @@ Nguồn định nghĩa kỹ thuật: `tailwind.config.ts` và `src/app/globals.c
 - Hướng nghệ thuật: thiết kế biên tập không gradient, nền giấy sáng, typography rõ, màu sắc trầm, khoảng trắng chủ động; ưu tiên minh họa tương tác Word/Slides/Quiz với ghi chú minh họa, không dùng dashboard/bài viết/số liệu giả.
 - Luồng giới thiệu: Hero → 4 nhu cầu → Word Lab, Slides, Quiz → phương pháp học → khóa học thật → danh mục chức năng/trạng thái → Teacher Studio (đang phát triển) → FAQ → CTA.
 - Quy tắc nghiệm thu: kiểm CTA có route thật, module tương lai không gắn link giả, một H1, focus/keyboard, reduced-motion và 360/768/1280/1920; cần chạy full CI/Next build trước phát hành.
+
+### 2026-11-11 — Public Homepage: giọng sản phẩm hoàn chỉnh, không nhãn release
+- Phạm vi duy nhất: nội dung và kiểu trình bày trên route `/`; giữ hệ chữ, màu, header/footer và các workspace.
+- Ngôn ngữ người dùng: tên chức năng + giá trị sử dụng + đường đi phù hợp. Không hiển thị “đã có”, “cần đăng nhập”, “đang phát triển”, “trong lộ trình”, hoặc thông báo roadmap trong vùng giới thiệu sản phẩm.
+- Catalog tám nhóm dùng nhãn **lĩnh vực** (Học tập, Soạn thảo, Bài giảng, Đánh giá, Thư viện, Giảng dạy, Kỹ năng số, Tương tác) thay vì nhãn trạng thái; catalog là nội dung biên tập không giả tương tác. CTA chỉ đến route đang tồn tại.
+- Trạng thái triển khai thực tế tiếp tục ghi trong tài liệu nội bộ, không suy luận rằng module chưa nghiệm thu đã hoạt động. Giữ responsive, reduced-motion, WCAG, một H1.
