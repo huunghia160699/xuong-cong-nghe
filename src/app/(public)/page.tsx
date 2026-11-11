@@ -1,117 +1,126 @@
 import type {Metadata} from "next";
 import Link from "next/link";
-import {ArrowDown,ArrowRight,ArrowUpRight,Check,ChevronDown} from "lucide-react";
+import {
+ ArrowDown,ArrowRight,ArrowUpRight,BookOpen,CalendarDays,Check,ChevronDown,
+ ClipboardCheck,GraduationCap,Heart,MessageCircle,
+ PenLine,Presentation,School,ShieldCheck,Sparkles,Star
+} from "lucide-react";
 import {courses} from "@/data/mock";
 import {getPublishedCourses} from "@/features/courses/live-public";
 import {isLiveMode} from "@/lib/supabase/config";
 
 export const metadata:Metadata={
  title:"Xưởng Công Nghệ | Học đến đâu, làm được đến đó",
- description:"Khám phá Xưởng Công Nghệ: khóa học, Word Lab, trình chiếu, Quiz, tài nguyên và các trải nghiệm học tập số trong một không gian.",
+ description:"Nơi học viên, giáo viên và gia đình cùng khám phá kỹ năng số qua khóa học, Word Lab, trình chiếu và Quiz.",
  alternates:{canonical:"/"}
 };
 
-const paths=[
- {title:"Tôi muốn học",subtitle:"Học từ nền tảng, theo từng bài và từng chủ đề.",href:"/khoa-hoc",action:"Xem khóa học"},
- {title:"Tôi muốn thực hành",subtitle:"Mở công cụ, tự thao tác và làm ra sản phẩm.",href:"/cong-cu",action:"Vào khu thực hành"},
- {title:"Tôi muốn kiểm tra",subtitle:"Làm bài Quiz và xem những phần cần ôn lại.",href:"/dang-nhap?next=%2Fstudent%2Fquiz",action:"Đến bài luyện"},
- {title:"Tôi là giáo viên",subtitle:"Bài giảng, câu hỏi và hoạt động lớp học trong cùng một hành trình.",href:"/gioi-thieu",action:"Khám phá góc giáo viên"}
+const rolePaths=[
+ {name:"Giáo viên",description:"Chuẩn bị và truyền cảm hứng",href:"/gioi-thieu",icon:BookOpen,color:"amber"},
+ {name:"Phụ huynh",description:"Cùng con khám phá",href:"/gioi-thieu",icon:Heart,color:"sky"},
+ {name:"Học viên",description:"Học và thực hành",href:"/khoa-hoc",icon:GraduationCap,color:"lime"},
+ {name:"Nhà trường",description:"Kết nối việc học",href:"/lien-he",icon:School,color:"violet"}
 ] as const;
 
-const directory=[
- {name:"Khóa học",desc:"Kiến thức Tin học và kỹ năng số theo chủ đề, từ nền tảng đến ứng dụng.",area:"Học tập"},
- {name:"Word Lab",desc:"Luyện soạn thảo, định dạng và trình bày tài liệu một cách chỉn chu.",area:"Soạn thảo"},
- {name:"Trình chiếu",desc:"Những bài giảng trực quan, ví dụ sinh động và hoạt động theo từng trang.",area:"Bài giảng"},
- {name:"Quiz & luyện tập",desc:"Câu hỏi, bài luyện và phản hồi để củng cố kiến thức.",area:"Đánh giá"},
- {name:"Tài nguyên học tập",desc:"Học liệu, hướng dẫn và mẫu bài thực hành theo từng mục tiêu.",area:"Thư viện"},
- {name:"Teacher Studio",desc:"Bài giảng, học liệu, lớp học và bài tập dưới góc nhìn giáo viên.",area:"Giảng dạy"},
- {name:"Excel · Coding · SQL · Data Lab",desc:"Tư duy bảng tính, lập trình, truy vấn và phân tích dữ liệu.",area:"Kỹ năng số"},
- {name:"Live Quiz · Garden · Đấu trường",desc:"Thử thách kiến thức, hoạt động nhóm và trải nghiệm học tập tương tác.",area:"Tương tác"}
+// Decorative photos. No reviews, learner counts or endorsements are implied.
+const moments=[
+ {src:"https://images.unsplash.com/photo-1503676260728-1c00da094a0b?auto=format&fit=crop&w=500&q=78",alt:""},
+ {src:"https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&w=500&q=78",alt:""},
+ {src:"https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=500&q=78",alt:""},
+ {src:"https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&w=500&q=78",alt:""},
+ {src:"https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=500&q=78",alt:""},
+ {src:"https://images.unsplash.com/photo-1543269865-cbf427effbad?auto=format&fit=crop&w=500&q=78",alt:""},
+ {src:"https://images.unsplash.com/photo-1577896851231-70ef18881754?auto=format&fit=crop&w=500&q=78",alt:""},
+ {src:"https://images.unsplash.com/photo-1434030216411-0b793f4b4173?auto=format&fit=crop&w=500&q=78",alt:""},
+ {src:"https://images.unsplash.com/photo-1523580494863-6f3031224c94?auto=format&fit=crop&w=500&q=78",alt:""}
+] as const;
+
+const ecosystem=[
+ {title:"Khóa học",desc:"Bài học theo chủ đề và mục tiêu",area:"Học tập"},
+ {title:"Word Lab",desc:"Tự tay soạn thảo và định dạng",area:"Soạn thảo"},
+ {title:"Trình chiếu",desc:"Biến ý tưởng thành bài giảng",area:"Bài giảng"},
+ {title:"Quiz & luyện tập",desc:"Ôn tập bằng câu hỏi và phản hồi",area:"Đánh giá"},
+ {title:"Tài nguyên học tập",desc:"Tư liệu và bài tập gắn thực tế",area:"Thư viện"},
+ {title:"Teacher Studio",desc:"Góc nhìn dành cho người dạy",area:"Giảng dạy"},
+ {title:"Excel · Coding · Data",desc:"Tư duy số từ bảng tính đến dữ liệu",area:"Kỹ năng số"},
+ {title:"Live Quiz · Garden",desc:"Thử thách và học tập tương tác",area:"Tương tác"}
+] as const;
+
+const values=[
+ {number:"01",title:"Học để hiểu",body:"Bắt đầu từ một câu hỏi thật rõ ràng."},
+ {number:"02",title:"Luyện để nhớ",body:"Tự tay làm thay vì chỉ đứng ngoài quan sát."},
+ {number:"03",title:"Làm để giỏi",body:"Tạo ra một sản phẩm nhỏ sau mỗi chặng học."},
+ {number:"04",title:"Cùng tiến bộ",body:"Kết nối kiến thức với lớp học và cuộc sống."}
 ] as const;
 
 export default async function HomePage(){
  const listedCourses=isLiveMode()?await getPublishedCourses():courses;
  return <main className="xcn-workshop">
   <section className="ws-hero" aria-labelledby="ws-home-title">
-   <div className="xcn-container ws-hero-grid">
-    <div className="ws-hero-copy">
-     <h1 id="ws-home-title">Học đến đâu,<br/><span>làm được đến đó.</span></h1>
-     <p>Đừng chỉ xem cách làm. Hãy tự tay thử, sửa, và tạo ra sản phẩm của mình — từ một trang Word đầu tiên đến những kỹ năng số dùng được mỗi ngày.</p>
-     <div className="ws-hero-actions">
-      <Link href="/cong-cu" className="ws-button ws-button-primary">Bắt đầu thực hành <ArrowUpRight size={19} aria-hidden="true"/></Link>
-      <Link href="/khoa-hoc" className="ws-text-link">Tìm khóa học phù hợp <ArrowRight size={17} aria-hidden="true"/></Link>
-     </div>
+   <div className="xcn-container ws-hero-copy">
+    <p className="ws-hero-kicker">XƯỞNG CÔNG NGHỆ · KHÔNG GIAN HỌC TẬP SỐ</p>
+    <h1 id="ws-home-title">Nơi học tập trở thành<br/><span>hành trình khám phá.</span></h1>
+    <p>Học đến đâu, làm được đến đó. Từ những kỹ năng số đầu tiên đến những sản phẩm do chính bạn tạo nên.</p>
+    <p className="ws-roles-label">Bắt đầu với vai trò của bạn</p>
+    <div className="ws-path-grid" id="bat-dau" aria-label="Chọn vai trò">
+     {rolePaths.map(role=>{const Icon=role.icon;return <Link className="ws-path" href={role.href} key={role.name} aria-label={`${role.name}: ${role.description}`}>
+      <span className={`ws-role-icon ws-role-${role.color}`}><Icon size={28} strokeWidth={2.3} aria-hidden="true"/></span>
+      <strong>{role.name}</strong><span className="ws-path-arrow"><ArrowRight size={16} aria-hidden="true"/></span>
+     </Link>;})}
     </div>
-    <div className="ws-hero-work" role="group" aria-label="Minh họa một sản phẩm tài liệu học tập có thể tạo với Word Lab">
-     <div className="ws-work-head"><span>SẢN PHẨM SAU BUỔI THỰC HÀNH</span><span>01 / WORD LAB</span></div>
-     <div className="ws-paper-frame">
-      <div className="ws-paper" aria-hidden="true">
-       <div className="ws-paper-topline"><span>HỌ VÀ TÊN</span><i/></div>
-       <h2>Kế hoạch<br/><span>học tập.</span></h2>
-       <p className="ws-paper-intro">Mục tiêu tuần này là biết cách trình bày một tài liệu rõ ràng, dễ đọc.</p>
-       <div className="ws-paper-rule"/>
-       <p className="ws-paper-small">NHỮNG VIỆC CẦN LÀM</p>
-       <div className="ws-paper-task"><b>01</b><span>Căn lề và định dạng đoạn văn</span><Check size={15}/></div>
-       <div className="ws-paper-task"><b>02</b><span>Tạo tiêu đề và danh sách</span><Check size={15}/></div>
-       <div className="ws-paper-task"><b>03</b><span>Lưu tài liệu của mình</span><i/></div>
-       <div className="ws-paper-sign">Một việc nhỏ, một kỹ năng thật.</div>
-      </div>
-      <div className="ws-paper-note"><span>THỰC HÀNH TRÊN TRÌNH DUYỆT</span><strong>Từ trang trắng<br/>đến tài liệu.</strong><ArrowUpRight size={24} aria-hidden="true"/></div>
-     </div>
-     <div className="ws-work-bottom"><span>BÀI TẬP MẪU · WORD LAB</span><Link href="/cong-cu/mo-phong-word">Mở Word Lab <ArrowUpRight size={15} aria-hidden="true"/></Link></div>
+    <p className="ws-hero-note"><Star size={15} fill="currentColor" aria-hidden="true"/><Star size={15} fill="currentColor" aria-hidden="true"/><Star size={15} fill="currentColor" aria-hidden="true"/><span>HỌC · THỬ · TẠO RA SẢN PHẨM</span></p>
+   </div>
+   <div className="ws-photo-mosaic" aria-label="Hình ảnh minh họa những khoảnh khắc học tập">
+    {moments.map((moment,index)=><div key={moment.src} className={`ws-mosaic-photo ws-mosaic-${index+1}`} role="img" aria-label={`Khoảnh khắc học tập ${index+1}`} style={{backgroundImage:`url("${moment.src}")`}} />)}
+    <div className="ws-mosaic-center"><span>KHÁM PHÁ</span><strong>Một nơi để học.<br/>Nhiều cách để lớn lên.</strong><Link href="/cong-cu">Vào Xưởng <ArrowUpRight size={17} aria-hidden="true"/></Link></div>
+    <span className="ws-mosaic-caption">Từ lớp học, gia đình đến thế giới kỹ năng số.</span>
+   </div>
+   <div className="ws-scroll-note"><a href="#cau-chuyen">Khám phá hành trình <ArrowDown size={17} aria-hidden="true"/></a></div>
+  </section>
+
+  <section className="ws-journey" id="cau-chuyen" aria-label="Hành trình học tập trong Xưởng Công Nghệ">
+   <svg className="ws-journey-trail" viewBox="0 0 1000 2350" fill="none" preserveAspectRatio="none" aria-hidden="true"><path d="M190 70C700 170 240 360 620 475S870 760 490 860 135 1140 570 1260 760 1560 310 1630 100 1870 680 1980 815 2260 410 2300" stroke="#dce4f6" strokeWidth="3" strokeDasharray="5 12" strokeLinecap="round"/></svg>
+
+   <div className="xcn-container ws-journey-row ws-row-blue ws-feature-main">
+    <div className="ws-story-art ws-art-chat" aria-hidden="true">
+     <div className="ws-chat-blob"><span className="ws-chat-bubble ws-chat-a">Cách làm này hay quá!<small>Thử thêm một ví dụ nhé.</small></span><span className="ws-chat-bubble ws-chat-b">Mình làm được rồi! <Check size={14}/></span><span className="ws-chat-bubble ws-chat-c">Hôm nay mình học được một điều mới.</span><span className="ws-chat-avatar ws-avatar-1"><GraduationCap size={22}/></span><span className="ws-chat-avatar ws-avatar-2"><Heart size={20}/></span><span className="ws-chat-sticker"><Sparkles size={26}/></span></div>
     </div>
+    <div className="ws-story-copy"><span className="ws-story-icon ws-blue"><MessageCircle size={23} fill="currentColor" aria-hidden="true"/></span><p className="ws-step-eyebrow">KẾT NỐI</p><h2>Gần nhau hơn<br/>qua từng bài học.</h2><p>Một câu hỏi mở ra cuộc trò chuyện. Một bài thực hành nhỏ giúp người học, gia đình và giáo viên tìm thấy tiếng nói chung.</p><Link href="/gioi-thieu" className="ws-story-link">Khám phá cách học <ArrowUpRight size={17} aria-hidden="true"/></Link></div>
    </div>
-   <div className="xcn-container ws-hero-scroll"><a href="#bat-dau">Khám phá Xưởng <ArrowDown size={16} aria-hidden="true"/></a><span>HỌC · THỬ · LÀM ĐƯỢC</span></div>
-  </section>
 
-  <section className="ws-paths ws-section" id="bat-dau" aria-labelledby="ws-paths-title">
-   <div className="xcn-container">
-    <div className="ws-section-heading ws-heading-split"><h2 id="ws-paths-title">Bạn đến đây<br/>để làm gì?</h2><p>Không cần tìm trong một danh sách dài. Chọn việc bạn muốn làm và bắt đầu từ đó.</p></div>
-    <div className="ws-path-grid">{paths.map((path,index)=><Link key={path.title} href={path.href} className="ws-path">
-      <span className="ws-path-index">0{index+1}</span><div><h3>{path.title}</h3><p>{path.subtitle}</p><span className="ws-path-action">{path.action} <ArrowUpRight size={17} aria-hidden="true"/></span></div><ArrowUpRight className="ws-path-arrow" size={23} aria-hidden="true"/>
-     </Link>)}</div>
+   <div className="xcn-container ws-journey-row ws-row-orange ws-row-reverse">
+    <div className="ws-story-art ws-art-lessons" aria-hidden="true"><div className="ws-lesson-blob"/><div className="ws-lesson-card ws-lesson-back"><span>BÀI HỌC TRỰC QUAN</span><div className="ws-lesson-picture"/><b>Khám phá cách trình bày ý tưởng</b><small>TRÌNH CHIẾU</small></div><div className="ws-lesson-card ws-lesson-front"><span>THỰC HÀNH TỪNG BƯỚC</span><div className="ws-lesson-photo"/><b>Từ trang trắng đến tài liệu đầu tiên</b><small>WORD LAB</small></div><div className="ws-mini-tag"><Check size={16}/> Hoàn thành bài học</div></div>
+    <div className="ws-story-copy"><span className="ws-story-icon ws-orange"><Presentation size={23} aria-hidden="true"/></span><p className="ws-step-eyebrow">TRẢI NGHIỆM</p><h2>Mở cánh cửa<br/>vào thế giới kỹ năng số.</h2><p>Soạn một trang Word, theo dõi bài trình chiếu và ứng dụng kiến thức vào việc thật. Học bằng mắt, bằng tay và bằng chính sự tò mò.</p><Link href="/cong-cu/mo-phong-word" className="ws-story-link">Thực hành với Word Lab <ArrowUpRight size={17} aria-hidden="true"/></Link></div>
    </div>
-  </section>
 
-  <section className="ws-tools ws-section" aria-labelledby="ws-tools-title">
-   <div className="xcn-container">
-    <div className="ws-section-heading ws-heading-split"><div><p className="ws-label">THỬ NGAY TRÊN WEB</p><h2 id="ws-tools-title">Công cụ để<br/>bắt tay vào làm.</h2></div><p>Không chỉ xem hướng dẫn. Bạn có thể mở công cụ, luyện một thao tác và biết mình vừa học được gì.</p></div>
-    <div className="ws-feature-main">
-     <div className="ws-feature-image ws-word-visual" aria-hidden="true">
-      <div className="ws-editor-shell"><div className="ws-editor-toolbar"><strong>Word Lab</strong><span>Trang đầu</span><span>Chèn</span><span>Bố trí</span><span>Xem</span></div><div className="ws-editor-tools"><span className="ws-editor-bold">B</span><span className="ws-editor-italic">I</span><span><u>U</u></span><i/><span>≡</span><span>☷</span><span>▤</span></div><div className="ws-editor-canvas"><div className="ws-editor-paper"><small>BÀI THỰC HÀNH CỦA TÔI</small><h3>Viết một đoạn văn<br/>thật chỉn chu.</h3><p>Hôm nay, em học cách trình bày văn bản sao cho người đọc dễ theo dõi. Một tiêu đề rõ ràng, những đoạn văn ngay ngắn và khoảng cách hợp lý giúp tài liệu của em trở nên chuyên nghiệp hơn.</p><div/><div/></div></div></div>
-      <span className="ws-visual-caption">Minh họa bố cục phòng soạn thảo</span>
-     </div>
-     <div className="ws-feature-copy"><span className="ws-feature-topic">SOẠN THẢO · TRÌNH BÀY</span><p className="ws-feature-number">CÔNG CỤ 01</p><h3>Word Lab.</h3><p className="ws-feature-lead">Học soạn thảo bằng chính thao tác của bạn.</p><p>Trình bày trang A4, nhập nội dung, định dạng văn bản và làm quen với Ribbon. Hữu ích từ bài Tin học đầu tiên đến công việc thường ngày.</p><Link href="/cong-cu/mo-phong-word" className="ws-inline-link">Mở Word Lab <ArrowUpRight size={19} aria-hidden="true"/></Link></div>
-    </div>
-    <div className="ws-feature-secondary">
-     <article className="ws-tool-half ws-slide-half"><div className="ws-tool-half-visual" aria-hidden="true"><div className="ws-slide-art"><span>TRÌNH CHIẾU TIN HỌC</span><strong>Ý tưởng<br/>được nhìn thấy.</strong><div><i/><i/><i/></div></div></div><div className="ws-tool-half-copy"><span className="ws-feature-topic">BÀI GIẢNG · TƯƠNG TÁC</span><h3>Trình chiếu</h3><p>Xem bài giảng trực quan, khám phá nội dung theo từng trang và tương tác với câu hỏi.</p><Link href="/cong-cu/trinh-chieu">Khám phá trình chiếu <ArrowUpRight size={18} aria-hidden="true"/></Link></div></article>
-     <article className="ws-tool-half ws-quiz-half"><div className="ws-tool-half-visual" aria-hidden="true"><div className="ws-quiz-art"><div><span>LUYỆN TẬP</span><b>1 / 10</b></div><strong>Đâu là thao tác để căn giữa đoạn văn?</strong><p>A. Căn đều</p><p className="selected">B. Căn giữa <Check size={17}/></p><p>C. Căn trái</p></div></div><div className="ws-tool-half-copy"><span className="ws-feature-topic">TRẮC NGHIỆM · ÔN TẬP</span><h3>Quiz & bài luyện</h3><p>Tự kiểm tra kiến thức, nhận kết quả và quay lại những nội dung cần luyện thêm.</p><Link href="/dang-nhap?next=%2Fstudent%2Fquiz">Đến khu luyện tập <ArrowUpRight size={18} aria-hidden="true"/></Link></div></article>
-    </div>
+   <div className="xcn-container ws-journey-row ws-row-purple">
+    <div className="ws-story-art ws-art-quiz" aria-hidden="true"><div className="ws-quiz-blob"/><div className="ws-quiz-card ws-quiz-main"><span><ClipboardCheck size={16}/> TRẮC NGHIỆM</span><b>Phím tắt nào dùng để lưu tài liệu?</b><div>A. Ctrl + P</div><div className="ws-quiz-selected">B. Ctrl + S <Check size={18}/></div><div>C. Ctrl + Z</div><small>GIỎI LẮM! CÙNG THỬ CÂU TIẾP THEO</small></div><div className="ws-quiz-floating"><Star size={19} fill="currentColor"/> Hoàn thành thử thách</div></div>
+    <div className="ws-story-copy"><span className="ws-story-icon ws-purple"><ClipboardCheck size={24} aria-hidden="true"/></span><p className="ws-step-eyebrow">LUYỆN TẬP</p><h2>Hỏi một câu.<br/>Hiểu thêm một điều.</h2><p>Mỗi bài Quiz là một cơ hội để thử sức, nhận phản hồi và nhìn lại điều mình đã học. Kiến thức trở nên gần gũi khi bạn được tự mình tìm câu trả lời.</p><Link href="/dang-nhap?next=%2Fstudent%2Fquiz" className="ws-story-link">Đến khu Quiz <ArrowUpRight size={17} aria-hidden="true"/></Link></div>
+   </div>
+
+   <div className="xcn-container ws-journey-row ws-row-green ws-row-reverse">
+    <div className="ws-story-art ws-art-steps" aria-hidden="true"><div className="ws-progress-blob"/><div className="ws-progress-board"><span>HÀNH TRÌNH CỦA BẠN</span><strong>Mỗi ngày một bước nhỏ.</strong><div className="ws-progress-line"><i className="done"><Check size={17}/></i><i className="done"><Check size={17}/></i><i className="now"><Star size={17}/></i><i><PenLine size={17}/></i></div><div className="ws-progress-labels"><span>Khám phá</span><span>Thực hành</span><span>Vận dụng</span><span>Chia sẻ</span></div></div><span className="ws-progress-spark"><Sparkles size={30}/></span></div>
+    <div className="ws-story-copy"><span className="ws-story-icon ws-green"><GraduationCap size={24} aria-hidden="true"/></span><p className="ws-step-eyebrow">TIẾN BỘ</p><h2>Đi theo nhịp học<br/>của chính bạn.</h2><p>Chọn chủ đề vừa sức, thử lại khi cần và nối từng bài học thành một hành trình có ý nghĩa. Mỗi kỹ năng mới đều bắt đầu từ một lần bạn dám thử.</p><Link href="/khoa-hoc" className="ws-story-link">Chọn một khóa học <ArrowUpRight size={17} aria-hidden="true"/></Link></div>
+   </div>
+
+   <div className="xcn-container ws-journey-row ws-row-coral">
+    <div className="ws-story-art ws-art-teacher" aria-hidden="true"><div className="ws-teacher-blob"/><div className="ws-teacher-board"><span><CalendarDays size={18}/> GIỜ HỌC NGÀY MAI</span><strong>Một ý tưởng.<br/>Nhiều cách khám phá.</strong><div><b>01</b> Khởi động bằng câu hỏi</div><div><b>02</b> Thực hành cùng công cụ</div><div><b>03</b> Chia sẻ điều vừa học</div></div><span className="ws-teacher-tick"><Check size={20}/></span></div>
+    <div className="ws-story-copy"><span className="ws-story-icon ws-coral"><PenLine size={23} aria-hidden="true"/></span><p className="ws-step-eyebrow">GIẢNG DẠY</p><h2>Một giờ học tuyệt vời<br/>bắt đầu từ ý tưởng.</h2><p>Biến nội dung Tin học thành trải nghiệm dễ hiểu, dễ thử và dễ nhớ. Bài giảng, câu hỏi và hoạt động thực hành cùng hướng về một mục tiêu: học sinh tự làm được.</p><Link href="/cong-cu/trinh-chieu" className="ws-story-link">Khám phá Trình chiếu <ArrowUpRight size={17} aria-hidden="true"/></Link></div>
    </div>
   </section>
 
-  <section className="ws-method ws-section" aria-labelledby="ws-method-title">
-   <div className="xcn-container ws-method-grid"><div><p className="ws-label">CÁCH CHÚNG TÔI MUỐN BẠN HỌC</p><h2 id="ws-method-title">Hiểu một chút.<br/>Thử ngay.<br/><span>Nhớ lâu hơn.</span></h2></div><div className="ws-method-steps"><article><span>01</span><div><h3>Hiểu điều cần làm</h3><p>Đọc hướng dẫn ngắn và biết kết quả mình cần đạt.</p></div></article><article><span>02</span><div><h3>Tự tay thực hành</h3><p>Làm ngay trên công cụ, thay vì chỉ xem một video dài.</p></div></article><article><span>03</span><div><h3>Kiểm tra và tiếp tục</h3><p>Nhận phản hồi, sửa chỗ chưa đúng và học bước tiếp theo.</p></div></article></div></div>
+  <section className="ws-discover" aria-labelledby="ws-discover-title">
+   <div className="xcn-container ws-discover-inner"><span className="ws-discover-sun"><Sparkles size={31}/></span><p>KHÁM PHÁ XƯỞNG</p><h2 id="ws-discover-title">Một thế giới kiến thức đang chờ bạn mở cửa.</h2><Link href="/cong-cu">Bắt đầu trải nghiệm <ArrowUpRight size={17} aria-hidden="true"/></Link><span className="ws-discover-decoration ws-deco-one">✳</span><span className="ws-discover-decoration ws-deco-two">✦</span><span className="ws-discover-decoration ws-deco-three">✳</span></div>
   </section>
 
-  <section className="ws-courses ws-section" aria-labelledby="ws-courses-title">
-   <div className="xcn-container"><div className="ws-section-heading ws-heading-split"><div><p className="ws-label">HỌC THEO LỘ TRÌNH</p><h2 id="ws-courses-title">Hôm nay học gì?</h2></div><p>Bắt đầu từ một chủ đề vừa sức. Mỗi bài học là một bước nhỏ trong quá trình làm chủ kỹ năng.</p></div>
-    {listedCourses.length?<div className="ws-course-list">{listedCourses.slice(0,3).map((course,index)=><Link key={course.slug} href={`/khoa-hoc/${course.slug}`} className="ws-course"><span className="ws-course-index">0{index+1}</span><div><span className="ws-course-meta">{course.category} · {course.level} · {course.lessons} bài học</span><h3>{course.title}</h3></div><span className="ws-course-go">Xem nội dung <ArrowUpRight size={19} aria-hidden="true"/></span></Link>)}</div>:<div className="ws-course-empty"><p>Bắt đầu từ một bài thực hành để khám phá cách học phù hợp với bạn.</p><Link href="/cong-cu">Khám phá công cụ <ArrowUpRight size={18} aria-hidden="true"/></Link></div>}
-    <Link href="/khoa-hoc" className="ws-inline-link ws-course-all">Xem tất cả khóa học <ArrowRight size={18} aria-hidden="true"/></Link>
-   </div>
-  </section>
+  <section className="ws-catalog ws-section" id="du-an" aria-labelledby="ws-catalog-title"><div className="xcn-container"><div className="ws-section-heading"><p className="ws-kicker">HỆ SINH THÁI XƯỞNG CÔNG NGHỆ</p><h2 id="ws-catalog-title">Mỗi sự tò mò đều<br/>có một nơi để bắt đầu.</h2><p>Khám phá các lĩnh vực học tập, thực hành, kiểm tra và sáng tạo trong cùng một không gian.</p></div><div className="ws-directory">{ecosystem.map((item,index)=><article key={item.title} className="ws-directory-row"><span className="ws-directory-index">0{index+1}</span><h3>{item.title}</h3><p>{item.desc}</p><span className="ws-directory-area">{item.area}</span></article>)}</div><Link className="ws-directory-more" href="/cong-cu">Khám phá công cụ <ArrowUpRight size={17} aria-hidden="true"/></Link></div></section>
 
-  <section className="ws-catalog ws-section" id="du-an" aria-labelledby="ws-catalog-title">
-   <div className="xcn-container"><div className="ws-section-heading ws-heading-split"><div><p className="ws-label">BẢN ĐỒ HỆ SINH THÁI</p><h2 id="ws-catalog-title">Mỗi kỹ năng,<br/>một hướng khám phá.</h2></div><p>Khóa học, công cụ thực hành, bài luyện và hoạt động lớp học — tìm đúng nhóm nội dung cho mục tiêu của bạn.</p></div>
-    <div className="ws-directory">{directory.map((item,index)=><article key={item.name} className="ws-directory-row"><span className="ws-directory-index">{"0"+(index+1)}</span><div><h3>{item.name}</h3><p>{item.desc}</p></div><span className="ws-directory-area">{item.area}</span></article>)}</div>
-    <Link href="/cong-cu" className="ws-inline-link ws-directory-more">Khám phá công cụ thực hành <ArrowUpRight size={18} aria-hidden="true"/></Link>
-   </div>
-  </section>
+  <section className="ws-courses ws-section" aria-labelledby="ws-courses-title"><div className="xcn-container"><div className="ws-section-heading"><p className="ws-kicker">HỌC QUA TỪNG CHỦ ĐỀ</p><h2 id="ws-courses-title">Hôm nay bạn muốn học gì?</h2><p>Chọn một chủ đề gần gũi và bắt đầu bằng một bước vừa sức.</p></div>{listedCourses.length?<div className="ws-course-list">{listedCourses.slice(0,3).map((course,index)=><Link href={`/khoa-hoc/${course.slug}`} className="ws-course" key={course.slug}><span className="ws-course-number">0{index+1}</span><div><small>{course.category} · {course.level}</small><h3>{course.title}</h3><span>{course.lessons} bài học</span></div><ArrowUpRight size={22} aria-hidden="true"/></Link>)}</div>:<p className="ws-course-empty">Bắt đầu bằng một bài thực hành để khám phá cách học phù hợp với bạn.</p>}<Link href="/khoa-hoc" className="ws-course-more">Xem tất cả khóa học <ArrowRight size={18} aria-hidden="true"/></Link></div></section>
 
-  <section className="ws-teacher ws-section" aria-labelledby="ws-teacher-title"><div className="xcn-container ws-teacher-grid"><div><p className="ws-label">DÀNH CHO GIÁO VIÊN</p><h2 id="ws-teacher-title">Giờ học tốt bắt đầu từ khâu chuẩn bị.</h2><p>Từ chuẩn bị bài giảng, tổ chức hoạt động đến luyện tập và phản hồi, mỗi giờ học trở thành một hành trình rõ ràng cho cả thầy cô và học sinh.</p><div className="ws-teacher-actions"><Link href="/gioi-thieu" className="ws-inline-link">Khám phá cách dạy và học <ArrowUpRight size={19} aria-hidden="true"/></Link><span>BÀI GIẢNG · LỚP HỌC · TƯƠNG TÁC</span></div></div><div className="ws-teacher-illustration" aria-hidden="true"><div className="ws-teacher-board"><span>BUỔI HỌC NGÀY MAI</span><strong>Một bài giảng.<br/>Nhiều cách hiểu.</strong><div className="ws-board-list"><div><b>01</b><span>Giới thiệu nội dung</span></div><div><b>02</b><span>Học sinh thử làm</span></div><div><b>03</b><span>Kiểm tra & phản hồi</span></div></div></div></div></div></section>
+  <section className="ws-community ws-section" aria-labelledby="ws-community-title"><div className="xcn-container"><div className="ws-section-heading"><span className="ws-community-heart"><Heart size={20} fill="currentColor"/></span><h2 id="ws-community-title">Những điều nhỏ bé<br/>làm nên hành trình lớn.</h2><p>Bốn điều luôn hiện diện trong mỗi trải nghiệm học tập tại Xưởng Công Nghệ.</p></div><div className="ws-value-grid">{values.map(value=><article key={value.number} className="ws-value-card"><span>{value.number} / XƯỞNG</span><h3>{value.title}</h3><p>{value.body}</p><div className="ws-value-symbol" aria-hidden="true">✦</div></article>)}</div><Link href="/gioi-thieu" className="ws-community-more">Tìm hiểu câu chuyện của Xưởng <ArrowUpRight size={17} aria-hidden="true"/></Link></div></section>
 
-  <section className="ws-faq ws-section" aria-labelledby="ws-faq-title"><div className="xcn-container ws-faq-grid"><div><p className="ws-label">BẮT ĐẦU CÙNG XƯỞNG</p><h2 id="ws-faq-title">Một vài câu hỏi thường gặp.</h2></div><div className="ws-faq-items"><details><summary>Tôi nên bắt đầu học từ đâu? <ChevronDown size={19} aria-hidden="true"/></summary><p>Bạn có thể chọn một khóa học theo chủ đề, mở Word Lab để thực hành ngay hoặc vào khu Quiz nếu muốn tự kiểm tra kiến thức.</p></details><details><summary>Word Lab khác bài hướng dẫn thông thường ở điểm nào? <ChevronDown size={19} aria-hidden="true"/></summary><p>Thay vì chỉ xem các bước, bạn trực tiếp nhập nội dung, chỉnh sửa và định dạng văn bản ngay trong trình duyệt.</p></details><details><summary>Làm thế nào để học đều và nhớ kiến thức lâu hơn? <ChevronDown size={19} aria-hidden="true"/></summary><p>Đặt một mục tiêu nhỏ, thử làm trong công cụ, kiểm tra lại bằng bài luyện và tiếp tục với chủ đề kế tiếp.</p></details></div></div></section>
+  <section className="ws-trust ws-section" aria-labelledby="ws-trust-title"><div className="xcn-container ws-trust-inner"><span className="ws-trust-mark"><ShieldCheck size={28} aria-hidden="true"/></span><div><p className="ws-kicker">HỌC TẬP CÙNG SỰ TIN CẬY</p><h2 id="ws-trust-title">An tâm học hỏi.<br/>Tự tin khám phá.</h2><p>Mỗi không gian học tập nên rõ mục tiêu, dễ sử dụng và tôn trọng quyền truy cập của từng người. Đó là điều chúng tôi đặt vào trải nghiệm của Xưởng.</p><Link href="/gioi-thieu">Tìm hiểu Xưởng Công Nghệ <ArrowUpRight size={17} aria-hidden="true"/></Link></div></div></section>
 
-  <section className="ws-end" aria-labelledby="ws-end-title"><div className="xcn-container ws-end-grid"><div><h2 id="ws-end-title">Bạn không cần biết hết.<br/><span>Chỉ cần bắt đầu.</span></h2><p>Một bài thực hành hôm nay có thể là kỹ năng bạn dùng ngày mai.</p></div><div><Link href="/cong-cu/mo-phong-word" className="ws-button ws-button-light">Thử Word Lab <ArrowUpRight size={19} aria-hidden="true"/></Link><Link href="/khoa-hoc" className="ws-end-link">Xem khóa học <ArrowRight size={18} aria-hidden="true"/></Link></div></div></section>
+  <section className="ws-photo-finale" aria-labelledby="ws-finale-title"><div className="ws-finale-shade"><h2 id="ws-finale-title">Cùng nhau tạo nên<br/>những giờ học đáng nhớ.</h2><Link href="/khoa-hoc">Khám phá bài học <ArrowUpRight size={18} aria-hidden="true"/></Link></div></section>
  </main>;
 }
