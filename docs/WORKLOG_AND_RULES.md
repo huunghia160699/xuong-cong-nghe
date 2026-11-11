@@ -126,3 +126,8 @@ Không viết lại cả nhật ký cũ. Một task nhiều commit có thể th�
 - **Đường đi:** Học viên /khoa-hoc; giáo viên/phụ huynh /gioi-thieu; nhà trường /lien-he; Word Lab /cong-cu/mo-phong-word; Slides /cong-cu/trinh-chieu; Quiz qua đăng nhập. Không link giả hoặc review/số liệu giả.
 - **QA local isolated:** TSX parse PASS; 4/4 structural regression PASS; browser standalone CSS/HTML ở 390 và 1440 không tràn ngang, chưa đại diện Next/CI. Đợi GitHub CI để cập nhật PASS đầy đủ.
 - **RELEASE:** chưa merge main hoặc Vercel; không đổi Auth/RLS/Production Supabase hay Admin Roadmap.
+
+### 2026-11-11 — [PUBLIC HOME] Font tiếng Việt
+- **FIX (nhánh QA):** homepage heading trước dùng `--font-heading` không khai báo → Arial fallback; thay bằng Noto Sans có subset Vietnamese qua Next font, áp dụng cục bộ toàn homepage. Hero line-height 1.16, giảm tracking chữ đậm để hiển thị dấu.
+- **REGRESSION:** thêm test cấu hình font/không fallback và kiểm computed font trong Chromium QA; giữ nguyên route, UI nội dung, Header/Footer, Word/Slides, Auth và Supabase Production.
+- **KIỂM THỬ/PHÁT HÀNH:** ghi PASS/READY riêng theo CI và Vercel sau khi có bằng chứng; không tự suy luận từ commit.
