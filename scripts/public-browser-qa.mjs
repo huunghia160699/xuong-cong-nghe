@@ -100,8 +100,8 @@ try{
     assert.ok(homepage.root&&homepage.hero&&homepage.discovery&&homepage.storyTrail&&homepage.finalBanner,"Community-first homepage is missing a section");
     assert.equal(homepage.h1Count,1,"Homepage must have one H1");
     assert.match(homepage.h1,/Nơi học tập trở thành/);
-    assert.match(homepage.headingFont,/Noto_Sans/,"Headings must render in Noto Sans with Vietnamese glyphs");
-    assert.match(homepage.bodyFont,/Noto_Sans/,"Homepage body must use the same Vietnamese-capable font");
+    assert.match(homepage.headingFont,/Noto[ _]Sans/,"Headings must render in Noto Sans with Vietnamese glyphs");
+    assert.match(homepage.bodyFont,/Noto[ _]Sans/,"Homepage body must use the same Vietnamese-capable font");
     assert.ok(homepage.heroCopy?.length>35&&homepage.heroCopy.length<240,"Hero description should be concise");
     assert.ok(homepage.headingPx>=32&&homepage.headingPx<=86,"Responsive hero title outside expected range");
     assert.equal(homepage.backgroundImage,"none","Hero background must remain simple and white");
