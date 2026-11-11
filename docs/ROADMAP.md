@@ -718,3 +718,8 @@ Nguồn: [TINHOCBAN_DEEP_REVIEW.md](TINHOCBAN_DEEP_REVIEW.md).
 - **CODE READY (nhánh QA):** Trang chủ `/` mới theo Digital Learning Workshop, Hero → bốn lối vào → Labs → cách học → khóa học → catalog → giáo viên → FAQ → CTA.
 - **GIỮ NGUYÊN:** Header/Footer công khai, workspace Student/Admin, Word Lab, Slides, Auth/RLS, Supabase Production, Admin Roadmap.
 - **REGRESSION:** Bổ sung `tests/public-homepage-workshop.test.mjs` kiểm cấu trúc, route, trạng thái và CSS responsive; release chỉ DONE sau Next build và xác minh deployment theo SHA.
+
+### 2026-11-11 — P1 Public Home: Presentation polish
+- **Phạm vi:** điều chỉnh microcopy/SEO và catalog trang chủ theo giọng sản phẩm nhất quán; xóa trạng thái release khỏi UI công khai; cập nhật CSS category và test.
+- **Không mở rộng năng lực:** Word Lab, Slides, Quiz, Auth, Teacher, Admin và Supabase giữ nguyên; các chức năng chưa nghiệm thu không được cấp URL giả.
+- **GATE:** nghiệm thu `pnpm test`, `pnpm typecheck`, `pnpm build`, Chromium public QA trước khi hợp nhất. Không tự triển khai Vercel cho yêu cầu thay đổi nội dung này.
