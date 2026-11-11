@@ -718,3 +718,13 @@ Nguồn: [TINHOCBAN_DEEP_REVIEW.md](TINHOCBAN_DEEP_REVIEW.md).
 - **CODE READY (nhánh QA):** Trang chủ `/` mới theo Digital Learning Workshop, Hero → bốn lối vào → Labs → cách học → khóa học → catalog → giáo viên → FAQ → CTA.
 - **GIỮ NGUYÊN:** Header/Footer công khai, workspace Student/Admin, Word Lab, Slides, Auth/RLS, Supabase Production, Admin Roadmap.
 - **REGRESSION:** Bổ sung `tests/public-homepage-workshop.test.mjs` kiểm cấu trúc, route, trạng thái và CSS responsive; release chỉ DONE sau Next build và xác minh deployment theo SHA.
+
+### 2026-11-11 — P1 Public Home: Presentation polish
+- **Phạm vi:** điều chỉnh microcopy/SEO và catalog trang chủ theo giọng sản phẩm nhất quán; xóa trạng thái release khỏi UI công khai; cập nhật CSS category và test.
+- **Không mở rộng năng lực:** Word Lab, Slides, Quiz, Auth, Teacher, Admin và Supabase giữ nguyên; các chức năng chưa nghiệm thu không được cấp URL giả.
+- **GATE:** nghiệm thu `pnpm test`, `pnpm typecheck`, `pnpm build`, Chromium public QA trước khi hợp nhất. Không tự triển khai Vercel cho yêu cầu thay đổi nội dung này.
+
+### 2026-11-11 — Public Homepage: ClassDojo-style reference composition
+- **UI CODE (PR #77):** Trang chủ công khai với 4 role entry, 9 photo-card collage, 5 câu chuyện theo đường cong chấm, banner khám phá, catalog 8 nhóm, khóa học, 4 giá trị và CTA cuối.
+- **An toàn:** ảnh nguồn độc lập, không dùng assets ClassDojo; không bịa số liệu hay review. Không đổi Admin Roadmap task state, Auth/RLS/DB, Lab code hoặc route ngoài homepage.
+- **Nghiệm thu:** regression mới và Chromium 5 route × 4 viewport, pnpm test/typecheck/build trước merge; không tự push main hoặc deploy Vercel.
