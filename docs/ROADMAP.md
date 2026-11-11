@@ -728,3 +728,8 @@ Nguồn: [TINHOCBAN_DEEP_REVIEW.md](TINHOCBAN_DEEP_REVIEW.md).
 - **UI CODE (PR #77):** Trang chủ công khai với 4 role entry, 9 photo-card collage, 5 câu chuyện theo đường cong chấm, banner khám phá, catalog 8 nhóm, khóa học, 4 giá trị và CTA cuối.
 - **An toàn:** ảnh nguồn độc lập, không dùng assets ClassDojo; không bịa số liệu hay review. Không đổi Admin Roadmap task state, Auth/RLS/DB, Lab code hoặc route ngoài homepage.
 - **Nghiệm thu:** regression mới và Chromium 5 route × 4 viewport, pnpm test/typecheck/build trước merge; không tự push main hoặc deploy Vercel.
+
+### 2026-11-11 — P1 Public Home: Sửa font tiếng Việt
+- **CODE (nhánh QA):** dùng `Noto Sans` có subset Vietnamese cho nội dung và tiêu đề homepage, không dùng fallback `--font-heading` chưa khai báo; điều chỉnh line-height/letter-spacing.
+- **REGRESSION:** kiểm thử dấu tiếng Việt và computed font trên Chromium; không chỉnh API, Supabase Auth/RLS, Word Lab/Slides, Public Header/Footer hoặc các route khác.
+- **RELEASE GATE:** GitHub Actions PASS, xác minh `vercel.json` khóa tự deploy rồi mới merge main/deploy Production theo SHA.
