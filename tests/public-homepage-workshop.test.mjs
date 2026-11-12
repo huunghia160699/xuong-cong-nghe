@@ -65,3 +65,21 @@ test('public homepage: Noto Sans loads Vietnamese glyphs without unresolved head
  assert.match(css,/\.ws-hero h1\{[^}]*line-height:1\.16;letter-spacing:-\.025em/);
  for(const phrase of ['Nơi học tập trở thành','Học đến đâu, làm được đến đó','Khám phá'])assert.ok(page.includes(phrase),phrase);
 });
+
+test('public homepage: fluid typographic scale stays scoped and readable',()=>{
+ const fluid=fs.readFileSync(path.join(root,'src/app/(public)/home-fluid.css'),'utf8');
+ assert.match(layout,/import "\.\/home-fluid\.css"/);
+ assert.match(fluid,/\.xcn-workshop\s*\{[^}]*--ws-type-body:clamp\(/);
+ assert.match(fluid,/--ws-type-detail:clamp\(/);
+ assert.match(fluid,/--ws-type-caption:clamp\(/);
+ for(const component of ['ws-hero-copy>p:nth-of-type(2)','ws-path strong','ws-story-copy>p:not(.ws-step-eyebrow)','ws-directory-row p','ws-course h3','ws-value-card p','ws-photo-finale h2']){
+  assert.ok(fluid.includes(component),'Missing fluid scaling on '+component);
+ }
+ assert.match(fluid,/\.ws-mosaic-photo\s*\{[^}]*aspect-ratio:1\.45/);
+ assert.match(fluid,/@media\(max-width:600px\)/);
+ assert.match(fluid,/@media\(max-width:480px\)/);
+ assert.match(fluid,/\.ws-path-grid\s*\{[^}]*grid-template-columns:repeat\(2,minmax\(0,1fr\)\)/);
+ assert.match(fluid,/\.ws-value-grid\{grid-template-columns:1fr\}/);
+ assert.match(fluid,/\.xcn-public:has\(\.xcn-workshop\)/);
+ assert.doesNotMatch(fluid,/linear-gradient\(|radial-gradient\(|!important/);
+});

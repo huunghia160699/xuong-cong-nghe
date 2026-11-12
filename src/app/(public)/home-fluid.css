@@ -1,0 +1,232 @@
+/* Public homepage fluid layout.
+   vw tracks the viewport as a percentage; rem-based clamps protect legibility.
+   Keep this file after home-workshop.css and never alter editor/admin typography. */
+.xcn-workshop{
+  --ws-type-body:clamp(1.0625rem,1.34vw,1.375rem);
+  --ws-type-detail:clamp(1rem,1.17vw,1.2rem);
+  --ws-type-caption:clamp(.875rem,1.05vw,1.125rem);
+  --ws-space:clamp(1rem,1.55vw,1.875rem);
+}
+.xcn-workshop .ws-hero{padding-top:clamp(3rem,5vw,5.5rem)}
+.xcn-workshop .ws-hero-copy{max-width:clamp(70rem,86vw,82rem)}
+.xcn-workshop .ws-hero-kicker,
+.xcn-workshop .ws-kicker,
+.xcn-workshop .ws-step-eyebrow{font-size:var(--ws-type-caption)}
+.xcn-workshop .ws-hero h1{font-size:clamp(2.6rem,5.4vw,5.25rem)}
+.xcn-workshop .ws-hero-copy>p:nth-of-type(2){
+  max-width:clamp(42rem,55vw,56rem);
+  font-size:var(--ws-type-body);
+  line-height:1.6;
+  margin-bottom:clamp(2rem,3.1vw,3rem)
+}
+.xcn-workshop .ws-roles-label{font-size:var(--ws-type-detail)}
+.xcn-workshop .ws-path-grid{max-width:clamp(40rem,53vw,54rem);gap:var(--ws-space)}
+.xcn-workshop .ws-path{
+  min-height:clamp(9rem,11.5vw,11.25rem);
+  padding:clamp(1rem,1.5vw,1.5rem) .75rem;
+  border-radius:clamp(.875rem,1.25vw,1.25rem);
+  gap:clamp(.35rem,.6vw,.75rem)
+}
+.xcn-workshop .ws-role-icon{
+  width:clamp(3.5rem,4.6vw,4.5rem);
+  height:clamp(3.5rem,4.6vw,4.5rem)
+}
+.xcn-workshop .ws-role-icon svg{width:53%;height:53%}
+.xcn-workshop .ws-path strong{font-size:var(--ws-type-detail);line-height:1.35}
+.xcn-workshop .ws-path-arrow svg{width:1.2em;height:1.2em}
+.xcn-workshop .ws-hero-note{gap:clamp(.25rem,.45vw,.5rem);margin-top:clamp(1.75rem,2.4vw,2.75rem)}
+.xcn-workshop .ws-hero-note>span{font-size:var(--ws-type-caption);letter-spacing:.04em}
+.xcn-workshop .ws-photo-mosaic{
+  height:clamp(22rem,29vw,32rem);
+  margin-top:clamp(1rem,1.8vw,2rem)
+}
+.xcn-workshop .ws-mosaic-photo{
+  width:clamp(9.5rem,15.5vw,16.5rem);
+  height:auto;
+  aspect-ratio:1.45;
+  border-width:clamp(3px,.35vw,5px)
+}
+.xcn-workshop .ws-mosaic-center{width:clamp(17rem,25vw,23rem)}
+.xcn-workshop .ws-mosaic-center>span,
+.xcn-workshop .ws-mosaic-caption{font-size:var(--ws-type-caption)}
+.xcn-workshop .ws-mosaic-center strong{font-size:clamp(1.375rem,2.15vw,2rem)}
+.xcn-workshop .ws-mosaic-center>a{
+  min-height:2.875rem;
+  padding:clamp(.75rem,.9vw,1rem) clamp(1.5rem,2vw,2rem);
+  font-size:var(--ws-type-detail)
+}
+.xcn-workshop .ws-scroll-note a{font-size:var(--ws-type-caption)}
+.xcn-workshop .ws-journey{padding-block:clamp(2rem,3vw,3.75rem) clamp(3.75rem,5vw,6rem)}
+.xcn-workshop .ws-journey-row{
+  max-width:clamp(67.5rem,90vw,84rem);
+  min-height:clamp(26rem,31vw,33rem);
+  gap:clamp(2rem,5vw,6.5rem);
+  margin-block:clamp(2rem,3vw,3.5rem) clamp(4rem,5.5vw,7rem)
+}
+.xcn-workshop .ws-story-art{height:clamp(22rem,29vw,27rem)}
+.xcn-workshop .ws-story-copy{max-width:clamp(25rem,35vw,31rem)}
+.xcn-workshop .ws-story-icon{
+  width:clamp(3rem,4vw,3.75rem);
+  height:clamp(3rem,4vw,3.75rem);
+  margin-bottom:clamp(1.25rem,1.8vw,1.75rem)
+}
+.xcn-workshop .ws-story-icon svg{width:51%;height:51%}
+.xcn-workshop .ws-story-copy h2{font-size:clamp(2.125rem,3.55vw,3.5rem)}
+.xcn-workshop .ws-story-copy>p:not(.ws-step-eyebrow){
+  font-size:var(--ws-type-body);
+  line-height:1.65;
+  margin-bottom:clamp(1.25rem,2vw,1.875rem)
+}
+.xcn-workshop .ws-story-link{font-size:var(--ws-type-detail);min-height:2.75rem}
+.xcn-workshop .ws-chat-bubble{font-size:clamp(.8125rem,1.1vw,.96875rem)}
+.xcn-workshop .ws-chat-bubble small{font-size:clamp(.75rem,.9vw,.875rem)}
+.xcn-workshop .ws-lesson-card>span,
+.xcn-workshop .ws-lesson-card>small,
+.xcn-workshop .ws-mini-tag,
+.xcn-workshop .ws-quiz-main>span,
+.xcn-workshop .ws-quiz-main>small,
+.xcn-workshop .ws-progress-board>span,
+.xcn-workshop .ws-teacher-board>span{font-size:clamp(.6875rem,.85vw,.8125rem)}
+.xcn-workshop .ws-lesson-card>b{font-size:clamp(.875rem,1.1vw,1.0625rem)}
+.xcn-workshop .ws-quiz-main>b{font-size:clamp(1rem,1.25vw,1.25rem)}
+.xcn-workshop .ws-quiz-main>div,
+.xcn-workshop .ws-quiz-floating,
+.xcn-workshop .ws-teacher-board>div{font-size:clamp(.8125rem,1vw,1rem)}
+.xcn-workshop .ws-progress-labels{font-size:clamp(.6875rem,.85vw,.8125rem)}
+.xcn-workshop .ws-progress-board>strong,
+.xcn-workshop .ws-teacher-board>strong{font-size:clamp(1.3125rem,1.8vw,1.625rem)}
+.xcn-workshop .ws-discover{padding-bottom:clamp(4.5rem,7vw,7.5rem)}
+.xcn-workshop .ws-discover-inner{
+  max-width:clamp(64rem,83vw,76rem);
+  min-height:clamp(18rem,23vw,23rem);
+  padding:clamp(2.75rem,4vw,4rem) clamp(1.5rem,3vw,3rem)
+}
+.xcn-workshop .ws-discover p{font-size:var(--ws-type-caption)}
+.xcn-workshop .ws-discover h2{font-size:clamp(2rem,3.1vw,3rem)}
+.xcn-workshop .ws-discover a,
+.xcn-workshop .ws-photo-finale a{font-size:var(--ws-type-detail);min-height:2.875rem}
+.xcn-workshop .ws-section{padding-block:clamp(5rem,7.4vw,7.5rem)}
+.xcn-workshop .ws-section-heading{max-width:clamp(47rem,62vw,56rem);margin-bottom:clamp(2.5rem,4vw,4rem)}
+.xcn-workshop .ws-section-heading h2{font-size:clamp(2.25rem,3.65vw,3.75rem)}
+.xcn-workshop .ws-section-heading>p:last-child{font-size:var(--ws-type-body);line-height:1.65}
+.xcn-workshop .ws-directory{max-width:clamp(66rem,88vw,80rem);gap:var(--ws-space)}
+.xcn-workshop .ws-directory-row{
+  min-height:clamp(15rem,19vw,19rem);
+  padding:clamp(1.25rem,1.6vw,1.875rem);
+  border-radius:clamp(1rem,1.2vw,1.25rem)
+}
+.xcn-workshop .ws-directory-index{font-size:var(--ws-type-caption)}
+.xcn-workshop .ws-directory-row h3{font-size:clamp(1.25rem,1.65vw,1.625rem)}
+.xcn-workshop .ws-directory-row p{font-size:var(--ws-type-detail);line-height:1.55}
+.xcn-workshop .ws-directory-area{font-size:var(--ws-type-caption);padding:.55em .85em}
+.xcn-workshop .ws-directory-more,
+.xcn-workshop .ws-course-more{font-size:var(--ws-type-detail);min-height:2.75rem}
+.xcn-workshop .ws-course-list{max-width:clamp(66rem,88vw,80rem);gap:var(--ws-space)}
+.xcn-workshop .ws-course{
+  min-height:clamp(12rem,16vw,16rem);
+  padding:clamp(1.25rem,1.6vw,1.875rem);
+  border-radius:clamp(1rem,1.2vw,1.25rem)
+}
+.xcn-workshop .ws-course-number,
+.xcn-workshop .ws-course small,
+.xcn-workshop .ws-course>div>span{font-size:var(--ws-type-caption)}
+.xcn-workshop .ws-course h3{font-size:clamp(1.25rem,1.65vw,1.625rem)}
+.xcn-workshop .ws-value-grid{max-width:clamp(68rem,90vw,82rem);gap:var(--ws-space)}
+.xcn-workshop .ws-value-card{
+  min-height:clamp(15rem,19vw,19rem);
+  padding:clamp(1.25rem,1.7vw,2rem);
+  border-radius:clamp(1.125rem,1.4vw,1.5rem)
+}
+.xcn-workshop .ws-value-card>span{font-size:var(--ws-type-caption)}
+.xcn-workshop .ws-value-card h3{font-size:clamp(1.375rem,1.75vw,1.75rem)}
+.xcn-workshop .ws-value-card p{font-size:var(--ws-type-detail);line-height:1.6;max-width:none}
+.xcn-workshop .ws-community-more{font-size:var(--ws-type-detail);min-height:2.875rem}
+.xcn-workshop .ws-trust{min-height:clamp(24rem,30vw,30rem)}
+.xcn-workshop .ws-trust-inner{max-width:clamp(45rem,60vw,58rem)}
+.xcn-workshop .ws-trust h2{font-size:clamp(2.25rem,3.6vw,3.75rem)}
+.xcn-workshop .ws-trust p:not(.ws-kicker){font-size:var(--ws-type-body);line-height:1.65;max-width:none}
+.xcn-workshop .ws-trust a{font-size:var(--ws-type-detail);min-height:2.75rem}
+.xcn-workshop .ws-photo-finale{min-height:clamp(23rem,30vw,33rem)}
+.xcn-workshop .ws-photo-finale h2{font-size:clamp(2.25rem,3.6vw,3.75rem)}
+
+/* Shared header/footer change only while the homepage is present. */
+.xcn-public:has(.xcn-workshop) .xcn-brand-name{font-size:clamp(.9375rem,1.1vw,1.125rem)}
+.xcn-public:has(.xcn-workshop) .xcn-public-nav-link{
+  font-size:clamp(.9375rem,1vw,1.0625rem);
+  padding-inline:clamp(.5rem,.85vw,.875rem)
+}
+.xcn-public:has(.xcn-workshop) .xcn-public-account,
+.xcn-public:has(.xcn-workshop) .xcn-public-mobile-account{font-size:var(--ws-type-detail,1rem)}
+.xcn-public:has(.xcn-workshop) .xcn-public-footer-links a,
+.xcn-public:has(.xcn-workshop) .xcn-public-footer-brand p{font-size:clamp(.9375rem,1.1vw,1.125rem)}
+
+@media(max-width:850px){
+  .xcn-workshop .ws-journey-row{max-width:100%;gap:clamp(1.5rem,3vw,2rem)}
+  .xcn-workshop .ws-story-copy>p:not(.ws-step-eyebrow){font-size:var(--ws-type-body)}
+  .xcn-workshop .ws-directory{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .xcn-workshop .ws-course-list{grid-template-columns:1fr}
+}
+@media(max-width:600px){
+  .xcn-workshop .ws-hero{padding-top:clamp(2.25rem,6vw,3rem)}
+  .xcn-workshop .ws-hero h1{font-size:clamp(2.25rem,8.4vw,3rem);line-height:1.16}
+  .xcn-workshop .ws-hero-copy>p:nth-of-type(2){
+    font-size:1rem;
+    max-width:38rem;
+    margin-bottom:1.75rem
+  }
+  .xcn-workshop .ws-path-grid{
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    max-width:25rem;
+    gap:.75rem
+  }
+  .xcn-workshop .ws-path{min-height:8.25rem;padding:.875rem .5rem;gap:.5rem}
+  .xcn-workshop .ws-role-icon{width:3.25rem;height:3.25rem}
+  .xcn-workshop .ws-path strong{font-size:.9375rem}
+  .xcn-workshop .ws-roles-label{font-size:1rem}
+  .xcn-workshop .ws-hero-note>span{font-size:.875rem;margin-left:.5rem}
+  .xcn-workshop .ws-photo-mosaic{height:clamp(21rem,70vw,24rem);margin-top:.75rem}
+  .xcn-workshop .ws-mosaic-photo{width:clamp(8.25rem,31vw,9.25rem);height:auto;aspect-ratio:1.45}
+  .xcn-workshop .ws-mosaic-center{
+    width:min(70vw,17rem);
+    top:33%;
+    padding:1rem;
+    border-radius:1.25rem
+  }
+  .xcn-workshop .ws-mosaic-center strong{font-size:clamp(1.25rem,4.6vw,1.75rem)}
+  .xcn-workshop .ws-mosaic-center>a{font-size:1rem;padding:.7rem 1.25rem}
+  .xcn-workshop .ws-mosaic-caption{
+    max-width:90vw;
+    white-space:normal;
+    text-align:center;
+    bottom:.25rem
+  }
+  .xcn-workshop .ws-journey-row{
+    grid-template-columns:1fr;
+    min-height:auto;
+    gap:1.25rem;
+    margin-block:1.5rem 4rem
+  }
+  .xcn-workshop .ws-journey-row .ws-story-copy{max-width:100%;order:1}
+  .xcn-workshop .ws-journey-row .ws-story-art{order:2;height:18.5rem}
+  .xcn-workshop .ws-story-copy h2{font-size:clamp(2.125rem,7.5vw,2.75rem)}
+  .xcn-workshop .ws-story-copy>p:not(.ws-step-eyebrow){font-size:1rem}
+  .xcn-workshop .ws-section{padding-block:clamp(4rem,10vw,5rem)}
+  .xcn-workshop .ws-section-heading h2{font-size:clamp(2rem,7vw,2.5rem)}
+  .xcn-workshop .ws-section-heading>p:last-child{font-size:1rem}
+  .xcn-workshop .ws-directory-row{min-height:14rem;padding:1rem}
+  .xcn-workshop .ws-directory-row h3{font-size:clamp(1.2rem,3.7vw,1.375rem)}
+  .xcn-workshop .ws-directory-row p{font-size:1rem}
+  .xcn-workshop .ws-course{min-height:10rem}
+  .xcn-workshop .ws-value-card{min-height:13rem}
+  .xcn-workshop .ws-discover h2{font-size:clamp(1.75rem,6.5vw,2.25rem)}
+  .xcn-workshop .ws-trust h2{font-size:clamp(2.125rem,7vw,2.75rem)}
+  .xcn-workshop .ws-photo-finale h2{font-size:clamp(2rem,7vw,2.5rem)}
+}
+@media(max-width:480px){
+  /* Avoid illegibly narrow cards: reflow instead of shrinking the content. */
+  .xcn-workshop .ws-directory,
+  .xcn-workshop .ws-value-grid{grid-template-columns:1fr}
+  .xcn-workshop .ws-directory-row,
+  .xcn-workshop .ws-value-card{min-height:0}
+  .xcn-workshop .ws-value-card:nth-child(even){transform:none}
+}
