@@ -31,6 +31,13 @@ Không viết lại cả nhật ký cũ. Một task nhiều commit có thể th�
 
 ## III. Nhật ký mới (từ 30/10/2026)
 
+
+### 2026-11-12 — [PUBLIC HOME] Scale typography và thành phần theo viewport
+- **IN PROGRESS (nhánh QA `fix/public-home-fluid-proportions-20261112`):** stylesheet scoped `home-fluid.css` dùng `clamp(rem,vw,rem)` cho chữ, khoảng cách, lưới, nút; ảnh collage giữ tỷ lệ 1.45; reflow ở ≤600/480px. Duy trì Noto Sans tiếng Việt và đường dẫn tương tác.
+- **Đã kiểm:** đối chiếu `main` và xác minh `vercel.json` có `git.deploymentEnabled:false`; kiểm cấu trúc CSS cơ bản trong bước tạo file. Mở rộng test nguồn và script Chromium đo cỡ chữ/lưới.
+- **NOT TESTED:** toàn bộ `pnpm test`, `pnpm typecheck`, `pnpm build` và Chromium trên ứng dụng thực tế; chưa có bằng chứng CI, zoom/overflow hoặc Vercel runtime. Không thay đổi Production/Supabase, không deploy.
+- **Tiếp theo:** kiểm CI và E2E trên 360/768/1280/1366/1440/1920, nghiệm thu trước khi báo PASS.
+
 ### 2026-11-10 — [PUBLIC HOME] Đồng bộ font trang chủ
 - **DONE (local):** bỏ font serif Georgia khỏi tiêu đề thẻ bài viết và vế nhấn màu xanh của slogan Hero; dùng font sans-serif kế thừa từ hệ thống giao diện, giữ nguyên nội dung và bố cục.
 - **QA:** TypeScript, 7 regression public layout/palette và production build 76/76 đều PASS. **RELEASE:** chờ commit và Vercel Production xác minh trong cùng tác vụ.
