@@ -131,3 +131,10 @@ Nguồn định nghĩa kỹ thuật: `tailwind.config.ts` và `src/app/globals.c
 - **Quy tắc:** Tiêu đề và nội dung trang chủ dùng `Noto Sans` qua `next/font/google` với subset `latin`, `vietnamese`, `display:"swap"`. Font chỉ áp dụng tại `src/app/(public)/page.tsx`, không ảnh hưởng Admin/Word/Slides.
 - **Nguyên nhân đã sửa:** Trang chủ trước đây gọi biến `--font-heading` không được khai báo, nên tiêu đề rơi xuống Arial. Tiêu đề kế thừa đúng font đã tự host bởi Next; giảm letter-spacing âm và tăng line-height Hero để dấu tiếng Việt không chạm nhau.
 - **QA:** kiểm tra ảnh Chromium 360/768/1280/1920, giá trị `getComputedStyle(...).fontFamily` của H1 và body, `pnpm test`, `pnpm typecheck`, `pnpm build`. Không đưa font vào workspace soạn thảo.
+
+## 12/11/2026 — Tỷ lệ giao diện trang chủ theo khung nhìn (QA branch)
+
+- **Phạm vi:** homepage `src/app/(public)/page.tsx`; lớp override `home-fluid.css` được import sau `home-workshop.css`. Không đổi font/kích thước của Word Lab, Slides, Quiz hay Admin. Header/footer chỉ đổi khi `.xcn-public:has(.xcn-workshop)`.
+- **Nguyên tắc tỷ lệ:** dùng `vw` (theo phần trăm chiều rộng viewport) kết hợp `clamp(rem, vw, rem)`; tránh `font-size:%` dây chuyền và tránh CSS transform scale toàn trang khiến chữ 13-inch bị quá nhỏ. Chữ nội dung trọng tâm có mức tối thiểu 16–17px tương đương ở font mặc định; vẫn tôn trọng zoom/user font size.
+- **Tỷ lệ thành phần:** lưới role 4 cột desktop, 2 cột ở ≤600px; catalog và giá trị chuyển 1 cột ở ≤480px. Ảnh collage giữ `aspect-ratio:1.45`, kích thước theo `vw` có chặn hai đầu; card, icon, khoảng cách, tiêu đề và CTA cùng co giãn.
+- **Tiêu chí kiểm:** Chromium ở 360/768/1280/1920 và laptop 1366/1440; không cuộn ngang, chữ role ≥15px, mô tả hero/stories/catalog ≥16px, menu/ESC/keyboard và zoom 200% không vỡ bố cục. Các mức QA mới chỉ là tiêu chí cho lần chạy; không tự coi là PASS.
