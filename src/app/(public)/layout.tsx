@@ -1,5 +1,6 @@
 import "./public.css";
 import "./home-workshop.css";
+import "./home-fluid.css";
 import {Footer} from "@/components/footer";
 import {PublicHeader} from "@/components/public-header";
 
