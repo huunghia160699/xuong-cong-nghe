@@ -43,7 +43,7 @@ try{
  };
  await call("Page.enable");await call("Runtime.enable");
  const routes=["/","/gioi-thieu","/bang-gia","/tin-tuc","/lien-he"];
- for(const width of [360,768,1280,1920]){
+ for(const width of [360,768,1280,1366,1440,1920]){
   for(const route of routes){
    await call("Emulation.setDeviceMetricsOverride",{width,height:width===1280?680:900,deviceScaleFactor:1,mobile:width<=768});
    await call("Page.navigate",{url:base+route});
@@ -143,7 +143,7 @@ try{
    }   console.log("PASS PUBLIC",route,width,"h1",info.title);
   }
  }
- console.log("PASS D1 public shell 5 routes x 4 viewports + responsive menu/ESC");
+ console.log("PASS D1 public shell 5 routes x 6 viewports + responsive menu/ESC");
 }catch(error){console.error("PUBLIC VISUAL QA FAILED:",error);process.exitCode=1;}
 finally{
  ws?.close();child?.kill("SIGTERM");await wait(150);if(profile)rmSync(profile,{recursive:true,force:true});
