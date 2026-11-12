@@ -733,3 +733,9 @@ Nguồn: [TINHOCBAN_DEEP_REVIEW.md](TINHOCBAN_DEEP_REVIEW.md).
 - **CODE (nhánh QA):** dùng `Noto Sans` có subset Vietnamese cho nội dung và tiêu đề homepage, không dùng fallback `--font-heading` chưa khai báo; điều chỉnh line-height/letter-spacing.
 - **REGRESSION:** kiểm thử dấu tiếng Việt và computed font trên Chromium; không chỉnh API, Supabase Auth/RLS, Word Lab/Slides, Public Header/Footer hoặc các route khác.
 - **RELEASE GATE:** GitHub Actions PASS, xác minh `vercel.json` khóa tự deploy rồi mới merge main/deploy Production theo SHA.
+
+### 2026-11-12 — P1 Public Homepage / tỉ lệ thiết kế đa khung nhìn
+
+- **IN PROGRESS (QA branch):** thêm lớp typography/spacing `home-fluid.css` để chữ, card, nút, ảnh minh họa và các khoảng cách chuyển kích thước tỷ lệ theo viewport, có ngưỡng đọc được trên laptop 13 inch. Thay 4 role card mobile bằng 2 cột, catalog/value card 1 cột ở màn nhỏ.
+- **Bảo toàn:** không đổi Auth/RLS, dữ liệu, công cụ, đường dẫn hoặc giao diện module nội bộ; không deploy Preview/Production.
+- **Để nghiệm thu:** chạy `pnpm test`, `pnpm typecheck`, `pnpm build` và Chromium 360/768/1280/1366/1440/1920, kiểm zoom 200%, không overflow, CTA và menu. Không tick hoàn tất nếu chưa có kết quả.
