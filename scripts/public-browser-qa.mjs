@@ -95,7 +95,12 @@ try{
       values:document.querySelectorAll('.ws-value-card').length,
       finalBanner:!!document.querySelector('.ws-photo-finale'),
       links:[...document.querySelectorAll('main a[href]')].map(a=>a.getAttribute('href')),
-      gutter:parseFloat(getComputedStyle(document.querySelector('.xcn-container')).paddingLeft)
+      gutter:parseFloat(getComputedStyle(document.querySelector('.xcn-container')).paddingLeft),
+      heroBodyPx:parseFloat(getComputedStyle(document.querySelector('.ws-hero-copy>p:nth-of-type(2)')).fontSize),
+      rolePx:parseFloat(getComputedStyle(document.querySelector('.ws-path strong')).fontSize),
+      storyBodyPx:parseFloat(getComputedStyle(document.querySelector('.ws-story-copy>p:not(.ws-step-eyebrow)')).fontSize),
+      catalogBodyPx:parseFloat(getComputedStyle(document.querySelector('.ws-directory-row p')).fontSize),
+      roleColumns:getComputedStyle(document.querySelector('.ws-path-grid')).gridTemplateColumns.trim().split(/\\s+/).length
     }))()`);
     assert.ok(homepage.root&&homepage.hero&&homepage.discovery&&homepage.storyTrail&&homepage.finalBanner,"Community-first homepage is missing a section");
     assert.equal(homepage.h1Count,1,"Homepage must have one H1");
@@ -104,6 +109,11 @@ try{
     assert.match(homepage.bodyFont,/Noto[ _]Sans/,"Homepage body must use the same Vietnamese-capable font");
     assert.ok(homepage.heroCopy?.length>35&&homepage.heroCopy.length<240,"Hero description should be concise");
     assert.ok(homepage.headingPx>=32&&homepage.headingPx<=86,"Responsive hero title outside expected range");
+    assert.ok(homepage.heroBodyPx>=16,"Hero text too small @"+width+": "+homepage.heroBodyPx);
+    assert.ok(homepage.rolePx>=15,"Role label too small @"+width+": "+homepage.rolePx);
+    assert.ok(homepage.storyBodyPx>=16,"Story text too small @"+width+": "+homepage.storyBodyPx);
+    assert.ok(homepage.catalogBodyPx>=16,"Catalog text too small @"+width+": "+homepage.catalogBodyPx);
+    assert.equal(homepage.roleColumns,width<=600?2:4,"Role grid should reflow without tiny cards @"+width);
     assert.equal(homepage.backgroundImage,"none","Hero background must remain simple and white");
     assert.equal(homepage.rolePaths,4,"Four user role cards required");
     assert.equal(homepage.photos,9,"Photo mosaic must contain nine visual cards");
